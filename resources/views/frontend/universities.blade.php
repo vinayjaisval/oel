@@ -119,10 +119,11 @@
                            $.each(response.data.data, function(index, item) {
                               var url_param =getParams();
                               var assetBaseUrl = "{{ asset('') }}/";
+                              console.log(assetBaseUrl);
                               html += `
                                   <div class="col-lg-3 col-md-6 col-xs-12 col-sm-12 col-12">
                                     <div class="courses_int_img bg-white img-mx px-3 py-4 rounded">
-                                        <img src="${assetBaseUrl}${item.thumbnail ?? ''}" alt="university"  style="max-height:150px;min-height:150px">
+                                        <img src="${assetBaseUrl}${item.logo ?? ''}" alt="university"  style="max-height:150px;min-height:150px">
                                         <div class="course_name mt-4">
                                             <span class="fw-light">${item.country?.name ?? ''}</span>
                                             <h4 class="fw-bold">${item.university_name}</h4>
@@ -169,7 +170,7 @@
                                html += `
                                 <div class="col-lg-3 col-md-6 col-xs-12 col-sm-12 col-12">
                                     <div class="courses_int_img img-mx bg-white px-3 py-4 rounded">
-                                        <img src="${assetBaseUrl}${item.thumbnail ?? ''}" alt="university"  style="max-height:150px;min-height:150px">
+                                        <img src="${assetBaseUrl}${item.logo ?? ''}" alt="university"  style="max-height:150px;min-height:150px">
                                         <div class="course_name mt-4">
                                             <span class="fw-light">${item.country?.name ?? ''}</span>
                                             <h4 class="fw-bold">${item.university_name}</h4>

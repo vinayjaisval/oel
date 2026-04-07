@@ -46,7 +46,7 @@
                         </ul>
                     </div>
                 @endif
-                <form class="row g-4"  action="{{route('update-program',$program->id)}}" method="POST">
+                <form id="programForm" class="row g-4"  action="{{route('update-program',$program->id)}}" method="POST">
                     @csrf
                     @method('post')
                     <div class="col-4">
@@ -56,7 +56,7 @@
                            <select class="form-control " name="school_id" id="school_id" placeholder="University / College Name">
                              <option value="">-- University / College Name --</option>
                              @foreach ($universities as $item)
-                               <option value="{{$item->id}}" {{ old('school_id') == $item->id ? 'selected' : ($program->school_id == $item->id ? 'selected' : '') }}>{{ implode(' ', array_slice(explode(' ', $item->university_name), 0, 5)) }}</option>
+                               <option title="{{$item->university_name}}" value="{{$item->id}}" {{ old('school_id') == $item->id ? 'selected' : ($program->school_id == $item->id ? 'selected' : '') }}>{{ implode(' ', array_slice(explode(' ', $item->university_name), 0, 5)) }}</option>
                             @endforeach
                             </select>
 
@@ -97,22 +97,7 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
-
-                    {{-- <div class="col-4 ">
-                        <div class="form-floating">
-                            <select class="form-control  selectpicker" name="subject_id_input"
-                                id="subject_id_input" multiple placeholder="Education Level">
-                                @foreach ($all_subject as $item)
-                                    <option value="{{ $item->id }}" {{ old('subject_id_input') == $item->id ? 'selected' : '' }}>{{ $item->subject_name }}</option>
-                                @endforeach
-                            </select>
-                            <label for="lead-education_level_id" class="form-label">-- Program / Courses Subject --</label>
-
-                        </div>
-                        @error('subject_id_input')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                    </div> --}}
+                  
                     <div class="col-4">
                         <div class="form-floating">
                             <input  name="name" type="text" class="form-control " value="{{ old('name') ? old('name') : $program->name }}" placeholder="Program / Courses Name" autocomplete="name" >
@@ -120,7 +105,7 @@
                         </div>
                         @error('name')
                         <div class="text-danger">{{ $message }}</div>
-                    @enderror
+                        @enderror
                     </div>
                     <div class="col-4">
                        <div class="form-floating">
@@ -129,7 +114,7 @@
                         </div>
                         @error('length')
                         <div class="text-danger">{{ $message }}</div>
-                    @enderror
+                        @enderror
                     </div>
                     <div class="col-4">
                        <div class="form-floating">
@@ -143,7 +128,7 @@
                         </div>
                         @error('programType')
                         <div class="text-danger">{{ $message }}</div>
-                    @enderror
+                        @enderror
                     </div>
                     <div class="col-4">
                        <div class="form-floating">
@@ -160,22 +145,15 @@
                        </div>
                     </div>
 
-                   <div class="col-4">
+                    <div class="col-4">
                         <div class="form-floating">
                             <input id="lead-priority" name="priority" type="text" class="form-control" placeholder="Campus" autocomplete="priority" value="{{old('priority') ?? $program->priority}}">
                             <label for="lead-priority" class="form-label">Campus</label>
                         </div>
                         @error('priority')
                         <div class="text-danger">{{ $message }}</div>
-                    @enderror
+                        @enderror
                     </div>
-
-
-
-
-
-
-
                     
                     <div class="col-4">
                        <div class="form-floating">
@@ -189,24 +167,9 @@
                         </div>
                         @error('lang_spec_for_program')
                         <div class="text-danger">{{ $message }}</div>
-                    @enderror
+                        @enderror
                     </div>
-
-                    {{-- <div class="col-4">
-                       <div class="form-floating">
-                          <select class="form-control " name="fieldsofstudytype" id="lead-fieldsofstudytype" placeholder="Fields Of Study Type (Degree type offered)">
-                             <option value="">-- Select Fields Of Study Type --</option>
-                             @foreach ($filed_of_study as $item)
-                             <option value="{{$item->id}}" {{ old('fieldsofstudytype ') == $item->id ? 'selected' : '' }}>{{$item->name}}</option>
-                             @endforeach
-                            </select>
-                          <label for="lead-fieldsofstudytype" class="form-label">Fields Of Study Type (Degree type offered) <span class="text-danger">*</span></label>
-                        </div>
-                        @error('fieldsofstudytype')
-                          <div class="text-danger">{{ $message }}</div>
-                      @enderror
-                    </div> --}}
-
+               
                     <div class="col-4">
                        <div class="form-floating">
                           <select class="form-control " name="program_level" id="program-level" placeholder="Degree">
@@ -249,47 +212,7 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
-                    {{-- <div class="col-4">
-                        <div class="form-floating">
-                            <select class="form-control select-grading-scheme" name="grading_scheme_id" id="grading_scheme_id" placeholder="Grading Scheme">
-                                <option value="">-- Grading Scheme --</option>
-                                @foreach ($grading_scheme as $item)
-                                    <option value="{{$item->id}}" {{ old('grading_scheme_id') == $item->id ? 'selected' : ($program->grading_scheme_id == $item->id ? 'selected' : '') }}>{{$item->name}}</option>
-                                @endforeach
-                            </select>
-
-                            <label for="lead-grading_scheme_id" class="form-label">Grading Scheme <span class="text-danger">*</span></label>
-                        </div>
-                        @error('grading_scheme_id')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
-                    </div> --}}
-                    {{-- <div class="col-4">
-                        <div class="form-floating">
-                            <select class="form-control select-grading-scheme" name="grading_scheme_id" id="grading_scheme_id" placeholder="Grading Scheme">
-                                <option value="">-- Grading Scheme --</option>
-                                @foreach ($grading_scheme as $item)
-                                    <option value="{{$item->id}}" {{ old('grading_scheme_id') == $item->id ? 'selected' : ($program->grading_scheme_id == $item->id ? 'selected' : '') }}>{{$item->name}}</option>
-                                @endforeach
-                            </select>
-                            <label for="lead-grading_scheme_id" class="form-label">Grading Scheme <span class="text-danger">*</span></label>
-                        </div>
-                        @error('grading_scheme_id')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="col-4" id="grading-number-div" style="display: none;">
-                        <div class="form-floating">
-                            <input type="hidden" name="max_grading_number" id="max_grading_number">
-                            <input id="lead-grading_number" name="grading_number" type="text" class="form-control" placeholder="Grading Number" autocomplete="grading_number"
-                            value="{{old('grading_number', $program->grading_number ?? '')}}" >
-                            <label for="lead-grading_number" class="form-label">Grading Number <span class="text-danger">*</span></label>
-                            <div id="grading_input_error" class="text-danger"  style="display: none;">Invalid grade. Please enter a value within the selected grading scheme.</div>
-                        </div>
-                        @error('grading_number')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
-                    </div> --}}
+                                      
                     <div class="col-4">
                         <div class="form-floating">
                             <select class="form-control select-grading-scheme" name="grading_scheme_id" id="grading_scheme_id" placeholder="Grading Scheme">
@@ -316,15 +239,7 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
-                    {{-- <div class="col-4">
-                        <div class="form-floating ">
-                            <input id="lead-total_credits" name="total_credits" type="number" class="form-control " placeholder="Total Credits" autocomplete="total_credits" value="{{old('total_credits', $program->total_credits ?? '')}}">
-                            <label for="lead-total_credits" class="form-label">Total Credits <span class="text-danger">*</span></label>
-                        </div>
-                        @error('total_credits')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
-                    </div> --}}
+                   
                     <div class="col-4">
                         <div class="form-floating">
                            <select class="form-control other-exam" name="other_exam" id="other_exam" placeholder="" >
@@ -350,20 +265,7 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
-                    {{-- <div class="col-4">
-                        <div class="form-floating">
-                           <select class="form-control other-exam" name="other_exam" id="other_exam" placeholder="" >
-                              <option value="">-- Other Exam --</option>
-                              @foreach ($other_exam as $item)
-                                <option value="{{$item->id}}" {{$program->other_exam == $item->id ? 'selected' : ''}}>{{$item->name}}</option>
-                              @endforeach
-                           </select>
-                           <label for="lead-other-exam" class="form-label"> Other Exam <span class="text-danger">*</span></label>
-                         </div>
-                         @error('other_exam')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
-                     </div> --}}
+                   
                     <div class="col-4">
                         <div class="form-floating">
                             <input id="lead-application_fee" name="application_fee" type="number" class="form-control " placeholder="Application Fees in INR" autocomplete="application_fee" value="{{old('application_fee', $program->application_fee ?? '')}}">
@@ -383,49 +285,47 @@
                         @enderror
                     </div>
                    <div class="col-4">
-    <div class="form-floating">
-        <input id="lead-application_closing_date_input" 
-               name="application_closing_date_input" 
-               type="date" 
-               class="form-control date-input" 
-               placeholder="Application Closing Date"
-               value="{{ old('application_closing_date_input') }}">
-        <label for="lead-application_closing_date_input">
-            Application Closing Date <span class="text-danger">*</span>
-        </label>
-    </div>
+                        <div class="form-floating">
+                            <input id="lead-application_closing_date_input" 
+                                name="application_closing_date_input" 
+                                type="date" 
+                                class="form-control date-input" 
+                                placeholder="Application Closing Date"
+                                value="{{ old('application_closing_date_input') }}">
+                            <label for="lead-application_closing_date_input">
+                                Application Closing Date <span class="text-danger">*</span>
+                            </label>
+                        </div>
+                        <div class="mt-2">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                    type="radio"
+                                    name="application_closing_date_radio"
+                                    id="application_closing_date_option1"
+                                    value="ASAP">
+                                <label class="form-check-label" for="application_closing_date_option1">ASAP</label>
+                            </div>
 
-    <div class="mt-2">
-        <div class="form-check form-check-inline">
-            <input class="form-check-input"
-                   type="radio"
-                   name="application_closing_date_radio"
-                   id="application_closing_date_option1"
-                   value="ASAP">
-            <label class="form-check-label" for="application_closing_date_option1">ASAP</label>
-        </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                    type="radio"
+                                    name="application_closing_date_radio"
+                                    id="application_closing_date_option2"
+                                    value="TBD">
+                                <label class="form-check-label" for="application_closing_date_option2">TBD</label>
+                            </div>
+                         </div>
 
-        <div class="form-check form-check-inline">
-            <input class="form-check-input"
-                   type="radio"
-                   name="application_closing_date_radio"
-                   id="application_closing_date_option2"
-                   value="TBD">
-            <label class="form-check-label" for="application_closing_date_option2">TBD</label>
-        </div>
-    </div>
+   
+                            <input type="hidden"
+                                name="application_closing_date"
+                                id="application_closing_date_hidden"
+                                value="{{ old('application_closing_date', $program->application_closing_date ?? '') }}">
 
-    <!-- 🔴 SINGLE SOURCE OF TRUTH -->
-    <input type="hidden"
-           name="application_closing_date"
-           id="application_closing_date_hidden"
-           value="{{ old('application_closing_date', $program->application_closing_date ?? '') }}">
-
-    @error('application_closing_date')
-        <div class="text-danger mt-1">{{ $message }}</div>
-    @enderror
-</div>
-
+                            @error('application_closing_date')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                    </div>
 
                     <div class="col-4">
                         <div class="form-floating">
@@ -434,7 +334,7 @@
                         </div>
                         @error('tution_fee')
                         <div class="text-danger">{{ $message }}</div>
-                    @enderror
+                        @enderror
                     </div>
                     <div class="col-4">
                        <div class="form-floating">
@@ -448,7 +348,7 @@
                         </div>
                         @error('currency')
                         <div class="text-danger">{{ $message }}</div>
-                    @enderror
+                        @enderror
                     </div>
                     <div class="col-4">
                        <div class="form-floating">
@@ -462,7 +362,7 @@
                         </div>
                         @error('intake')
                         <div class="text-danger">{{ $message }}</div>
-                    @enderror
+                         @enderror
                     </div>
                     <div class="col-4">
                        <div class="form-floating">
@@ -476,7 +376,7 @@
                         </div>
                         @error('year')
                         <div class="text-danger">{{ $message }}</div>
-                    @enderror
+                        @enderror
                     </div>
                     <div class="col-4">
                         <div class="form-floating">
@@ -491,7 +391,6 @@
                         <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
-
                   
                     <div class="col-4">
                         <div class="form-floating">
@@ -502,8 +401,7 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
-              
-                   
+                                 
                     <div class="col-12">
                        <label>Description</label>
                         <textarea name="details" id="summernote1" cols="30" rows="10">{!! old('details') ?? $program->description !!}</textarea>
@@ -514,11 +412,15 @@
                          <textarea name="extra_notes" id="summernote2" cols="30" rows="10">{!! old('details') ?? $program->extra_notes !!}</textarea>
                          @error('notes')
                          <div class="text-danger">{{ $message }}</div>
-                     @enderror
+                         @enderror
                     </div>
-                    <div class="col-12 w-50"><button type="submit" class="btn btn-info  py-6 ">Submit</button></div>
-                 </form>
-                <br>
+
+                    <div class="col-12 w-50">
+                       <button id="submitBtn" type="submit" class="btn btn-info py-6">Submit</button>
+                    </div>
+                </form>
+
+                    <br>
               </div>
             </div>
           </div>
@@ -537,6 +439,20 @@
 <!-- ===================== JS (PLUGINS ONLY) ===================== -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("programForm");
+    const btn = document.getElementById("submitBtn");
+
+    if (form && btn) {
+        form.addEventListener("submit", function () {
+            btn.disabled = true;
+            btn.innerText = "Processing...";
+        });
+    }
+});
+</script>
 <script>
 $(document).ready(function () {
 

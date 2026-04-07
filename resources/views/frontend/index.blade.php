@@ -25,201 +25,85 @@
         }
     }
 </style>
+
 <style>
-
-
 #yt-strip-1 {
-        --size: 160px;
-        --gap: 28px;
-        --radius: 18px;
-        --speed: 24s;
-    }
-    #yt-strip-1 * {
-        box-sizing: border-box;
-    }
-    #yt-strip-1 .heading {
-        text-align: center;
-        font: 600 12px/1.2 system-ui, sans-serif;
-        letter-spacing: .12em;
-        color: #666;
-        margin: 0 0 12px
-    }
-    #yt-strip-1 .scroller {
-        position: relative;
-        overflow: hidden;
-        padding: 12px 0
-    }
-    #yt-strip-1 .track {
-        display: flex;
-        gap: var(--gap);
-        width: max-content;
-        align-items: center;
-        animation: yt-scroll var(--speed) linear infinite;
-    }
-    #yt-strip-1 .scroller:hover .track {
-        animation-play-state: paused;
-    }
-    @keyframes yt-scroll {
-        from {
-            transform: translateX(0)
-        }
-        to {
-            transform: translateX(calc(-50% - var(--gap)/2))
-        }
-    }
-    #yt-strip-1 .card {
-        position: relative;
-        flex: 0 0 auto;
-        width: 250px;
-        height: 250px;
-        border-radius: var(--radius);
-        overflow: hidden;
-        background: #111;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, .25);
-    }
-    #yt-strip-1 .thumb,
-    #yt-strip-1 .embed {
-        width: 100%;
-        height: 100%;
-        display: block;
-        object-fit: cover;
-    }
-    #yt-strip-1 .play-btn {
-        position: absolute;
-        inset: auto 50% 10% 50%;
-        translate: -50% 0;
-        border: 0;
-        border-radius: 999px;
-        padding: 10px 14px;
-        cursor: pointer;
-        background: rgba(0, 0, 0, .65);
-        color: #fff;
-        font: 600 13px/1 system-ui, sans-serif;
-    }
-    #yt-strip-1 .play-btn:after {
-        content: ':arrow_forward: Play';
-    }
-    #yt-strip-1 .card.playing .play-btn {
-        display: none;
-    }
-    /* Optional edge-fade */
-    #yt-strip-1 .scroller::before,
-    #yt-strip-1 .scroller::after {
-        content: \"\";
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 120px;
-        pointer-events: none;
-    }
-    #yt-strip-1 .scroller::before {
-        left: 0;
-        background: linear-gradient(90deg, #fff, transparent);
-        mix-blend-mode: multiply
-    }
-    #yt-strip-1 .scroller::after {
-        right: 0;
-        background: linear-gradient(270deg, #fff, transparent);
-        mix-blend-mode: multiply
-    }
-    /* Dark sites tweak (optional): comment out if not needed */
-    @media (prefers-color-scheme: dark) {
-        #yt-strip-1 .heading {
-            color: #B7C0CF
-        }
-        #yt-strip-1 .scroller::before {
-            background: linear-gradient(90deg, #0F1115, transparent)
-        }
-        #yt-strip-1 .scroller::after {
-            background: linear-gradient(270deg, #0F1115, transparent)
-        }
-    }
-    /* Responsive */
-    @media (max-width:520px) {
-        #yt-strip-1 {
-            --size: 132px;
-            --gap: 18px;
-            --speed: 20s
-        }
-    }
-
-.btn-info {
-  background: linear-gradient(45deg, #00C5FB, #0D6EFD);
-  border: none;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 197, 251, 0.2);
-  color: #FFFFFF;
-  font-size: 16px;
-  font-weight: 600;
-  padding: 8px 15px;
-  text-align: center !important;
-  transition: all 0.3s ease-in-out; /* smooth hover */
-}
-.btn-info:hover,
-.btn-info:focus,
-.btn-info:active {
-  background: linear-gradient(45deg, #0D6EFD, #00C5FB); /* same gradient, reversed */
-  color: #FFFFFF; /* keep text consistent */
-  box-shadow: 0 6px 16px rgba(0, 197, 251, 0.4); /* slightly stronger shadow */
-  border: none; /* prevent border flicker */
-}
-
-
-
-
-
-
-</style>
-
-<style>
-
-.yt-strip {
-    width: 100%;
+    --gap: 20px;
+    --speed: 30s;
     overflow: hidden;
     position: relative;
 }
 
-.scroller {
-    overflow-x: hidden;
-    white-space: nowrap;
+#yt-strip-1 .scroller {
+    overflow: hidden;
 }
 
-.track {
+#yt-strip-1 .track {
     display: flex;
-    gap: 20px;
-    animation: scroll-left 40s linear infinite;
+    gap: var(--gap);
+    width: max-content;
+    animation: scroll var(--speed) linear infinite;
 }
 
-@keyframes scroll-left {
+/* STOP WHEN VIDEO PLAYING */
+#yt-strip-1.playing .track {
+    animation-play-state: paused;
+}
+
+@keyframes scroll {
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
 }
 
-.card {
+/* CARD */
+#yt-strip-1 .card {
     width: 250px;
     height: 180px;
+    flex: 0 0 auto;
     border-radius: 12px;
     overflow: hidden;
-    position: relative;
     cursor: pointer;
+    position: relative;
     background: #000;
 }
 
-.card .thumb {
+/* IMAGE */
+#yt-strip-1 .thumb {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.card.playing {
-    width: 350px;
-    height: 250px;
-    z-index: 99;
-}
-
-.embed {
+/* ✅ FIX VIDEO BLACK SCREEN */
+#yt-strip-1 .embed {
     width: 100%;
     height: 100%;
+    position: relative;
+}
+
+#yt-strip-1 .embed iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: none;
+    display: block;
+}
+
+/* PLAYING EFFECT */
+#yt-strip-1 .card.playing {
+    transform: scale(1.05);
+    z-index: 2;
+}
+
+/* TEXT */
+#yt-strip-1 figcaption {
+    position: absolute;
+    bottom: 6px;
+    left: 8px;
+    color: #fff;
+    font-size: 12px;
+    background: rgba(0,0,0,0.6);
+    padding: 2px 6px;
+    border-radius: 5px;
 }
 
 </style>
@@ -245,7 +129,7 @@
                     <div class="col-lg-7">
                         <div class="main_air">
                             <div class="airplane-gif">
-                                <img src="{{asset('/frontend/gif/gif in blue (1)_1 (1).gif')}}" width="w-100" height="auto">
+                                <img src="{{asset('/frontend/gif/airplane.gif')}}" width="w-100" height="auto">
                             </div>
                         </div>
                     </div>
@@ -265,19 +149,9 @@
         </div>
     </div>
 </section>
-<!-- <section>
-  <a href="https://wa.me/918929922525?text=Hello,%20I%20am%20interested%20in%20your%20services!"
-    target="_blank"
-    class="whatsapp-icon"
-  >
-    <img src="{{asset('frontend/img/whatsapp.png')}}" alt="WhatsApp Logo">
-  </a>
-</section> -->
-
 <section>
     <div class="marquee_section ">
         <img src="{{asset('frontend/img/transparent gif.gif')}}">
-
     </div>
 </section>
 <section>
@@ -330,8 +204,6 @@
                                         @php
                                         $content = strip_tags($item->content);
                                         $shortContent = Str::limit($content, 100);
-
-
                                         echo $shortContent;
                                         @endphp
                                     </div>
@@ -347,13 +219,7 @@
     </div>
 </section>
 <section>
-    <div class="about_us_title position-relative">
-        <!-- <div class="sign_flower">
-            <div class="sign_flower_int position-absolute top-0 end-0 ">
-                <img src="{{asset('frontend/img/bg-partial-3.svg.png')}}" alt="paritial">
-            </div>
-        </div> -->
-    </div>
+    
     <div class="container ">
         <div class="about_int">
             <div class="row">
@@ -446,12 +312,7 @@
                                 <i class="fa-solid fa-star"></i>
                                 <i class="fa-solid fa-star"></i>
                             </div>
-                            <!-- <div class="counter_wrapper">
-                                <div class="counter_item">
-                                    <h1 class="counter fw-bold" data-number="2500" data-speed="200"><span>+</span></h1>
-                                    <p class="fw-semibold text-black">Successful Students</p>
-                                </div>
-                            </div> -->
+                           
                             <div class="counter_wrapper">
                                 <div class="counter_item text-center">
                                     <div class="d-flex justify-content-center align-items-center">
@@ -471,10 +332,7 @@
                         <img src="{{asset('frontend/img/SVG.png')}}" alt="svg" class="img-fluid">
                         <div class="yr_txt">
                             <div class="counter_wrapper">
-                                <!-- <div class="counter_item">
-                                    <h1 class="fw-bold">99%</h1>
-                                    <p class="fw-semibold text-black">Success Rate</p>
-                                </div> -->
+                              
                                 <div class="counter_item text-center">
                                     <div class="d-flex justify-content-center align-items-center">
                                         <h1 class="counter fw-bold me-1" data-number="99" data-speed="0.84">99</h1>
@@ -686,7 +544,6 @@
 
         <div class="anot_int text-center mt-4">
 
-            <!-- VIDEO SCROLLER -->
             <div id="yt-strip-1" class="yt-strip">
                 <div class="scroller">
                     <div class="track">
@@ -713,11 +570,11 @@
 
                             @if ($videoId)
                                 <figure class="card" data-vid="{{ trim($videoId) }}">
-                                    <img class="thumb"
-                                         src="https://img.youtube.com/vi/{{ trim($videoId) }}/hqdefault.jpg"
-                                         alt="Video Thumbnail">
-                                    <figcaption>Feedback Student</figcaption>
-                                </figure>
+    <img class="thumb"
+         src="https://img.youtube.com/vi/{{ trim($videoId) }}/hqdefault.jpg"
+         alt="Video Thumbnail">
+    <figcaption>Feedback Student</figcaption>
+</figure>
                             @endif
                         @endforeach
 
@@ -728,82 +585,6 @@
         </div>
     </div>
 </section>
-<script>
-(function initStrip(sectionId) {
-    const root = document.getElementById(sectionId);
-    let currentPlayer = null;
-    let currentCard = null;
-
-    function loadYTScript(cb) {
-        if (window.YT && window.YT.Player) return cb();
-        const tag = document.createElement("script");
-        tag.src = "https://www.youtube.com/iframe_api";
-        document.head.appendChild(tag);
-        window.onYouTubeIframeAPIReady = () => cb();
-    }
-
-    function playVideo(card) {
-        return new Promise(resolve => {
-            const vid = card.dataset.vid;
-            const container = document.createElement("div");
-            container.className = "embed";
-            card.innerHTML = "";
-            card.appendChild(container);
-
-            loadYTScript(() => {
-                const player = new YT.Player(container, {
-                    videoId: vid,
-                    playerVars: {
-                        autoplay: 1,
-                        controls: 1,
-                        rel: 0,
-                        modestbranding: 1,
-                        playsinline: 1
-                    },
-                    events: {
-                        onStateChange: (e) => {
-                            if (e.data === YT.PlayerState.PLAYING) card.classList.add("playing");
-                            if (e.data === YT.PlayerState.ENDED || e.data === YT.PlayerState.PAUSED)
-                                card.classList.remove("playing");
-                        }
-                    }
-                });
-                resolve(player);
-            });
-        });
-    }
-
-    function restoreCard(card) {
-        const vid = card.dataset.vid;
-        card.innerHTML = `<img class="thumb" src="https://img.youtube.com/vi/${vid}/hqdefault.jpg">`;
-        card.classList.remove("playing");
-    }
-
-    root.addEventListener("click", async (e) => {
-        const img = e.target.closest(".thumb");
-        if (!img) return;
-        const card = img.closest(".card");
-
-        root.querySelector(".track").style.animationPlayState = "paused";
-
-        if (currentCard && currentCard !== card) {
-            currentPlayer.stopVideo();
-            restoreCard(currentCard);
-        }
-
-        currentPlayer = await playVideo(card);
-        currentCard = card;
-    });
-
-    document.addEventListener("click", (e) => {
-        if (!root.contains(e.target)) {
-            root.querySelector(".track").style.animationPlayState = "running";
-        }
-    });
-
-})("yt-strip-1");
-</script>
-
 
 <section>
     <div class="main_sl">
@@ -1106,7 +887,7 @@
                     </div>
                     <div class="growing_title mt-5">
                         <div class="growing_title_text text-center fw-light ">
-                            <!-- <span> University Partners</span> -->
+                          
                             <h3 class="fw-bold">Partner Universities</h3>
                         </div>
                         <div class=" containers h-100 mt-5">
@@ -1171,9 +952,7 @@
             </div>
             <div class="world_fm pb-5 ">
                 <div class="scale_map ">
-                    <!-- <div class="sc_map  ">
-                        <img src="{{asset('frontend/img/shape-2-5 12.png')}}" alt="shape">
-                    </div> -->
+                   
                     <div class="d-flex fg text-center">
                         <div class="world_famous ">
                             <h4 class="fw-normal">The World is your Campus!</h4>
@@ -1187,9 +966,7 @@
                         </div>
                         <div class="rigt_img ">
                             <img src="{{asset('frontend/img/cam1.png')}}" alt="image">
-                            <!-- <div class="poly_h ">
-                                <img src="{{asset('frontend/img/Polygon 1.png')}}" alt="polygon">
-                            </div> -->
+                           
                         </div>
 
                     </div>
@@ -1224,42 +1001,8 @@
     })
 </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.read-more-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                let parentDiv = btn.closest('.confusion');
-                let shortContent = parentDiv.querySelector('.short-content');
-                let fullContent = parentDiv.querySelector('.full-content');
 
-                if (fullContent.style.display === 'none') {
-                    fullContent.style.display = 'block';
-                    shortContent.style.display = 'none';
-                    btn.textContent = 'Read Less';
-                } else {
-                    fullContent.style.display = 'none';
-                    shortContent.style.display = 'block';
-                    btn.textContent = 'Read More';
-                }
-            });
-        });
-    });
-</script>
 
-<script>
-    const slider = document.getElementById("slider");
-    const videos = slider.querySelectorAll("video");
-
-    videos.forEach(video => {
-        video.addEventListener("mouseenter", () => {
-            slider.style.animationPlayState = "paused";
-        });
-
-        video.addEventListener("mouseleave", () => {
-            slider.style.animationPlayState = "running";
-        });
-    });
-</script>
 
 <script>
     let testimonials = [];
@@ -1382,7 +1125,7 @@
     fetch('{{url("/get-testimonials")}}')
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+          
             testimonials = data.map(item => {
                 // Remove any HTML tags
                 const plainText = item.testimonial_desc.replace(/<[^>]*>/g, '');
@@ -1415,86 +1158,28 @@
     });
 </script>
 
-<!-- Swiper CSS -->
 
-
-<!-- Your custom script -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    // init Swiper
-    const swiper = new Swiper("#slider", {
-        slidesPerView: 5, // 5 videos in a row
-        spaceBetween: 20,
-        loop: true,
-        autoplay: {
-            delay: 2000,
-            disableOnInteraction: false,
-        },
-    });
-
-    // Pause on hover, resume on mouseout
-    document.querySelectorAll(".circle_video_top").forEach(slide => {
-        slide.addEventListener("mouseenter", () => swiper.autoplay.stop());
-        slide.addEventListener("mouseleave", () => swiper.autoplay.start());
-    });
-});
-
-
-</script>
-
-<script>
-    let players = [];
-
-    // Called when API is loaded
-    function onYouTubeIframeAPIReady() {
-        document.querySelectorAll("iframe[id^='player-']").forEach((iframe, index) => {
-            let player = new YT.Player(iframe.id, {
-                events: {
-                    'onStateChange': (event) => {
-                        if (event.data === YT.PlayerState.PLAYING) {
-                            stopOthers(index);
-                        }
-                    }
-                }
-            });
-            players.push(player);
-        });
-    }
-
-    // Stop all other videos except the one playing
-    function stopOthers(currentIndex) {
-        players.forEach((player, index) => {
-            if (index !== currentIndex) {
-                player.pauseVideo();
-            }
-        });
-    }
-
-    // Inject YouTube API script dynamically
-    (function() {
-        let tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        document.head.appendChild(tag);
-    })();
-</script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+
     const image = document.getElementById("tree-responsive-image");
     const map = document.getElementById("image-map");
+
+    // ✅ FULL STOP if element not found (no warning)
+    if (!image || !map) return;
+
     const originalWidth = 575;
     const originalHeight = 570;
 
-    if (!image || !map) {
-        console.warn("tree-responsive-image or image-map element not found");
-        return; // stop if missing
-    }
-
     function scaleCoords() {
+        if (!image.offsetWidth || !image.offsetHeight) return;
+
         const scaleX = image.offsetWidth / originalWidth;
         const scaleY = image.offsetHeight / originalHeight;
 
         const areas = map.getElementsByTagName("area");
+
         for (let area of areas) {
             if (!area.dataset.originalCoords) continue;
 
@@ -1512,6 +1197,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // store original coords once
     const areas = map.getElementsByTagName("area");
+
     for (let area of areas) {
         if (!area.dataset.originalCoords) {
             area.dataset.originalCoords = area.coords;
@@ -1520,13 +1206,130 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.addEventListener("resize", scaleCoords);
 
-    // run once image has loaded (important for correct offsetWidth/Height)
     if (image.complete) {
         scaleCoords();
     } else {
         image.addEventListener("load", scaleCoords);
     }
+
 });
+</script>
+
+
+
+<script>
+   (function initStrip(sectionId) {
+    const root = document.getElementById(sectionId);
+
+    let currentPlayer = null;
+    let currentCard = null;
+
+    function loadYTScript(cb) {
+        if (window.YT && window.YT.Player) return cb();
+
+        const tag = document.createElement("script");
+        tag.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(tag);
+
+        window.onYouTubeIframeAPIReady = () => cb();
+    }
+
+    function playVideo(card, callback) {
+        const vid = card.dataset.vid;
+
+        const container = document.createElement("div");
+        container.className = "embed";
+        container.style.width = "100%";
+        container.style.height = "100%";
+
+        card.innerHTML = "";
+        card.appendChild(container);
+
+        loadYTScript(() => {
+            const player = new YT.Player(container, {
+                width: "100%",
+                height: "100%",
+                videoId: vid,
+                playerVars: {
+                    autoplay: 1,
+                    controls: 1,
+                    rel: 0,
+                    modestbranding: 1
+                },
+                events: {
+                    onReady: (e) => {
+                        e.target.playVideo();
+                        callback(e.target); // ✅ correct player return
+                    },
+                    onStateChange: (e) => {
+                        if (e.data === YT.PlayerState.PLAYING) {
+                            root.classList.add("playing");
+                            card.classList.add("playing");
+                        }
+
+                        if (
+                            e.data === YT.PlayerState.ENDED ||
+                            e.data === YT.PlayerState.PAUSED
+                        ) {
+                            root.classList.remove("playing");
+                            card.classList.remove("playing");
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+    function restoreCard(card) {
+        const vid = card.dataset.vid;
+
+        card.innerHTML = `
+            <img class="thumb" src="https://img.youtube.com/vi/${vid}/hqdefault.jpg">
+            <figcaption>Feedback Student</figcaption>
+        `;
+        card.classList.remove("playing");
+    }
+
+    root.addEventListener("click", (e) => {
+        const img = e.target.closest(".thumb");
+        if (!img) return;
+
+        const card = img.closest(".card");
+
+        // ✅ SAFE STOP
+        if (currentPlayer && typeof currentPlayer.stopVideo === "function") {
+            currentPlayer.stopVideo();
+        }
+
+        if (currentCard && currentCard !== card) {
+            restoreCard(currentCard);
+        }
+
+        playVideo(card, (player) => {
+            currentPlayer = player; // ✅ correct assign
+            currentCard = card;
+        });
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!root.contains(e.target)) {
+
+            if (currentPlayer && typeof currentPlayer.stopVideo === "function") {
+                currentPlayer.stopVideo();
+            }
+
+            if (currentCard) {
+                restoreCard(currentCard);
+            }
+
+            currentPlayer = null;
+            currentCard = null;
+
+            root.classList.remove("playing");
+        }
+    });
+
+     })("yt-strip-1");
 </script>
 
 @endsection

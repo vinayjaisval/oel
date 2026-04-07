@@ -661,12 +661,19 @@ Route::get('/clear-all', function () {
             // message lead
             Route::get('message-lead', [MessageController::class, 'message_lead'])->name('message-lead');
             Route::get('message-franchise', [MessageController::class, 'message_frenchise'])->name('message-frenchise');
+            Route::get('message-sub-agent', [MessageController::class, 'message_sub_agent'])->name('message-sub-agent');
+
             Route::get('message-student', [MessageController::class, 'message_student'])->name('message-student');
             Route::get('message-lead', [MessageController::class, 'message_lead'])->name('message-lead');
             Route::post('send-sms', [MessageController::class, 'sendSmsToLeadUsers'])->name('send-sms');
             Route::post('send-email', [MessageController::class, 'sendEmailToLeadUsers'])->name('send-email');
             Route::post('send-sms-frenchise', [MessageController::class, 'sendSmsToFrenchise'])->name('send-sms-frenchise');
+            
+            Route::post('send-sms-sub-agent', [MessageController::class, 'sendSmsTosubAgent'])->name('send-sms-sub-agent');     
+            
             Route::post('send-email-frenchise', [MessageController::class, 'sendEmailToFrenchise'])->name('send-email-frenchise');
+            Route::post('send-email-sub-agent', [MessageController::class, 'sendEmailTosubAgent'])->name('send-email-sub-agent');
+
             Route::post('send-sms-student', [MessageController::class, 'sendSmsToStudent'])->name('send-sms-student');
             Route::post('send-email-student', [MessageController::class, 'sendEmailToStudent'])->name('send-email-student');
             Route::get('outbox', [MessageController::class, 'outbox'])->name('outbox');

@@ -18,27 +18,44 @@ class PermissionSeeder extends Seeder
      */
     //  php artisan db:seed PermissionSeeder
     public function run()
-    {
-        try {
-            $permissionList = config('permissionlist.permissions');
-            $role = Role::firstOrCreate(['name' => 'Administrator']);
-            foreach ($permissionList as $permissions) {
-                foreach ($permissions as $subPermission) {
-                    if(!empty($subPermission)){
-                        Permission::firstOrCreate(['name' => $subPermission]);
-                    }
+{
+    try {
+        $permissionList = config('permissionlist.permissions');
+
+        // Create Role
+        $role = Role::firstOrCreate(['name' => 'Administrator']);
+
+        // Create Permissions
+        foreach ($permissionList as $permissions) {
+            foreach ($permissions as $subPermission) {
+                if (!empty($subPermission)) {
+                    Permission::firstOrCreate(['name' => $subPermission]);
                 }
             }
-            $role->syncPermissions(Permission::all());
-            $input = array('name' => 'RIC','email' => 'admin@com', 'status' => 1, 'password' => Hash::make('12345678'),'admin_type' => 'Administrator');
-            $findUser = User::where('email', 'admin@com')->first();
-            if(empty($findUser)){
-                $user = User::firstOrCreate($input);
-                $user->assignRole([$role->id]);
-            }
-        } catch (\Exception $e) {
-            \Log::info($e->getMessage());
         }
+
+        // Assign all permissions to role
+        $role->syncPermissions(Permission::pluck('id')->toArray());
+
+        // Create Admin User
+        $user = User::firstOrCreate(
+            ['email' => 'admin@com'], // unique field
+            [
+                'name' => 'RIC',
+                'status' => 1,
+                'password' => Hash::make('12345678'),
+                'admin_type' => 'Administrator'
+            ]
+        );
+
+        // Assign Role (avoid duplicate attach)
+        if (!$user->hasRole('Administrator')) {
+            $user->assignRole($role);
+        }
+
+    } catch (\Exception $e) {
+        \Log::error('Seeder Error: ' . $e->getMessage());
     }
+}
 }
 

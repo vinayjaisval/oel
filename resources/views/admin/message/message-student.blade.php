@@ -62,10 +62,8 @@
                             <th>Pincode</th>
                             <th> Sms</th>
                             <th> Mail </th>
-                            {{-- <th>Country</th>
                             <th>State</th>
                             <th>Login</th>
-                            <th>Apply Oel 360</th> --}}
                         </tr>
                     </thead>
                     <tbody id="lead-list">
@@ -134,11 +132,7 @@
                 <div class="sidebar-headersets">
                     <h5>SMS List</h5>
                 </div>
-                <!-- <div class="sidebar-headerclose">
-                    <a data-bs-dismiss="offcanvas" aria-label="Close">
-                        <img src="{{ url('assets/img/close.png') }}" alt="Close Icon">
-                    </a>
-                </div> -->
+              
                 <div class="sidebar-headerclose">
                 <a data-bs-dismiss="offcanvas" aria-label="Close" class="close-icon">
                     <i class="fa fa-times" aria-hidden="true"></i>
@@ -162,11 +156,7 @@
                 <div class="sidebar-headersets">
                     <h5>Email List</h5>
                 </div>
-                <!-- <div class="sidebar-headerclose">
-                    <a data-bs-dismiss="offcanvas" aria-label="Close">
-                        <img src="{{ url('assets/img/close.png') }}" alt="Close Icon">
-                    </a>
-                </div> -->
+                
                 <div class="sidebar-headerclose">
                 <a data-bs-dismiss="offcanvas" aria-label="Close" class="close-icon">
                     <i class="fa fa-times" aria-hidden="true"></i>
@@ -189,11 +179,7 @@
             <div class="sidebar-headersets">
                 <h5>SMS</h5>
             </div>
-            <!-- <div class="sidebar-headerclose">
-                <a data-bs-dismiss="offcanvas" aria-label="Close">
-                    <img src="{{ url('assets/img/close.png') }}" alt="Close Icon">
-                </a>
-            </div> -->
+          
             <div class="sidebar-headerclose">
                 <a data-bs-dismiss="offcanvas" aria-label="Close" class="close-icon">
                     <i class="fa fa-times" aria-hidden="true"></i>
@@ -259,11 +245,7 @@
             <div class="sidebar-headersets">
                 <h5>Email</h5>
             </div>
-            <!-- <div class="sidebar-headerclose">
-                <a data-bs-dismiss="offcanvas" aria-label="Close">
-                    <img src="{{ url('assets/img/close.png') }}" alt="Close Icon">
-                </a>
-            </div> -->
+         
             <div class="sidebar-headerclose">
                 <a data-bs-dismiss="offcanvas" aria-label="Close" class="close-icon">
                     <i class="fa fa-times" aria-hidden="true"></i>
@@ -307,7 +289,8 @@
  <!-- summernotejs start -->
  <script src="{{ asset('assets/js/jquery-3.7.1.js') }}"></script>
  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
- {{-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> --}}
+ 
+ 
  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
  <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
@@ -547,8 +530,8 @@
                             }else{
                                 $.each(response.data, function(key, value) {
                                     sms_table += `<tr>
-                                        <td>${value.subject}</td>
                                         <td>${value.recepients}</td>
+                                        <td>${value.subject}</td>
                                         <td class='text-wrap'>${value.body}</td>
                                     </tr>`;
                                 });
