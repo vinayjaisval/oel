@@ -129,7 +129,7 @@
                     <div class="col-lg-7">
                         <div class="main_air">
                             <div class="airplane-gif">
-                                <img src="{{asset('/frontend/gif/airplane.gif')}}" width="w-100" height="auto">
+                                <img src="{{asset('frontend/gif/airplane.gif')}}" width="w-100" height="auto">
                             </div>
                         </div>
                     </div>
