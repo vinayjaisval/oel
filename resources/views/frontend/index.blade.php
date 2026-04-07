@@ -642,7 +642,7 @@
                 </div>
                 @endforeach
 
-                <!-- Duplicate slides to create infinite effect -->
+               
                 @foreach ($ads as $item)
                 <div class="slide logos img">
                     <img src="{{ asset($item->image) }}" style="width:280px;height:280px" alt="{{$item->title}}" class="img-name">
@@ -675,7 +675,7 @@
                             </ul>
                             <div class="right_click d-flex justify-content-between align-items-center  ">
                                 <div class="king">
-                                    <!-- <span>Kingdom</span> -->
+                                   
                                 </div>
                                 <div class="details">
                                     <a href="{{route('course-details',$item->id)}}">View Details</a><i class="fa-solid fa-arrow-right mx-2"></i>
@@ -711,7 +711,7 @@
                             </div>
                         </div>
                         <div class="col-lg-8">
-                            <!-- new-look slider -->
+                           
                             <div class="testimonial-container mt-5 pt-5">
                                 <div class="testimonial-grid">
                                     <div class="image-container" id="image-container"></div>
