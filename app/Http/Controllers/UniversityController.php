@@ -570,14 +570,19 @@ class UniversityController extends Controller
     {
         if (!$request->university_id) {
             return response()->json(['status' => false, 'errors' => 'Please Create University'], 422);
-        }
-    
-        $validator = Validator::make($request->all(), [
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            // 'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'banner' => 'nullable|image|mimes:jpeg,png,jpg|max:6048',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
+        }    
+       $validator = Validator::make($request->all(), [
+            'logo' => '|image|mimes:jpeg,png,jpg|max:100',
+            'thumbnail' => 'image|mimes:jpeg,png,jpg|max:100',
+            'banner' => '|image|mimes:jpeg,png,jpg|max:100',
+         
+            'images.*' => 'image|mimes:jpeg,png,jpg|max:100',
+            ], [
+                'logo.max' => 'Logo must be less than 100KB',
+                'thumbnail.max' => 'Thumbnail must be less than 100KB',
+                'banner.max' => 'Banner must be less than 100KB',
+                'images.*.max' => 'Each image must be less than 100KB',
+            ]);
     
         if ($validator->fails()) {
             return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
@@ -615,8 +620,8 @@ class UniversityController extends Controller
                 $imageName = time() . '_' . $uploadedImage->getClientOriginalName();
                 $imagePath = 'imagesapi/' . $imageName;
                 $uploadedImage->move(public_path('imagesapi/'), $imageName);
-    
-                DB::table('university_galary_images')->insert([
+
+                 DB::table('university_galary_images')->insert([
                     'file_name' => $imagePath,
                     'university_id' => $request->university_id,
                     'mime_type' => '',

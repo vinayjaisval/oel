@@ -3,11 +3,13 @@
     <div class="sidebar-inner slimscroll">
         <div id="sidebar-menu" class="sidebar-menu">
             @foreach ($verticalMenuData[0]->menu as $menu)
+
+
                 @php
                     if(is_array($menu->permission)){
                         $permissions = implode("', '", $menu->permission);
                         $permissionCondition = eval("return auth()->user()->hasAnyPermission('".$permissions."');");
-                    
+                  
                     
                     } else {
                         $permissionCondition = eval("return auth()->user()->can('".$menu->permission."');");
@@ -15,10 +17,11 @@
                 @endphp
                 @php
                     $user = Auth::user();
+                  
                 @endphp
                 @if($permissionCondition)
                     @if(!($user->hasRole('student')))
-                        @if($menu->permission== 'my_profile.view' || $menu->permission== 'applied_program.view' || $menu->permission == 'oel_apply.view' || $menu->permission== 'apply_program.view' || $menu->permission == 'my_profile.update')
+                        @if($menu->permission== 'my_profile.view' || $menu->permission== 'applied_program.view' || $menu->permission == 'oel_apply.view' || $menu->permission== 'apply_program.view' || $menu->permission == 'my_profile.update'||  $menu->permission == 'message_lead.view')
                             @continue
                         @endif
                     @endif

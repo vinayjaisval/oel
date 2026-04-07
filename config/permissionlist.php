@@ -452,6 +452,13 @@ return [
             'message_franchise.update',
             'message_franchise.delete',
         ],
+
+        'message_sub_agent' => [
+            'message_sub_agent.create',
+            'message_sub_agent.view',
+            'message_sub_agent.update',
+            'message_sub_agent.delete',
+        ],
         'message_student' => [
             'message_student.create',
             'message_student.view',

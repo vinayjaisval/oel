@@ -703,8 +703,8 @@
                             }else{
                                 $.each(response.data, function(key, value) {
                                     sms_table += `<tr>
-                                        <td>${value.subject}</td>
                                         <td>${value.recepients}</td>
+                                        <td>${value.subject}</td>
                                         <td class='text-wrap'>${value.body}</td>
                                     </tr>`;
                                 });

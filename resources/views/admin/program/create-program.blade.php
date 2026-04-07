@@ -47,7 +47,7 @@
                     </div>
                 @endif
 
-                <form class="row g-4"  action="{{route('store-program')}}" method="POST">
+                <form id="programForm" class="row g-4"  action="{{route('store-program')}}" method="POST">
                     @csrf
                     @method('post')
                     <div class="col-4">
@@ -55,7 +55,7 @@
                           <select class="form-control " name="school_id" id="school_id" placeholder="University / College Name">
                              <option value="">-- University / College Name --</option>
                              @foreach ($universities as $item)
-                                <option value="{{$item->id}}" {{ old('school_id') == $item->id ? 'selected' : '' }}>{{ implode(' ', array_slice(explode(' ', $item->university_name), 0, 5)) }}</option>
+                                <option  title="{{$item->university_name}}" value="{{$item->id}}" {{ old('school_id') == $item->id ? 'selected' : '' }}>{{ implode(' ', array_slice(explode(' ', $item->university_name), 0, 5)) }}</option>
                              @endforeach
                           </select>
 
@@ -304,7 +304,7 @@
                             </div>
                         </div>
 
-                        <!-- 🔴 SINGLE SOURCE -->
+                        
                         <input type="hidden"
                             name="application_closing_date"
                             id="final_closing_date"
@@ -404,7 +404,9 @@
                          <div class="text-danger">{{ $message }}</div>
                      @enderror
                     </div>
-                    <div class="col-12"><button type="submit" class="btn btn-info  py-6">Submit</button></div>
+                    <div class="col-12">
+                        <button id="submitBtn" type="submit" class="btn btn-info py-6">Submit</button>
+                    </div>
                  </form>
                 <br>
               </div>
@@ -424,7 +426,19 @@
 <!-- ===================== JS (PLUGINS ONLY) ===================== -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("programForm");
+    const btn = document.getElementById("submitBtn");
 
+    if (form && btn) {
+        form.addEventListener("submit", function () {
+            btn.disabled = true;
+            btn.innerText = "Processing...";
+        });
+    }
+});
+</script>
 
 <script>
 $(document).ready(function () {

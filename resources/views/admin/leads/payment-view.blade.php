@@ -59,6 +59,7 @@
                 <div class="card-body">
                     <h1>Dear {{ $data['name'] }},</h1>
                     <p>Please proceed with your payment</p>
+                    <span>Note: GST 18% and 3% Markup fee is added for international payment.</span>
                     <p>Amount: {{ $data['amount'] }} INR</p>
                     <form action="{{ route('razorpay.payment.store') }}" method="POST">
                         @csrf

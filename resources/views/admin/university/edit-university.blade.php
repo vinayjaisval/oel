@@ -499,16 +499,20 @@
                   <div class="row">
                     <div class="col-lg-6">
                       <div class="input-block mb-3">
-                        <label for="basicpill-namecard-input" class="form-label"> Logo <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control " id="basicpill-namecard-input" name="logo">
+                        <label for="basicpill-namecard-input" class="form-label"> Logo <span class="text-danger">*</span>
+                     <small class="text-muted">(Max: 100kb, JPG/PNG)</small>
+                    </label>
+                        <input type="file" class="form-control " id="basicpill-namecard-input" name="logo" accept="image/*">
                         <span class="text-danger logo"></span>
                       </div>
                     </div>
                     <div class="col-lg-6">
                       <div class="input-block mb-3">
-                        <label for="basicpill-namecard-input" class="form-label"> Thumbnail <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control " id="basicpill-namecard-input" name="thumbnail">
-                        <input type="hidden" name="university_id" class="university_id"  value="{{$university->id ?? null }}">
+                        <label for="basicpill-namecard-input" class="form-label"> Thumbnail <span class="text-danger">*</span>
+                     <small class="text-muted">(Max: 2MB, JPG/PNG)</small>
+                    </label>
+                        <input type="file" class="form-control " id="basicpill-namecard-input" name="thumbnail" accept="image/*">
+                        <input type="hidden" name="university_id" class="university_id"  value="{{$university->id ?? null }}" accept="image/*">
                         <span class="text-danger thumbnail"></span>
                       </div>
                     </div>
@@ -516,8 +520,10 @@
                   <div class="row">
                     <div class="col-lg-6">
                       <div class="input-block mb-3">
-                        <label for="basicpill-cardno-input" class="form-label"> Banner <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control " id="basicpill-cardno-input" name="banner">
+                        <label for="basicpill-cardno-input" class="form-label"> Banner <span class="text-danger">*</span>
+                     <small class="text-muted">(Max: 2MB, JPG/PNG)</small>
+                    </label>
+                        <input type="file" class="form-control " id="basicpill-cardno-input" name="banner" accept="image/*">
                         <span class="text-danger banner"></span>
                       </div>
                     </div>
@@ -525,6 +531,8 @@
                       <div class="input-block mb-3">
                         <label for="basicpill-namecard-input" class="form-label">
                           Images <span class="text-danger">*</span>
+
+                           <small class="text-muted">(Max: 2MB, JPG/PNG)</small>
                         </label>
                         <input type="file" class="form-control" id="basicpill-namecard-input" name="images[]" multiple accept="image/*">
                         <span class="text-danger images"></span>
@@ -579,6 +587,8 @@
  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
  <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+
+ 
  <script>
     $('#summernote1').summernote({
       placeholder: ' Write Here',

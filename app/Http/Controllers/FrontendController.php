@@ -99,9 +99,9 @@ class FrontendController extends Controller
         $education_level = EducationLevel::whereIn('program_level_id', $request->program_level_id)->whereIn('program_sublevel_id', $request->program_sublevel_id)->get();
         return response()->json($education_level);
     }
-  
-  
-     public function course_university(Request $request)
+
+
+    public function course_university(Request $request)
     {
 
 
@@ -181,7 +181,7 @@ class FrontendController extends Controller
                         });
                 };
 
-               
+
 
                 $universities = University::select('universities.*')
                     ->with([
@@ -226,7 +226,7 @@ class FrontendController extends Controller
                     })
                     ->paginate(50);
 
-                
+
 
 
 
@@ -310,7 +310,7 @@ class FrontendController extends Controller
                                 ->when(!empty($last_school_attended->grading_average), function ($query) use ($last_school_attended) {
                                     return $query->where('grading_number', '<=', $last_school_attended->grading_average);
                                 })
-                                
+
                                 ->when(!empty($student_data->work_experience), function ($query) use ($student_data) {
                                     $query->where('work_experience', $student_data->work_experience);
                                 })
@@ -328,7 +328,7 @@ class FrontendController extends Controller
                                 $query->when(!empty($last_school_attended->grading_average), function ($query) use ($last_school_attended) {
                                     $query->where('grading_number', '<=', $last_school_attended->grading_average);
                                 });
-                               
+
                                 $query->when(!empty($student_data->work_experience), function ($query) use ($student_data) {
                                     $query->where('work_experience', $student_data->work_experience);
                                 });
@@ -522,7 +522,7 @@ class FrontendController extends Controller
                         'program.programSubLevel',
                         'program.educationLevelprogram'
                     ])
-                  ->where('is_approved', 1) // ✅ Only approved universities
+                    ->where('is_approved', 1) // ✅ Only approved universities
                     ->selectSub(function ($query) use ($applyProgramFilters) {
                         $query->from('program')
                             ->selectRaw('COUNT(*)')
@@ -573,11 +573,11 @@ class FrontendController extends Controller
                             ->first();
 
                         //$grading_scheme_id = explode('-', $last_school_attended->grading_scheme_id );
-                          $grading_scheme_id = [];
+                        $grading_scheme_id = [];
 
-                          if ($last_school_attended && isset($last_school_attended->grading_scheme_id)) {
-                              $grading_scheme_id = explode('-', $last_school_attended->grading_scheme_id);
-                          }
+                        if ($last_school_attended && isset($last_school_attended->grading_scheme_id)) {
+                            $grading_scheme_id = explode('-', $last_school_attended->grading_scheme_id);
+                        }
 
                         $grading_scheme_value = end($grading_scheme_id);
                         if ($grading_scheme_value == null) {
@@ -750,7 +750,7 @@ class FrontendController extends Controller
     {
         dispatch(new SendOTPJob($details));
     }
-  
+
     public function send_otp(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -794,11 +794,11 @@ class FrontendController extends Controller
 
 
         try {
-           Log::info('OTP sent successfully.' , $items);
+            Log::info('OTP sent successfully.', $items);
 
             $this->send_otp_job($items); // Attempt to send OTP
             session()->put('WithdrawEmailOtp', $otp); // Store OTP in session
-           Log::info('OTP sent successfully.');
+            Log::info('OTP sent successfully.');
             return response()->json(['message' => 'OTP sent successfully.', 'success' => true]);
         } catch (\Exception $e) {
             // Log the exception if needed
@@ -810,7 +810,7 @@ class FrontendController extends Controller
 
     public function send_otp_old(Request $request)
     {
-        
+
 
 
         $validator = Validator::make($request->all(), [
@@ -862,9 +862,6 @@ class FrontendController extends Controller
 
             return response()->json(['message' => 'Failed to send OTP. Please try again later.', 'success' => false]);
         }
-
-
-       
     }
     public function verify_otp(Request $request)
     {
@@ -985,9 +982,8 @@ class FrontendController extends Controller
         return view('frontend.apply-program-payment', compact('program_data', 'student_id', 'intake_month', 'intake_year'));
     }
 
-    public function pay_amount($student_id, $program_id, $amount, $intake_month, $intake_year)
+    public function pay_amount($student_id = null, $program_id = null, $amount = null, $intake_month = null, $intake_year = null)
     {
-
         $fee = Crypt::decrypt($amount);
 
         $da = Carbon::now()->startOfMonth()->format('Y-m');
@@ -1017,7 +1013,16 @@ class FrontendController extends Controller
             'amount' => $fee,
         ]);
 
+     
+
         $currency = $rates['data']['INR'];
+        $basea=$currency * $fee;
+
+        $gst = ($basea * 18) / 100;
+       
+        $razorpayCharge = ($basea * 3) / 100;
+        $finalAmount = $basea + $razorpayCharge + $gst;
+
         $controller = new LeadsManageCotroller();
         $token         = $controller->generateToken();
         $uniqueId         = $controller->uniqidgenrate();
@@ -1033,7 +1038,7 @@ class FrontendController extends Controller
                 'payment_type_remarks'     => "applied_program",
                 'payment_mode'          => null,
                 'payment_mode_remarks'     => "",
-                'amount'                 => round($currency * $fee, 2),
+                'amount'                 => round($finalAmount, 2),
                 'expired_in'            => date('Y-m-d H:i:s', strtotime('+ 10 days')),
                 'fallowp_unique_id' => $uniqueId,
                 'master_service' => 2,
@@ -1189,7 +1194,9 @@ class FrontendController extends Controller
     public function universities(Request $request)
     {
         $country = Country::select('name', 'id')->where('is_active', 1)->get();
-        $universities = University::select('id', 'university_name')->get();
+        $universities = University::select('id', 'university_name')->where('is_approved', 1)->get();
+
+   
         if ($request->ajax()) {
             if ($request->has('university_name') || $request->has('country') || $request->has('country_name')) {
                 $country_id = $country->where('name', 'like', '%' . $request->country_name . '%')->pluck('id')->first();
@@ -1215,57 +1222,34 @@ class FrontendController extends Controller
     }
 
 
-    public function programso(Request $request)
-    {
-        $program_name = Program::where('is_approved', 1)->select('name', 'id')->get();
-        $country = Country::select('name', 'id')->where('is_active', 1)->get();
-        $universities = University::select('id', 'university_name')->get();
-        if ($request->ajax()) {
-            if ($request->has('university_id') || $request->has('country') || $request->has('program_id') || $request->has('course')) {
-                $programs = Program::with(['university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name'])->where('is_approved', 1)
-                    ->when(!empty($request->country), function ($query) use ($request) {
-                        $query->whereHas('university_name', function ($subquery) use ($request) {
-                            $subquery->where('country_id', $request->country);
-                        });
-                    })
-                    ->when(!empty($request->university_id), function ($query) use ($request) {
-                        $query->where('school_id', $request->university_id);
-                    })
-                    ->when(!empty($request->course), function ($query) use ($request) {
-                        $query->where('name', 'like', '%' . $request->course . '%');
-                    })
-                    ->when(!empty($request->program_id), function ($query) use ($request) {
-                        $query->where('name', 'like', '%' . $request->program_id . '%');
-                    })
-                    ->latest()
-                    ->paginate(12);
-            } else {
-                $programs =  Program::with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)->latest()->paginate(12);
-            }
-
-            return response()->json(['data' => $programs]);
-        }
-        return view('frontend.programs', compact('program_name', 'country', 'universities'));
-    }
+   
     public function programs(Request $request)
     {
         if ($request->ajax()) {
             $programs = Program::with([
-                    'university_name:id,university_name,logo,country_id,testrequired',
-                    'programLevel:id,name',
-                    'university_name.country_name:id,name'
-                ])
+                'university_name:id,university_name,logo,country_id,testrequired',
+                'programLevel:id,name',
+                'university_name.country_name:id,name'
+            ])
                 ->select('id', 'name', 'school_id', 'program_level_id', 'length', 'application_fee', 'tution_fee', 'currency', 'is_approved', 'programType')
                 ->where('is_approved', 1)
-                ->when($request->country, fn($q) =>
-                    $q->whereHas('university_name', fn($sub) =>
+                ->when(
+                    $request->country,
+                    fn($q) =>
+                    $q->whereHas(
+                        'university_name',
+                        fn($sub) =>
                         $sub->where('country_id', $request->country)
                     )
                 )
-                ->when($request->university_id, fn($q) =>
+                ->when(
+                    $request->university_id,
+                    fn($q) =>
                     $q->where('school_id', $request->university_id)
                 )
-                ->when($request->course, fn($q) =>
+                ->when(
+                    $request->course,
+                    fn($q) =>
                     $q->where('name', 'like', '%' . $request->course . '%')
                 )
                 ->when($request->program_id, function ($q) use ($request) {
@@ -1278,18 +1262,18 @@ class FrontendController extends Controller
                 })
                 ->latest()
                 ->paginate(12);
-    
+
             return response()->json(['data' => $programs]);
         }
-    
+
         // No heavy loading here, dropdowns will use AJAX
         return view('frontend.programs');
     }
-    
+
     // AJAX search for universities
-   public function searchUniversities(Request $request)
+    public function searchUniversities(Request $request)
     {
-        
+
         $term = $request->get('term', '');
 
         $universities = University::select('id', 'university_name')
@@ -1302,21 +1286,21 @@ class FrontendController extends Controller
 
         return response()->json($universities);
     }
-    
+
     // AJAX search for programs
     public function searchPrograms(Request $request)
     {
-      
+
         $term = $request->get('term', '');
         $programs = Program::select('id', 'name')
             ->where('is_approved', 1)
             ->when($term, fn($q) => $q->where('name', 'like', "%$term%"))
             ->limit(20)
             ->get();
- 
+
         return response()->json($programs);
     }
-    
+
     public function about_oel()
     {
         return view('frontend.about_oel');
@@ -1355,7 +1339,7 @@ class FrontendController extends Controller
 
     public function storeContactusold(Request $request)
     {
-        
+
 
         $validatedData = $request->validate([
             'first_name' => 'required|regex:/^[a-zA-Z]+$/',
@@ -1408,27 +1392,27 @@ class FrontendController extends Controller
             return response()->json(['message' => 'Failed to send email: ' . $e->getMessage()], 500);
         }
     }
-  
-  public function storeContactus(Request $request)
-{
-    $validatedData = $request->validate([
-        'first_name' => 'required|regex:/^[a-zA-Z]+$/',
-        'last_name'  => 'required|regex:/^[a-zA-Z]+$/',
-        'phone'      => 'required|numeric',
-    ]);
 
-    // 1️⃣ Store in Contactus
-    $contact = Contactus::create([
-        "first_name" => $request->first_name,
-        "last_name"  => $request->last_name,
-        "phone"      => $request->phone,
-        "preferred_study_destination" => $request->preferred_study_destination,
-        "preferred_study_year"        => $request->preferred_study_year,
-        "preferred_study_intake"      => $request->preferred_study_intake,
-    ]);
+    public function storeContactus(Request $request)
+    {
+        $validatedData = $request->validate([
+            'first_name' => 'required|regex:/^[a-zA-Z]+$/',
+            'last_name'  => 'required|regex:/^[a-zA-Z]+$/',
+            'phone'      => 'required|numeric',
+        ]);
 
-    // 2️⃣ Store in StudentByAgent with source = contactus
-     StudentByAgent::firstOrCreate(
+        // 1️⃣ Store in Contactus
+        $contact = Contactus::create([
+            "first_name" => $request->first_name,
+            "last_name"  => $request->last_name,
+            "phone"      => $request->phone,
+            "preferred_study_destination" => $request->preferred_study_destination,
+            "preferred_study_year"        => $request->preferred_study_year,
+            "preferred_study_intake"      => $request->preferred_study_intake,
+        ]);
+
+        // 2️⃣ Store in StudentByAgent with source = contactus
+        StudentByAgent::firstOrCreate(
             ['phone_number' => $request->phone],
             [
                 "first_name" => $request->first_name,
@@ -1440,41 +1424,40 @@ class FrontendController extends Controller
         );
 
 
-    try {
-        // 3️⃣ Rate limit check
-        if (RateLimiter::tooManyAttempts('email:' . $request->ip(), 5)) {
+        try {
+            // 3️⃣ Rate limit check
+            if (RateLimiter::tooManyAttempts('email:' . $request->ip(), 5)) {
+                return response()->json([
+                    'message' => 'Too many email requests. Please wait a minute before trying again.'
+                ], 429);
+            }
+
+            $country = Country::find($request->preferred_study_destination);
+
+            $mail_details = [
+                'name'  => $request->first_name,
+                'phone' => $request->phone,
+                'preferred_study_destination' => $country?->name,
+                'preferred_study_year'        => $request->preferred_study_year,
+                'preferred_study_intake'      => $request->preferred_study_intake
+            ];
+
+            // Mail::to(env('MAIL_FROM_ADDRESS'))->send(new ContactMail($mail_details));
+
+            RateLimiter::hit('email:' . $request->ip());
+
+            session()->flash(
+                'message',
+                'We have successfully received your message. We will contact you soon.'
+            );
+
+            return redirect()->back();
+        } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Too many email requests. Please wait a minute before trying again.'
-            ], 429);
+                'message' => 'Failed to send email: ' . $e->getMessage()
+            ], 500);
         }
-
-        $country = Country::find($request->preferred_study_destination);
-
-        $mail_details = [
-            'name'  => $request->first_name,
-            'phone' => $request->phone,
-            'preferred_study_destination' => $country?->name,
-            'preferred_study_year'        => $request->preferred_study_year,
-            'preferred_study_intake'      => $request->preferred_study_intake
-        ];
-
-        // Mail::to(env('MAIL_FROM_ADDRESS'))->send(new ContactMail($mail_details));
-
-        RateLimiter::hit('email:' . $request->ip());
-
-        session()->flash(
-            'message',
-            'We have successfully received your message. We will contact you soon.'
-        );
-
-        return redirect()->back();
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'message' => 'Failed to send email: ' . $e->getMessage()
-        ], 500);
     }
-}
 
 
     public  function blogs()
@@ -1486,8 +1469,8 @@ class FrontendController extends Controller
     public function blog_details($title)
     {
         $blog = Blog::where('slug', $title)
-                    ->where('status', 1)
-                    ->first();
+            ->where('status', 1)
+            ->first();
 
         if (!$blog) {
             abort(404);

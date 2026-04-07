@@ -5,7 +5,7 @@ use App\Http\Controllers\LeadsManageCotroller;
 use App\Jobs\SendMailtoUser;
 use App\Mail\SendGridEmail;
 use App\Mail\UserNotification;
-use App\Models\{Agent, Country, MasterLeadStatus, Message, Outbox, SmsTemplate, Student, StudentByAgent};
+use App\Models\{Agent, User, Country, MasterLeadStatus, Message, Outbox, SmsTemplate, Student, StudentByAgent};
 use App\Services\TwilioService;
 use Illuminate\Support\Facades\{Auth, Log};
 use SendGrid\Mail\Mail;
@@ -97,6 +97,7 @@ class MessageController extends Controller
 
     public function twillio_email(Request $request, $users = null, $leadIds = null)
     {
+
         $subject = $request->input('subject');
         $emailBody = $request->input('email_body');
         $attachment = $request->file('attachment');
@@ -106,6 +107,7 @@ class MessageController extends Controller
             $attachmentName = $attachment->getClientOriginalName();
         }
         $user_id =Auth::user()->id;
+      
         SendMailtoUser::dispatch($users, $subject, $emailBody, $attachmentData, $attachmentName ?? null,$user_id);
         return response()->json(['status' => true]);
     }
@@ -130,6 +132,19 @@ class MessageController extends Controller
         return view('admin.message.message-frenchise',compact('countries','frenchise','smsTemplates'));
     }
 
+      public function message_sub_agent(Request $request, $export = null)
+    {
+        $user = Auth::user();
+        if ($user->hasRole('Administrator')) {
+            $frenchise =User::where('admin_type', 'sub_agent')->paginate(20);
+         
+        } else {
+            $frenchise =User::where('added_by', $user->id)->where('admin_type', 'sub_agent')->paginate(20);
+        }
+        $smsTemplates =SmsTemplate::get();
+        $countries =Country::get();
+        return view('admin.message.message-sub-agent',compact('countries','frenchise','smsTemplates'));
+    }
     public function sendSmsToFrenchise(Request $request){
         if(!$request->has('leadIds')){
             return response()->json(['status' => false, 'message' => 'Please select Frenchise!'], 422);
@@ -139,6 +154,17 @@ class MessageController extends Controller
         $this->twillio_sms($request, $users,$leadIds);
         return response()->json(['status' => 'success', 'message' => 'Sms sent successfully!']);
     }
+
+        public function sendSmsTosubAgent(Request $request){
+        if(!$request->has('leadIds')){
+            return response()->json(['status' => false, 'message' => 'Please select Frenchise!'], 422);
+        }
+        $leadIds = $request->input('leadIds');
+        $users = User::whereIn('id', $leadIds)->where('admin_type', 'sub_agent')->pluck('phone')->toArray();
+        $this->twillio_sms($request, $users,$leadIds);
+        return response()->json(['status' => 'success', 'message' => 'Sms sent successfully!']);
+    }
+
 
     public function sendEmailToFrenchise(Request $request)
     {
@@ -154,6 +180,27 @@ class MessageController extends Controller
          $leadIds = explode(',', $request->selectedLeads);
 
          $users = Agent::whereIn('id', $leadIds)->pluck('email')->toArray();
+         $this->twillio_email($request,$users,$leadIds);
+         return response()->json(['status' => 'success', 'message' => 'Email sent successfully!']);
+    }
+
+
+     public function sendEmailTosubAgent(Request $request)
+    {
+        
+        if (!$request->selectedLeads) {
+            return response()->json(['status' => false, 'message' => 'Please select Sub-Agent !'], 422);
+        }
+        if (!$request->subject) {
+            return response()->json(['status' => false, 'message' => 'Please add subject'], 422);
+        }
+        if (!$request->email_body) {
+            return response()->json(['status' => false, 'message' => 'Please add message!'], 422);
+        }
+         $leadIds = explode(',', $request->selectedLeads);
+
+         $users = User::whereIn('id', $leadIds)->where('admin_type', 'sub_agent')->pluck('email')->toArray();
+       
          $this->twillio_email($request,$users,$leadIds);
          return response()->json(['status' => 'success', 'message' => 'Email sent successfully!']);
     }
@@ -286,6 +333,7 @@ class MessageController extends Controller
     public function show_email(Request $request)
     {
         $message_data =Message::where('recepients',$request->email)->where('type','mail')->get();
+       
         return response()->json([
             'status'=>true,
             'data'=>$message_data
