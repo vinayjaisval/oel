@@ -150,7 +150,7 @@ class ProgramController extends Controller
     {
         $request->validate([
             'school_id' => 'required|max:200',
-            'name' => 'required|max:200',
+            'name' => 'required|max:1000',
             'length' => 'required|max:200',
             'programType' => 'required|max:200',
             'programCampus' => 'required|max:200',
