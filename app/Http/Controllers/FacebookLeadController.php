@@ -239,6 +239,8 @@ class FacebookLeadController extends Controller
 
         $email = $fields['email'] ?? null;
         $phone = $fields['phone_number'] ?? null;
+        $planned_country = $fields['planned_country'] ?? null;
+
 
         if ($phone || $email) {
 
@@ -259,6 +261,7 @@ class FacebookLeadController extends Controller
                     'name'         => $fullName,
                     'email'        => $email,
                     'phone_number' => $phone,
+                    'preferred_country_id' => $planned_country,
                     'source'       => 'facebook-leads',
                     'lead_status'  => 1,
                 ]);

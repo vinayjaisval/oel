@@ -221,7 +221,7 @@
                             <th> Name </th>
                             <th> Phone</th>
                             <th> Email</th>
-                            <th> PinCode</th>
+                            <!-- <th> PinCode</th> -->
                             <th> Sms</th>
                             <th> Mail </th>
                         </tr>
@@ -244,7 +244,7 @@
                                 <td>{{ $data->name }}</td>
                                 <td>{{ $data->phone_number }}</td>
                                 <td>{{ $data->email }}</td>
-                                <td>{{ $data->zip }}</td>
+                                <!-- <td>{{ $data->zip }}</td> -->
                                 <td>
                                     <a href="" class="btn-sm mx-1" class="last_attended" data-tour="search"
                                     data-bs-toggle="offcanvas" data-bs-target="#sms-list"

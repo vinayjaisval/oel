@@ -730,31 +730,31 @@ class LeadsManageCotroller extends Controller
         // }
 
 
-        // Visa, Application Punching, Sub Agent — old logic
-if ($user->hasRole('visa') 
-    || $user->hasRole('Application Punching') 
-    || $user->hasRole('sub_agent')) {
+                // Visa, Application Punching, Sub Agent — old logic
+        if ($user->hasRole('visa') 
+            || $user->hasRole('Application Punching') 
+            || $user->hasRole('sub_agent')) {
 
-    $lead_list->where(function ($query) use ($user_id) {
-        $query->where('assigned_to', $user_id)
-            ->orWhere('user_id', $user_id);
-    });
-}
+            $lead_list->where(function ($query) use ($user_id) {
+                $query->where('assigned_to', $user_id)
+                    ->orWhere('user_id', $user_id);
+            });
+        }
 
-// Digital Marketing logic (NEW)
-if ($user->hasRole('Digital Marketing')) {
+        // Digital Marketing logic (NEW)
+        if ($user->hasRole('Digital Marketing')) {
 
-    $lead_list->where(function ($query) use ($user_id) {
-        // 1. Apne leads (user_id)
-        $query->where('user_id', $user_id)
+            $lead_list->where(function ($query) use ($user_id) {
+                // 1. Apne leads (user_id)
+                $query->where('user_id', $user_id)
 
-            // 2. Apne assigned leads
-            ->orWhere('assigned_to', $user_id)
+                    // 2. Apne assigned leads
+                    ->orWhere('assigned_to', $user_id)
 
-            // 3. Facebook + Google leads (any user)
-            ->orWhereIn('source', ['facebook-leads', 'Google Ads']);
-    });
-}
+                    // 3. Facebook + Google leads (any user)
+                    ->orWhereIn('source', ['facebook-leads', 'Google Ads']);
+            });
+        }
 
 
         // Apply filters from the request
@@ -768,7 +768,7 @@ if ($user->hasRole('Digital Marketing')) {
             $lead_list->where('phone_number', 'LIKE', '%' . $request->phone_number . '%');
         }
         if ($request->zip) {
-            $lead_list->where('zip', 'LIKE', '%' . $request->zip . '%');
+            $lead_list->where('preferred_country_id', 'LIKE', '%' . $request->zip . '%');
         }
         if ($request->country_id) {
             $lead_list->where('country_id', $request->country_id);
@@ -916,6 +916,8 @@ if ($user->hasRole('Digital Marketing')) {
     public function lead_list(Request $request, $export = null)
     {
         $lead_list = $this->filterLeads($request);
+
+        
 
         if ($request->has('export')) {
             return Excel::download(new LeadExport($lead_list->get()), 'leads.xlsx');

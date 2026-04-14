@@ -48,7 +48,7 @@
                             </div>
                             <div class="col-md-4">
                                 <input type="text" class="form-control  formmrgin" name="zip"
-                                    value="{{ request()->get('zip') }}" placeholder="Pincode" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);">
+                                    value="{{ request()->get('zip') }}" placeholder="Preferred Countries" >
                             </div>
                             <div class="col-md-4">
                                 <select class="form-control  country formmrgin" name="country_id" >
@@ -246,7 +246,7 @@
                             <th> Email</th>
                            
                             <th>Status</th>
-                            <th> Course </th>
+                            <th> Preferred Country </th>
                             <th> Intake </th>
                             <th> IntakeY</th>
                             <th> Action </th>
@@ -302,7 +302,7 @@
                                 <td title="{{ $lead_status->color ?? '' }}">
                                     {{ $lead_status->name ?? '' }}
                                 </td>
-                                <td>{{  Str::limit($data->course, 12, '...')  }} </td>
+                                <td>{{  Str::limit($data->preferred_country_id, 12, '...')  }} </td>
                                 <td>
                                     @php
                                         $intake = $data->intake;

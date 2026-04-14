@@ -95,23 +95,54 @@ class MessageController extends Controller
          return response()->json(['status' => 'success', 'message' => 'Email sent successfully!']);
     }
 
-    public function twillio_email(Request $request, $users = null, $leadIds = null)
-    {
 
-        $subject = $request->input('subject');
-        $emailBody = $request->input('email_body');
+public function twillio_email(Request $request, $users = null, $leadIds = null)
+{
+    $subject = $request->input('subject');
+    $emailBody = $request->input('email_body');
+
+    $attachmentPath = null;
+    $attachmentName = null;
+
+    // ✅ FILE UPLOAD
+    if ($request->hasFile('attachment')) {
+
         $attachment = $request->file('attachment');
-        $attachmentData = null;
-        if ($attachment) {
-            $attachmentData = base64_encode($attachment->get());
-            $attachmentName = $attachment->getClientOriginalName();
+
+        if ($attachment->isValid()) {
+
+            $fileName = time() . '_' . $attachment->getClientOriginalName();
+
+            // create folder if not exist
+            $destinationPath = public_path('attachments');
+
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+
+            // ✅ move file
+            $attachment->move($destinationPath, $fileName);
+
+            // ✅ only path store
+            $attachmentPath = $destinationPath . '/' . $fileName;
+            $attachmentName = $fileName;
         }
-        $user_id =Auth::user()->id;
-      
-        SendMailtoUser::dispatch($users, $subject, $emailBody, $attachmentData, $attachmentName ?? null,$user_id);
-        return response()->json(['status' => true]);
     }
 
+    $user_id = Auth::id();
+
+    // ✅ DISPATCH JOB (ONLY SIMPLE DATA)
+    SendMailtoUser::dispatch(
+        $users,
+        $subject,
+        $emailBody,
+        $attachmentPath,   // ✅ path pass karo
+        $attachmentName,
+        $user_id
+    );
+
+    return response()->json(['status' => true]);
+}
 
     private function formatPhoneNumber($phone)
     {
@@ -212,8 +243,11 @@ class MessageController extends Controller
         if ($user->hasRole('Administrator')) {
             $student_profile =Student::with('country','province')->paginate(20);
         } else {
-            $student_profile =Student::with('country','province')->where('added_by', $user->id)->paginate(20);
-        }
+
+            $student_profile =Student::with('country','province')->where('added_by_agent_id', $user->id)->paginate(20);
+      
+            }
+
         $smsTemplates =SmsTemplate::get();
         return view('admin.message.message-student',compact('student_profile','smsTemplates'));
     }

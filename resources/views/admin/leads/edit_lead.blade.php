@@ -109,14 +109,14 @@
                       </div>
                       <div class="col-4">
                          <div class="form-floating">
-                            <input id="lead-phone_number" name="phone_number" type="number" class="form-control" placeholder="Phone"  value="{{$studentData->phone_number}}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+                            <input id="lead-phone_number" name="phone_number" type="text" class="form-control" placeholder="Phone"  value="{{$studentData->phone_number}}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
                             <label for="lead-phone_number" class="form-label">Phone</label>
                             <span class="text-danger phone_number"></span>
                          </div>
                       </div>
                       <div class="col-4">
                          <div class="form-floating">
-                            <input id="lead-phone_number1" name="phone_number1" type="number" class="form-control" value="{{$studentData->phone_number_one}}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+                            <input id="lead-phone_number1" name="phone_number1" type="text" class="form-control" value="{{$studentData->phone_number_one}}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
                             <label for="lead-phone_number1" class="form-label">Phone 1</label>
                             <span class="text-danger phone_number1"></span>
                          </div>

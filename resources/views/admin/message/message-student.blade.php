@@ -59,11 +59,11 @@
                             <th>Name</th>
                             <th>Email</th>
                             <th>Phone</th>
-                            <th>Pincode</th>
+                            <!-- <th>Pincode</th> -->
                             <th> Sms</th>
                             <th> Mail </th>
-                            <th>State</th>
-                            <th>Login</th>
+                            <!-- <th>State</th> -->
+                            <!-- <th>Login</th> -->
                         </tr>
                     </thead>
                     <tbody id="lead-list">
@@ -76,7 +76,7 @@
                             <td>{{ $item->first_name ?? null }}</td>
                             <td>{{ $item->email ?? null }}</td>
                             <td>{{ $item->phone_number ?? null }}</td>
-                            <td>{{ $item->zip ?? null }}</td>
+                            <!-- <td>{{ $item->zip ?? null }}</td> -->
                             <td>
                                 <a href="" class="btn-sm mx-1" class="last_attended" data-tour="search"
                                 data-bs-toggle="offcanvas" data-bs-target="#sms-list"
@@ -501,6 +501,8 @@
                 $('.email-list-data').html('');
                 var email = $(this).attr('data-id');
                 var msg = 'sms';
+                 var attachment = "{{asset('attachments/')}}";
+               
                 setupCSRF();
                 $.ajax({
                     url: "{{route('show-lead-email')}}",
@@ -520,6 +522,8 @@
                                             <th>Name</th>
                                             <th>Subject</th>
                                             <th>Message</th>
+                                            <th>Attachment</th>
+
                                         </tr>
                                     </thead>
                                     <tbody>`;
@@ -533,6 +537,7 @@
                                         <td>${value.recepients}</td>
                                         <td>${value.subject}</td>
                                         <td class='text-wrap'>${value.body}</td>
+                                        <td class='text-wrap'>${value.attachment ? `<a href="${attachment}/${value.attachment}" target="_blank">View Attachment</a>` : 'No Attachment'}</td>
                                     </tr>`;
                                 });
                             }
