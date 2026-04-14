@@ -598,7 +598,7 @@
                         msg: msg
                     },
                     success: function(response) {
-                        console.log(response.data[5].attachment);
+                      
                         if (response.status == false) {
                             Swal.fire({
                                 icon: 'error',
