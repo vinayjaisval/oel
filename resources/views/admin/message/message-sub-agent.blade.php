@@ -144,7 +144,7 @@
                         <th>Name</th>
                         <th> Email </th>
                         <th> Phone Number </th>
-                        <th> PinCode</th>
+                        <!-- <th> PinCode</th> -->
                         <th> Sms</th>
                         <th> Mail </th>
                     </tr>
@@ -159,10 +159,10 @@
                             <input type="checkbox" class="lead-id" leads-user-id="{{$item->id}}">
                         </td>
                         <td>{{$i}}</td>
-                        <td>{{$item->legal_first_name}}</td>
+                        <td>{{$item->name}}</td>
                         <td>{{$item->email}}</td>
-                        <td>{{$item->phone}}</td>
-                        <td>{{$item->zip}}</td>
+                        <td>{{$item->phone_number}}</td>
+                        <!-- <td>{{$item->zip}}</td> -->
                         <td>
                             <a href="" class="btn-sm mx-1" class="last_attended" data-tour="search"
                                 data-bs-toggle="offcanvas" data-bs-target="#sms-list"
@@ -586,6 +586,9 @@
                 $('.email-list-data').html('');
                 var email = $(this).attr('data-id');
                 var msg = 'sms';
+                
+                var attachment = "{{asset('attachments/')}}";
+               
                 setupCSRF();
                 $.ajax({
                     url: "{{route('show-lead-email')}}",
@@ -595,6 +598,7 @@
                         msg: msg
                     },
                     success: function(response) {
+                        console.log(response.data[5].attachment);
                         if (response.status == false) {
                             Swal.fire({
                                 icon: 'error',
@@ -608,6 +612,8 @@
                                             <th>Name</th>
                                             <th>Subject</th>
                                             <th>Message</th>
+                                            <th>Attachment</th>
+
                                         </tr>
                                     </thead>
                                     <tbody>`;
@@ -621,6 +627,7 @@
                                         <td>${value.recepients}</td>
                                         <td>${value.subject}</td>
                                         <td class='text-wrap'>${value.body}</td>
+                                        <td class='text-wrap'>${value.attachment ? `<a href="${attachment}/${value.attachment}" target="_blank">View Attachment</a>` : 'No Attachment'}</td>
                                     </tr>`;
                                 });
                             }
