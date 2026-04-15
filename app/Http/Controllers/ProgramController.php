@@ -302,7 +302,7 @@ class ProgramController extends Controller
             'priority' => $request->priority,
             'cost_of_living_fee' => '00.00',
             'cost_of_living' => '00.00',
-            'is_approved' => 0,
+            // 'is_approved' => 0,
         ]);
         return redirect()->route('manage-program')->with('success', 'Program Updated Successfully');
     }
