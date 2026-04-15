@@ -342,13 +342,17 @@ class OtherMasterDataController extends Controller
     //  province
      public function province(Request $request)
      {
-         $province=Province::with('country')->when($request->name, function ($query) use ($request) {
-                        $query->where('name', 'like', '%'.$request->name.'%');
-                    })
-                    ->when($request->country_id, function ($query) use ($request) {
-                        $query->where('country_id', 'like', '%'.$request->country_id.'%');
-                    })
-         ->paginate(12);
+
+   $province = Province::with('country')
+    ->when($request->name, function ($query) use ($request) {
+        $query->where('name', 'like', '%'.$request->name.'%');
+    })
+    ->when($request->country_id, function ($query) use ($request) {
+        $query->where('country_id', $request->country_id); // ✅ FIX
+    })
+    ->paginate(12);
+
+         
          $country =Country::where('is_active',1)->get();
          return view('admin.othermaster.province.index',compact('province','country'));
      }

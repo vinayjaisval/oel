@@ -426,6 +426,8 @@
                         country_id: country_id
                     },
                     success: function(data) {
+                        $('.province_id').empty().append('<option value="">Select Province</option>');
+
                         if ($.isEmptyObject(data)) {
                             $('.province_id').append(
                                 '<option value="">No records found</option>');

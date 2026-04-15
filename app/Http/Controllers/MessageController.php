@@ -98,6 +98,7 @@ class MessageController extends Controller
 
 public function twillio_email(Request $request, $users = null, $leadIds = null)
 {
+  
     $subject = $request->input('subject');
     $emailBody = $request->input('email_body');
 
