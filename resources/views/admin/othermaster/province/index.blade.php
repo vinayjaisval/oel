@@ -34,6 +34,7 @@
             <div class="col-md-4">
                 <div class="form-floating ">
                     <select class="form-control " name="country_id">
+                        <option value="">Select Country</option>
                         @foreach ($country as $item)
                            <option value="{{$item->id}}">{{$item->name}}</option>
                         @endforeach
