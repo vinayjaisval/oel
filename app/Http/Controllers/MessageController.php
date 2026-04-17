@@ -238,21 +238,49 @@ public function twillio_email(Request $request, $users = null, $leadIds = null)
     }
 
 
-    public function message_student(Request $request)
-    {
-        $user = Auth::user();
-        if ($user->hasRole('Administrator')) {
-            $student_profile =Student::with('country','province')->paginate(20);
-        } else {
+ public function message_student(Request $request)
+{
+    $user = Auth::user();
 
-            $student_profile =Student::with('country','province')->where('added_by_agent_id', $user->id)->paginate(20);
-      
-            }
+    $query = Student::with('country', 'province');
 
-        $smsTemplates =SmsTemplate::get();
-        return view('admin.message.message-student',compact('student_profile','smsTemplates'));
+    // Role wise filter
+    if (!$user->hasRole('Administrator')) {
+        $query->where('added_by_agent_id', $user->id);
     }
 
+    // 🔍 Filters
+    if ($request->filled('name')) {
+        $query->where('first_name', 'LIKE', '%' . $request->name . '%');
+    }
+
+    if ($request->filled('email')) {
+        $query->where('email', 'LIKE', '%' . $request->email . '%');
+    }
+
+    if ($request->filled('phone_number')) {
+        $query->where('phone_number', $request->phone_number);
+    }
+
+ 
+    // Date filter
+    if ($request->filled('from_date')) {
+        $query->whereDate('created_at', '>=', $request->from_date);
+    }
+
+    if ($request->filled('to_date')) {
+        $query->whereDate('created_at', '<=', $request->to_date);
+    }
+
+    
+
+    // Pagination with query string (IMPORTANT)
+    $student_profile = $query->orderby('id', 'desc')->paginate(20)->appends($request->all());
+
+    $smsTemplates = SmsTemplate::all();
+
+    return view('admin.message.message-student', compact('student_profile', 'smsTemplates'));
+}
 
     public function sendSmsToStudent(Request $request)
     {

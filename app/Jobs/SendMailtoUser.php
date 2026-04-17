@@ -36,8 +36,7 @@ class SendMailtoUser implements ShouldQueue
 
     public function handle()
     {
-
-   
+  
         $failedEmails = [];
         foreach ($this->users as $email) {
             if (!empty($email)) {
