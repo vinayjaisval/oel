@@ -25,6 +25,61 @@
         </div>
     </div>
 
+     <div class="row">
+        <div class="card-group">
+            <div class="card">
+                <div class="card-body myform">
+                    <form action="{{ route('message-student') }}" method="GET">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <input type="text" class="form-control formmrgin " name="name"
+                                    value="{{ request()->get('name') }}" placeholder="Student Name "pattern="[A-Za-z\s]+" 
+                                
+                                oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')">
+                            </div>
+                           <div class="col-md-4">
+                            <input type="email" class="form-control formmrgin" name="email"
+                                value="{{ request()->get('email') }}" placeholder="Student Email"
+                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                               >
+                        </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control formmrgin " name="phone_number"
+                                    value="{{ request()->get('phone_number') }}" placeholder="Student Phone Number"oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+                            </div>
+                           
+                            
+                            <div class="col-md-4 col-sm-4">
+                                <input type="date" name="from_date" class="form-control formmrgin "
+                                    value="{{ request()->get('from_date') }}" placeholder="From Date">
+                            </div>
+
+                            <div class="col-md-4 col-sm-4">
+                                <input type="date" name="to_date" class="form-control formmrgin "
+                                    value="{{ request()->get('to_date') }}" placeholder="to Date" value="">
+                            </div>
+
+                          
+
+                        
+                          
+                           
+                            <div class="col-md-2 ">
+                                <a href="{{ route('message-lead') }}" class="btn btn-info d-lg-block  formmrgin  px-4">Reset
+                                </a>
+                            </div>
+                            <div class="col-md-1 ">
+                                <button type="submit" value="submit" class="btn btn-info d-lg-block  formmrgin  px-4"
+                                    name="submit">Filter </button>
+                            </div>
+                        </div>
+                        @csrf
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="card-group">
             <div class="card">
