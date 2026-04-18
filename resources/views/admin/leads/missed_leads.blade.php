@@ -1,9 +1,21 @@
 @extends('admin.include.app')
 @section('style')
 <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.2/dist/sweetalert2.min.css" rel="stylesheet">
+
+<style>
+
+
+    .container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 255px;
+    padding-right: 15px;
+    margin: 0 auto;
+}
+</style>
 @endsection
 @section('main-content')
-    <div class="row">
+    <div class="row ">
         <div class="card card-buttons">
             <div class="card-body">
                 <div class="row">

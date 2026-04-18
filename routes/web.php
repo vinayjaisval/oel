@@ -129,14 +129,19 @@ Route::get('/clear-all', function () {
     // Route::get('/impersonate/{user}', [UserController::class, 'impersonate'])->name('impersonate')->middleware('auth', 'role:Administrator');
     // Route::get('/revert-to-admin', [UserController::class, 'revertToAdmin'])->name('revert_to_admin')->middleware('auth');
     Route::get('pay-now/{token?}', [LeadsManageCotroller::class, 'payment_view']);
+
+    // Payment APIs
     Route::post('payment/create', [LeadsManageCotroller::class, 'store'])->name('razorpay.payment.store');
     Route::post('payment/failure', [LeadsManageCotroller::class, 'failure'])->name('razorpay.payment.failure');
-    Route::get('payment/success', [LeadsManageCotroller::class, 'success'])->name('razorpay.payment.succes');
 
+    // Pages
+    Route::get('payment/success', [LeadsManageCotroller::class, 'success'])->name('razorpay.payment.success');
+    Route::get('payment/failure-page', [LeadsManageCotroller::class, 'paymentfailure'])->name('razorpay.payment.failure.page');
+
+    // Other
     Route::post('send-payment-link', [StudentController::class, 'payment_link'])->name('send-payment-link');
     Route::get('payment_link_details', [StudentController::class, 'payment_link_details'])->name('fetch-student-payment');
     Route::get('delete-payment-link', [StudentController::class, 'delete_payment_link'])->name('delete-payment-link');
-
     Route::get('/get-program', [StudentController::class, 'get_program'])->name('get-program');
 
     // student mobile number verfication

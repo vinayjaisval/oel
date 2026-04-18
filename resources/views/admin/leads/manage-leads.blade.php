@@ -1,6 +1,18 @@
 @extends('admin.include.app')
 @section('style')
 <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.2/dist/sweetalert2.min.css" rel="stylesheet">
+
+
+<style>
+
+    .container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 255px;
+    padding-right: 15px;
+    margin: 0 auto;
+}
+</style>
 @endsection
 @section('main-content')
     <div class="row">
@@ -508,7 +520,7 @@
         </div>
     </div>
     <br>
-    <div class="row">
+    <div class="row container">
         <div class="col-md-12">
             <div class="table-responsive">
                 <table id="dataTable" class="table table-striped custom-table mb-0">
