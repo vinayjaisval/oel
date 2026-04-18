@@ -1463,8 +1463,8 @@ class FrontendController extends Controller
     public  function blogs()
     {
         $blogs = Blog::where('status', 1)
-    ->orderBy('created_at', 'desc')
-    ->paginate(10);
+        ->orderBy('created_at', 'desc')
+        ->paginate(12);
         return view('frontend.blogs', compact('blogs'));
     }
 

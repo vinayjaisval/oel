@@ -136,7 +136,7 @@
                 }
             },
             success: function () {
-                window.location.href = "{{ url('payment/failure') }}";
+                window.location.href = "{{ url('payment/failure-page') }}";
             }
         });
     });
