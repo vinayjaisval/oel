@@ -30,7 +30,7 @@
 #yt-strip-1 {
     --gap: 20px;
     --speed: 30s;
-    overflow: hidden;
+    overflow: hidden; /* Wapas sahi kiya taaki design na bigde */
     position: relative;
 }
 
@@ -42,17 +42,51 @@
     display: flex;
     gap: var(--gap);
     width: max-content;
-    animation: scroll var(--speed) linear infinite;
+    transition: transform 0.5s ease-in-out;
+}
+
+/* UPDATED PERFECT NAVIGATION BUTTONS */
+.yt-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #0061ff 0%, #60efff 100%);
+    color: #fff;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    width: 40px; /* Thoda chhota kiya */
+    height: 40px;
+    border-radius: 50%;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 5px 15px rgba(0, 97, 255, 0.4);
+    transition: all 0.3s ease;
+}
+
+.yt-nav-btn:hover {
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 8px 20px rgba(0, 97, 255, 0.6);
+}
+
+.yt-prev {
+    left: 10px; /* Wapas andar le aaya */
+}
+
+.yt-next {
+    right: 10px; /* Wapas andar le aaya */
+}
+
+/* Responsive fix */
+@media (max-width: 768px) {
+    .yt-nav-btn { width: 35px; height: 35px; font-size: 18px; }
 }
 
 /* STOP WHEN VIDEO PLAYING */
 #yt-strip-1.playing .track {
     animation-play-state: paused;
-}
-
-@keyframes scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
 }
 
 /* CARD */
@@ -545,6 +579,8 @@
         <div class="anot_int text-center mt-4">
 
             <div id="yt-strip-1" class="yt-strip">
+                <button class="yt-nav-btn yt-prev" onclick="scrollStrip(-1)">❮</button>
+                <button class="yt-nav-btn yt-next" onclick="scrollStrip(1)">❯</button>
                 <div class="scroller">
                     <div class="track">
 
@@ -1329,7 +1365,26 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-     })("yt-strip-1");
+    // MANUAL SCROLL LOGIC
+    const track = root.querySelector(".track");
+    let currentPos = 0;
+
+    window.scrollStrip = function(direction) {
+        const cardWidth = 250 + 20; // width + gap
+        const visibleWidth = root.offsetWidth;
+        const maxScroll = track.scrollWidth - visibleWidth;
+        
+        // Move by 1 card width per click (direction is -1 or 1)
+        // We subtract because going 'next' (1) means moving track 'left' (negative)
+        currentPos -= direction * cardWidth; 
+        
+        if (currentPos > 0) currentPos = 0;
+        if (Math.abs(currentPos) > maxScroll) currentPos = -maxScroll;
+
+        track.style.transform = `translateX(${currentPos}px)`;
+    };
+
+    })("yt-strip-1");
 </script>
 
 @endsection

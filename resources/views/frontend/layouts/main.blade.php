@@ -56,8 +56,143 @@
                 "https://in.pinterest.com/Overseaseducationlane/",
                 "https://www.overseaseducationlane.com/"
             ]
-        }
     </script>
+    <style>
+        /* --- PROPER HEADER ADJUSTMENTS --- */
+        .header .container { 
+            max-width: 1500px !important; 
+            width: 100% !important;
+            padding: 0 20px !important;
+        }
+        .nav_links { 
+            gap: 15px !important; 
+            align-items: center; 
+            margin-bottom: 0; 
+            padding-left: 0;
+            list-style: none;
+        }
+        .nav_links li a { 
+            font-size: 13px !important; 
+            font-weight: 600;
+            color: #333;
+            padding: 5px 2px !important; 
+            text-decoration: none !important;
+            white-space: nowrap;
+        }
+        .nav_links li a:hover { color: #FF6600; }
+        
+        .apply-btn { 
+            font-size: 11px !important; 
+            font-weight: 700 !important;
+            padding: 8px 12px !important; 
+            white-space: nowrap; 
+            border-radius: 5px !important;
+            height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .counseling-btn-header {
+            background: #fff !important;
+            color: #FF6600 !important;
+            border: 1px solid #FF6600 !important;
+            transition: all 0.3s ease;
+        }
+        .counseling-btn-header:hover {
+            background: #FF6600 !important;
+            color: #fff !important;
+        }
+        
+        .oel-logo img { max-width: 150px; height: auto; }
+
+        /* --- 100% EXACT FULL-PAGE MATCH SPECIFICATIONS --- */
+        .wizard-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, #e0ebff 0%, #ffffff 100%); /* Exact Gradient */
+            z-index: 10000;
+            overflow-y: auto;
+        }
+
+        .wizard-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: block;
+            padding: 50px 20px;
+            position: relative;
+        }
+
+        .wiz-top-logo { text-align: center; margin-bottom: 50px; }
+        .wiz-top-logo img { max-width: 220px; }
+
+        .wiz-header-main { text-align: center; margin-bottom: 60px; }
+        .wiz-title-blue { font-size: 38px; font-weight: 800; color: #001d6e; margin-bottom: 12px; line-height: 1.1; }
+        .wiz-title-red { font-size: 24px; font-weight: 800; color: #ff4d4d; text-transform: uppercase; letter-spacing: 2px; }
+
+        .dest-grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 15px; 
+            max-width: 1050px; 
+            margin: 0 auto; 
+        }
+        .dest-card { 
+            background: #f1f1f1;
+            border: 2px solid #000; 
+            padding: 16px 20px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .dest-card:hover { 
+            background: #fff;
+        }
+
+        .wizard-container {
+            background: #fff;
+            width: 90%;
+            max-width: 850px;
+            height: 550px;
+            border-radius: 12px;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+
+        .wizard-sidebar {
+            width: 30%;
+            background: #f8f9fb;
+            padding: 30px;
+            border-right: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wizard-sidebar h4 { color: #666; font-size: 14px; margin-bottom: 10px; }
+        .wizard-sidebar h2 { color: #333; font-size: 22px; font-weight: 800; line-height: 1.2; }
+        .wizard-sidebar .selection-info { margin-top: 30px; }
+        .wizard-sidebar .info-item { margin-bottom: 15px; font-size: 14px; color: #555; display: flex; align-items: center; gap: 8px; }
+
+        .wiz-page { display: none; }
+        .wiz-page.active { display: block; animation: wizSlideUp 0.5s ease forwards; }
+        @keyframes wizSlideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Mobile adjust */
+        @media (max-width: 768px) {
+            .wizard-sidebar { display: none; }
+            .wizard-main { width: 100%; padding: 30px; }
+            .dest-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
 </head>
 
 <body>
@@ -107,6 +242,11 @@
                             <button class="rounded apply-btn fn border-0 p-2">Login</button>
                         </a>
                     @endif
+                </li>
+                <li>
+                    <a href="javascript:void(0)" onclick="openWizard()" class="apply-btn rounded fn border-0 text-decoration-none counseling-btn-header">
+                        <i class="fa fa-video-camera me-1"></i> Book Online Counselling
+                    </a>
                 </li>
 
 
@@ -465,12 +605,120 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             })
         })
-        $('.myspan').on('click', function() {
-            $('#exampleModal').css('display', 'none');
-        });
     </script>
+    <!-- PREMIUM COUNSELING WIZARD MODAL -->
+    <div id="exactWizardModal" class="wizard-modal">
+        <span class="close-wiz" onclick="toggleExactWizard()">&times;</span>
+        
+        <div class="wizard-container">
+            <div class="wiz-top-logo">
+                <img src="{{ asset('frontend/img/logo.png') }}" alt="OEL Logo">
+            </div>
 
+            <!-- PAGE 1: DESTINATION -->
+            <div id="wiz-p1" class="wiz-page active">
+                <div class="wiz-header-main">
+                    <h1 class="wiz-title-blue">Book Your Free Online Counselling & Start Your Study Abroad Journey</h1>
+                    <h2 class="wiz-title-red">SELECT YOUR DREAM STUDY DESTINATION !</h2>
+                </div>
+                
+                <div class="dest-grid">
+                    <div class="dest-card" onclick="goPage2('USA')"><span class="dest-flag">🇺🇸</span><span class="dest-name">USA</span></div>
+                    <div class="dest-card" onclick="goPage2('Canada')"><span class="dest-flag">🇨🇦</span><span class="dest-name">Canada</span></div>
+                    <div class="dest-card" onclick="goPage2('United Kingdom')"><span class="dest-flag">🇬🇧</span><span class="dest-name">UK</span></div>
+                    <div class="dest-card" onclick="goPage2('Ireland')"><span class="dest-flag">🇮🇪</span><span class="dest-name">Ireland</span></div>
+                    <div class="dest-card" onclick="goPage2('Australia')"><span class="dest-flag">🇦🇺</span><span class="dest-name">Australia</span></div>
+                    <div class="dest-card" onclick="goPage2('New Zealand')"><span class="dest-flag">🇳🇿</span><span class="dest-name">New Zealand</span></div>
+                    <div class="dest-card" onclick="goPage2('Europe')"><span class="dest-flag">🇪🇺</span><span class="dest-name">Europe</span></div>
+                    <div class="dest-card" onclick="goPage2('Asia')"><span class="dest-flag">🌏</span><span class="dest-name">Asia</span></div>
+                </div>
+                <div style="display:flex; justify-content:center; margin-top:15px;">
+                    <div class="dest-card" style="width:250px; justify-content:center;" onclick="goPage2('Germany')"><span class="dest-flag">🇩🇪</span><span class="dest-name">Germany</span></div>
+                </div>
 
+                <div class="test-prep-section">
+                    <h3 class="test-prep-title">Book Free Test Prep & Education Loan Counselling !</h3>
+                    <div class="dest-grid" style="grid-template-columns: repeat(4, 1fr);">
+                        <div class="dest-card" onclick="goPage2('IELTS')"><span class="dest-flag">📝</span><span class="dest-name">IELTS</span></div>
+                        <div class="dest-card" onclick="goPage2('PTE')"><span class="dest-flag">📝</span><span class="dest-name">PTE</span></div>
+                        <div class="dest-card" onclick="goPage2('GRE')"><span class="dest-flag">📝</span><span class="dest-name">GRE</span></div>
+                        <div class="dest-card" onclick="goPage2('Loan')"><span class="dest-flag">💰</span><span class="dest-name">Education Loan</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 2: SCHEDULE -->
+            <div id="wiz-p2" class="wiz-page">
+                <div style="text-align:center; margin-bottom:30px;">
+                    <button class="btn btn-link text-decoration-none" onclick="backPage(1)" style="color:#003399; font-weight:700;">← Back to Destination</button>
+                </div>
+                <div class="wiz-header-main">
+                    <h1 class="wiz-title-blue">When should we talk?</h1>
+                    <p style="color:#666; font-size:18px;">Select a date and time for your free counseling session.</p>
+                </div>
+                <div class="dest-grid" style="grid-template-columns: repeat(2, 1fr); max-width:600px;">
+                    <div class="dest-card" style="justify-content:center;" onclick="goPage3('10:00 AM')"><span class="dest-name">10:00 AM</span></div>
+                    <div class="dest-card" style="justify-content:center;" onclick="goPage3('11:30 AM')"><span class="dest-name">11:30 AM</span></div>
+                    <div class="dest-card" style="justify-content:center;" onclick="goPage3('02:00 PM')"><span class="dest-name">02:00 PM</span></div>
+                    <div class="dest-card" style="justify-content:center;" onclick="goPage3('04:30 PM')"><span class="dest-name">04:30 PM</span></div>
+                </div>
+            </div>
+
+            <!-- PAGE 3: DETAILS -->
+            <div id="wiz-p3" class="wiz-page">
+                <div style="text-align:center; margin-bottom:30px;">
+                    <button class="btn btn-link text-decoration-none" onclick="backPage(2)" style="color:#003399; font-weight:700;">← Back to Schedule</button>
+                </div>
+                <div class="wiz-header-main">
+                    <h1 class="wiz-title-blue">Almost there!</h1>
+                    <p style="color:#666; font-size:18px;">Fill in your details to confirm your session.</p>
+                </div>
+                <div style="max-width:500px; margin:0 auto;">
+                    <form action="{{ route('query') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="destination" id="f-dest">
+                        <input type="hidden" name="schedule" id="f-time">
+                        <div style="display:grid; gap:20px;">
+                            <input type="text" name="name" placeholder="Full Name" required style="padding:18px; border-radius:12px; border:2px solid #000; font-weight:600;">
+                            <input type="email" name="email" placeholder="Email Address" required style="padding:18px; border-radius:12px; border:2px solid #000; font-weight:600;">
+                            <input type="text" name="mobile" placeholder="Phone Number" required style="padding:18px; border-radius:12px; border:2px solid #000; font-weight:600;">
+                            <button type="submit" style="background:#FF6600; color:white; padding:20px; border-radius:12px; border:none; font-weight:800; font-size:20px; cursor:pointer;">Confirm Booking</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleExactWizard() {
+            const modal = document.getElementById('exactWizardModal');
+            modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+        }
+        function openWizard() {
+            toggleExactWizard();
+        }
+        function goPage2(dest) {
+            document.getElementById('wiz-p1').classList.remove('active');
+            document.getElementById('wiz-p2').classList.add('active');
+            document.getElementById('step-1').classList.remove('active');
+            document.getElementById('step-2').classList.add('active');
+            document.getElementById('f-dest').value = dest;
+        }
+        function goPage3(time) {
+            document.getElementById('wiz-p2').classList.remove('active');
+            document.getElementById('wiz-p3').classList.add('active');
+            document.getElementById('step-2').classList.remove('active');
+            document.getElementById('step-3').classList.add('active');
+            document.getElementById('f-time').value = time;
+        }
+        function backPage(page) {
+            document.querySelectorAll('.wiz-page').forEach(p => p.classList.remove('active'));
+            document.getElementById('wiz-p' + page).classList.add('active');
+            document.querySelectorAll('.wiz-step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step-' + page).classList.add('active');
+        }
+    </script>
 </body>
 
 </html>
