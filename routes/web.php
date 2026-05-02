@@ -391,6 +391,7 @@ Route::get('/clear-all', function () {
             // PROGRAM DISPLINE
 
             Route::get('program-discipline', [ProgramController::class, 'program_discipline'])->name('program-discipline');
+           
             Route::get('edit-program-discipline/{id?}', [ProgramController::class, 'program_discipline_edit'])->name('edit-program-discipline');
             Route::get('delete-program-discipline/{id?}', [ProgramController::class, 'program_discipline_delete'])->name('delete-program-discipline');
             Route::post('update-program-discipline/{id?}', [ProgramController::class, 'program_discipline_update'])->name('update-program-discipline');

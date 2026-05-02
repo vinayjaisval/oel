@@ -502,10 +502,15 @@ $users=Auth::user();
           var monthName = intakeDate.toLocaleString('default', {
             month: 'long'
           });
+          const date = new Date(response.created_at);
+
+          const formattedDate = `${date.getDate().toString().padStart(2, '0')}-${
+              (date.getMonth() + 1).toString().padStart(2, '0')
+          }-${date.getFullYear()}`;
           var lead_details =
                         `<tr>
                             <th>Date :</th>
-                            <td>${response.created_at}</td>
+                            <td>${formattedDate}</td>
                         </tr>
                         <tr>
                             <th>socure:</th>
@@ -521,7 +526,7 @@ $users=Auth::user();
                         </tr>
                         <tr>
                             <th>name</th>
-                            <td>${response.name}</td>
+                            <td>${response.first_name}</td>
                         </tr>
                         <tr>
                             <th>Father name </th>

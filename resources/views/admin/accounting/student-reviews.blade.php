@@ -14,104 +14,110 @@
 
 {{-- ======================== SEARCH FILTER ======================== --}}
 <div class="row">
-    <div class="card-group">
-        <div class="card">
-            <div class="card-body myform">
-                <form action="{{ route('student-review') }}" method="GET">
-                    <div class="row">
-                        <div class="col-md-3 ps-2">
-                            <input type="text" name="first_name" class="form-control formmrgin"
-                                   placeholder="Student Name" value="{{ request()->first_name }}"
-                                   oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')">
-                        </div>
-                        <div class="col-md-3 ps-2">
-                            <input type="email" name="email" class="form-control formmrgin"
-                                   placeholder="Student Email" value="{{ request()->email }}">
-                        </div>
-                        <div class="col-md-3 ps-2">
-                            <input type="text" name="phone_number" class="form-control formmrgin"
-                                   placeholder="Student Phone Number" value="{{ request()->phone_number }}"
-                                   oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
-                        </div>
-                        <div class="col-md-3 ps-2">
-                            <input type="date" name="day" class="form-control formmrgin"
-                                   value="{{ request()->day }}">
-                        </div>
-                        <div class="col-md-3 ps-2 mt-2">
-                            <input type="month" name="month" class="form-control formmrgin"
-                                   value="{{ request()->month }}">
-                        </div>
-                        <div class="col-md-1 mt-2">
-                            <button type="submit" class="btn btn-info w-100">
-                                <i class="fa fa-filter"></i>
-                            </button>
-                        </div>
-                        <div class="col-md-1 mt-2">
-                            <a href="{{ route('student-review') }}" class="btn btn-secondary w-100">
-                                <i class="fa fa-undo"></i>
-                            </a>
-                        </div>
+    <div class="card">
+        <div class="card-body">
+            <form action="{{ route('student-review') }}" method="GET">
+                <div class="row">
+
+                    <div class="col-md-3">
+                        <input type="text" name="first_name" class="form-control"
+                               placeholder="Student Name" value="{{ request()->first_name }}">
                     </div>
-                    @csrf
-                </form>
-            </div>
+
+                    <div class="col-md-3">
+                        <input type="email" name="email" class="form-control"
+                               placeholder="Student Email" value="{{ request()->email }}">
+                    </div>
+
+                    <div class="col-md-3">
+                        <input type="text" name="phone_number" class="form-control"
+                               placeholder="Phone" value="{{ request()->phone_number }}">
+                    </div>
+
+                    <div class="col-md-3">
+                        <input type="date" name="day" class="form-control"
+                               value="{{ request()->day }}">
+                    </div>
+
+                    <div class="col-md-3 mt-2">
+                        <input type="month" name="month" class="form-control"
+                               value="{{ request()->month }}">
+                    </div>
+
+                    <div class="col-md-3 mt-2">
+                        <input type="number" name="year" class="form-control"
+                               placeholder="Year"
+                               value="{{ request()->year }}">
+                    </div>
+
+                    <div class="col-md-1 mt-2">
+                        <button class="btn btn-info w-100">
+                            Filter
+                        </button>
+                    </div>
+
+                    <div class="col-md-1 mt-2">
+                        <a href="{{ route('student-review') }}" class="btn btn-secondary w-100">
+                            Reset
+                        </a>
+                    </div>
+
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 <br>
 
-@if(request()->day || request()->month)
+@if(request()->day || request()->month || request()->year)
 <div class="row">
-    {{-- MONTHLY TOTAL --}}
-    @if($monthlyTotal->count() > 0)
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Monthly Collection (Filtered)</h5>
-            </div>
+
+    {{-- MONTHLY --}}
+    @if($monthlyTotal->count())
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">Monthly</div>
             <div class="card-body">
-                <table class="table table-bordered table-striped">
-                    <tr>
-                        <th>Month</th>
-                        <th>Total Amount</th>
-                    </tr>
-                    @foreach ($monthlyTotal as $m)
-                        <tr>
-                            <td>{{ \Carbon\Carbon::parse($m->month.'-01')->format('F Y') }}</td>
-                            <td>₹ {{ number_format($m->total,2) }}</td>
-                        </tr>
-                    @endforeach
-                </table>
+                @foreach($monthlyTotal as $m)
+                    <p>{{ \Carbon\Carbon::parse($m->month.'-01')->format('F Y') }} :
+                        ₹ {{ number_format($m->total,2) }}</p>
+                @endforeach
             </div>
         </div>
     </div>
     @endif
 
-    {{-- DAILY TOTAL --}}
-    @if($dailyTotal->count() > 0)
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0">Daily Collection (Filtered)</h5>
-            </div>
+    {{-- DAILY --}}
+    @if($dailyTotal->count())
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">Daily</div>
             <div class="card-body">
-                <table class="table table-bordered table-striped">
-                    <tr>
-                        <th>Date</th>
-                        <th>Total Amount</th>
-                    </tr>
-                    @foreach ($dailyTotal as $d)
-                        <tr>
-                            <td>{{ \Carbon\Carbon::parse($d->day)->format('d M Y') }}</td>
-                            <td>₹ {{ number_format($d->total,2) }}</td>
-                        </tr>
-                    @endforeach
-                </table>
+                @foreach($dailyTotal as $d)
+                    <p>{{ \Carbon\Carbon::parse($d->day)->format('d M Y') }} :
+                        ₹ {{ number_format($d->total,2) }}</p>
+                @endforeach
             </div>
         </div>
     </div>
     @endif
+
+    {{-- YEARLY --}}
+    @if($yearlyTotal->count())
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-dark text-white">Yearly</div>
+            <div class="card-body">
+                @foreach($yearlyTotal as $y)
+                    <p>{{ $y->year }} :
+                        ₹ {{ number_format($y->total,2) }}</p>
+                @endforeach
+            </div>
+        </div>
+    </div>
+    @endif
+
 </div>
 @endif
 

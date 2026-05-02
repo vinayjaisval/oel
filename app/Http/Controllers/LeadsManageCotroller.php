@@ -1985,97 +1985,228 @@ class LeadsManageCotroller extends Controller
                 'table_three_sixtee' => $table_three_sixtee
             ];
             return response()->json($data);
-        } elseif ($request->tab3) {
-            $status = DB::table('tbl_three_sixtee')
-                ->where('sba_id', $id)
-                ->first();
-            if ($status == NULL) {
-                DB::table('tbl_three_sixtee')->insert([
-                    'sba_id' => $id,
-                    'user_id' => $user_id,
-                    'application' => json_encode($request->all()),
-                    'remarks' => json_encode($request->all()),
-                    'selected_program' => implode(',', $request->program_ids)
-                ]);
-            } else {
-                DB::table('tbl_three_sixtee')
-                    ->Where('sba_id', $id)
-                    ->update([
-                        'sba_id' => $id,
-                        'user_id' => $user_id,
-                        'application' => json_encode($request->all()),
-                        'remarks' =>  json_encode($request->all()),
-                        'selected_program' => implode(',', $request->program_ids)
-                    ]);
-            }
+        } 
+        // elseif ($request->tab3) {
+        //     $status = DB::table('tbl_three_sixtee')
+        //         ->where('sba_id', $id)
+        //         ->first();
+        //     if ($status == NULL) {
+        //         DB::table('tbl_three_sixtee')->insert([
+        //             'sba_id' => $id,
+        //             'user_id' => $user_id,
+        //             'application' => json_encode($request->all()),
+        //             'remarks' => json_encode($request->all()),
+        //             'selected_program' => implode(',', $request->program_ids)
+        //         ]);
+        //     } else {
+        //         DB::table('tbl_three_sixtee')
+        //             ->Where('sba_id', $id)
+        //             ->update([
+        //                 'sba_id' => $id,
+        //                 'user_id' => $user_id,
+        //                 'application' => json_encode($request->all()),
+        //                 'remarks' =>  json_encode($request->all()),
+        //                 'selected_program' => implode(',', $request->program_ids)
+        //             ]);
+        //     }
 
 
-            $student = StudentByAgent::where('student_user_id', $request->sba_id)->select('email', 'name')->first();
-            $threesixetee = DB::table('tbl_three_sixtee')->where('sba_id', $id)->first();
+        //     $student = StudentByAgent::where('student_user_id', $request->sba_id)->select('email', 'name')->first();
+        //     $threesixetee = DB::table('tbl_three_sixtee')->where('sba_id', $id)->first();
 
-            $collegeValues = explode(',', $threesixetee->college);
+        //     $collegeValues = explode(',', $threesixetee->college);
 
-            $courseValues = explode(',', $threesixetee->courses);
+        //     $courseValues = explode(',', $threesixetee->courses);
 
-            $universities = University::whereIn('id', $collegeValues)->pluck('university_name')->implode(', ');
+        //     $universities = University::whereIn('id', $collegeValues)->pluck('university_name')->implode(', ');
 
-            $course_in_three_sixtee = DB::table('course_tags')->wherein('id', $courseValues)->pluck('tag_name')->implode(', ');
+        //     $course_in_three_sixtee = DB::table('course_tags')->wherein('id', $courseValues)->pluck('tag_name')->implode(', ');
 
-            $application = json_decode($threesixetee->application);
+        //     $application = json_decode($threesixetee->application);
 
-            foreach ($application->program_ids as $key => $value) {
-                // Get program details for each program id
-                $program = Program::where('id', $value)->first();
+        //     foreach ($application->program_ids as $key => $value) {
+        //         // Get program details for each program id
+        //         $program = Program::where('id', $value)->first();
 
-                // Get application status and remarks for the specific program
-                $app_status = $application->{$program->id . '_application_status'};
-                $app_remarks = $application->{'remarks_' . $program->id};
+        //         // Get application status and remarks for the specific program
+        //         $app_status = $application->{$program->id . '_application_status'};
+        //         $app_remarks = $application->{'remarks_' . $program->id};
 
-                // Build the course name, status, and remarks data
-                $programsData[] = [
-                    'name' => $program->name,
-                    'status' => $app_status,
-                    'remarks' => $app_remarks
-                ];
-            }
+        //         // Build the course name, status, and remarks data
+        //         $programsData[] = [
+        //             'name' => $program->name,
+        //             'status' => $app_status,
+        //             'remarks' => $app_remarks
+        //         ];
+        //     }
 
-            // Prepare the data to send in the email
-            $data = [
-                'university' => $universities,
-                'student' => $student->name,
-                'courses' => $programsData, // Array of courses with status and remarks
-            ];
-            // dd($data);
-            // Check if there's data to send
-            if ($data) {
+        //     // Prepare the data to send in the email
+        //     $data = [
+        //         'university' => $universities,
+        //         'student' => $student->name,
+        //         'courses' => $programsData, // Array of courses with status and remarks
+        //     ];
+        //      dd($data);
+        //     // Check if there's data to send
+        //     if ($data) {
 
-                Mail::to($student->email)->send(new ApplyOel360Email($data));
-            }
+        //         Mail::to($student->email)->send(new ApplyOel360Email($data));
+        //     }
 
-            // Handle the response based on application status
-            if ($request->application_status == 'rejected') {
-                $response = 'Rejected';
-            } else {
-                $response = true;
-            }
+        //     // Handle the response based on application status
+        //     if ($request->application_status == 'rejected') {
+        //         $response = 'Rejected';
+        //     } else {
+        //         $response = true;
+        //     }
 
-            $acceptedProgramIds = [];
-            $programIds = $request->input('program_ids', []);
-            foreach ($programIds as $programId) {
-                $applicationStatus = $request->input("{$programId}_application_status");
+        //     $acceptedProgramIds = [];
+        //     $programIds = $request->input('program_ids', []);
+        //     foreach ($programIds as $programId) {
+        //         $applicationStatus = $request->input("{$programId}_application_status");
 
-                if ($applicationStatus === "accepted") {
-                    $acceptedProgramIds[] = $programId;
-                }
-            }
-            $program = Program::whereIn('id', $acceptedProgramIds)->where('is_approved', 1)->select('id', 'name')->get();
-            $data = [
-                'success' => true,
-                'status' => $response,
-                'program' => $program
-            ];
-            return response()->json($data);
-        } elseif ($request->tab == 'tab4') {
+        //         if ($applicationStatus === "accepted") {
+        //             $acceptedProgramIds[] = $programId;
+        //         }
+        //     }
+        //     $program = Program::whereIn('id', $acceptedProgramIds)->where('is_approved', 1)->select('id', 'name')->get();
+        //     $data = [
+        //         'success' => true,
+        //         'status' => $response,
+        //         'program' => $program
+        //     ];
+        //     return response()->json($data);
+        // } 
+
+
+        elseif ($request->tab3) {
+
+    $status = DB::table('tbl_three_sixtee')
+        ->where('sba_id', $id)
+        ->first();
+
+    if ($status == NULL) {
+        DB::table('tbl_three_sixtee')->insert([
+            'sba_id' => $id,
+            'user_id' => $user_id,
+            'application' => json_encode($request->all()),
+            'remarks' => json_encode($request->all()),
+            'selected_program' => implode(',', $request->program_ids),
+            'mail_sent' => 0 // 👈 NEW
+        ]);
+    } else {
+        DB::table('tbl_three_sixtee')
+            ->Where('sba_id', $id)
+            ->update([
+                'sba_id' => $id,
+                'user_id' => $user_id,
+                'application' => json_encode($request->all()),
+                'remarks' =>  json_encode($request->all()),
+                'selected_program' => implode(',', $request->program_ids)
+            ]);
+    }
+
+    $student = StudentByAgent::where('student_user_id', $request->sba_id)
+        ->select('email', 'name')->first();
+
+    $threesixetee = DB::table('tbl_three_sixtee')
+        ->where('sba_id', $id)->first();
+
+    $collegeValues = explode(',', $threesixetee->college);
+    $courseValues = explode(',', $threesixetee->courses);
+
+    $universities = University::whereIn('id', $collegeValues)
+        ->pluck('university_name')->implode(', ');
+
+    $course_in_three_sixtee = DB::table('course_tags')
+        ->whereIn('id', $courseValues)
+        ->pluck('tag_name')->implode(', ');
+
+    $application = json_decode($threesixetee->application);
+
+    $programsData = [];
+$sendMail = false;
+
+foreach ($application->program_ids as $key => $value) {
+
+    $program = Program::where('id', $value)->first();
+
+    // SAFE KEYS
+    $statusKey = $program->id . '_application_status';
+    $remarksKey = 'remarks_' . $program->id;
+
+    $app_status = isset($application->$statusKey) ? $application->$statusKey : null;
+    $app_remarks = isset($application->$remarksKey) ? $application->$remarksKey : null;
+
+    // mail flag
+    if ($app_status === 'accepted') {
+        $sendMail = true;
+    }
+
+    $programsData[] = [
+        'name' => $program->name ?? '',
+        'status' => $app_status ?? '',
+        'remarks' => $app_remarks ?? ''
+    ];
+}
+
+    // Prepare email data
+    $data = [
+        'university' => $universities,
+        'student' => $student->name,
+        'courses' => $programsData,
+    ];
+
+    // ❌ REMOVE THIS (warna mail kabhi nahi jayega)
+    
+
+    // ✅ CHECK mail already sent or not
+    $alreadySent = DB::table('tbl_three_sixtee')
+        ->where('sba_id', $id)
+        ->value('mail_sent');
+
+    if ($sendMail && !$alreadySent) {
+
+        Mail::to($student->email)->send(new ApplyOel360Email($data));
+
+        // mark as sent
+        DB::table('tbl_three_sixtee')
+            ->where('sba_id', $id)
+            ->update(['mail_sent' => 1]);
+    }
+
+    // RESPONSE LOGIC (same as yours)
+    if ($request->application_status == 'rejected') {
+        $response = 'Rejected';
+    } else {
+        $response = true;
+    }
+
+    $acceptedProgramIds = [];
+    $programIds = $request->input('program_ids', []);
+
+    foreach ($programIds as $programId) {
+        $applicationStatus = $request->input("{$programId}_application_status");
+
+        if ($applicationStatus === "accepted") {
+            $acceptedProgramIds[] = $programId;
+        }
+    }
+
+    $program = Program::whereIn('id', $acceptedProgramIds)
+        ->where('is_approved', 1)
+        ->select('id', 'name')->get();
+
+    $data = [
+        'success' => true,
+        'status' => $response,
+        'program' => $program
+    ];
+
+    return response()->json($data);
+}
+        
+        elseif ($request->tab == 'tab4') {
 
 
             $status = DB::table('tbl_three_sixtee')->where('sba_id', $id)->first();
@@ -2511,6 +2642,9 @@ class LeadsManageCotroller extends Controller
         ];
         return response()->json($data);
     }
+
+
+
 
     public function get_lead_360_images(Request $request)
     {

@@ -63,46 +63,55 @@ class AccountingController extends Controller
         return $query->where('email', $userId)->sum('amount');
     }
 
-    public function getFeesByMasterServiceByMonth($master_service, $month = 1)
-    {
-        $user = Auth::user();
-        $query = PaymentsLink::with('payments')
-            ->whereHas('payments', function ($query) use ($month) {
-                $query->where('payment_status', 'success')
-                ;
-                if ($month) {
-                    $query->whereMonth('created_at', $month);
-                }
-            })
-            ->wherein('master_service', [$master_service]);
-        if ($user->hasRole('Administrator')) {
-            return $query->sum('amount');
-        }
-        $userId = $user->id;
-        if ($user->hasRole('agent')) {
-            return $query->whereIn('email', function ($subquery) use ($userId) {
-                $subquery->select('email')
-                    ->from('student_by_agent')
-                    ->orWhere('added_by_agent_id', null)
-                    ->where('added_by_agent_id', $userId);
-            })->orWhere('email', $user->email)->sum('amount');
-        }
-        
-        if ($user->hasRole('sub_agent')) {
-            $usersId = StudentByAgent::where('assigned_to', $userId)
-                // ->whereNotIn('admin_type', ['student'])
-                ->pluck('email')
-                ->toArray();
-            if (!empty($usersId)) {
-                $usersId[] = $userId;
+   public function getFeesByMasterServiceByMonth($master_service, $month = 1, $year = 2026)
+{
+    $user = Auth::user();
+
+    $query = PaymentsLink::with('payments')
+        ->whereHas('payments', function ($query) use ($month, $year) {
+            $query->where('payment_status', 'success');
+
+            if ($month) {
+                $query->whereMonth('created_at', $month);
             }
 
-            return $query->whereIn('email', $usersId)->sum('amount');
-        }
-        return $query->where('email', $userId)->sum('amount');
+            if ($year) {
+                $query->whereYear('created_at', $year); // ✅ FIX
+            }
+        })
+        ->whereIn('master_service', [$master_service]);
 
-        // return $query->where('user_id', $userId)->sum('amount');
+    if ($user->hasRole('Administrator')) {
+        return $query->sum('amount');
     }
+
+    $userId = $user->id;
+
+    if ($user->hasRole('agent')) {
+        return $query->whereIn('email', function ($subquery) use ($userId) {
+                $subquery->select('email')
+                    ->from('student_by_agent')
+                    ->where('added_by_agent_id', $userId)
+                    ->orWhereNull('added_by_agent_id'); // FIXED order
+            })
+            ->orWhere('email', $user->email)
+            ->sum('amount');
+    }
+
+    if ($user->hasRole('sub_agent')) {
+        $usersEmail = StudentByAgent::where('assigned_to', $userId)
+            ->pluck('email')
+            ->toArray();
+
+        if (!empty($usersEmail)) {
+            $usersEmail[] = $user->email; // ⚠️ yahan ID nahi, email hona chahiye
+        }
+
+        return $query->whereIn('email', $usersEmail)->sum('amount');
+    }
+
+    return $query->where('email', $user->email)->sum('amount');
+}
     public function index()
     {
         $query = PaymentsLink::whereHas('payments', function ($query) {
@@ -198,104 +207,140 @@ class AccountingController extends Controller
         return view('admin.accounting.student-reviews', compact('students'));
     }
   
-   public function student_review(Request $request)
-    {
-        $user = Auth::user();
+  public function student_review(Request $request)
+{
+    $user = Auth::user();
 
-        // ===================== STUDENT TABLE QUERY =====================
-        $studentsQuery = Payment::query()
-            ->join('student_by_agent', 'student_by_agent.email', '=', 'payments.customer_email')->where('student_by_agent.lead_status', 7);
+    // ===================== STUDENT TABLE QUERY =====================
+    $studentsQuery = Payment::query()
+        ->join('student_by_agent', 'student_by_agent.email', '=', 'payments.customer_email')
+        ->where('student_by_agent.lead_status', 7);
+
+    // Role Filters
+    if ($user->hasRole('agent')) {
+        $studentsQuery->where(function ($q) use ($user) {
+            $q->where(function ($qq) use ($user) {
+                $qq->where('student_by_agent.added_by_agent_id', $user->id)
+                    ->where('payments.payment_status', 'success');
+            })->orWhereNull('student_by_agent.added_by_agent_id');
+        });
+    }
+
+    if ($user->hasRole('sub_agent')) {
+        $studentsQuery->where('student_by_agent.assigned_to', $user->id);
+    }
+
+    // Search Filters
+    if ($request->first_name) {
+        $studentsQuery->where('student_by_agent.name', 'like', '%' . $request->first_name . '%');
+    }
+
+    if ($request->email) {
+        $studentsQuery->where('student_by_agent.email', 'like', '%' . $request->email . '%');
+    }
+
+    if ($request->phone_number) {
+        $studentsQuery->where('student_by_agent.phone_number', 'like', '%' . $request->phone_number . '%');
+    }
+
+    if ($request->day) {
+        $studentsQuery->whereDate('payments.created_at', $request->day);
+    }
+
+    if ($request->month) {
+        $studentsQuery->whereMonth('payments.created_at', \Carbon\Carbon::parse($request->month)->month)
+            ->whereYear('payments.created_at', \Carbon\Carbon::parse($request->month)->year);
+    }
+
+    if ($request->year) {
+        $studentsQuery->whereYear('payments.created_at', $request->year);
+    }
+
+    $students = $studentsQuery
+        ->select('student_by_agent.*', 'payments.amount', 'payments.created_at as payment_date')
+        ->orderBy('payments.created_at', 'DESC')
+        ->paginate(15);
+
+    // ===================== TOTALS =====================
+    $dailyTotal = collect();
+    $monthlyTotal = collect();
+    $yearlyTotal = collect();
+
+    if ($request->day || $request->month || $request->year) {
+
+        $totalQuery = Payment::query()
+            ->join('student_by_agent', 'student_by_agent.email', '=', 'payments.customer_email')
+            ->where('student_by_agent.lead_status', 7);
 
         // Role Filters
         if ($user->hasRole('agent')) {
-            $studentsQuery->where(function ($q) use ($user) {
+            $totalQuery->where(function ($q) use ($user) {
                 $q->where(function ($qq) use ($user) {
                     $qq->where('student_by_agent.added_by_agent_id', $user->id)
                         ->where('payments.payment_status', 'success');
                 })->orWhereNull('student_by_agent.added_by_agent_id');
             });
         }
+
         if ($user->hasRole('sub_agent')) {
-            $studentsQuery->where('student_by_agent.assigned_to', $user->id);
+            $totalQuery->where('student_by_agent.assigned_to', $user->id);
         }
 
-        // Search Filters
+        // Same Filters
         if ($request->first_name) {
-            $studentsQuery->where('student_by_agent.name', 'like', '%' . $request->first_name . '%');
+            $totalQuery->where('student_by_agent.name', 'like', '%' . $request->first_name . '%');
         }
+
         if ($request->email) {
-            $studentsQuery->where('student_by_agent.email', 'like', '%' . $request->email . '%');
+            $totalQuery->where('student_by_agent.email', 'like', '%' . $request->email . '%');
         }
+
         if ($request->phone_number) {
-            $studentsQuery->where('student_by_agent.phone_number', 'like', '%' . $request->phone_number . '%');
+            $totalQuery->where('student_by_agent.phone_number', 'like', '%' . $request->phone_number . '%');
         }
+
         if ($request->day) {
-            $studentsQuery->whereDate('payments.created_at', $request->day);
+            $totalQuery->whereDate('payments.created_at', $request->day);
         }
+
         if ($request->month) {
-            $studentsQuery->whereMonth('payments.created_at', \Carbon\Carbon::parse($request->month)->month)
+            $totalQuery->whereMonth('payments.created_at', \Carbon\Carbon::parse($request->month)->month)
                 ->whereYear('payments.created_at', \Carbon\Carbon::parse($request->month)->year);
         }
 
-        $students = $studentsQuery
-            ->select('student_by_agent.*', 'payments.amount', 'payments.created_at as payment_date')
-            ->orderBy('payments.created_at', 'DESC')
-            ->paginate(15);
-
-        // ===================== TOTALS ONLY IF FILTER APPLIED =====================
-        $dailyTotal = collect();
-        $monthlyTotal = collect();
-
-        if ($request->day || $request->month) {
-            $totalQuery = Payment::query()
-                ->join('student_by_agent', 'student_by_agent.email', '=', 'payments.customer_email')->where('student_by_agent.lead_status', 7);
-
-            if ($user->hasRole('agent')) {
-                $totalQuery->where(function ($q) use ($user) {
-                    $q->where(function ($qq) use ($user) {
-                        $qq->where('student_by_agent.added_by_agent_id', $user->id)
-                            ->where('payments.payment_status', 'success');
-                    })->orWhereNull('student_by_agent.added_by_agent_id');
-                });
-            }
-            if ($user->hasRole('sub_agent')) {
-                $totalQuery->where('student_by_agent.assigned_to', $user->id);
-            }
-
-            if ($request->first_name) {
-                $totalQuery->where('student_by_agent.name', 'like', '%' . $request->first_name . '%');
-            }
-            if ($request->email) {
-                $totalQuery->where('student_by_agent.email', 'like', '%' . $request->email . '%');
-            }
-            if ($request->phone_number) {
-                $totalQuery->where('student_by_agent.phone_number', 'like', '%' . $request->phone_number . '%');
-            }
-            if ($request->day) {
-                $totalQuery->whereDate('payments.created_at', $request->day);
-            }
-            if ($request->month) {
-                $totalQuery->whereMonth('payments.created_at', \Carbon\Carbon::parse($request->month)->month)
-                    ->whereYear('payments.created_at', \Carbon\Carbon::parse($request->month)->year);
-            }
-
-            // Daily total
-            $dailyTotal = (clone $totalQuery)
-                ->selectRaw('DATE(payments.created_at) as day, SUM(payments.amount) as total')
-                ->groupBy('day')
-                ->orderBy('day', 'DESC')
-                ->get();
-
-            // Monthly total
-            $monthlyTotal = (clone $totalQuery)
-                ->selectRaw("DATE_FORMAT(payments.created_at,'%Y-%m') as month, SUM(payments.amount) as total")
-                ->groupBy('month')
-                ->orderBy('month', 'DESC')
-                ->get();
+        if ($request->year) {
+            $totalQuery->whereYear('payments.created_at', $request->year);
         }
 
-        return view('admin.accounting.student-reviews', compact('students', 'dailyTotal', 'monthlyTotal'));
+        // Daily Total
+        $dailyTotal = (clone $totalQuery)
+            ->selectRaw('DATE(payments.created_at) as day, SUM(payments.amount) as total')
+            ->groupBy('day')
+            ->orderBy('day', 'DESC')
+            ->get();
+
+        // Monthly Total
+        $monthlyTotal = (clone $totalQuery)
+            ->selectRaw("DATE_FORMAT(payments.created_at,'%Y-%m') as month, SUM(payments.amount) as total")
+            ->groupBy('month')
+            ->orderBy('month', 'DESC')
+            ->get();
+
+        // Yearly Total
+        $yearlyTotal = (clone $totalQuery)
+            ->selectRaw("YEAR(payments.created_at) as year, SUM(payments.amount) as total")
+            ->groupBy('year')
+            ->orderBy('year', 'DESC')
+            ->get();
     }
+
+    return view('admin.accounting.student-reviews', compact(
+        'students',
+        'dailyTotal',
+        'monthlyTotal',
+        'yearlyTotal'
+    ));
+}
 
     public function student_view($id)
     {
@@ -321,7 +366,7 @@ class AccountingController extends Controller
           if (!$student) {
              
               $payments = collect();
-
+            
               
           } else {
               $payments = Payment::with(['PaymentLink' => function ($query) {

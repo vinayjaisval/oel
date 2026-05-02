@@ -33,7 +33,13 @@
                     <div class="d-flex justify-content-start align-items-center">
                         <div class="col-md-5">
                             <div class="form-floating ">
-                                <input id="lead-total_credits" name="name" type="text" class="form-control " placeholder="NAME">
+                                <input id="lead-total_credits"
+                                    name="name"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="NAME"
+                                    value="{{ request()->name }}">
+                              
                                 <label for="lead-total_credits" class="form-label">Title</label>
                             </div>
                         </div>

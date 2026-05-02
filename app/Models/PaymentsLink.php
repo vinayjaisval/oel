@@ -10,25 +10,27 @@ class PaymentsLink extends Model
     use HasFactory;
 
 
-    protected $table ='payments_link';
+    protected $table = 'payments_link';
 
-    protected $guarded =[];
+    protected $guarded = [];
 
     public function master_service()
     {
-        return $this->belongsTo(MasterService::class,'master_service','id');
+        return $this->belongsTo(MasterService::class, 'master_service', 'id');
     }
     public function master_services()
     {
-        return $this->belongsTo(MasterService::class,'master_service','id');
+        return $this->belongsTo(MasterService::class, 'master_service', 'id');
     }
 
 
-    public function program(){
-        return $this->hasOne(Program::class,'id','program_id');
+    public function program()
+    {
+        return $this->hasOne(Program::class, 'id', 'program_id');
     }
 
     public function payments()
-{
-    return $this->hasOne(Payment::class,'fallowp_unique_id','fallowp_unique_id');
-}}
+    {
+        return $this->hasOne(Payment::class, 'fallowp_unique_id', 'fallowp_unique_id');
+    }
+}
