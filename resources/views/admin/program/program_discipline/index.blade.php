@@ -7,7 +7,7 @@
                 <div class="col-md-8">
                     <ol class="breadcrumb text-muted mb-0">
                         <li class="breadcrumb-item">
-                        <a href="{{route('dashboard')}}"> Dashboard</a>
+                            <a href="{{route('dashboard')}}"> Dashboard</a>
                         </li>
                         <li class="breadcrumb-item text-muted">
                             Manage Program Discipline
@@ -15,10 +15,10 @@
                     </ol>
                 </div>
                 @can('program_discipline.create')
-                    <div class="col-md-4">
-                        <a href="{{ route('create-program-discipline') }}" class="btn add-btn float-end">
-                            <i class="las la-plus"></i>Create New Program Discipline</a>
-                    </div>
+                <div class="col-md-4">
+                    <a href="{{ route('create-program-discipline') }}" class="btn add-btn float-end">
+                        <i class="las la-plus"></i>Create New Program Discipline</a>
+                </div>
                 @endcan
             </div>
         </div>
@@ -27,35 +27,42 @@
 <br>
 <div class="row">
     <div class="card-group">
-      <div class="card">
-        <div class="card-body myform">
-          <form id="eudcation" action="{{route('program-discipline')}}" method="get" class="d-flex justify-content-between">
-            <div class="col-md-8">
-                <div class="form-floating ">
-                    <input id="lead-total_credits" name="name" type="text" class="form-control " placeholder="Enter Exam Name" >
-                    <label for="lead-total_credits" class="form-label">NAME</label>
-                </div>
+        <div class="card">
+            <div class="card-body myform">
+                <form id="eudcation" action="{{route('program-discipline')}}" method="get" class="d-flex justify-content-between">
+                    <div class="col-md-8">
+                        <div class="form-floating ">
+
+                            <input id="lead-total_credits"
+                                name="name"
+                                type="text"
+                                class="form-control"
+                                placeholder="Enter Exam Name"
+                                value="{{ request()->name }}">
+
+                            <label for="lead-total_credits" class="form-label">NAME</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-info px-5 mx-2 float-end" id="submit" value="1">Search</button>
+                    </div>
+                    <div class="col-md-2 float-start">
+                        <a href="{{route('program-discipline')}}" class="btn btn-info px-5 mx-2">
+                            Reset
+                        </a>
+                    </div>
+                </form>
             </div>
-            <div class="col-md-2">
-              <button type="submit" class="btn btn-info px-5 mx-2 float-end" id="submit" value="1">Search</button>
-            </div>
-            <div class="col-md-2 float-start">
-                <a href="{{route('program-discipline')}}" class="btn btn-info px-5 mx-2">
-                    Reset
-                </a>
-            </div>
-          </form>
         </div>
-      </div>
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-12">
         @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
         @endif
         <div class="table-responsive">
             <table class="table table-striped custom-table mb-0">
@@ -79,10 +86,10 @@
                         <td class="text-wrap">{{ $item->name }}</td>
                         <td>{{ $item->status == 1 ? 'Active' : 'Inactive' }}</td>
                         @can('program_discipline.update')
-                          <td><a  href="{{route('edit-program-discipline',$item->id)}}" class="btn btn-info"><i class="fa-solid fa-pen"></i></a></td>
+                        <td><a href="{{route('edit-program-discipline',$item->id)}}" class="btn btn-info"><i class="fa-solid fa-pen"></i></a></td>
                         @endcan
                         @can('program_discipline.delete')
-                          <td><a href="{{route('delete-program-discipline',$item->id)}}" class="btn btn-warning"><i class="fa-solid fa-trash"></i></a></td>
+                        <td><a href="{{route('delete-program-discipline',$item->id)}}" class="btn btn-warning"><i class="fa-solid fa-trash"></i></a></td>
                         @endcan
                     </tr>
                     @endforeach
@@ -98,5 +105,5 @@
         </div>
     </div>
 </div>
-  @endsection
+@endsection
 @section('scripts')

@@ -94,7 +94,7 @@
                                           </td>
                                           @endif
                                           <td>{{$item->name}}</td>
-                                          <td><a class="text-success" href="{{url('university_details')}}/{{$item->program->university_name->id ?? null}}">{{$item->program->university_name->university_name ?? null}}</a></td>
+                                          <td class="text-success">{{$item->program->university_name->university_name ?? null}}</td>
                                           <td><a class="text-info" href="{{route('course-details')}}/{{$item->program->id ?? null}}">{{$item->program->name ?? null}}</a> </td>
                                           <td>
                                              @if((!empty($item->payments->payment_status) == 'success'))

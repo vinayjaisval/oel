@@ -76,7 +76,7 @@
             </div>
             <div class="col-md-6 text-end">
                 <h2 class="text-primary mb-2">INVOICE</h2>
-                <p class="mb-1">Invoice #: OEL-2024-00{{$student->id}}</p>
+                <p class="mb-1">Invoice #: OEL-{{ $student->created_at->format('Y') }}-00{{$student->id}}</p>
                 <p class="text-muted">Date: {{$student->created_at}}</p>
             </div>
         </div>
@@ -192,8 +192,8 @@
 
                         <tr class="total-row">
                             <td colspan="4" class="text-end"><strong>Payable</strong></td>
-                            <td class="text-end">{{ $sum }}</td>
-                            <td>{{$panding_sum}}</td>
+                            <td class="text-end">₹ {{ $sum }}</td>
+                            <td class="text-end">₹ {{ $panding_sum }}</td>
                         </tr>
                     </tbody>
                 </table>

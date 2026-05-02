@@ -32,7 +32,12 @@
           <form id="eudcation" action="{{route('program-sub-level')}}" method="get" class="d-flex justify-content-between">
             <div class="col-md-8">
                 <div class="form-floating ">
-                    <input id="lead-total_credits" name="name" type="text" class="form-control " placeholder="NAME" >
+                    <input id="lead-total_credits" 
+       name="name" 
+       type="text" 
+       class="form-control"
+       placeholder="NAME"
+       value="{{ request()->name }}">
                     <label for="lead-total_credits" class="form-label">NAME</label>
                 </div>
             </div>

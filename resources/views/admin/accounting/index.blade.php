@@ -258,31 +258,45 @@
     </div>
     <br>
 
-    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-    <script>
-        var chart = new CanvasJS.Chart("chartContainer", {
-            animationEnabled: true,
-            theme: "light2",
-            title:{
-                text: "Monthly Fees"
-            },
-            options: {
-                axisX: {
-                    labelAngle: -90
-                }
-            },
-            data: [{
-                type: "stackedColumn",
-                dataPoints: [
-                    @foreach ($feesMonthly as $month => $fees)
-                        @foreach ($fees as $serviceName => $feesAmount)
-                            { y: {{ $feesAmount }}, label: "{{ $serviceName }} - {{strftime('%B', mktime(0, 0, 0, $month, 10))}}" },
+   <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script>
+    var chart = new CanvasJS.Chart("chartContainer", {
+        animationEnabled: true,
+        theme: "light2",
+        title:{
+            text: "Monthly Fees (2026)"
+        },
+        axisX: {
+            labelAngle: -90
+        },
+        data: [{
+            type: "stackedColumn",
+            dataPoints: [
+                @for ($month = 1; $month <= 12; $month++)
+                    @php
+                        $year = 2026;
+                        $monthName = date('F', mktime(0, 0, 0, $month, 1, $year));
+                        $feesData = $feesMonthly[$month] ?? [];
+                    @endphp
+
+                    @if(count($feesData))
+                        @foreach ($feesData as $serviceName => $feesAmount)
+                            {
+                                y: {{ $feesAmount }},
+                                label: "{{ $serviceName }} - {{ $monthName }}"
+                            },
                         @endforeach
-                    @endforeach
-                ],
-            }]
-        });
-        chart.render();
-    </script>
-    </div>
+                    @else
+                        {
+                            y: 0,
+                            label: "No Data - {{ $monthName }}"
+                        },
+                    @endif
+                @endfor
+            ]
+        }]
+    });
+
+    chart.render();
+</script>
 @endsection
