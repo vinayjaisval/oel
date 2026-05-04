@@ -1,0 +1,847 @@
+﻿
+  temp_reference.html:16:  function gtag(){dataLayer.push(arguments);}
+  temp_reference.html:17:  gtag('js', new Date());
+  temp_reference.html:18:
+> temp_reference.html:19:  gtag('config', 
+'G-WD357BWFDW');</script><!--/sp-global-script-head--><!--/sp-global-script-head--><script src="https://app-widgets.jot
+form.io/scripts/getUrlReferrer.js"></script><!--/sp-global-script-head--><!--/sp-global-script-head--><!-- Google tag 
+(gtag.js) --><script async 
+src="https://www.googletagmanager.com/gtag/js?id=G-B663SH169X"></script><script>window.dataLayer = window.dataLayer || 
+[];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());   gtag('config', 
+'G-B663SH169X');</script><!--/sp-global-script-head--><!--sp-tracking-page-head--><!--/sp-tracking-page-head--><meta 
+charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href=""><styl
+e>a,body,div,h1,h2,h3,h5,html,img,p,q,s,u{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseli
+ne}body{line-height:1}q{quotes:none}q:after,q:before{content:"";content:none}a,a:hover,a:visited{text-decoration:none;c
+ursor:pointer}body{overflow-x:hidden;-webkit-font-smoothing:antialiased}p{margin-bottom:20px}p:last-child{margin-bottom
+:0}img{max-width:100%;border:0;-ms-interpolation-mode:bicubic;vertical-align:middle;height:auto}a{color:#1b86f1}.VF{pos
+ition:relative;-webkit-box-sizing:border-box;box-sizing:border-box}.WF,.XF{position:absolute;top:0;left:0;width:100%;he
+ight:100%}.XF{z-index:0;overflow:hidden}.YF{-webkit-box-sizing:border-box;box-sizing:border-box;width:100%}.ZF{position
+:relative;z-index:2}.aF,.bF{position:absolute;top:0;left:0;width:100%;height:100%}.cF{position:relative;overflow:hidden
+;line-height:0;z-index:2;pointer-events:none}.cF svg{width:100%;height:100%;fill:currentColor}.dF svg{-webkit-transform
+:rotateY(180deg);transform:rotateY(180deg)}.eF{bottom:0}.fF{z-index:3}.gF{position:relative;padding:0 10px;z-index:2;ma
+rgin-bottom:25px}.gF,.hF{margin-left:auto;margin-right:auto}.hF{width:100%;max-width:1180px}.iF{display:-webkit-box;dis
+play:-ms-flexbox;display:flex;margin:0 -25px;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start;-webki
+t-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-ms-flex-wrap:nowrap;fle
+x-wrap:nowrap}.jF>.gF>.iF{-webkit-box-align:stretch;-ms-flex-align:stretch;-ms-grid-row-align:stretch;align-items:stret
+ch}.kF>.gF>.iF{margin-left:-10px;margin-right:-10px}.lF>.gF>.iF{margin-left:-25px;margin-right:-25px}.mF>.gF>.iF{margin
+-left:-10px;margin-right:-10px}.nF{padding:0 15px;position:relative;-webkit-box-sizing:border-box;box-sizing:border-box
+;display:-webkit-box;display:-ms-flexbox;display:flex}.jF>.gF>.iF>.nF{-webkit-box-align:stretch;-ms-flex-align:stretch;
+align-items:stretch}.tatsu-column-inner{width:100%;position:relative;border-style:solid;border-color:transparent;-webki
+t-transition:-webkit-box-shadow .3s ease,-webkit-transform .3s ease;transition:-webkit-box-shadow .3s 
+ease,-webkit-transform .3s ease;-o-transition:box-shadow .3s ease,transform .3s ease;transition:box-shadow .3s 
+ease,transform .3s ease;transition:box-shadow .3s ease,transform .3s ease,-webkit-box-shadow .3s 
+ease,-webkit-transform .3s ease;padding:10px}.oF{width:100%}.jF>.gF>.iF>.nF>.tatsu-column-inner{display:-webkit-box;dis
+play:-ms-flexbox;display:flex}.jF>.gF>.iF>.pF>.tatsu-column-inner{-webkit-box-align:center;-ms-flex-align:center;align-
+items:center}.jF>.gF>.iF>.qF>.tatsu-column-inner{-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start}.k
+F>.gF>.iF>.nF{padding:0}.lF>.gF>.iF>.nF{padding:0 15px}.mF>.nF,.rF>.gF>.iF>.sF{padding:0}.sF{width:100%}.tF{width:25%}.
+uF{width:50%}.aF{cursor:pointer}.aF,.oF{z-index:2}.oF{position:relative}.vF{z-index:0;overflow:hidden}.vF,.wF{position:
+absolute;top:0;left:0;width:100%;height:100%}.xF>.rF{margin:0 -10px}.VF 
+.rF:last-child>.gF>.iF>.nF>.tatsu-column-inner>.oF>.xF>h1:last-child,.VF 
+.rF:last-child>.gF>.iF>.nF>.tatsu-column-inner>.oF>.xF>h2:last-child,.VF 
+.rF:last-child>.gF>.iF>.nF>.tatsu-column-inner>.oF>.xF>h3:last-child,.VF 
+.rF:last-child>.gF>.iF>.nF>.tatsu-column-inner>.oF>.xF>h5:last-child{margin-bottom:0}.VF 
+.rF:not(:last-child)>.gF>.iF>.nF>.tatsu-column-inner>.oF>.xF>h1:last-child,.VF 
+.rF:not(:last-child)>.gF>.iF>.nF>.tatsu-column-inner>.oF>.xF>h2:last-child,.VF 
+.rF:not(:last-child)>.gF>.iF>.nF>.tatsu-column-inner>.oF>.xF>h3:last-child,.VF 
+.rF:not(:last-child)>.gF>.iF>.nF>.tatsu-column-inner>.oF>.xF>h5:last-child{margin-bottom:20px}.nF 
+.bF{-webkit-transition:opacity .4s ease;-o-transition:opacity .4s ease;transition:opacity .4s ease}.xF{-webkit-box-sizi
+ng:border-box;box-sizing:border-box}.jF>.gF>.iF>.yF>.tatsu-column-inner>.oF>.xF,.xF{width:100%}.tatsu-module{margin-bot
+tom:50px}.zF{text-align:center}@media only screen and (min-width:1377px){div.AG{display:none!important}}@media only 
+screen and (min-width:1025px) and (max-width:1376px){div.BG{display:none!important}}@media only screen and 
+(max-width:1280px){.rF.hF>.gF>.iF>.nF:not(.sF) 
+.iF{-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row}}@media only 
+screen and (max-width:1024px){.nF:not(.sF) 
+.iF{-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row}}@media only 
+screen and (max-width:1366px){.iF{-ms-flex-wrap:wrap;flex-wrap:wrap}}@media only screen and (min-width:1025px) and 
+(max-width:1220px){.hF{max-width:calc(100% - 60px)}}@media only screen and (min-width:960px) and 
+(max-width:1024px){.hF{max-width:900px}}@media only screen and (min-width:768px) and 
+(max-width:1024px){div.CG{display:none!important}.tF:first-child,.tF:nth-child(2){margin-bottom:45px}}@media only 
+screen and (min-width:768px) and (max-width:959px){.hF{max-width:740px}}@media only screen and 
+(max-width:767px){.hF{max-width:90vw}.gF{padding:0;margin-bottom:45px}.DG{margin-bottom:0}.xF>.rF{margin:0}.rF .gF 
+.iF{-webkit-box-orient:vertical;-webkit-box-direction:normal;margin-left:0;margin-right:0}.nF{margin:0 0 45px}.rF>.gF>.
+iF>.nF,.rF>.gF>.iF>.nF>.tatsu-column-inner{padding:0}.jF>.gF>.iF>.nF.yF:not(.EG){min-height:350px}.EG.yF>.tatsu-column-
+inner>.oF>.xF{padding:0!important}.VF 
+.rF:last-child>.gF>.iF>.nF>.tatsu-column-inner{margin-bottom:0}div.FG{display:none!important}}@media only screen and 
+(min-width:480px) and (max-width:767px){.hF{max-width:440px}}.GG:after,.GG:before{content:" ";display:table}.GG:after{c
+lear:both}html{overflow-x:hidden}.tatsu-single-image-inner{overflow:hidden;border-style:solid}.DG{margin-bottom:0}.VF{w
+idth:100%}*{-webkit-box-sizing:border-box;box-sizing:border-box}.HG{width:100%;line-height:0;margin:0 0 
+30px}.tatsu-image-lazyload img{opacity:0;-webkit-transition:opacity .3s ease;transition:opacity .3s 
+ease}.tatsu-single-image-inner{display:inline-block;position:relative}.HG a,.HG 
+img{position:absolute;top:0;left:0;width:100%;height:100%}.HG 
+img{-webkit-box-sizing:border-box;box-sizing:border-box;border:0 solid 
+transparent;-o-object-fit:cover;object-fit:cover}.HG.zF{text-align:center}@media only screen and 
+(max-width:767px){.HG.tatsu-module .tatsu-single-image-inner{max-width:100%;-webkit-transform:translateZ(0);transform:t
+ranslateZ(0)}}.countdown-section{line-height:1}.be-start-animation{-webkit-transition:-webkit-transform 
+.7s,-webkit-scale .7s,opacity .7s;-webkit-transition:scale .7s,opacity .7s,-webkit-transform .7s;transition:scale 
+.7s,opacity .7s,-webkit-transform .7s;transition:transform .7s,scale .7s,opacity .7s;transition:transform .7s,scale 
+.7s,opacity .7s,-webkit-transform .7s}.tatsu-gallery-thumb-img-wrap img{height:100%;-o-object-fit:cover;object-fit:cove
+r}.be-col{padding:0;margin:0}.be-grid{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:start;-ms-
+flex-align:start;align-items:flex-start;-ms-flex-wrap:wrap;flex-wrap:wrap}.be-grid.be-grid-initialized{visibility:visib
+le}.be-col{-webkit-box-flex:0;-ms-flex:0 0 auto;flex:0 0 auto;padding:0 15px;width:33.33%;-webkit-box-sizing:border-box
+;box-sizing:border-box;margin-bottom:30px}.be-lazy-load{opacity:0;-webkit-transition:opacity .5s;transition:opacity .5s
+}.be-lazy-loaded{opacity:1}.be-col-hide{opacity:0;-webkit-transform:translate3d(0,100px,0);transform:translate3d(0,100p
+x,0)}.be-col-visible{opacity:1;-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-transition:opacity 
+.5s;transition:opacity .5s}.be-embed-placeholder{position:relative}.be-embed-placeholder:before{content:"";padding-top:
+56.25%;display:block}.be-embed-placeholder .be-vimeo-embed,.be-embed-placeholder .be-youtube-embed{position:absolute;to
+p:0;left:0;width:100%;height:100%;opacity:0}.countdown-section,.tatsu-form-validate-show{display:block}.IG{margin:0 0 
+20px}.JG{margin:0 0 12px}.KG{margin:0}.LG{margin:0 auto}.tatsu-mobile-menu{position:absolute;top:100%;width:100%;displa
+y:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direct
+ion:column;flex-direction:column;z-index:5;height:0;overflow:hidden}.open.tatsu-mobile-menu{height:auto}@media only 
+screen and (min-width:1024px){.MG,.tatsu-mobile-menu{display:none}}@media only screen and (max-width:1024px){.MG,.tatsu
+-mobile-menu{display:-webkit-box;display:-ms-flexbox;display:flex}.MG{height:50px;-webkit-box-align:center;-ms-flex-ali
+gn:center;align-items:center;outline:none}}.tatsu-mobile-menu{background:#fff}.NG{margin-bottom:0}.tatsu-amp-bg-video 
+video{object-fit:cover}@media only screen and (max-width:1377px) {}@media only screen and (min-width:768px) and 
+(max-width: 1024px) {}@media only screen and (max-width: 767px) {}.A{font-family:"Inter",sans-serif;}.B{font-weight:700
+;}.C{font-weight:600;}.D{font-size:18px;}.E{line-height:1.2em;}.F{line-height:1.25em;}.G{line-height:1.5em;}.H{text-tra
+nsform:none;letter-spacing:0px;}.I{color:rgba(0,0,92,1);}.J{font-weight:800;font-size:65px;}.K{font-size:48px;}.L{font-
+weight:500;font-size:26px;}.M{font-size:46px;}.N{font-size:28px;}.O{font-size:24px;}.P{font-size:20px;}.Q{letter-spacin
+g:1px;text-transform:uppercase;color:rgba(60,80,224,1);}.R{font-weight:400;color:rgba(98,113,147,1);}.S{font-size:16px;
+line-height:1em;color:#ffffff;}.bB{margin:0px 0px 30px 0px;}.BB{width:80%;}.cC{margin:0px 0px -300px 
+0px;}.CC{font-weight:900;font-style:italic;}.DD{padding:14px 0px 0px 0px;}.aB{margin:0px 0px 40px 
+0px;}.AB{width:70%;}.bC{background-color:rgba(253,180,0,1);}.BC{border-radius:12px;}.a{border-width:2px 2px 2px 
+2px;border-color:rgba(0,0,0,1);}.CD{margin:0px 0px 6px 
+0px;}.aC{padding-bottom:66.8%;}.AC{border-radius:20px;}.BD{background-color:rgba(108,72,240,0.1);}.b{border-width:1px 
+1px 1px 1px;border-color:rgba(245,245,245,1);}.aD{width:48%;}.AD{padding-bottom:84.12698412698413%;}.c{font-family:"Bue
+nosAires";}.d{font-family:"Inter";}.e{box-shadow:0px 0px 0px 0px rgba(0,0,0,0);}.f{box-shadow:0px 60px 80px -32px 
+rgba(214,215,216,0.57);}.g{fill:#ffffff;}.h{fill:rgba(60,80,224,1);}.zB{padding:26px 24px 26px 24px;}.ZB{margin:0px 
+0px 0px 0px;}.i{color:#ffffff;}.yB{padding:1px;}.YB{background:rgba(244,247,252,1);}.zC{margin-bottom:40px;}.ZC{border-
+width:1px 0px 0px 0px;border-radius:30px 30px 30px 30px;}.j{color:rgba(60,80,224,1);}.xB{padding:52px 40px 38px 
+40px;}.XB{transform:translate3d(0px,0px, 0);}.yC{padding-bottom:26.93333333333333%;}.YC{font-size:24px;}.ZD{padding-bot
+tom:17.552083333333332%;}.k{color:#FFFFFF;}.wB{padding:12px 0px 0px 
+0px;}.WB{text-transform:capitalize;}.xC{padding:27px 0px 61px 
+0px;}.XC{width:127.091%;}.YD{background-color:rgba(60,80,224,1);}.l{color:rgba(211,41,46,1);}.vB{padding:11px 0px 0px 
+0px;}.VB{text-transform:none;}.wC{width:41%;}.WC{margin:0px 0px 330px 0px;}.XD{margin:0px 0px 12px 
+0px;}.m{color:rgba(0,0,92,1);}.uB{padding:10px 0px 0px 0px;}.UB{margin-bottom:25px;}.vC{background-color:rgba(98,113,14
+7,1);}.VC{width:1180px;}.WD{width:1920px;}.n{color:rgba(237,243,255,1);}.tB{padding:53px 35px 50px 
+35px;}.TB{margin-bottom:30px;}.uC{padding:0px 0px 35px 0px;}.UC{padding-bottom:65.71428571428571%;}.VD{line-height:35px
+;width:88%;font-size:31px;}.o{background-color:#FFFFFF;}.sB{padding:9px 0px 0px 0px;}.SB{padding-bottom:53.142857142857
+14%;}.tC{color:rgba(212,227,255,1);}.TC{background-image:url(https://studies-overseascom.swipepages.media/2023/8/5e1c26
+f40913e0001c2894fa/ellipse-153--2-.png);}.UD{margin-bottom:0px;}.p{background-color:rgba(212,227,255,1);}.rB{padding:8p
+x 0px 0px 0px;}.RB{padding-bottom:100%;}.sC{width:26.3%;}.SC{background-image:url(https://studies-overseascom.swipepage
+s.media/2023/6/63c0e17f10641c0010f5cf05/ellipse_35__7_-removebg-preview.png);}.TD{background-color:rgba(237,243,255,1);
+}.q{background-color:rgba(244,247,252,1);}.qB{padding:90px 0px 90px 
+0px;}.QB{padding-bottom:58.59375%;}.rC{padding:30px 0px 0px 
+0px;}.RC{font-size:18px;}.SD{width:36%;}.r{background-color:rgba(255,255,255,1);}.pB{padding:0px 0px 0px 0px;}.PB{heigh
+t:73px;}.qC{background-image:url(https://studies-overseascom.swipepages.media/2023/8/5e1c26f40913e0001c2894fa/ellipse-1
+53.png);}.QC{font-size:28px;}.RD{margin:11px 0px 1px 0px;}.s{border-width:0px 0px 0px 0px;}.oB{padding:38px 38px 38px 
+38px;}.OB{background:rgba(98,113,147,0.1);height:1px;}.pC{background-color:rgba(235,238,252,1);border-radius:20px 20px 
+20px 20px;}.PC{font-size:17px;}.QD{padding:80px 0px 80px 
+0px;}.t{text-align:left;}.nB{mix-blend-mode:normal;}.NB{border-radius:5px 5px 5px 5px;width:700px;}.oC{background-image
+:url(https://studies-overseascom.swipepages.media/2023/8/5e1c26f40913e0001c2894fa/ellipse-153--1-.png);}.OC{font-size:2
+7px;}.PD{background-color:rgba(255,86,112,1);}.u{text-align:center;}.mB{border-style:solid;}.MB{width:512px;}.nC{height
+:100px;}.NC{font-size:16px;}.OD{margin:-16px 0px -15px 0px;}.v{width:25%;}.lB{margin:0px 0px 160px 0px;}.LB{width:26.65
+%;}.mC{background-color:rgba(100,100,122,0.1);}.MC{font-size:25px;}.ND{padding-bottom:84%;}.W{font-weight:600;font-size
+:20px;line-height:1em;}.w{width:10%;}.kB{margin:0px 0px 18px 
+0px;}.KB{width:751px;}.lC{line-height:36px;}.LC{font-size:23px;}.MD{padding:37px 37px 37px 
+37px;}.X{font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe 
+UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica 
+Neue',sans-serif;letter-spacing:0;font-weight:400;line-height:1.3em;}.x{width:20%;}.jB{margin:0px 0px 15px 0px;}.JB{wid
+th:29.28%;}.kC{line-height:1.2em;text-transform:uppercase;font-weight:700;letter-spacing:1px;}.KC{max-width:100%;}.LD{p
+adding-bottom:90.16949152542372%;}.Y{background-size:cover;}.y{width:30%;}.iB{margin:0px 0px 36px 0px;}.IB{width:24.45%
+;}.jC{line-height:40px;font-size:26px;}.JC{max-width:none;}.KD{background-color:rgba(255,115,97,0.1);}.Z{background-rep
+eat:no-repeat;background-attachment:scroll;background-position:center 
+center;background-size:initial;}.z{width:50%;}.hB{margin:0px 0px 25px 0px;}.HB{width:33.33%;}.iC{padding:0px 0px 74px 0
+px;}.IC{background-image:url(https://studies-overseascom.swipepages.media/2020/2/content-blob-blue.svg);}.JD{margin-bot
+tom:-12px;}.gB{margin:0px 0px 14px 0px;}.GB{width:100%;}.hC{width:18.1%;}.HC{background-image:url(https://studies-overs
+eascom.swipepages.media/2023/6/63c0e17f10641c0010f5cf05/group-1995.svg);}.ID{width:50.83%;}.fB{margin:0px 0px 45px 
+0px;}.FB{width:180px;}.gC{width:1260px;}.GC{letter-spacing:0px;}.HD{width:49.17%;}.eB{margin:0px 0px 21px 
+0px;}.EB{width:100;}.fC{background-color:rgba(209,231,251,1);}.FC{border-image:none;}.GD{width:82%;}.dB{margin:0px 0px 
+10px 0px;}.DB{width:18px;}.eC{margin:0px 0px 1px 0px;}.EC{font-weight:500;}.FD{width:42%;}.cB{margin:0px 0px 20px 0px;}
+.CB{width:90%;}.dC{margin-bottom:60px;}.DC{margin-top:0px;}.ED{width:19.6%;}.bD:after{color:rgba(60,80,224,1);}.cD:afte
+r{color:#FFFFFF;}.dD:after{border-width:1px;}.eD:after{border-color:rgba(60,80,224,1);border-image:none;}.fD:after{back
+ground:rgba(255,86,112,1);}.gD:before{background:#FFFFFF;}.hD:before{background:rgba(60,80,224,1);}.iD:before{border-im
+age:none;border-color:rgba(60,80,224,1);border-width:1px;}@media only screen and (max-width:1377px) {.jD{padding:0px 
+0px 0px 0px;}.kD{transform:translate3d(0px,0px, 0);}.lD{border-width:0px 0px 0px 0px;}.mD{width:50%;}.nD{margin:0px 
+0px 0px 0px;}}@media only screen and (min-width:768px) and (max-width: 1024px) {.EE{margin:0px 0px 0px 
+0px;}.DE{font-size:25px;}.CE{width:30%;}.BE{padding:0px 20px 0px 20px;}.AE{font-size:26px;}.zD{margin:30px 0px 0px 
+0px;}.yD{border-width:0px 0px 0px 0px;}.xD{margin-top:0px;}.wD{margin:0px 0px 30px 
+0px;}.vD{margin-bottom:-33px;}.uD{width:100%;}.tD{width:50%;}.sD{transform:translate3d(0px,0px, 0);}.rD{padding:60px 
+20px 60px 20px;}.qD{padding:30px 10px 30px 10px;}.pD{padding:60px 0px 60px 0px;}.oD{padding:0px 0px 0px 
+0px;}.HE{margin-bottom:25px;}.GE{transform:translate3d(183px,20px, 0);}.FE{padding:19px 0px 0px 0px;}}@media only 
+screen and (max-width: 767px) {.T{font-size:42px;}.U{font-size:39px;}.V{font-size:34px;}.eE{margin:11px 0px 10px 
+0px;}.FF{width:80%;}.dE{margin:0 0 0px 0;}.EF{margin-bottom:10px;}.cE{transform:translate3d(7px,0px, 
+0);}.DF{padding:10px 0px 0px 0px;}.bE{transform:translate3d(-8px,0px, 0);}.CF{margin:-6px 0px 0px 
+0px;}.aE{transform:translate3d(0px,0px, 0);}.BF{line-height:30px;}.AF{line-height:40px;font-size:27px;}.zE{padding:0px 
+0px 18px 0px;}.ZE{text-transform:none;}.yE{padding:0px 5px 0px 5px;}.YE{margin-bottom:25px;}.xE{padding:10px 0px 8px 0p
+x;}.XE{margin-bottom:20px;}.wE{margin-bottom:37px;}.WE{margin-bottom:0;}.vE{width:90%;}.VE{margin-bottom:0px;}.uE{width
+:120%;}.UE{height:43px;}.tE{line-height:27px;font-family:"BuenosAires";font-weight:500;}.TE{width:95.63%;}.UF{margin-bo
+ttom:28px;}.sE{padding:60px 10px 60px 10px;}.SE{width:98.35%;}.TF{padding-bottom:18.95625%;}.rE{font-size:16px;}.RE{wid
+th:100%;}.SF{width:151%;transform:translateX(-33.775%);}.qE{font-size:17px;}.QE{width:50%;}.RF{text-align:left;}.pE{fon
+t-size:20px;}.PE{width:40%;}.QF{margin:0px 0px 11px 0px;}.oE{max-width:none;}.OE{width:95%;}.PF{line-height:28px;font-s
+ize:21px;}.nE{margin-top:0px;}.NE{width:85%;}.OF{transform:translate3d(6px,0px, 0);}.mE{padding:0px 0 0 
+0;}.ME{width:35%;}.NF{padding:11px 5px 0px 5px;}.lE{padding:40px 30px 40px 30px;}.LE{width:15%;}.MF{padding:0px 50px 
+0px 50px;}.kE{padding:60px 0px 60px 0px;}.KE{text-align:center;}.LF{padding:16px 0px 24px 0px;}.jE{padding:0px 10px 
+0px 10px;}.JE{border-width:0px 0px 0px 0px;}.KF{font-size:26px;}.iE{padding:0px 0px 0px 
+0px;}.IE{border-style:solid;border-width:2px 2px 2px 2px;border-image:none;border-color:rgba(0,0,0,1);}.JF{margin:0px 
+0px 29px 0px;}.hE{margin:0px 0px 20px 0px;}.IF{padding:60px 0px 40px 0px;}.gE{margin:0px 0px 0px 0px;}.HF{padding:18px 
+0px 0px 0px;}.fE{margin:0px 0 0 0;}.GF{padding:25px 0px 0px 0px;}}@font-face {
+  temp_reference.html:20:                font-family: 'Inter';
+  temp_reference.html:21:                src: url('https://assets.swipepages.com/fonts/inter/bold/Inter-Bold.woff') 
+format('woff'), url('https://assets.swipepages.com/fonts/inter/bold/Inter-Bold.eot?#iefix') 
+format('embedded-opentype'),  url('https://assets.swipepages.com/fonts/inter/bold/Inter-Bold.otf')  format('opentype'),
+> temp_reference.html:22:                           
+url('https://assets.swipepages.com/fonts/inter/bold/Inter-Bold.ttf')  format('truetype'), 
+url('https://assets.swipepages.com/fonts/inter/bold/Inter-Bold.svg#Inter-Blod') format('svg');
+  temp_reference.html:23:                font-weight: 700;
+  temp_reference.html:24:                font-style: normal;
+  temp_reference.html:25:                font-display: swap;
+  temp_reference.html:26:              }@font-face {
+  temp_reference.html:27:                font-family: 'Inter';
+  temp_reference.html:28:                src: 
+url('https://assets.swipepages.com/fonts/inter/semibold/Inter-SemiBold.woff') format('woff'), 
+url('https://assets.swipepages.com/fonts/inter/semibold/Inter-SemiBold.eot?#iefix') format('embedded-opentype'),  
+url('https://assets.swipepages.com/fonts/inter/semibold/Inter-SemiBold.otf')  format('opentype'),
+> temp_reference.html:29:                           
+url('https://assets.swipepages.com/fonts/inter/semibold/Inter-SemiBold.ttf')  format('truetype'), 
+url('https://assets.swipepages.com/fonts/inter/semibold/Inter-SemiBold.svg#Inter-SemiBold') format('svg');
+  temp_reference.html:30:                font-weight: 600;
+  temp_reference.html:31:                font-style: normal;
+  temp_reference.html:32:                font-display: swap;
+  temp_reference.html:33:              }@font-face {
+  temp_reference.html:34:                font-family: 'Inter';
+  temp_reference.html:35:                src: 
+url('https://assets.swipepages.com/fonts/inter/regular/Inter-Regular.woff') format('woff'), 
+url('https://assets.swipepages.com/fonts/inter/regular/Inter-Regular.eot?#iefix') format('embedded-opentype'),  
+url('https://assets.swipepages.com/fonts/inter/regular/Inter-Regular.otf')  format('opentype'),
+> temp_reference.html:36:                           
+url('https://assets.swipepages.com/fonts/inter/regular/Inter-Regular.ttf')  format('truetype'), 
+url('https://assets.swipepages.com/fonts/inter/regular/Inter-Regular.svg#Inter-Regular') format('svg');
+  temp_reference.html:37:                font-weight: 400;
+  temp_reference.html:38:                font-style: normal;
+  temp_reference.html:39:                font-display: swap;
+  temp_reference.html:40:              }@font-face {
+  temp_reference.html:41:                font-family: 'Inter';
+  temp_reference.html:42:                src: 
+url('https://assets.swipepages.com/fonts/inter/extrabold/Inter-ExtraBold.woff') format('woff'), 
+url('https://assets.swipepages.com/fonts/inter/extrabold/Inter-ExtraBold.eot?#iefix') format('embedded-opentype'),  
+url('https://assets.swipepages.com/fonts/inter/extrabold/Inter-ExtraBold.otf')  format('opentype'),
+> temp_reference.html:43:                          
+url('https://assets.swipepages.com/fonts/inter/extrabold/Inter-ExtraBold.ttf')  format('truetype'), 
+url('https://assets.swipepages.com/fonts/inter/extrabold/Inter-ExtraBold.svg#Inter-ExtraBold') format('svg');
+  temp_reference.html:44:                font-weight: 800;
+  temp_reference.html:45:                font-style: normal;
+  temp_reference.html:46:                font-display: swap;
+  temp_reference.html:47:              }@font-face {
+  temp_reference.html:48:                font-family: 'Inter';
+  temp_reference.html:49:                src: 
+url('https://assets.swipepages.com/fonts/inter/medium/Inter-Medium.woff') format('woff'), 
+url('https://assets.swipepages.com/fonts/inter/medium/Inter-Medium.eot?#iefix') format('embedded-opentype'),  
+url('https://assets.swipepages.com/fonts/inter/medium/Inter-Medium.otf')  format('opentype'),
+> temp_reference.html:50:                           
+url('https://assets.swipepages.com/fonts/inter/medium/Inter-Medium.ttf')  format('truetype'), 
+url('https://assets.swipepages.com/fonts/inter/medium/Inter-Medium.svg#Inter-Medium') format('svg');
+  temp_reference.html:51:                font-weight: 500;
+  temp_reference.html:52:                font-style: normal;
+  temp_reference.html:53:                font-display: swap;
+  temp_reference.html:56:                    font-family: BuenosAires;
+  temp_reference.html:57:                    
+src:url(https://studies-overseascom.swipepages.media/64be52a56efbd7001077fa82/fonts/BuenosAires-Italic-900-Black.woff) 
+format("woff"),
+  temp_reference.html:58:                        
+url(https://studies-overseascom.swipepages.media/64be52a56efbd7001077fa82/fonts/BuenosAires-Italic-900-Black.woff2) 
+format("woff2"),
+> temp_reference.html:59:                        
+url(https://studies-overseascom.swipepages.media/64be52a56efbd7001077fa82/fonts/BuenosAires-Italic-900-Black.svg) 
+format("svg"),
+  temp_reference.html:60:                        
+url(https://studies-overseascom.swipepages.media/64be52a56efbd7001077fa82/fonts/BuenosAires-Italic-900-Black.eot) 
+format("embedded-opentype");
+  temp_reference.html:61:                    font-weight:900;
+  temp_reference.html:62:                    font-style:italic;
+  temp_reference.html:65:                    font-family: BuenosAires;
+  temp_reference.html:66:                    src:url(https://studies-overseascom.swipepages.media/64be52a56efbd7001077f
+a82/fonts/BuenosAires-Normal-500-Medium.woff) format("woff"),
+  temp_reference.html:67:                        
+url(https://studies-overseascom.swipepages.media/64be52a56efbd7001077fa82/fonts/BuenosAires-Normal-500-Medium.woff2) 
+format("woff2"),
+> temp_reference.html:68:                        
+url(https://studies-overseascom.swipepages.media/64be52a56efbd7001077fa82/fonts/BuenosAires-Normal-500-Medium.svg) 
+format("svg"),
+  temp_reference.html:69:                        
+url(https://studies-overseascom.swipepages.media/64be52a56efbd7001077fa82/fonts/BuenosAires-Normal-500-Medium.eot) 
+format("embedded-opentype");
+  temp_reference.html:70:                    font-weight:500;
+  temp_reference.html:71:                    font-style:normal;
+  temp_reference.html:74:        window.open('https://www.studies-overseas.com/thank-you', '_blank');
+  temp_reference.html:75:      }
+  temp_reference.html:76:    };
+> temp_reference.html:77:    window?.addEventListener("message", onMessage);</script><!--/sp-global-script-bodyClose-->
+<!--/sp-global-script-bodyClose--><!--/sp-global-script-bodyClose--><!--/sp-global-script-bodyClose--><!--sp-tracking-p
+age-bodyOpen--><!--/sp-tracking-page-bodyOpen--><div class="tatsu-Qy91hlWG26 VF GG tatsu-section-offset TD gE"><div 
+class="YF GG rC GF"><div class="tatsu-section-pad-inner"><div class="ZF"><div class="rF be-preview GG tatsu-RXsNxsuCy_ 
+lF hF jF mF"><div class="gF DG GB"><div class="iF"><div class="nF NG GG EG qF tatsu-O-qDETqzW sF GB kD sD aE"><div 
+class="tatsu-column-inner gradientClass"><div class="oF"><div class="xF jD oD iE"><div class="HG tatsu-module 
+tatsu-F15Mlfe0p NG zF tatsu-image-lazyload tatsu-F15Mlfe0p XB"><div class="tatsu-single-image-inner x JC CE QE"><div 
+class="tatsu-single-image-padding-wrap yC"></div><img 
+data-srcset="https://studies-overseascom.swipepages.media/2024/6/64be52a56efbd7001077fa82/kc-logo-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/6/64be52a56efbd7001077fa82/kc-logo-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/6/64be52a56efbd7001077fa82/kc-logo-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/6/64be52a56efbd7001077fa82/kc-logo.webp 750w" 
+sizes="(max-width: 767px) 50vw,(max-width: 1024px) 30vw,(max-width: 1377px) 232px, 232px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/6/64be52a56efbd7001077fa82/kc-logo.webp" 
+data-webp="0"></div></div></div></div><div class="vF"><div 
+class="wF"></div></div></div></div></div></div></div></div></div></div><div class="XF"><div 
+class="WF"></div></div><div class="bF tatsu-section-overlay nB"></div><div class="cF eF fF PB tC UE"><svg 
+preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 217"><g fill-rule="evenodd" 
+transform="matrix(-1 0 0 1 1920 0)"><path d="M0,57.46875 C203.364583,135.217754 494.835938,156.564108 
+874.414062,121.507813 C1192.61198,-13.9827666 1541.14063,-35.3291208 1920,57.46875 L1920,207 L0,207 L0,57.46875 Z" 
+opacity=".3"/><path d="M0,79 C292.46875,165.453125 612.46875,165.453125 960,79 C1307.53125,-7.453125 
+1627.53125,-7.453125 1920,79 L1920,207 L0,207 L0,79 Z" opacity=".6"/><path d="M0,89 C288.713542,146.786458 
+608.713542,146.786458 960,89 C1311.28646,31.2135417 1631.28646,31.2135417 1920,89 L1920,217 L0,217 L0,89 
+Z"/></g></svg></div></div><div class="tatsu-f-R5aIvQg8 VF GG FG tatsu-section-offset FG p cC" id="1"><div class="YF GG 
+pB"><div class="tatsu-section-pad-inner"><div class="ZF"><div class="rF be-preview GG tatsu-tSI_g_bzBE lF hF jF mF 
+DC"><div class="gF GB UB"><div class="iF"><div class="nF NG GG EG qF tatsu-nyg3vtOtI sF GB kD sD aE"><div 
+class="tatsu-column-inner gradientClass"><div class="oF"><div class="xF jD oD iE"><div class="tatsu-module 
+tatsu-Uok8Se5OKD h1 IG tatsu-title-wrap-h1 FG u eB rB"><h1 class="tatsu-title KG A E H I J c GB VB EC jC DE T">Book 
+Your Free Online Counselling &amp;<br>Start Your Study Abroad Journey</h1></div><div class="tatsu-module 
+tatsu-SLi284BzK h2 IG tatsu-title-wrap-h2 NG u vB"><h2 class="tatsu-title LG A B F H I K c l GB VB EC GC OC AE 
+U">Select Your Dream Study Destination !</h2></div></div></div><div class="vF"><div 
+class="wF"></div></div></div></div></div></div></div><div class="rF be-preview GG tatsu-LgGbmhmqAW lF hF jF"><div 
+class="gF GB"><div class="iF jE"><div class="nF GG pF tatsu-YQ09O9lFv tF IB kD sD tD aE RE"><div 
+class="tatsu-column-inner gradientClass a r mB BC FC"><div class="oF"><div class="xF jD oD iE"><div class="rF 
+be-preview GG tatsu-jl9j4KajR3 kF jF tatsu-inner-row-wrap"><div class="gF DG"><div class="iF"><div class="nF GG EG pF 
+tatsu-DPBmLxJ5N uF JB kD sD RE aE dE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF 
+uB"><div class="HG tatsu-module tatsu-cpunK5EwJ NG zF tatsu-image-lazyload tatsu-cpunK5EwJ XB gE"><div 
+class="tatsu-single-image-inner GB JC PE"><div class="tatsu-single-image-padding-wrap QB"></div><img 
+data-srcset="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/1-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/1-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/1-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/1.png 512w" sizes="(max-width: 
+767px) 40vw,(max-width: 1024px) 100vw,(max-width: 1377px) 339.648px, 339.648px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/1.png" data-extension=".png" 
+data-webp="1"></div></div></div></div><div class="vF"><div class="wF"></div></div></div></div><div class="nF NG GG EG 
+pF tatsu-7OiRVG6Fcv uF ZB AB kD sD aE RE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div 
+class="xF uB"><div class="tatsu-module tatsu-xDfuQGLS6 h5 IG JG NG t KE"><h5 class="tatsu-title KG A C G H I O GB VB 
+RC">United States</h5></div></div></div><div class="vF"><div 
+class="wF"></div></div></div></div></div></div></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-usa?prefill=%7B%22Preferred%20Destination%22%3A%22United%20States%22%7D" 
+class="aF"></a></div></div><div class="nF GG pF tatsu-gJNrLc2o1s tF IB kD tD sD RE aE"><div class="tatsu-column-inner 
+gradientClass a r mB BC FC"><div class="oF"><div class="xF jD oD iE"><div class="rF be-preview GG tatsu-UX8PdJOIu7 kF 
+jF tatsu-inner-row-wrap"><div class="gF DG"><div class="iF"><div class="nF GG EG pF tatsu-BrCqNH3Bv uF y kD sD aE dE 
+RE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF uB"><div class="HG tatsu-module 
+tatsu-9f1uSQeQe NG zF tatsu-image-lazyload tatsu-9f1uSQeQe XB"><div class="tatsu-single-image-inner GB JC PE"><div 
+class="tatsu-single-image-padding-wrap QB"></div><img 
+data-srcset="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/8-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/8-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/8-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/8.png 512w" sizes="(max-width: 
+767px) 40vw,(max-width: 1024px) 100vw,(max-width: 1377px) 348px, 348px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/8.png" data-extension=".png" 
+data-webp="1"></div></div></div></div><div class="vF"><div class="wF"></div></div></div></div><div class="nF NG GG EG 
+pF tatsu-744Cd7iLLj uF AB kD sD RE aE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF 
+sB"><div class="tatsu-module tatsu-rxVbqTrhI h5 IG JG NG t KE"><h5 class="tatsu-title KG A C G H I O GB VB 
+RC">Canada</h5></div></div></div><div class="vF"><div 
+class="wF"></div></div></div></div></div></div></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-canada?prefill=%7B%22Preferred%20Destination%22%3A%22Canada%22%7D" 
+class="aF"></a></div></div><div class="nF GG qF tatsu-ktgopneM0C tF LB kD sD tD aE RE"><div class="tatsu-column-inner 
+gradientClass a r mB BC FC"><div class="oF"><div class="xF jD oD iE"><div class="rF be-preview GG tatsu-Pqp1Nj3Yl0 kF 
+jF tatsu-inner-row-wrap nE"><div class="gF DG WE"><div class="iF wB mE"><div class="nF GG EG pF tatsu-3Rqd6lrWf uF JB 
+kD sD aE dE TE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF jD oD iE"><div 
+class="HG tatsu-module tatsu-IoYk4FGSJ NG zF tatsu-image-lazyload tatsu-IoYk4FGSJ XB"><div 
+class="tatsu-single-image-inner GB JC PE"><div class="tatsu-single-image-padding-wrap QB"></div><img 
+data-srcset="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/7-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/7-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/7-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/7.png 512w" sizes="(max-width: 
+767px) 38.251999999999995vw,(max-width: 1024px) 95.63vw,(max-width: 1377px) 339.648px, 339.648px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/7.png" data-extension=".png" 
+data-webp="1"></div></div></div></div><div class="vF"><div class="wF"></div></div></div></div><div class="nF NG GG EG 
+pF tatsu-3aZM8LD2pk uF AB kD sD SE aE gE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div 
+class="xF jD oD iE"><div class="tatsu-module tatsu-8VkbAn5xd h5 IG JG NG t KE"><h5 class="tatsu-title KG A C G H I O 
+GB VB RC">United Kingdom</h5></div></div></div><div class="vF"><div 
+class="wF"></div></div></div></div></div></div></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-uk?prefill=%7B%22Preferred%20Destination%22%3A%22United%20Kingdom%22%7D" 
+class="aF"></a></div></div><div class="nF NG GG pF tatsu-7WjipbnQmo tF IB kD sD tD aE RE"><div 
+class="tatsu-column-inner gradientClass a r mB BC FC"><div class="oF"><div class="xF jD oD iE"><div class="rF 
+be-preview GG tatsu-R5OiV5TWuA kF jF tatsu-inner-row-wrap nE"><div class="gF DG WE"><div class="iF DD iE"><div 
+class="nF GG EG pF tatsu-uW9-MQ3K3 uF y kD sD RE aE gE"><div class="tatsu-column-inner gradientClass e"><div 
+class="oF"><div class="xF jD oD iE"><div class="HG tatsu-module tatsu-FuWyO-O9m NG zF tatsu-image-lazyload 
+tatsu-FuWyO-O9m XB"><div class="tatsu-single-image-inner GB JC PE"><div class="tatsu-single-image-padding-wrap 
+QB"></div><img data-srcset="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/4-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/4-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/4-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/4.png 512w" sizes="(max-width: 
+767px) 40vw,(max-width: 1024px) 100vw,(max-width: 1377px) 348px, 348px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/4.png" data-extension=".png" 
+data-webp="1"></div></div></div></div><div class="vF"><div class="wF"></div></div></div></div><div class="nF NG GG EG 
+pF tatsu-pZCpJeLG6r uF AB kD sD aE RE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF 
+jD oD iE"><div class="tatsu-module tatsu-JIwAHBwrz h5 IG JG NG t KE"><h5 class="tatsu-title KG A C G H I O GB VB 
+RC">Ireland</h5></div></div></div><div class="vF"><div 
+class="wF"></div></div></div></div></div></div></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-ireland?prefill=%7B%22Preferred%20Destination%22%3A%22Ireland%22%7D" 
+class="aF"></a></div></div></div></div></div><div class="rF be-preview GG tatsu-Le4rbQ6kPF lF hF jF"><div class="gF 
+GB"><div class="iF jE"><div class="nF GG pF tatsu-6QSgORyub2H tF IB kD tD sD RE aE"><div class="tatsu-column-inner 
+gradientClass a r mB BC FC"><div class="oF"><div class="xF jD oD iE"><div class="rF be-preview GG tatsu-UEUI1PKk4Oo kF 
+jF tatsu-inner-row-wrap"><div class="gF DG"><div class="iF"><div class="nF GG EG pF tatsu-UpK5UhbLaiX uF JB kD sD aE 
+dE RE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF uB"><div class="HG tatsu-module 
+tatsu-pdfFrk_mXft NG zF tatsu-image-lazyload tatsu-pdfFrk_mXft XB gE"><div class="tatsu-single-image-inner GB JC 
+PE"><div class="tatsu-single-image-padding-wrap QB"></div><img 
+data-srcset="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/3-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/3-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/3-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/3.png 512w" sizes="(max-width: 
+767px) 40vw,(max-width: 1024px) 100vw,(max-width: 1377px) 339.648px, 339.648px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/3.png" data-extension=".png" 
+data-webp="1"></div></div></div></div><div class="vF"><div class="wF"></div></div></div></div><div class="nF NG GG EG 
+pF tatsu-LdtQa93pSmO uF ZB AB kD sD aE RE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div 
+class="xF uB"><div class="tatsu-module tatsu-YsBiP1ZLGZE h5 IG JG NG t KE"><h5 class="tatsu-title KG A C G H I O GB VB 
+RC">Australia</h5></div></div></div><div class="vF"><div 
+class="wF"></div></div></div></div></div></div></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-australia?prefill=%7B%22Preferred%20Destination%22%3A%22Australia%22%7D" 
+class="aF"></a></div></div><div class="nF GG pF tatsu-OadLbARgyMI tF IB kD tD sD RE aE"><div class="tatsu-column-inner 
+gradientClass a r mB BC FC"><div class="oF"><div class="xF jD oD iE"><div class="rF be-preview GG tatsu-roaAS5i0uF2 kF 
+jF tatsu-inner-row-wrap"><div class="gF DG"><div class="iF"><div class="nF GG EG pF tatsu-NbiGnc_28c0 uF y kD sD aE dE 
+RE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF uB"><div class="HG tatsu-module 
+tatsu-aBR_Or04ZyG NG zF tatsu-image-lazyload tatsu-aBR_Or04ZyG XB"><div class="tatsu-single-image-inner GB JC PE"><div 
+class="tatsu-single-image-padding-wrap QB"></div><img 
+data-srcset="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/2-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/2-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/2-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/2.png 512w" sizes="(max-width: 
+767px) 40vw,(max-width: 1024px) 100vw,(max-width: 1377px) 348px, 348px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/2.png" data-extension=".png" 
+data-webp="1"></div></div></div></div><div class="vF"><div class="wF"></div></div></div></div><div class="nF NG GG EG 
+pF tatsu-W5RXtV7M8ul uF AB kD sD aE RE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF 
+sB"><div class="tatsu-module tatsu-3lWOb3IglLx h5 IG JG NG t KE"><h5 class="tatsu-title KG GB VB RC A C G H I O">New 
+Zealand</h5></div></div></div><div class="vF"><div 
+class="wF"></div></div></div></div></div></div></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-new-zealand?prefill=%7B%22Preferred%20Destination%22%3A%22New%20Zealand%22%7D" 
+class="aF"></a></div></div><div class="nF GG qF tatsu-V6i9anTxbhI tF LB kD tD sD RE aE"><div class="tatsu-column-inner 
+gradientClass a r mB BC FC"><div class="oF"><div class="xF jD oD iE"><div class="rF be-preview GG tatsu-J-ui820sMKo kF 
+jF tatsu-inner-row-wrap nE"><div class="gF DG WE"><div class="iF rB mE"><div class="nF GG EG pF tatsu-8JdNbUFCNME uF 
+JB kD sD aE dE TE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF jD oD iE"><div 
+class="HG tatsu-module tatsu-vQN2sPbclQxS NG zF tatsu-image-lazyload tatsu-vQN2sPbclQxS XB"><div 
+class="tatsu-single-image-inner GB JC PE"><div class="tatsu-single-image-padding-wrap QB"></div><img 
+data-srcset="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/5-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/5-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/5-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/5.png 512w" sizes="(max-width: 
+767px) 38.251999999999995vw,(max-width: 1024px) 95.63vw,(max-width: 1377px) 339.648px, 339.648px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/5.png" data-extension=".png" 
+data-webp="1"></div></div></div></div><div class="vF"><div class="wF"></div></div></div></div><div class="nF NG GG EG 
+pF tatsu-0aMF6lVzsx-5 uF AB kD sD aE gE SE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div 
+class="xF jD oD iE"><div class="tatsu-module tatsu-vCQ8inf6fuML h5 IG JG NG t KE"><h5 class="tatsu-title KG A C G H I 
+O GB VB RC">Europe</h5></div></div></div><div class="vF"><div 
+class="wF"></div></div></div></div></div></div></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-europe/meetings" class="aF"></a></div></div><div class="nF NG GG pF 
+tatsu-8i9s6vbkYa2P tF IB kD tD sD RE aE"><div class="tatsu-column-inner gradientClass a r mB BC FC"><div 
+class="oF"><div class="xF jD oD iE"><div class="rF be-preview GG tatsu-dn8BPs98UkUo kF jF tatsu-inner-row-wrap 
+nE"><div class="gF DG WE"><div class="iF uB iE"><div class="nF GG EG pF tatsu-q4UK7ft-_onI uF y kD sD aE gE RE"><div 
+class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF jD oD iE"><div class="HG tatsu-module 
+tatsu-3UmGcsxHgsr1 NG zF tatsu-image-lazyload tatsu-3UmGcsxHgsr1 XB"><div class="tatsu-single-image-inner GB JC 
+PE"><div class="tatsu-single-image-padding-wrap QB"></div><img 
+data-srcset="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/6-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/6-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/6-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/6.png 512w" sizes="(max-width: 
+767px) 40vw,(max-width: 1024px) 100vw,(max-width: 1377px) 348px, 348px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/6.png" data-extension=".png" 
+data-webp="1"></div></div></div></div><div class="vF"><div class="wF"></div></div></div></div><div class="nF NG GG EG 
+pF tatsu-ATMQ6U37zVD0 uF AB kD sD RE aE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div 
+class="xF jD oD iE"><div class="tatsu-module tatsu-6N6GHp093MS3 h5 IG JG NG t KE"><h5 class="tatsu-title KG GB VB RC A 
+C G H I O">Asia</h5></div></div></div><div class="vF"><div 
+class="wF"></div></div></div></div></div></div></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-asia" class="aF"></a></div></div></div></div></div><div class="rF be-preview GG 
+tatsu-r1Fa7VW4XW lF hF jF DC"><div class="gF DG GB UD"><div class="iF jD oD jE"><div class="nF GG EG pF 
+tatsu-lHfAks_Bho tF lB SD kD sD tD aE RE"><div class="tatsu-column-inner gradientClass BC lD yD JE"><div 
+class="oF"><div class="xF jD oD iE"><div class="rF be-preview GG tatsu-QmKhgGjw3Ik kF jF tatsu-inner-row-wrap"><div 
+class="gF DG"><div class="iF"><div class="nF GG yF EG pF tatsu-D15fzRWRhuK uF y kD sD aE dE RE"><div 
+class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF uB"></div></div><div class="vF"><div 
+class="wF"></div></div></div></div><div class="nF NG GG EG pF tatsu-rhKm1wT_EXp uF AB kD sD aE RE"><div 
+class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF sB"><div class="tatsu-module 
+tatsu-lU52HO_iuq2 h5 IG JG NG t KE"><h5 class="tatsu-title KG A C G H I O GB VB RC"></h5></div></div></div><div 
+class="vF"><div class="wF"></div></div></div></div></div></div></div></div></div><div class="vF"><div class="wF 
+BC"></div></div><a 
+href="https://zipme.at/kcoverseas-new-zealand?prefill=%7B%22Preferred%20Destination%22%3A%22New%20Zealand%22%7D" 
+class="aF"></a></div></div><div class="nF GG pF tatsu-U1mXlr5Nx8_ tF WC sC kD sD tD aE RE"><div 
+class="tatsu-column-inner gradientClass a r mB BC FC"><div class="oF"><div class="xF jD oD iE"><div class="rF 
+be-preview GG tatsu-R1Ed1NZwHyU kF jF tatsu-inner-row-wrap"><div class="gF DG"><div class="iF"><div class="nF GG EG pF 
+tatsu-PmXbidyOWXS uF JB kD sD aE dE RE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF 
+uB"><div class="HG tatsu-module tatsu-5gv6JLxQL4O NG zF tatsu-image-lazyload tatsu-5gv6JLxQL4O XB gE"><div 
+class="tatsu-single-image-inner GB JC PE"><div class="tatsu-single-image-padding-wrap aC"></div><img data-srcset="https
+://studies-overseascom.swipepages.media/2025/11/64be52a56efbd7001077fa82/flag_of_germany_-3-2--svg-150.webp 
+150w,https://studies-overseascom.swipepages.media/2025/11/64be52a56efbd7001077fa82/flag_of_germany_-3-2--svg.webp 
+250w" sizes="(max-width: 767px) 40vw,(max-width: 1024px) 100vw,(max-width: 1377px) 339.648px, 339.648px" alt data-src="
+https://studies-overseascom.swipepages.media/2025/11/64be52a56efbd7001077fa82/flag_of_germany_-3-2--svg.webp" 
+data-webp="0"></div></div></div></div><div class="vF"><div class="wF"></div></div></div></div><div class="nF NG GG EG 
+pF tatsu-tT3yoer_asy uF AB ZB kD sD RE aE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div 
+class="xF uB"><div class="tatsu-module tatsu-zLY7mhIbJoZ h5 IG JG NG t KE"><h5 class="tatsu-title KG GB VB RC A C G H 
+I O">Germany</h5></div></div></div><div class="vF"><div 
+class="wF"></div></div></div></div></div></div></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kc-overseas-education-germany/meetings" class="aF"></a></div></div><div class="nF GG EG qF 
+tatsu-EVAa9orFAPN tF hC lB kD tD sD RE aE"><div class="tatsu-column-inner gradientClass BC lD yD JE"><div 
+class="oF"><div class="xF jD oD iE"><div class="rF be-preview GG tatsu-_eXUjqX_Mr0 kF jF tatsu-inner-row-wrap nE"><div 
+class="gF DG WE"><div class="iF rB mE"><div class="nF GG yF EG pF tatsu-FK4sEW9OyDZ uF JB kD sD TE aE dE"><div 
+class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF jD oD iE"></div></div><div class="vF"><div 
+class="wF"></div></div></div></div><div class="nF NG GG EG pF tatsu-pca0y3MLdNle uF AB kD sD SE aE gE"><div 
+class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF jD oD iE"><div class="tatsu-module 
+tatsu-TosdP7ZQEutK h5 IG JG NG t KE"><h5 class="tatsu-title KG GB VB RC A C G H I O"></h5></div></div></div><div 
+class="vF"><div class="wF"></div></div></div></div></div></div></div></div></div><div class="vF"><div class="wF 
+BC"></div></div><a href="https://zipme.at/kcoverseas-europe/meetings" class="aF"></a></div></div><div class="nF NG GG 
+yF EG qF tatsu-SILNSLhj4Ct tF ED kD sD tD aE RE"><div class="tatsu-column-inner gradientClass"><div class="oF"><div 
+class="xF jD oD iE"></div></div><div class="vF"><div 
+class="wF"></div></div></div></div></div></div></div></div></div></div><div class="XF"><div 
+class="WF"></div></div><div class="bF tatsu-section-overlay nB"></div></div><div class="tatsu-U6-7SQe5q VF GG FG 
+tatsu-section-offset FG p" id="1"><div class="YF GG xC"><div class="tatsu-section-pad-inner"><div class="ZF"><div 
+class="rF be-preview GG tatsu-WaoDEvgK6T lF hF jF mF DC"><div class="gF GB UB"><div class="iF FE"><div class="nF NG GG 
+EG qF tatsu-faNFhmXvq sF GB kD sD aE"><div class="tatsu-column-inner gradientClass"><div class="oF"><div class="xF jD 
+oD iE"><div class="tatsu-module tatsu-oWRW62GxP h3 IG tatsu-title-wrap-h3 NG FG u eC"><h3 class="tatsu-title LG c l GB 
+VB EC YC A B F H I M V">Book Free Test Prep &amp; Education Loan Counselling !</h3></div></div></div><div 
+class="vF"><div class="wF"></div></div></div></div></div></div></div><div class="rF be-preview GG tatsu-ILe7Uo10n2g lF 
+hF jF DC"><div class="gF DG GB JD"><div class="iF jD oD jE"><div class="nF GG pF tatsu-PExkbyag2 tF v kD sD tD aE 
+RE"><div class="tatsu-column-inner gradientClass a q mB BC FC"><div class="oF"><div class="xF jD oD iE"><div class="rF 
+be-preview GG tatsu-n0kZv1gG4Jz kF jF tatsu-inner-row-wrap"><div class="gF DG"><div class="iF"><div class="nF GG EG pF 
+tatsu-LUxaZVYmzWU uF JB kD sD aE dE RE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF 
+uB"><div class="HG tatsu-module tatsu-PPa02UUKmIq NG zF tatsu-image-lazyload tatsu-PPa02UUKmIq XB gE"><div 
+class="tatsu-single-image-inner BB JC PE"><div class="tatsu-single-image-padding-wrap RB"></div><img data-srcset="https
+://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-750.webp 
+750w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png 751w" 
+sizes="(max-width: 767px) 40vw,(max-width: 1024px) 80vw,(max-width: 1377px) 271.71840000000003px, 
+271.71840000000003px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png" 
+data-extension=".png" data-webp="1"></div></div></div></div><div class="vF"><div 
+class="wF"></div></div></div></div><div class="nF NG GG EG pF tatsu-fn8kEwGJMqL uF ZB AB kD sD aE RE"><div 
+class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF uB"><div class="tatsu-module 
+tatsu-pkNvjG7VUDz h5 IG JG NG t KE"><h5 class="tatsu-title KG A C G H I O c GB VB EC NC">IELTS, PTE, 
+TOEFL</h5></div></div></div><div class="vF"><div class="wF"></div></div></div></div></div></div></div></div></div><div 
+class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-test-prep-ielts-pte-toefl-duolingo-german/meetings" class="aF"></a></div></div><div 
+class="nF GG qF tatsu-WiWSPgMfTd tF v kD sD tD aE RE"><div class="tatsu-column-inner gradientClass a mB BC FC BD"><div 
+class="oF"><div class="xF jD oD iE"><div class="rF be-preview GG tatsu-5GgeJTqrRf7 kF jF tatsu-inner-row-wrap nE"><div 
+class="gF DG WE"><div class="iF wB mE"><div class="nF GG EG pF tatsu-_8TINwXYIVP uF JB kD sD aE dE TE"><div 
+class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF jD oD iE"><div class="HG tatsu-module 
+tatsu-XwCObZxaXIi NG zF tatsu-image-lazyload tatsu-XwCObZxaXIi XB"><div class="tatsu-single-image-inner BB JC PE"><div 
+class="tatsu-single-image-padding-wrap RB"></div><img data-srcset="https://studies-overseascom.swipepages.media/2024/8/
+64be52a56efbd7001077fa82/microsoftteams-image__4_-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-750.webp 
+750w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png 751w" 
+sizes="(max-width: 767px) 38.251999999999995vw,(max-width: 1024px) 76.50399999999999vw,(max-width: 1377px) 
+271.71840000000003px, 271.71840000000003px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png" 
+data-extension=".png" data-webp="1"></div></div></div></div><div class="vF"><div 
+class="wF"></div></div></div></div><div class="nF NG GG EG pF tatsu-AenoVh12eI5 uF AB kD sD aE gE SE"><div 
+class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF jD oD iE"><div class="tatsu-module 
+tatsu-Fzeg4UM0uLi h5 IG JG NG t KE"><h5 class="tatsu-title KG c GB VB EC NC A C G H I O">GRE, GMAT, SAT, 
+ACT</h5></div></div></div><div class="vF"><div class="wF"></div></div></div></div></div></div></div></div></div><div 
+class="vF"><div class="wF BC"></div></div><a href="https://zipme.at/kcoverseas-test-prep-gre-gmat-sat-act/meetings" 
+class="aF"></a></div></div><div class="nF GG pF tatsu-7nBVvtpEBo tF v kD sD tD aE RE"><div class="tatsu-column-inner 
+gradientClass a mB BC FC KD"><div class="oF"><div class="xF jD oD iE"><div class="rF be-preview GG tatsu-mslK_sixFC_ 
+kF jF tatsu-inner-row-wrap"><div class="gF DG"><div class="iF"><div class="nF GG EG pF tatsu-chqA20F4PD6 uF y kD sD RE 
+aE dE"><div class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF uB"><div class="HG tatsu-module 
+tatsu----TyFD9Pju NG zF tatsu-image-lazyload tatsu----TyFD9Pju XB"><div class="tatsu-single-image-inner BB JC PE"><div 
+class="tatsu-single-image-padding-wrap RB"></div><img data-srcset="https://studies-overseascom.swipepages.media/2024/8/
+64be52a56efbd7001077fa82/microsoftteams-image__4_-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-750.webp 
+750w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png 751w" 
+sizes="(max-width: 767px) 40vw,(max-width: 1024px) 80vw,(max-width: 1377px) 278.4px, 278.4px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png" 
+data-extension=".png" data-webp="1"></div></div></div></div><div class="vF"><div 
+class="wF"></div></div></div></div><div class="nF NG GG EG pF tatsu-ZQBpVTR9KjS uF AB kD sD RE aE"><div 
+class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF sB"><div class="tatsu-module 
+tatsu-hC0PLZjMZ4h h5 IG JG NG t KE"><h5 class="tatsu-title KG A C G H I O c GB VB EC NC">Duolingo, German 
+Language</h5></div></div></div><div class="vF"><div 
+class="wF"></div></div></div></div></div></div></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-test-prep-ielts-pte-toefl-duolingo-german/meetings" class="aF"></a></div></div><div 
+class="nF NG GG qF tatsu-ZecE6Dq0t5 tF v kD tD sD RE aE"><div class="tatsu-column-inner gradientClass a mB BC FC 
+mC"><div class="oF"><div class="xF jD oD iE"><div class="rF be-preview GG tatsu-cYw_LjcQ- kF jF tatsu-inner-row-wrap 
+nE"><div class="gF DG WE"><div class="iF vB iE"><div class="nF GG EG pF tatsu-CWV-sk76yA uF y kD sD aE gE RE"><div 
+class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF jD oD iE"><div class="HG tatsu-module 
+tatsu-ISUeKsdpAZ NG zF tatsu-image-lazyload tatsu-ISUeKsdpAZ XB"><div class="tatsu-single-image-inner BB JC PE"><div 
+class="tatsu-single-image-padding-wrap RB"></div><img data-srcset="https://studies-overseascom.swipepages.media/2024/8/
+64be52a56efbd7001077fa82/elan_logo_f0320a7229-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/elan_logo_f0320a7229.png 180w" 
+sizes="(max-width: 767px) 40vw,(max-width: 1024px) 80vw,(max-width: 1377px) 278.4px, 278.4px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/elan_logo_f0320a7229.png" 
+data-extension=".png" data-webp="1"></div></div></div></div><div class="vF"><div 
+class="wF"></div></div></div></div><div class="nF NG GG EG pF tatsu-qh-sf8Tcjq uF AB kD sD RE aE"><div 
+class="tatsu-column-inner gradientClass e"><div class="oF"><div class="xF jD oD iE"><div class="tatsu-module 
+tatsu-TXdiXW4chZ h5 IG JG NG t KE"><h5 class="tatsu-title KG A C G H I O c GB VB EC NC">Study Abroad Education 
+Loan</h5></div></div></div><div class="vF"><div class="wF"></div></div></div></div></div></div></div></div></div><div 
+class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kc-overseas-education-meetings/meetings?opentype=link" 
+class="aF"></a></div></div></div></div></div></div></div></div><div class="XF"><div class="WF"></div></div><div 
+class="bF tatsu-section-overlay nB"></div><div class="cF eF fF dF n PB"><svg preserveAspectRatio="none" 
+xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 217"><g fill-rule="evenodd" transform="matrix(-1 0 0 1 1920 
+0)"><path d="M0,57.46875 C203.364583,135.217754 494.835938,156.564108 874.414062,121.507813 C1192.61198,-13.9827666 
+1541.14063,-35.3291208 1920,57.46875 L1920,207 L0,207 L0,57.46875 Z" opacity=".3"/><path d="M0,79 
+C292.46875,165.453125 612.46875,165.453125 960,79 C1307.53125,-7.453125 1627.53125,-7.453125 1920,79 L1920,207 L0,207 
+L0,79 Z" opacity=".6"/><path d="M0,89 C288.713542,146.786458 608.713542,146.786458 960,89 C1311.28646,31.2135417 
+1631.28646,31.2135417 1920,89 L1920,217 L0,217 L0,89 Z"/></g></svg></div></div><div class="tatsu-98FetCs6gR VF GG AG 
+BG CG tatsu-section-offset AG BG CG p"><div class="YF GG qB DF"><div class="tatsu-section-pad-inner"><div 
+class="ZF"><div class="rF be-preview GG tatsu-zRNftawyX0 lF hF jF mF nE"><div class="gF GB UF"><div class="iF"><div 
+class="nF NG GG EG qF tatsu-U0uc7sYxP sF GB kD sD aE"><div class="tatsu-column-inner gradientClass"><div 
+class="oF"><div class="xF jD oD iE"><div class="tatsu-module tatsu-jMnv6gxm- h1 IG tatsu-title-wrap-h1 u eB rB"><h1 
+class="tatsu-title KG A E H I J c GB VB EC MC T PF">Book Your Free Online Counselling &amp; Start Your Study Abroad 
+Journey</h1></div><div class="tatsu-module tatsu-SBLfaN2sd h2 IG tatsu-title-wrap-h2 NG u vB NF"><h2 
+class="tatsu-title LG A B F H I K c l GB VB EC GC OC U pE BF">Select Your Dream Study Destination 
+!</h2></div></div></div><div class="vF"><div class="wF"></div></div></div></div></div></div></div><div class="rF 
+be-preview GG tatsu-kmLuPd_yXY lF hF jF nE"><div class="gF GB YE"><div class="iF iE"><div class="nF GG qF 
+tatsu-uaAZfSytX uF z kD sD bE gE"><div class="tatsu-column-inner gradientClass r BC IE"><div class="oF"><div class="xF 
+jD oD iE"><div class="HG tatsu-module tatsu-WVf7oTmw1 zF tatsu-image-lazyload tatsu-WVf7oTmw1 XB eE"><div 
+class="tatsu-single-image-inner MB KC QE oE"><div class="tatsu-single-image-padding-wrap QB"></div><img 
+data-srcset="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/1-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/1-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/1-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/1.png 512w" sizes="(max-width: 
+767px) 25vw,(max-width: 1024px) 50vw,(max-width: 1377px) 580px, 580px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/1.png" data-extension=".png" 
+data-webp="1"></div></div><div class="tatsu-module tatsu-se-gCIcFv h5 IG JG NG t KE"><h5 class="tatsu-title LG A C G H 
+I O c GB EC LC qE">United States</h5></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-usa?prefill=%7B%22Preferred%20Destination%22%3A%22United%20States%22%7D" 
+class="aF"></a></div></div><div class="nF NG GG qF tatsu-wZhKgpONB0 uF z kD sD cE dE"><div class="tatsu-column-inner 
+gradientClass r BC IE"><div class="oF"><div class="xF jD oD iE"><div class="HG tatsu-module tatsu-uo-9mNKuc zF 
+tatsu-image-lazyload tatsu-uo-9mNKuc XB eE"><div class="tatsu-single-image-inner s MB KC QE oE"><div 
+class="tatsu-single-image-padding-wrap QB"></div><img 
+data-srcset="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/8-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/8-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/8-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/8.png 512w" sizes="(max-width: 
+767px) 25vw,(max-width: 1024px) 50vw,(max-width: 1377px) 580px, 580px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/8.png" data-extension=".png" 
+data-webp="1"></div></div><div class="tatsu-module tatsu-ZasAx0NK8 h5 IG JG NG t KE"><h5 class="tatsu-title LG A C G H 
+I O c GB EC LC qE">Canada</h5></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-canada?prefill=%7B%22Preferred%20Destination%22%3A%22Canada%22%7D" 
+class="aF"></a></div></div></div></div></div><div class="rF be-preview GG tatsu-oYah6POiN lF hF jF nE"><div class="gF 
+GB YE"><div class="iF"><div class="nF GG qF tatsu-TfCQQ8QU_J uF z kD sD bE fE"><div class="tatsu-column-inner 
+gradientClass r BC IE"><div class="oF"><div class="xF jD oD iE"><div class="HG tatsu-module tatsu-CjvC-jC7BA zF 
+tatsu-image-lazyload tatsu-CjvC-jC7BA XB eE"><div class="tatsu-single-image-inner s MB KC QE oE"><div 
+class="tatsu-single-image-padding-wrap QB"></div><img 
+data-srcset="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/7-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/7-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/7-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/7.png 512w" sizes="(max-width: 
+767px) 25vw,(max-width: 1024px) 50vw,(max-width: 1377px) 580px, 580px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/7.png" data-extension=".png" 
+data-webp="1"></div></div><div class="tatsu-module tatsu-kf7pFS3R10 h5 IG JG NG t KE"><h5 class="tatsu-title LG A C G 
+H I O c GB EC LC qE">United Kingdom</h5></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-uk?prefill=%7B%22Preferred%20Destination%22%3A%22United%20Kingdom%22%7D" 
+class="aF"></a></div></div><div class="nF NG GG qF tatsu-_DtYdp3LqD uF z kD sD cE fE"><div class="tatsu-column-inner 
+gradientClass r BC IE"><div class="oF"><div class="xF jD oD iE"><div class="HG tatsu-module tatsu-6nTlThebA2 zF 
+tatsu-image-lazyload tatsu-6nTlThebA2 XB eE"><div class="tatsu-single-image-inner s MB KC QE oE"><div 
+class="tatsu-single-image-padding-wrap QB"></div><img 
+data-srcset="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/4-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/4-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/4-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/4.png 512w" sizes="(max-width: 
+767px) 25vw,(max-width: 1024px) 50vw,(max-width: 1377px) 580px, 580px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/4.png" data-extension=".png" 
+data-webp="1"></div></div><div class="tatsu-module tatsu-6D4J3qAwW- h5 IG JG NG t KE"><h5 class="tatsu-title LG c GB 
+EC LC A C G H I O qE">Ireland</h5></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-ireland?prefill=%7B%22Preferred%20Destination%22%3A%22Ireland%22%7D" 
+class="aF"></a></div></div></div></div></div><div class="rF be-preview GG tatsu-19K__TsF0 lF hF jF nE"><div class="gF 
+GB YE"><div class="iF"><div class="nF GG qF tatsu-g60fE0eqRM uF z kD sD bE fE"><div class="tatsu-column-inner 
+gradientClass r BC IE"><div class="oF"><div class="xF jD oD iE"><div class="HG tatsu-module tatsu-2GKbI8ukwt zF 
+tatsu-image-lazyload tatsu-2GKbI8ukwt XB eE"><div class="tatsu-single-image-inner s MB KC QE oE"><div 
+class="tatsu-single-image-padding-wrap QB"></div><img 
+data-srcset="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/3-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/3-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/3-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/3.png 512w" sizes="(max-width: 
+767px) 25vw,(max-width: 1024px) 50vw,(max-width: 1377px) 580px, 580px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/3.png" data-extension=".png" 
+data-webp="1"></div></div><div class="tatsu-module tatsu-0_B9db2Oei h5 IG JG NG t KE"><h5 class="tatsu-title LG A C G 
+H I O c GB EC LC qE">Australia</h5></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-australia?prefill=%7B%22Preferred%20Destination%22%3A%22Australia%22%7D" 
+class="aF"></a></div></div><div class="nF NG GG qF tatsu-fzuWXzHsax uF z kD sD cE fE"><div class="tatsu-column-inner 
+gradientClass r BC IE"><div class="oF"><div class="xF jD oD iE"><div class="HG tatsu-module tatsu-t45CKVht_u zF 
+tatsu-image-lazyload tatsu-t45CKVht_u XB eE"><div class="tatsu-single-image-inner s MB KC QE oE"><div 
+class="tatsu-single-image-padding-wrap QB"></div><img 
+data-srcset="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/2-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/2-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/2-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/2.png 512w" sizes="(max-width: 
+767px) 25vw,(max-width: 1024px) 50vw,(max-width: 1377px) 580px, 580px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/2.png" data-extension=".png" 
+data-webp="1"></div></div><div class="tatsu-module tatsu-eqLtyDblc9 h5 IG JG NG t KE"><h5 class="tatsu-title LG A C G 
+H I O c GB EC LC qE">New Zealand</h5></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-new-zealand?prefill=%7B%22Preferred%20Destination%22%3A%22New%20Zealand%22%7D" 
+class="aF"></a></div></div></div></div></div><div class="rF be-preview GG tatsu-G2Bt5Ju3g lF hF jF nE"><div class="gF 
+GB YE"><div class="iF"><div class="nF GG qF tatsu-FCXhAnJxa6 uF z kD sD bE fE"><div class="tatsu-column-inner 
+gradientClass r BC IE"><div class="oF"><div class="xF jD oD iE"><div class="HG tatsu-module tatsu-ELm5Rl1DUC zF 
+tatsu-image-lazyload tatsu-ELm5Rl1DUC XB eE"><div class="tatsu-single-image-inner s MB KC QE oE"><div 
+class="tatsu-single-image-padding-wrap QB"></div><img 
+data-srcset="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/5-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/5-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/5-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/5.png 512w" sizes="(max-width: 
+767px) 25vw,(max-width: 1024px) 50vw,(max-width: 1377px) 580px, 580px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/5.png" data-extension=".png" 
+data-webp="1"></div></div><div class="tatsu-module tatsu-LuYsco4XXD h5 IG JG NG t KE"><h5 class="tatsu-title LG A C G 
+H I O c GB EC LC qE">Europe</h5></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-europe/meetings" class="aF"></a></div></div><div class="nF NG GG qF tatsu-6sUoSx2rIN 
+uF z kD sD cE fE"><div class="tatsu-column-inner gradientClass r BC IE"><div class="oF"><div class="xF jD oD iE"><div 
+class="HG tatsu-module tatsu-jM4UPArBsj zF tatsu-image-lazyload tatsu-jM4UPArBsj XB eE"><div 
+class="tatsu-single-image-inner s MB KC QE oE"><div class="tatsu-single-image-padding-wrap QB"></div><img 
+data-srcset="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/6-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/6-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/6-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/6.png 512w" sizes="(max-width: 
+767px) 25vw,(max-width: 1024px) 50vw,(max-width: 1377px) 580px, 580px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/6.png" data-extension=".png" 
+data-webp="1"></div></div><div class="tatsu-module tatsu-7z4iw64uaG h5 IG JG NG t KE"><h5 class="tatsu-title LG A C G 
+H I O c GB EC LC qE">Asia</h5></div></div></div><div class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-asia" class="aF"></a></div></div></div></div></div><div class="rF be-preview GG 
+tatsu-qJoWt-aKb CG FG lF hF jF nE"><div class="gF GB YE"><div class="iF"><div class="nF GG qF tatsu-89n_332MA- uF z kD 
+sD bE fE"><div class="tatsu-column-inner gradientClass r BC IE"><div class="oF"><div class="xF jD oD iE"><div 
+class="HG tatsu-module tatsu-EijUiXrKDE zF tatsu-image-lazyload tatsu-EijUiXrKDE XB eE"><div 
+class="tatsu-single-image-inner s KB KC QE oE"><div class="tatsu-single-image-padding-wrap RB"></div><img data-srcset="
+https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-750.webp 
+750w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png 751w" 
+sizes="(max-width: 767px) 25vw,(max-width: 1024px) 50vw,(max-width: 1377px) 580px, 580px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png" 
+data-extension=".png" data-webp="1"></div></div><div class="tatsu-module tatsu-_2KDMv1SHB h5 IG JG NG t KE"><h5 
+class="tatsu-title LG c GB EC LC A C G H I O ZE qE">Test Prep -<br>IELTS, PTE, TOEFL</h5></div></div></div><div 
+class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-test-prep-ielts-pte-toefl-duolingo-german/meetings" class="aF"></a></div></div><div 
+class="nF NG GG qF tatsu-ZinZVusFH8 uF z kD sD cE fE"><div class="tatsu-column-inner gradientClass r BC IE"><div 
+class="oF"><div class="xF jD oD iE"><div class="HG tatsu-module tatsu-tMChyyeisG zF tatsu-image-lazyload 
+tatsu-tMChyyeisG XB eE"><div class="tatsu-single-image-inner s KB KC QE oE"><div 
+class="tatsu-single-image-padding-wrap RB"></div><img data-srcset="https://studies-overseascom.swipepages.media/2024/8/
+64be52a56efbd7001077fa82/microsoftteams-image__4_-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-750.webp 
+750w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png 751w" 
+sizes="(max-width: 767px) 25vw,(max-width: 1024px) 50vw,(max-width: 1377px) 580px, 580px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png" 
+data-extension=".png" data-webp="1"></div></div><div class="tatsu-module tatsu-fbuM_r8CET h5 IG JG NG t KE"><h5 
+class="tatsu-title LG A C G H I O c GB EC LC ZE rE">Test Prep - GRE, GMAT, SAT, ACT</h5></div></div></div><div 
+class="vF"><div class="wF BC"></div></div><a href="https://zipme.at/kcoverseas-test-prep-gre-gmat-sat-act/meetings" 
+class="aF"></a></div></div></div></div></div><div class="rF be-preview GG tatsu-196uj3myE CG FG lF hF jF nE"><div 
+class="gF DG GB VE"><div class="iF"><div class="nF GG qF tatsu-FcIOIYN9jU uF z kD sD bE fE"><div 
+class="tatsu-column-inner gradientClass r BC IE"><div class="oF"><div class="xF jD oD iE"><div class="HG tatsu-module 
+tatsu-UYnCosBE14 zF tatsu-image-lazyload tatsu-UYnCosBE14 XB eE"><div class="tatsu-single-image-inner s KB KC QE 
+oE"><div class="tatsu-single-image-padding-wrap RB"></div><img data-srcset="https://studies-overseascom.swipepages.medi
+a/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-750.webp 
+750w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png 751w" 
+sizes="(max-width: 767px) 25vw,(max-width: 1024px) 50vw,(max-width: 1377px) 580px, 580px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png" 
+data-extension=".png" data-webp="1"></div></div><div class="tatsu-module tatsu-s-rYLLrDH8 h5 IG JG NG t KE"><h5 
+class="tatsu-title LG A C G H I O c GB EC LC ZE rE">Test Prep - Duolingo, German Language</h5></div></div></div><div 
+class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-test-prep-ielts-pte-toefl-duolingo-german/meetings" class="aF"></a></div></div><div 
+class="nF NG GG qF tatsu-2Ouw-7Y6zA uF z kD sD cE fE"><div class="tatsu-column-inner gradientClass r BC IE"><div 
+class="oF"><div class="xF jD oD iE"><div class="HG tatsu-module tatsu-Y3lWs6hJw4 zF tatsu-image-lazyload 
+tatsu-Y3lWs6hJw4 XB eE"><div class="tatsu-single-image-inner s FB KC QE oE"><div 
+class="tatsu-single-image-padding-wrap RB"></div><img data-srcset="https://studies-overseascom.swipepages.media/2024/8/
+64be52a56efbd7001077fa82/elan_logo_f0320a7229-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/elan_logo_f0320a7229.png 180w" 
+sizes="(max-width: 767px) 25vw,(max-width: 1024px) 50vw,(max-width: 1377px) 580px, 580px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/elan_logo_f0320a7229.png" 
+data-extension=".png" data-webp="1"></div></div><div class="tatsu-module tatsu-CWr-w9qchN h5 IG JG NG t KE"><h5 
+class="tatsu-title LG A C G H I O c GB EC LC ZE qE">Study Abroad Education Loan</h5></div></div></div><div 
+class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kc-overseas-education-meetings/meetings?opentype=link" 
+class="aF"></a></div></div></div></div></div></div></div></div><div class="XF"><div class="WF"></div></div><div 
+class="bF tatsu-section-overlay nB"></div></div><div class="tatsu-sVccDvknmW VF GG AG BG CG tatsu-section-offset AG BG 
+CG p"><div class="YF GG qB xE"><div class="tatsu-section-pad-inner"><div class="ZF"><div class="rF be-preview GG 
+tatsu-ML5bDYrnDD lF hF jF mF"><div class="gF DG GB"><div class="iF"><div class="nF NG GG EG qF tatsu-RAdudkFLp sF GB 
+kD sD aE"><div class="tatsu-column-inner gradientClass"><div class="oF"><div class="xF jD oD iE"><div 
+class="tatsu-module tatsu--KsiZgkHV h2 IG tatsu-title-wrap-h2 NG t KE yE"><h2 class="tatsu-title KG l GB A B F H I K 
+ZE pE tE U">Book Free Test Prep &amp;<br>Education Loan Counselling !</h2></div></div></div><div class="vF"><div 
+class="wF"></div></div></div></div></div></div></div></div></div></div><div class="XF"><div 
+class="WF"></div></div><div class="bF tatsu-section-overlay nB"></div></div><div class="tatsu-HpC4B4v8c VF GG AG BG CG 
+tatsu-section-offset AG BG CG p"><div class="YF GG qB LF"><div class="tatsu-section-pad-inner"><div class="ZF"><div 
+class="rF be-preview GG tatsu-VnBQpRiU0t_ lF hF jF nE"><div class="gF GB YE"><div class="iF"><div class="nF GG qF 
+tatsu-HCrYU1qfGYf uF z kD sD bE fE"><div class="tatsu-column-inner gradientClass r BC IE"><div class="oF"><div 
+class="xF jD oD iE"><div class="HG tatsu-module tatsu-kMLWp1WjbA1 zF tatsu-image-lazyload tatsu-kMLWp1WjbA1 XB 
+eE"><div class="tatsu-single-image-inner s KB KC ME oE"><div class="tatsu-single-image-padding-wrap RB"></div><img data
+-srcset="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-150.webp
+ 150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-750.webp 
+750w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png 751w" 
+sizes="(max-width: 767px) 17.5vw,(max-width: 1024px) 50vw,(max-width: 1377px) 580px, 580px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png" 
+data-extension=".png" data-webp="1"></div></div><div class="tatsu-module tatsu-_v4KjtDffwN h5 IG JG NG t KE"><h5 
+class="tatsu-title LG A C G H I O c GB EC LC ZE qE">Test Prep -<br>IELTS, PTE, TOEFL</h5></div></div></div><div 
+class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-test-prep-ielts-pte-toefl-duolingo-german/meetings" class="aF"></a></div></div><div 
+class="nF NG GG qF tatsu-bUNbVGvO0c0 uF z kD sD cE fE"><div class="tatsu-column-inner gradientClass r BC IE"><div 
+class="oF"><div class="xF jD oD iE"><div class="HG tatsu-module tatsu-Y9w6-tiNr71 zF tatsu-image-lazyload 
+tatsu-Y9w6-tiNr71 XB eE"><div class="tatsu-single-image-inner s KB KC ME oE"><div 
+class="tatsu-single-image-padding-wrap RB"></div><img data-srcset="https://studies-overseascom.swipepages.media/2024/8/
+64be52a56efbd7001077fa82/microsoftteams-image__4_-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-750.webp 
+750w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png 751w" 
+sizes="(max-width: 767px) 17.5vw,(max-width: 1024px) 50vw,(max-width: 1377px) 580px, 580px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png" 
+data-extension=".png" data-webp="1"></div></div><div class="tatsu-module tatsu-ZPFnQJdp2Qk h5 IG JG NG t KE"><h5 
+class="tatsu-title LG A C G H I O c GB EC LC ZE rE">Test Prep - GRE, GMAT, SAT, ACT</h5></div></div></div><div 
+class="vF"><div class="wF BC"></div></div><a href="https://zipme.at/kcoverseas-test-prep-gre-gmat-sat-act/meetings" 
+class="aF"></a></div></div></div></div></div><div class="rF be-preview GG tatsu-jDSD5n4ch9N lF hF jF nE"><div 
+class="gF DG GB VE"><div class="iF"><div class="nF GG qF tatsu-lRj1ThiiQ5F uF z kD sD bE fE"><div 
+class="tatsu-column-inner gradientClass r BC IE"><div class="oF"><div class="xF jD oD iE"><div class="HG tatsu-module 
+tatsu-ZPfYvl_-M-o zF tatsu-image-lazyload tatsu-ZPfYvl_-M-o XB eE"><div class="tatsu-single-image-inner s KB KC ME 
+oE"><div class="tatsu-single-image-padding-wrap RB"></div><img data-srcset="https://studies-overseascom.swipepages.medi
+a/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-300.webp 
+300w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-500.webp 
+500w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_-750.webp 
+750w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png 751w" 
+sizes="(max-width: 767px) 17.5vw,(max-width: 1024px) 50vw,(max-width: 1377px) 580px, 580px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/microsoftteams-image__4_.png" 
+data-extension=".png" data-webp="1"></div></div><div class="tatsu-module tatsu-4-juKk2bE2F h5 IG JG NG t KE"><h5 
+class="tatsu-title LG A C G H I O c GB EC LC ZE rE">Test Prep - Duolingo, German Language</h5></div></div></div><div 
+class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kcoverseas-test-prep-ielts-pte-toefl-duolingo-german/meetings" class="aF"></a></div></div><div 
+class="nF NG GG qF tatsu-XcdTqLxwPiZ uF z kD sD cE fE"><div class="tatsu-column-inner gradientClass r BC IE"><div 
+class="oF"><div class="xF jD oD iE"><div class="HG tatsu-module tatsu-xiMLmsauX8G zF tatsu-image-lazyload 
+tatsu-xiMLmsauX8G XB eE"><div class="tatsu-single-image-inner s FB KC ME oE"><div 
+class="tatsu-single-image-padding-wrap RB"></div><img data-srcset="https://studies-overseascom.swipepages.media/2024/8/
+64be52a56efbd7001077fa82/elan_logo_f0320a7229-150.webp 
+150w,https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/elan_logo_f0320a7229.png 180w" 
+sizes="(max-width: 767px) 17.5vw,(max-width: 1024px) 50vw,(max-width: 1377px) 580px, 580px" alt 
+data-src="https://studies-overseascom.swipepages.media/2024/8/64be52a56efbd7001077fa82/elan_logo_f0320a7229.png" 
+data-extension=".png" data-webp="1"></div></div><div class="tatsu-module tatsu-V2kwO7Myq5f h5 IG JG NG t KE"><h5 
+class="tatsu-title LG A C G H I O c GB EC LC ZE qE">Study Abroad Education Loan</h5></div></div></div><div 
+class="vF"><div class="wF BC"></div></div><a 
+href="https://zipme.at/kc-overseas-education-meetings/meetings?opentype=link" 
+class="aF"></a></div></div></div></div></div></div></div></div><div class="XF"><div class="WF"></div></div><div 
+class="bF tatsu-section-overlay nB"></div><div class="cF eF fF n nC UE"><svg preserveAspectRatio="none" 
+xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 217"><g fill-rule="evenodd" transform="matrix(-1 0 0 1 1920 
+0)"><path d="M0,57.46875 C203.364583,135.217754 494.835938,156.564108 874.414062,121.507813 C1192.61198,-13.9827666 
+1541.14063,-35.3291208 1920,57.46875 L1920,207 L0,207 L0,57.46875 Z" opacity=".3"/><path d="M0,79 
+C292.46875,165.453125 612.46875,165.453125 960,79 C1307.53125,-7.453125 1627.53125,-7.453125 1920,79 L1920,207 L0,207 
+L0,79 Z" opacity=".6"/><path d="M0,89 C288.713542,146.786458 608.713542,146.786458 960,89 C1311.28646,31.2135417 
+1631.28646,31.2135417 1920,89 L1920,217 L0,217 L0,89 Z"/></g></svg></div></div><script>(function(){function c(){var 
+b=a.contentDocument||a.contentWindow.document;if(b){var 
+d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9f6671d0ecbda79d',t:'MTc3Nzg4NjU4NA=='};var a=docume
+nt.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head'
+)[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement(
+'iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.v
+isibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else 
+if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||func
+tion(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c
+())}}}})();</script><script defer 
+src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" 
+integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-bea
+con='{"version":"2024.11.0","token":"7ca6c8b7a7534664a48d62cce864beae","r":1,"server_timing":{"name":{"cfCacheStatus":t
+rue,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' 
+crossorigin="anonymous"></script>
+  temp_reference.html:78:</body><input type="hidden" id="swipe-pages-variant" value="66a62369d74a230011e0c085"> <input 
+type="hidden" id="swipe-pages-page" value="66a62369d74a230011e0c083"> <input type="hidden" id="swipe-pages-account" 
+value="64be52a56efbd7001077fa80"> <input type="hidden" id="swipe-pages-subaccount" 
+value="64be52a56efbd7001077fa82"><script type="text/javascript" 
+src="https://scripts.swipepages.com/js/jquery.min.js"></script><script type="text/javascript" 
+src="https://scripts.swipepages.com/js/vendor/asyncloader.min.js"></script><script type="text/javascript" 
+src="https://scripts.swipepages.com/js/helpers.min.js"></script><script type="text/javascript">tatsuFrontendConfig = {
+  temp_reference.html:79:            apiBaseUrl: "https://app.swipepages.com/api",
+  temp_reference.html:80:            domain: "https://app.swipepages.com",
+
+
