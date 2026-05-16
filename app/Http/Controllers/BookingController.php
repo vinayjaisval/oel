@@ -397,4 +397,16 @@ public function adminBookings(Request $request)
 
         return back()->with('success', 'Reminder Sent Successfully');
     }
+
+
+     public function joinMeeting($id)
+    {
+        $booking = Booking::findOrFail($id);
+
+        if ($booking->status !== 'cancelled' && $booking->status !== 'completed') {
+            $booking->update(['status' => 'completed']);
+        }
+
+        return redirect($booking->meeting_link);
+    }
 }
