@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\ContactMail;
 
-use App\Models\{Ads, Blog, Documents, GradingScheme, Contactus, AdditionalQualification, SchoolAttended, TestScore, Country, EducationLevel, EngProficiencyLevel, Fieldsofstudytype, Exam, Instagram, Payment, Program, ProgramDiscipline, ProgramLevel, ProgramSubdiscipline, ProgramSubLevel, Student, StudentByAgent, University, Faq, FeedBackVideo, PaymentsLink, ServiceLanding, Testimonials};
+use App\Models\{Ads, Blog, Documents, GradingScheme, Contactus,OnlineCountry, AdditionalQualification, SchoolAttended, TestScore, Country, EducationLevel, EngProficiencyLevel, Fieldsofstudytype, Exam, Instagram, Payment, Program, ProgramDiscipline, ProgramLevel, ProgramSubdiscipline, ProgramSubLevel, Student, StudentByAgent, University, Faq, FeedBackVideo, PaymentsLink, ServiceLanding, Testimonials};
 use App\Jobs\SendOTPJob;
 use App\Models\VerificationOtp;
 use App\Mail\SendOtp;
@@ -49,7 +49,9 @@ class FrontendController extends Controller
             'testimonials' => Testimonials::where('status', 1)->Select('profile_picture', 'designation', 'name', 'location', 'testimonial_desc')->where('status', 1)->take(6)->get(),
             'universitiesltl' => University::select('id', 'university_name', 'logo')->where('is_approved', 1)->take(16)->get(),
             'universitiesrtl' => University::select('id', 'university_name', 'logo')->where('is_approved', 1)->latest()->take(16)->get(),
-            'country' => Country::select('name', 'id')->where('is_active', 1)->get()
+            'country' => Country::select('name', 'id')->where('is_active', 1)->get(),
+            'online_country' => OnlineCountry::select('name', 'id','flag')->get()
+
 
         ]);
     }
@@ -78,15 +80,33 @@ class FrontendController extends Controller
         return view('frontend.service_details', compact('service_detials'));
     }
 
-    public function check_eligibility()
-    {
-        $country = Country::select('name', 'id')->where('is_active', 1)->get();
-        $program_level = ProgramLevel::select('name', 'id')->get();
-        $sub_program_level = ProgramSubLevel::select('name', 'id', 'program_id')->get();
-        $program_discipline = ProgramDiscipline::select('name', 'id')->get();
-        $eng_proficiency_level = EngProficiencyLevel::select('name', 'id')->get();
-        return view('frontend.check-my-eligibility', compact('country', 'eng_proficiency_level', 'program_level', 'sub_program_level', 'program_discipline'));
+   public function check_eligibility()
+{
+    // 🔒 OTP SECURITY CHECK
+    if (!session()->has('otp_verified')) {
+        return redirect('/');
     }
+
+    $country = Country::select('name', 'id')
+        ->where('is_active', 1)
+        ->get();
+
+    $program_level = ProgramLevel::select('name', 'id')->get();
+
+    $sub_program_level = ProgramSubLevel::select('name', 'id', 'program_id')->get();
+
+    $program_discipline = ProgramDiscipline::select('name', 'id')->get();
+
+    $eng_proficiency_level = EngProficiencyLevel::select('name', 'id')->get();
+
+    return view('frontend.check-my-eligibility', compact(
+        'country',
+        'eng_proficiency_level',
+        'program_level',
+        'sub_program_level',
+        'program_discipline'
+    ));
+}
 
     public function get_country(Request $request)
     {
@@ -863,7 +883,7 @@ class FrontendController extends Controller
             return response()->json(['message' => 'Failed to send OTP. Please try again later.', 'success' => false]);
         }
     }
-    public function verify_otp(Request $request)
+    public function verify_otp_old(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'otp' => 'required|numeric',
@@ -891,6 +911,53 @@ class FrontendController extends Controller
         } else {
             return response()->json(['message' => 'Invalid OTP.', 'success' => false], 401);
         }
+    }
+
+        public function verify_otp(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'otp' => 'required|numeric',
+            'email' => [
+                'required',
+                'email',
+                'unique:users,email',
+                'unique:student,email',
+                'unique:student_by_agent,email',
+            ],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        $storedOtp = session('otp');
+
+        if ($request->otp == $storedOtp) {
+
+            // ✅ OTP remove
+            session()->forget('otp');
+
+            // 🔥 IMPORTANT: OTP VERIFIED SESSION SET KARO
+            session(['otp_verified' => true]);
+
+            VerificationOtp::where("email", $request->email)->delete();
+
+            StudentByAgent::create([
+                'name' => $request->full_name,
+                'email' => $request->email,
+                'phone_number' => $request->phone_number,
+            ]);
+
+            return response()->json([
+                'message' => 'OTP verified successfully.',
+                'success' => true
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Invalid OTP.',
+            'success' => false
+        ], 401);
     }
 
     public function view_program_data(Request $request, $id = null)

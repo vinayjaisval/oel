@@ -16,13 +16,14 @@
         UniversityController,
         LearningTrainingController,
         AccountingController,
-        DataOperatorController
+        DataOperatorController,
+        BookingController
     };
     use Illuminate\Support\Facades\Route;
     use Maatwebsite\Excel\Row;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\FacebookLeadController;
-    // URL::forceScheme('https');
+    use App\Http\Controllers\ReportController;
+    use App\Http\Controllers\FacebookLeadController;
+        // URL::forceScheme('https');
 
 use Illuminate\Support\Facades\Artisan;
 
@@ -104,7 +105,11 @@ Route::get('/clear-all', function () {
     Route::get('selected-program-data', [FrontendController::class, 'view_program_data'])->name('view-program-data');
     Route::get('apply-program-payment/{student_id}/{program_id}', [FrontendController::class, 'apply_program_payment'])->name('apply-program-payment');
     Route::get('pay-later/{student_id}/{program_id}/{amount?}/{intake_month?}/{intake_year?}', [FrontendController::class, 'pay_later'])->name('pay-later');
+   
     Route::get('check-eligibility', [FrontendController::class, 'check_eligibility'])->name('check-eligibility');
+   
+   
+   
     Route::get('universities/{page?}', [FrontendController::class, 'universities'])->name('universities');
     Route::get("university-details/{id}", [UniversityController::class, 'view_university'])->name('view-university');
     Route::get('continue-course/{student_id}/{program_id}/{amount?}/{intake_month?}/{intake_year?}', [FrontendController::class, 'continue_course'])->name('continue-course');
@@ -122,6 +127,13 @@ Route::get('/clear-all', function () {
     Route::get('programs-offered', [FrontendController::class, 'programs_offered_filter'])->name('programs-offered');
     Route::get("service-details/{id}", [FrontendController::class, 'service_details'])->name('service-details');
 
+
+        
+    // Route::get('/', [BookingController::class, 'index']);
+
+    Route::post('/book', [BookingController::class, 'store']);
+
+    Route::get('/get-slots/{date}', [BookingController::class, 'getSlots']);
     // Route::get('/dashboard', function () {
     //     return view('dashboard');
     // })->middleware(['auth', 'verified'])->name('dashboard');
@@ -832,7 +844,30 @@ Route::get('/clear-all', function () {
         Route::get("edit/country-university/{id}", [\App\Http\Controllers\LandingPage\DashboardController::class, 'editCountryUniversity'])->name('edit.country.university');
         Route::post("update/country-university/{id}", [\App\Http\Controllers\LandingPage\DashboardController::class, 'updateCountryUniversity'])->name('update.country.university');
         Route::get("delete/country-university/{id}", [\App\Http\Controllers\LandingPage\DashboardController::class, 'deleteCountryUniversity'])->name('delete.country.university');
-    });
+    
+            // online meeting 
+            Route::get('/online-meeting',
+                [BookingController::class, 'adminBookings'])->name('online-meetings');
+
+            // JOIN MEETING
+            Route::get('/join-meeting/{id}',
+                [BookingController::class, 'joinMeeting'])->name('join.meeting');
+
+            // RESCHEDULE
+            Route::post('/reschedule/{id}',
+                [BookingController::class, 'reschedule'])->name('reschedule.meeting');
+
+                  Route::post('/update-booking-status/{id}',
+                  [BookingController::class, 'updateStatus'])->name('update.booking.status');
+            // CANCEL
+            Route::post('/cancel-booking/{id}',
+                [BookingController::class, 'cancelBooking'])->name('cancel.booking');
+
+            // SEND REMINDER
+            Route::get('/send-reminder/{id}',
+                [BookingController::class, 'sendReminder'])->name('send.reminder');
+    
+        });
 
     Route::get('/study-in-south-korea/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'index'])->name('study-in-south-korea');
     Route::get('/landing-page/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'index'])->name('landing-page');
