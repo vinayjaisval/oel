@@ -10,6 +10,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Illuminate\Pagination\Paginator;
+use App\Models\Booking;
+use App\Models\Country;
+use App\Models\OnlineCountry;
 
 class AppServiceProvider extends ServiceProvider {
 
@@ -45,6 +48,8 @@ class AppServiceProvider extends ServiceProvider {
         // if ($this->app->environment('production')) {
         //     \URL::forceScheme('https');
         // }
+         View::share('online_country', OnlineCountry::all());
+         View::share('todayMeetingCount', Booking::todayMeetingCount());
     }
 
 }

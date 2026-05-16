@@ -32,8 +32,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha512-1cK78a1o+ht2JcaW6g8OXYwqpev9+6GqOkz9xmBN9iUUhIndKtxwILGWYOSibOKjLsEdjyjZvYDq/cZwNeak0w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{asset('frontend/css/costoms.css')}}">
- <!-- Swiper CSS -->
- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+        <!-- Swiper CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-T9PKC9W1V2"></script>
     
@@ -86,33 +86,36 @@
                         <a href="{{url('/')}}"><img src="{{ asset('frontend/img/oel (1) 1.png') }}"></a>
                     </div>
                     <ul class="nav_links d-flex" id="nav_links">
-                <li><a href="{{ route('index') }}">Home</a></li>
-                <li><a href="{{ route('about-oel') }}">About OEL</a></li>
-                <li><a href="{{ route('programs') }}">Programs</a></li>
-                <li><a href="{{ route('program-offered') }}">Courses Offered</a></li>
-                <li><a href="{{ route('contact_us') }}">Contact Us</a></li>
-                <li><a class="apply-btn rounded fn border-0 p-2" href="{{ route('check-eligible') }}"> Quick Search</a></li>
-                <li><a class="apply-btn rounded fn border-0 p-2" data-bs-toggle="modal" data-bs-target="#exampleModal"> Check My Eligibility</a>
-                </li>
-                <li>
-                    @if(Auth::check())
-                        <a href="{{ route('dashboard') }}">
-                            <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('frontend/images/user.png') }}" 
-                                alt="User" 
-                                class="rounded-circle" 
-                                style="width:40px; height:40px; object-fit:cover;" >
-                        </a>
-                    @else
-                        <a href="{{ route('user-login') }}">
-                            <button class="rounded apply-btn fn border-0 p-2">Login</button>
-                        </a>
-                    @endif
-                </li>
-
-
-                <div class="students_img "><img src="{{ asset('frontend/img/new-list.png') }}">
-                </div>
-            </ul>
+                        <li><a href="{{ route('index') }}">Home</a></li>
+                        <li><a href="{{ route('about-oel') }}">About OEL</a></li>
+                        <li><a href="{{ route('programs') }}">Programs</a></li>
+                        <!-- <li><a href="{{ route('program-offered') }}">Courses Offered</a></li> -->
+                        <li><a href="{{ route('contact_us') }}">Contact Us</a></li>
+                        <li><a class="apply-btn rounded fn border-0 p-2" href="{{ route('check-eligible') }}"> Quick Search</a></li>
+                        <li><a class="apply-btn rounded fn border-0 p-2" data-bs-toggle="modal" data-bs-target="#exampleModal"> Check My Eligibility</a>
+                        </li>
+                        <li><button class="rounded apply-btn fn border-0 p-2" onclick="openWizard()" style="background-color: red;">
+                               <i class="fa-solid fa-video"></i>
+                                Book Online Counselling                            </button>
+                        </li>
+                        <li>
+                            @if(Auth::check())
+                                <a href="{{ route('dashboard') }}">
+                                    <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('frontend/images/user.png') }}" 
+                                        alt="User" 
+                                        class="rounded-circle" 
+                                        style="width:40px; height:40px; object-fit:cover;" >
+                                </a>
+                            @else
+                                <a href="{{ route('user-login') }}">
+                                    <button class="rounded apply-btn fn border-0 p-2">Login</button>
+                                </a>
+                            @endif
+                        </li>
+                        <div class="students_img ">
+                            <img src="{{ asset('frontend/img/new-list.png') }}">
+                        </div>
+                   </ul>
                     <div class="nav_menu_btn" id="menu_btn">
                         <span><i class="ri-menu-line" onclick="toggleMenu()"></i></span>
                     </div>
@@ -120,8 +123,10 @@
             </div>
         </div>
     </section>
+    @include('frontend.layouts.onlinemeeting')
+
     @yield('content')
-  
+   /// footer section
     <section>
         <div class="bottom_footer bv_cs">
             <div class="fw_footer container text-white">
@@ -227,91 +232,97 @@
         </div>
        
     </section>
+
+
+   //modal section
     <section>
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered" style="min-width: 800px;">
-        <div class="modal-content">
-            <div class="row">
-                <div class="col-md-6 p-0">
-                    <img src="https://overseaseducationlane.com/public/frontend/images/login.jpg"
-                        style="height: 100%;width: 100%;object-fit: cover;">
-                </div>
-                <div class="col-md-6"
-                    style="background: #EAEAEA;">
-                    <div class="modal-header float-end">
-
-                        <button type="button" class="btn-close position-relative p-3 border-0 bg-transparent" data-bs-dismiss="modal" aria-label="Close">
-                            <span class="position-absolute  translate-middle fw-bold custom-close">&times;</span>
-                        </button>
-                    </div>
-                    <h4 style="text-align:center">REQUEST AN ENQUIRY<br>we usually respond in seconds</h4>
-                    <div class="modal-header">
-                        
-                    </div>
-                    <form class="mx-1 mx-md-4" id="enquiry_data" method="POST" autocomplete="off" novalidate="novalidate">
-                        <input type="hidden" name="_token" value="EtDPgMZlqrXdbXLqqmRFysU8re1mNncBoQPgqNA7">
-
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fas fa-user-circle" style="width: 35px; font-size: 24px; color: #070758;"></i>
-                            <input type="text" class="form-control" name="full_name" id="full_name" required
-                                aria-describedby="emailHelp" placeholder="First Name">
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered" style="min-width: 800px;">
+                <div class="modal-content">
+                    <div class="row">
+                        <div class="col-md-6 p-0">
+                            <img src="https://overseaseducationlane.com/public/frontend/images/login.jpg"
+                                style="height: 100%;width: 100%;object-fit: cover;">
                         </div>
+                        <div class="col-md-6"
+                            style="background: #EAEAEA;">
+                            <div class="modal-header float-end">
 
-                        <div class="d-flex flex-row align-items-center mb-4">
-                            <i class="fas fa-at" style="width: 35px; font-size: 22px; color: #070758;"></i>
-                            <input type="email" name="email" class="form-control" required id="email_name"
-                                aria-describedby="emailHelp" placeholder="Enter email">
-                        </div>
-                        <span class="text-danger email_error"></span>
-                        <span style="margin-left: 37px; margin-bottom: 50px !important; position: relative; top: -8px; font-size: 12px;">
-                            We'll never share your email with anyone else.
-                        </span>
-
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="d-flex flex-row align-items-center mb-4">
-                                    <i class="fas fa-phone-alt" style="width: 35px; font-size: 24px; color: #070758;"></i>
-                                    <input type="tel" name="mobile_number" class="form-control" aria-describedby="emailHelp"
-                                        pattern="[0-9]{10}" placeholder="Mobile number" id="mobile_number" required  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
-                                </div>
-                                <span style="margin-left: 37px; position: relative; top: -8px; font-size: 12px;">
-                                    Please enter 10 digits only.
-                                </span>
+                                <button type="button" class="btn-close position-relative p-3 border-0 bg-transparent" data-bs-dismiss="modal" aria-label="Close">
+                                    <span class="position-absolute  translate-middle fw-bold custom-close">&times;</span>
+                                </button>
                             </div>
-                            <div class="col-md-4">
-                                <div class="d-flex float-end mt-2">
-                                    <button type="button" id="verify_otp" class="btn btn-sm"
-                                        style="background-color: #070758; color: white;">
+                            <h4 style="text-align:center">REQUEST AN ENQUIRY<br>we usually respond in seconds</h4>
+                            <div class="modal-header">
+                                
+                            </div>
+                            <form class="mx-1 mx-md-4" id="enquiry_data" method="POST" autocomplete="off" novalidate="novalidate">
+                                <input type="hidden" name="_token" value="EtDPgMZlqrXdbXLqqmRFysU8re1mNncBoQPgqNA7">
+
+                                <div class="d-flex flex-row align-items-center mb-4">
+                                    <i class="fas fa-user-circle" style="width: 35px; font-size: 24px; color: #070758;"></i>
+                                    <input type="text" class="form-control" name="full_name" id="full_name" required
+                                        aria-describedby="emailHelp" placeholder="First Name">
+                                </div>
+
+                                <div class="d-flex flex-row align-items-center mb-4">
+                                    <i class="fas fa-at" style="width: 35px; font-size: 22px; color: #070758;"></i>
+                                    <input type="email" name="email" class="form-control" required id="email_name"
+                                        aria-describedby="emailHelp" placeholder="Enter email">
+                                </div>
+                                <span class="text-danger email_error"></span>
+                                <span style="margin-left: 37px; margin-bottom: 50px !important; position: relative; top: -8px; font-size: 12px;">
+                                    We'll never share your email with anyone else.
+                                </span>
+
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="d-flex flex-row align-items-center mb-4">
+                                            <i class="fas fa-phone-alt" style="width: 35px; font-size: 24px; color: #070758;"></i>
+                                            <input type="tel" name="mobile_number" class="form-control" aria-describedby="emailHelp"
+                                                pattern="[0-9]{10}" placeholder="Mobile number" id="mobile_number" required  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+                                        </div>
+                                        <span style="margin-left: 37px; position: relative; top: -8px; font-size: 12px;">
+                                            Please enter 10 digits only.
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="d-flex float-end mt-2">
+                                            <button type="button" id="verify_otp" class="btn btn-sm"
+                                                style="background-color: #070758; color: white;">
+                                                <span class="spinner-grow spinner-grow-sm d-none" role="status" aria-hidden="true"></span>
+                                                Verify OTP
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="text-danger error-phone"></span>
+
+                                <div class="d-flex flex-row align-items-center mb-4 otp-verify" style="display:none !important;">
+                                    <i class="fas fa-key" style="width: 35px; font-size: 24px; color: #070758;"></i>
+                                    <input type="number" name="otp" class="form-control" id="otp" required
+                                        aria-describedby="emailHelp" placeholder="Enter otp"  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);">
+                                </div>
+                                <span class="text-danger otp-error"></span>
+
+                                <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                                    <button type="button" id="booking_enquiry" class="btn btn-lg booking_enquiry"
+                                        style="background-color: #070758; color: white;" disabled>
                                         <span class="spinner-grow spinner-grow-sm d-none" role="status" aria-hidden="true"></span>
-                                        Verify OTP
+                                        Submit Now
                                     </button>
                                 </div>
-                            </div>
+                            </form>
                         </div>
-                        <span class="text-danger error-phone"></span>
-
-                        <div class="d-flex flex-row align-items-center mb-4 otp-verify" style="display:none !important;">
-                            <i class="fas fa-key" style="width: 35px; font-size: 24px; color: #070758;"></i>
-                            <input type="number" name="otp" class="form-control" id="otp" required
-                                aria-describedby="emailHelp" placeholder="Enter otp"  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);">
-                        </div>
-                        <span class="text-danger otp-error"></span>
-
-                        <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                            <button type="button" id="booking_enquiry" class="btn btn-lg booking_enquiry"
-                                style="background-color: #070758; color: white;" disabled>
-                                <span class="spinner-grow spinner-grow-sm d-none" role="status" aria-hidden="true"></span>
-                                Submit Now
-                            </button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-</section>
+    </section>
+
+
+
     <section>
         <a href="{{url('contact-us')}}" class="chat-btn" title="Chat with us">
             <i class="fa-solid fa-comments"></i>
@@ -322,40 +333,43 @@
             <img src="{{asset('frontend/img/whatsapp.png')}}" alt="WhatsApp Logo">
         </a>
     </section>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"
         integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-
+  
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11.0.5/swiper-bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/swiper@11.0.5/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11.0.5/swiper-bundle.min.js"></script>
+  
     @yield('javascript_section')
 
     <script>
         AOS.init();
     </script>
    <script>
-document.addEventListener("DOMContentLoaded", function() {
-    var logosSlide = document.querySelector(".logos-slide");
-    var logoSlider = document.querySelector(".logo-slider");
+        document.addEventListener("DOMContentLoaded", function() {
+            var logosSlide = document.querySelector(".logos-slide");
+            var logoSlider = document.querySelector(".logo-slider");
 
-    if (logosSlide && logoSlider) {
-        var copy = logosSlide.cloneNode(true);
-        logoSlider.appendChild(copy);
-    }
-});
-</script>
+            if (logosSlide && logoSlider) {
+                var copy = logosSlide.cloneNode(true);
+                logoSlider.appendChild(copy);
+            }
+        });
+   </script>
     <script>
         const menuBtn = document.getElementById("menu_btn");
         const navLinks = document.getElementById("nav_links");
@@ -374,102 +388,72 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
     </script>
-    <script>
-        $(document).on('click', '#verify_otp', function(e) {
-            $('.error-phone').html('');
-            e.preventDefault();
-            let mobile_number = $('#mobile_number').val();
-            if (!mobile_number || mobile_number.length != 10 || !/^\d+$/.test(mobile_number)) {
-                alert('Please enter valid mobile number', 'error');
-                return false;
+  <script>
+    $(document).ready(function () {
+
+        // SEND OTP
+        $(document).on('click', '#verify_otp', function () {
+
+            let mobile = $('#mobile_number').val();
+
+            if (!mobile || mobile.length != 10) {
+                alert('Enter valid 10 digit mobile number');
+                return;
             }
-            var spinner = this.querySelector('.spinner-grow');
-            spinner.classList.remove('d-none');
+
             $.ajax({
                 url: "{{ route('send-otp') }}",
-                type: 'POST',
+                type: "POST",
                 data: {
-                    phone_number: mobile_number,
-                    _token: '{{ csrf_token() }}'
+                    _token: "{{ csrf_token() }}",
+                    phone_number: mobile
                 },
-                success: function(data) {
-                    spinner.classList.add('d-none');
-                    if (data.success) {
-                        $('.otp-sent').html(data.message);
-                    }
-                    if (data.success) {
+                success: function (res) {
+
+                    if (res.success) {
                         $('.otp-verify').show();
+                        $('.error-phone').text('');
+                        alert('OTP Sent');
                     } else {
-                        $('.error-phone').html(data.message);
-                    }
-                },
-                error: function(xhr) {
-                    spinner.classList.add('d-none');
-                    if (xhr.responseJSON.errors.phone_number) {
-                        $('.error-phone').html(xhr.responseJSON.errors.phone_number[0]);
-                    }
-                    if (xhr.responseJSON.errors.email) {
-                        $('.error-email').html(xhr.responseJSON.errors.email[0]);
+                        $('.error-phone').text(res.message);
                     }
                 }
-            })
-        })
-        $('.booking_enquiry').on('click', function(e) {
-            e.preventDefault();
-            let mobile_number = $('#mobile_number').val();
-            if (!mobile_number || mobile_number.length != 10 || !/^\d+$/.test(mobile_number)) {
-                alert('Please enter valid mobile number', 'error');
-                return false;
-            }
-            let full_name = $('#full_name').val();
-            if (!full_name) {
-                alert('Please enter your full name', 'error');
-                return false;
-            }
-            let email = $('#email_name').val();
-            let otp = $('#otp').val();
-            if (!otp) {
-                alert('Please enter otp', 'error');
-                return false;
-            }
-            var spinner = this.querySelector('.spinner-grow');
-            spinner.classList.remove('d-none');
+            });
+
+        });
+
+
+        // VERIFY OTP + REDIRECT
+        $(document).on('click', '#booking_enquiry', function () {
+
             $.ajax({
                 url: "{{ route('verify-otp') }}",
-                type: 'POST',
+                type: "POST",
                 data: {
-                    phone_number: mobile_number,
-                    full_name: full_name,
-                    email: email,
-                    otp: otp,
-                    _token: '{{ csrf_token() }}'
+                    _token: "{{ csrf_token() }}",
+                    phone_number: $('#mobile_number').val(),
+                    full_name: $('#full_name').val(),
+                    email: $('#email_name').val(),
+                    otp: $('#otp').val()
                 },
-                success: function(data) {
-                    spinner.classList.add('d-none');
-                    if (data.success) {
-                        window.location.href = "{{ url('check-eligibility') }}";
+
+                success: function (res) {
+
+                    if (res.success) {
+
+                        window.location.href = "{{ route('check-eligibility') }}";
+
                     } else {
-                        $('.otp-error').html(data.message);
-                        $('#exampleModal').css('display', 'none');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    spinner.classList.add('d-none');
-                    alert(xhr.responseJSON.errors.email[0]);
-                    if (xhr.responseJSON.errors.email) {
-                        $('.email_error').html(xhr.responseJSON.errors.email[0]);
-                    }
-                    if (xhr.status == 422) {
-                        $('.otp-error').html('Invalid OTP.');
+                        $('.otp-error').text(res.message);
                     }
                 }
-            })
-        })
-        $('.myspan').on('click', function() {
-            $('#exampleModal').css('display', 'none');
-        });
-    </script>
 
+            });
+
+        });
+
+    });
+  </script>
 
 </body>
 
