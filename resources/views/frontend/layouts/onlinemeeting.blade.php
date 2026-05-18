@@ -785,7 +785,7 @@
 
         $('#slotContainer').html('Loading...');
 
-        $.get('/overseas/get-slots/'+date,function(data){
+        $.get('/get-slots/'+date,function(data){
 
             let html='';
 
@@ -831,7 +831,7 @@
 
         $.ajax({
 
-            url:'/overseas/book',
+            url:'/book',
 
             type:'POST',
 
