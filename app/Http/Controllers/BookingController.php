@@ -73,6 +73,8 @@ class BookingController extends Controller
     |--------------------------------------------------------------------------
     */
 
+
+
   public function store(Request $request)
 {
   
@@ -91,17 +93,14 @@ class BookingController extends Controller
 
     // DEFAULT COUNSELOR
     // $counselor = Counselor::first();
-
     // if (!$counselor) {
-
     //     $counselor = Counselor::create([
-
     //         'name'  => 'Default Counselor',
     //         'email' => 'admin@gmail.com'
     //     ]);
     // }
-
     // CHECK SLOT ALREADY BOOKED
+
     $alreadyBooked = Booking::where('date', $request->date)
         ->where('time', $time)
         ->where('status', '!=', 'cancelled')
@@ -140,23 +139,45 @@ class BookingController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    Mail::raw(
+   Mail::raw(
 
-        "Hello {$request->name}\n\n" .
+"Dear Student,\n\n" .
 
-        "Your Study Abroad consultation is confirmed.\n\n" .
+"Thank you for booking your counseling session with Overseas Education Lane (OEL). " .
+"We are excited to connect with you and guide you toward your study abroad journey.\n\n" .
 
-        "Date: {$request->date}\n" .
-        "Time: {$request->time}\n\n" .
+"Your session has been successfully confirmed.\n\n" .
 
-        "Meeting Link:\n{$meetingLink}",
+"📅 Session Details\n" .
+"Date: {$request->date}\n" .
+"Time: {$request->time}\n\n" .
 
-        function ($message) use ($request) {
+"🔗 Meeting Link\n" .
+"{$meetingLink}\n\n" .
 
-            $message->to($request->email)
-                    ->subject('Study Abroad Consultation Booking');
-        }
-    );
+"Kindly be available and join the meeting on time so our counselor can assist you smoothly " .
+"and provide the best guidance for your future plans.\n\n" .
+
+"During the session, we will discuss about:\n" .
+"• University and course selection\n" .
+"• Scholarship opportunities\n" .
+"• Admission guidance\n" .
+"• Visa process\n" .
+"• Career opportunities abroad\n\n" .
+
+"If you have any questions, feel free to reply to this email or contact our team.\n\n" .
+
+"We look forward to meeting you soon.\n\n" .
+
+"Warm Regards,\n" .
+"Team Overseas Education Lane (OEL)",
+
+function ($message) use ($request) {
+
+    $message->to($request->email)
+            ->subject('Study Abroad Consultation Booking Confirmation');
+}
+);
 
     /*
     |--------------------------------------------------------------------------
@@ -304,24 +325,32 @@ public function adminBookings(Request $request)
         |--------------------------------------------------------------------------
         */
 
-        Mail::raw(
+       Mail::raw(
 
-            "Hello {$booking->name}\n\n" .
+            "Dear Student,\n\n" .
 
-            "Your meeting has been rescheduled.\n\n" .
+            "We would like to inform you that your counseling session with Overseas Education Lane (OEL) " .
+            "has been rescheduled.\n\n" .
 
-            "New Date: {$request->date}\n" .
-            "New Time: {$request->time}\n\n" .
+            "📅 New Date: {$request->date}\n" .
+            "⏰ New Time: {$request->time}\n" .
+            "💻 Mode: Online\n\n" .
 
-            "Meeting Link:\n{$booking->meeting_link}",
+            "🔗 Meeting Link:\n" .
+            "{$booking->meeting_link}\n\n" .
+
+            "We apologize for any inconvenience caused and appreciate your understanding. " .
+            "We look forward to connecting with you at the revised schedule.\n\n" .
+
+            "Best Regards,\n" .
+            "Team Overseas Education Lane (OEL)",
 
             function($message) use ($booking){
 
                 $message->to($booking->email)
-                        ->subject('Meeting Rescheduled');
+                        ->subject('Counseling Session Rescheduled');
             }
-        );
-
+            );
         return back()->with('success', 'Meeting Rescheduled Successfully');
     }
 
@@ -347,19 +376,26 @@ public function adminBookings(Request $request)
         |--------------------------------------------------------------------------
         */
 
-        Mail::raw(
+       Mail::raw(
 
-            "Hello {$booking->name}\n\n" .
+        "Dear Student,\n\n" .
 
-            "Your meeting has been cancelled.\n\n" .
+        "We would like to inform you that your scheduled counseling session with Overseas Education Lane (OEL) " .
+        "has been cancelled due to unforeseen circumstances.\n\n" .
 
-            "If needed, please book again later.",
+        "We sincerely apologize for the inconvenience caused. Kindly reschedule your session by " .
+        "booking another available slot at your convenience.\n\n" .
 
-            function($message) use ($booking){
+        "Thank you for your understanding and cooperation.\n\n" .
 
-                $message->to($booking->email)
-                        ->subject('Meeting Cancelled');
-            }
+        "Best Regards,\n" .
+        "Team Overseas Education Lane (OEL)",
+
+        function($message) use ($booking){
+
+            $message->to($booking->email)
+                    ->subject('Counseling Session Cancelled');
+        }
         );
 
         return back()->with('success', 'Booking Cancelled Successfully');
@@ -375,25 +411,33 @@ public function adminBookings(Request $request)
     {
         $booking = Booking::findOrFail($id);
 
-        Mail::raw(
+       Mail::raw(
 
-            "Hello {$booking->name}\n\n" .
+            "Dear Student/Parents,\n\n" .
 
-            "Reminder:\n\n" .
+            "This is a gentle reminder that your counseling session with Overseas Education Lane (OEL) " .
+            "is scheduled to begin in the next 10 minutes.\n\n" .
 
-            "Your meeting is scheduled soon.\n\n" .
+            "📅 Date: {$booking->date}\n" .
+            "⏰ Time: " . Carbon::parse($booking->time)->format('h:i A') . "\n" .
+            "💻 Mode: Online\n\n" .
 
-            "Date: {$booking->date}\n" .
-            "Time: " . Carbon::parse($booking->time)->format('h:i A') . "\n\n" .
+            "🔗 Meeting Link:\n" .
+            "{$booking->meeting_link}\n\n" .
 
-            "Meeting Link:\n{$booking->meeting_link}",
+            "Kindly ensure that you join the session on time.\n\n" .
+
+            "We look forward to connecting with you.\n\n" .
+
+            "Best Regards,\n" .
+            "Team Overseas Education Lane (OEL)",
 
             function($message) use ($booking){
 
                 $message->to($booking->email)
-                        ->subject('Meeting Reminder');
+                        ->subject('Reminder: Your Counseling Session Starts Soon');
             }
-        );
+            );
 
         return back()->with('success', 'Reminder Sent Successfully');
     }
