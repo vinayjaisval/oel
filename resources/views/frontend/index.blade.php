@@ -30,19 +30,27 @@
 #yt-strip-1 {
     --gap: 20px;
     --speed: 30s;
-    overflow: hidden; /* Wapas sahi kiya taaki design na bigde */
+    overflow: hidden;
     position: relative;
 }
 
 #yt-strip-1 .scroller {
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+}
+
+#yt-strip-1 .scroller::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
 }
 
 #yt-strip-1 .track {
     display: flex;
     gap: var(--gap);
     width: max-content;
-    transition: transform 0.5s ease-in-out;
+    padding-bottom: 5px;
 }
 
 /* UPDATED PERFECT NAVIGATION BUTTONS */
@@ -53,7 +61,7 @@
     background: linear-gradient(135deg, #0061ff 0%, #60efff 100%);
     color: #fff;
     border: 2px solid rgba(255, 255, 255, 0.8);
-    width: 40px; /* Thoda chhota kiya */
+    width: 40px; 
     height: 40px;
     border-radius: 50%;
     font-size: 18px;
@@ -72,11 +80,11 @@
 }
 
 .yt-prev {
-    left: 10px; /* Wapas andar le aaya */
+    left: 10px;
 }
 
 .yt-next {
-    right: 10px; /* Wapas andar le aaya */
+    right: 10px; 
 }
 
 /* Responsive fix */
@@ -1365,23 +1373,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // MANUAL SCROLL LOGIC
-    const track = root.querySelector(".track");
-    let currentPos = 0;
+    // NATIVE SCROLL LOGIC
+    const scroller = root.querySelector(".scroller");
 
     window.scrollStrip = function(direction) {
         const cardWidth = 250 + 20; // width + gap
-        const visibleWidth = root.offsetWidth;
-        const maxScroll = track.scrollWidth - visibleWidth;
-        
-        // Move by 1 card width per click (direction is -1 or 1)
-        // We subtract because going 'next' (1) means moving track 'left' (negative)
-        currentPos -= direction * cardWidth; 
-        
-        if (currentPos > 0) currentPos = 0;
-        if (Math.abs(currentPos) > maxScroll) currentPos = -maxScroll;
-
-        track.style.transform = `translateX(${currentPos}px)`;
+        if (scroller) {
+            scroller.scrollBy({
+                left: direction * cardWidth,
+                behavior: 'smooth'
+            });
+        }
     };
 
     })("yt-strip-1");
