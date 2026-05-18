@@ -508,7 +508,7 @@ $(document).ready(function () {
         /* ================= SUMMERNOTE ================= */
         $('#summernote1, #summernote2').summernote({
             placeholder: 'Write Here',
-            height: 100
+            height: 200
         });
 
         /* ================= PROGRAM DISCIPLINE ================= */

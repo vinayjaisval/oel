@@ -342,13 +342,17 @@ class OtherMasterDataController extends Controller
     //  province
      public function province(Request $request)
      {
-         $province=Province::with('country')->when($request->name, function ($query) use ($request) {
-                        $query->where('name', 'like', '%'.$request->name.'%');
-                    })
-                    ->when($request->country_id, function ($query) use ($request) {
-                        $query->where('country_id', 'like', '%'.$request->country_id.'%');
-                    })
-         ->paginate(12);
+
+   $province = Province::with('country')
+    ->when($request->name, function ($query) use ($request) {
+        $query->where('name', 'like', '%'.$request->name.'%');
+    })
+    ->when($request->country_id, function ($query) use ($request) {
+        $query->where('country_id', $request->country_id); // ✅ FIX
+    })
+    ->paginate(12);
+
+         
          $country =Country::where('is_active',1)->get();
          return view('admin.othermaster.province.index',compact('province','country'));
      }
@@ -662,14 +666,33 @@ class OtherMasterDataController extends Controller
       }
 
 
-      public function visa_sub_document_type(Request $request)
-      {
-          $visa_sub_document_type = VisaSubDocument::with('visa_documents')->when($request->visa_document_id, function ($query) use ($request) {
-                        $query->where('visa_document_id', $request->visa_document_id);
-                    })
-                    ->latest()->paginate(12);
-          return view('admin.othermaster.visa-sub-document.index',compact('visa_sub_document_type'));
-      }
+    public function visa_sub_document_type(Request $request)
+{
+    $query = VisaSubDocument::with('visa_documents');
+
+    // ✅ Name filter (title / name column)
+    if ($request->name) {
+        $query->where('name', 'like', '%' . $request->name . '%');
+    }
+
+    // ✅ Visa Document filter (existing)
+    if ($request->visa_document_id) {
+        $query->where('visa_document_id', $request->visa_document_id);
+    }
+
+    // ✅ (Optional) relation se bhi search karna ho
+    if ($request->name) {
+        $query->orWhereHas('visa_documents', function ($q) use ($request) {
+            $q->where('name', 'like', '%' . $request->name . '%');
+        });
+    }
+
+    $visa_sub_document_type = $query->latest()
+        ->paginate(12)
+        ->withQueryString();
+
+    return view('admin.othermaster.visa-sub-document.index', compact('visa_sub_document_type'));
+}
 
       public function visa_sub_document_type_create()
       {

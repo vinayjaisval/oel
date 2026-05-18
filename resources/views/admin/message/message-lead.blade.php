@@ -221,7 +221,7 @@
                             <th> Name </th>
                             <th> Phone</th>
                             <th> Email</th>
-                            <th> PinCode</th>
+                            <!-- <th> PinCode</th> -->
                             <th> Sms</th>
                             <th> Mail </th>
                         </tr>
@@ -244,7 +244,7 @@
                                 <td>{{ $data->name }}</td>
                                 <td>{{ $data->phone_number }}</td>
                                 <td>{{ $data->email }}</td>
-                                <td>{{ $data->zip }}</td>
+                                <!-- <td>{{ $data->zip }}</td> -->
                                 <td>
                                     <a href="" class="btn-sm mx-1" class="last_attended" data-tour="search"
                                     data-bs-toggle="offcanvas" data-bs-target="#sms-list"
@@ -675,6 +675,7 @@
                 $('.email-list-data').html('');
                 var email = $(this).attr('data-id');
                 var msg = 'sms';
+                 var attachment = "{{asset('attachments/')}}";
                 setupCSRF();
                 $.ajax({
                     url: "{{route('show-lead-email')}}",
@@ -693,6 +694,8 @@
                                             <th>Name</th>
                                             <th>Subject</th>
                                             <th>Message</th>
+                                            <th>Attachment</th>
+
                                         </tr>
                                     </thead>
                                     <tbody>`;
@@ -706,6 +709,7 @@
                                         <td>${value.recepients}</td>
                                         <td>${value.subject}</td>
                                         <td class='text-wrap'>${value.body}</td>
+                                        <td class='text-wrap'>${value.attachment ? `<a href="${attachment}/${value.attachment}" target="_blank">View Attachment</a>` : 'No Attachment'}</td>
                                     </tr>`;
                                 });
                             }

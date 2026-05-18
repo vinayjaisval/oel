@@ -150,7 +150,7 @@ class ProgramController extends Controller
     {
         $request->validate([
             'school_id' => 'required|max:200',
-            'name' => 'required|max:200',
+            'name' => 'required|max:1000',
             'length' => 'required|max:200',
             'programType' => 'required|max:200',
             'programCampus' => 'required|max:200',
@@ -252,7 +252,7 @@ class ProgramController extends Controller
     {
         $request->validate([
             'school_id' => 'required|max:200',
-            'name' => 'required|max:200',
+            'name' => 'required|max:1000',
             'length' => 'required|max:200',
             'programType' => 'required|max:200',
             'programCampus' => 'required|max:200',
@@ -302,7 +302,7 @@ class ProgramController extends Controller
             'priority' => $request->priority,
             'cost_of_living_fee' => '00.00',
             'cost_of_living' => '00.00',
-            'is_approved' => 1,
+            // 'is_approved' => 0,
         ]);
         return redirect()->route('manage-program')->with('success', 'Program Updated Successfully');
     }
@@ -458,11 +458,25 @@ class ProgramController extends Controller
 
 
     // program sublevel
-    public function program_sub_level()
-    {
-        $program_sub_level = ProgramSubLevel::with('programLevel')->paginate(12);
-        return view('admin.program.programsublevel.index', compact('program_sub_level'));
+  public function program_sub_level(Request $request)
+{
+    $query = ProgramSubLevel::with('programLevel');
+
+    // ✅ Name filter (sub level + level relation)
+    if ($request->name) {
+        $query->where(function ($q) use ($request) {
+            $q->where('name', 'like', '%' . $request->name . '%')
+              ->orWhereHas('programLevel', function ($qq) use ($request) {
+                  $qq->where('name', 'like', '%' . $request->name . '%');
+              });
+        });
     }
+
+    // ✅ Pagination + filter preserve
+    $program_sub_level = $query->paginate(12)->withQueryString();
+
+    return view('admin.program.programsublevel.index', compact('program_sub_level'));
+}
 
     public function program_sub_level_create()
     {
@@ -930,11 +944,20 @@ class ProgramController extends Controller
     }
 
 
-    public function program_discipline()
-    {
-        $program_discipline = ProgramDiscipline::paginate(12);
-        return view('admin.program.program_discipline.index', compact('program_discipline'));
+public function program_discipline(Request $request)
+{
+    $query = ProgramDiscipline::query();
+
+    // ✅ Name Filter
+    if ($request->name) {
+        $query->where('name', 'like', '%' . $request->name . '%');
     }
+
+    // Pagination + query string preserve
+    $program_discipline = $query->paginate(12)->withQueryString();
+
+    return view('admin.program.program_discipline.index', compact('program_discipline'));
+}
     public function program_discipline_create()
     {
         return view('admin.program.program_discipline.create');
@@ -977,11 +1000,27 @@ class ProgramController extends Controller
     }
 
 
-    public function program_subdiscipline()
-    {
-        $program_subdiscipline = ProgramSubdiscipline::with('programdiscipline')->paginate(12);
-        return view('admin.program.program_subdiscipline.index', compact('program_subdiscipline'));
+   public function program_subdiscipline(Request $request)
+{
+    $query = ProgramSubdiscipline::with('programdiscipline');
+
+    // ✅ Name filter (subdiscipline name)
+    if ($request->name) {
+        $query->where('name', 'like', '%' . $request->name . '%');
     }
+
+    // ✅ (Optional) Agar tum discipline name se bhi search karna chahte ho
+    $query->orWhereHas('programdiscipline', function ($q) use ($request) {
+        if ($request->name) {
+            $q->where('name', 'like', '%' . $request->name . '%');
+        }
+    });
+
+    // Pagination + query string preserve
+    $program_subdiscipline = $query->paginate(12)->withQueryString();
+
+    return view('admin.program.program_subdiscipline.index', compact('program_subdiscipline'));
+}
     public function program_subdiscipline_create()
     {
         $program_discipline = ProgramDiscipline::all();

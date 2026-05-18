@@ -730,31 +730,31 @@ class LeadsManageCotroller extends Controller
         // }
 
 
-        // Visa, Application Punching, Sub Agent — old logic
-if ($user->hasRole('visa') 
-    || $user->hasRole('Application Punching') 
-    || $user->hasRole('sub_agent')) {
+                // Visa, Application Punching, Sub Agent — old logic
+        if ($user->hasRole('visa') 
+            || $user->hasRole('Application Punching') 
+            || $user->hasRole('sub_agent')) {
 
-    $lead_list->where(function ($query) use ($user_id) {
-        $query->where('assigned_to', $user_id)
-            ->orWhere('user_id', $user_id);
-    });
-}
+            $lead_list->where(function ($query) use ($user_id) {
+                $query->where('assigned_to', $user_id)
+                    ->orWhere('user_id', $user_id);
+            });
+        }
 
-// Digital Marketing logic (NEW)
-if ($user->hasRole('Digital Marketing')) {
+        // Digital Marketing logic (NEW)
+        if ($user->hasRole('Digital Marketing')) {
 
-    $lead_list->where(function ($query) use ($user_id) {
-        // 1. Apne leads (user_id)
-        $query->where('user_id', $user_id)
+            $lead_list->where(function ($query) use ($user_id) {
+                // 1. Apne leads (user_id)
+                $query->where('user_id', $user_id)
 
-            // 2. Apne assigned leads
-            ->orWhere('assigned_to', $user_id)
+                    // 2. Apne assigned leads
+                    ->orWhere('assigned_to', $user_id)
 
-            // 3. Facebook + Google leads (any user)
-            ->orWhereIn('source', ['facebook-leads', 'Google Ads']);
-    });
-}
+                    // 3. Facebook + Google leads (any user)
+                    ->orWhereIn('source', ['facebook-leads', 'Google Ads']);
+            });
+        }
 
 
         // Apply filters from the request
@@ -768,7 +768,7 @@ if ($user->hasRole('Digital Marketing')) {
             $lead_list->where('phone_number', 'LIKE', '%' . $request->phone_number . '%');
         }
         if ($request->zip) {
-            $lead_list->where('zip', 'LIKE', '%' . $request->zip . '%');
+            $lead_list->where('preferred_country_id', 'LIKE', '%' . $request->zip . '%');
         }
         if ($request->country_id) {
             $lead_list->where('country_id', $request->country_id);
@@ -916,6 +916,8 @@ if ($user->hasRole('Digital Marketing')) {
     public function lead_list(Request $request, $export = null)
     {
         $lead_list = $this->filterLeads($request);
+
+        
 
         if ($request->has('export')) {
             return Excel::download(new LeadExport($lead_list->get()), 'leads.xlsx');
@@ -1404,6 +1406,7 @@ if ($user->hasRole('Digital Marketing')) {
 
     public function payment_view(Request $request)
     {
+       
         $token = $request->token;
         $paymentLink = PaymentsLink::where('token', $token)->first();
         if (!$paymentLink) {
@@ -1423,11 +1426,13 @@ if ($user->hasRole('Digital Marketing')) {
             'amount' => $oamount,
             'name' => $student_name->name
         ];
+
+        
        
         return view('admin.leads.payment-view', compact('data'));
     }
 
-    public function store(Request $request)
+    public function store_old(Request $request)
     {
 
         DB::beginTransaction();
@@ -1481,9 +1486,100 @@ if ($user->hasRole('Digital Marketing')) {
         }
     }
 
+
+    public function store(Request $request)
+{
+
+
+    DB::beginTransaction();
+
+    try {
+        Log::info('PAYMENT REQUEST DATA:', $request->all());
+
+        $paymentResponse = $request->input('response', []);
+
+        if (empty($paymentResponse['razorpay_payment_id'])) {
+            Log::error('No Payment ID Found');
+            return response()->json(['success' => false, 'message' => 'No Payment ID Found']);
+        }
+
+        $api = new Api(env('RAZORPAY_API_KEY'), env('RAZORPAY_API_SECRET'));
+
+        try {
+            // Fetch & Capture Payment
+            $payment = $api->payment->fetch($paymentResponse['razorpay_payment_id']);
+            Log::info('PAYMENT FETCHED:', (array)$payment);
+
+            $response = $payment->capture(['amount' => $payment['amount']]);
+            Log::info('PAYMENT CAPTURED:', (array)$response);
+
+            Payment::create([
+                'payment_id' => $response->id,
+                'payment_method' => $response->method,
+                'currency' => $response->currency,
+                'fallowp_unique_id' => $paymentResponse['fallowp_unique_id'] ?? null,
+                'customer_name' => $paymentResponse['name'] ?? null,
+                'user_id' => $paymentResponse['user_id'] ?? null,
+                'customer_email' => $response->email,
+                'amount' => $response->amount / 100,
+                'payment_status' => 'success',
+                'json_response' => json_encode((array)$response)
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment successfully recorded'
+            ]);
+
+        } catch (\Exception $e) {
+
+            Log::error('PAYMENT FAILED:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            // ⚠️ Important: Yaha response use mat karo
+            Payment::create([
+                'payment_id' => $paymentResponse['razorpay_payment_id'] ?? null,
+                'payment_method' => null,
+                'currency' => null,
+                'fallowp_unique_id' => $paymentResponse['fallowp_unique_id'] ?? null,
+                'customer_name' => $paymentResponse['name'] ?? null,
+                'user_id' => $paymentResponse['user_id'] ?? null,
+                'customer_email' => null,
+                'amount' => 0,
+                'payment_status' => 'failed',
+                'json_response' => json_encode(['error' => $e->getMessage()])
+            ]);
+
+            DB::commit(); // ❗ rollback nahi karna (warna save nahi hoga)
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Payment failed but recorded'
+            ]);
+        }
+
+    } catch (\Throwable $th) {
+        DB::rollBack();
+
+        Log::error('PAYMENT_STORE_ERROR:', [
+            'error' => $th->getMessage(),
+            'trace' => $th->getTraceAsString()
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'error' => 'Internal Server Error'
+        ], 500);
+    }
+}
+
     public function success()
     {
-        return view('admin.leads.success');
+        return view('admin.leads.payment-success');
     }
 
 
@@ -1512,6 +1608,11 @@ if ($user->hasRole('Digital Marketing')) {
         }
     }
 
+
+       public function paymentfailure()
+        {
+            return view('admin.leads.payment-failure');
+        }
     
     public function oel_360(Request $request)
     {
@@ -1688,9 +1789,6 @@ if ($user->hasRole('Digital Marketing')) {
     public function aply_360($id = null)
     {
 
-
-
-
         $user = Auth::user();
         if ($user->hasRole('student')) {
             $studentDetails = Student::where('user_id', $user->id)->first();
@@ -1765,9 +1863,7 @@ if ($user->hasRole('Digital Marketing')) {
         $paymentStatuses = MasterService::pluck('id', 'name');
 
         $paymentStatusDone = [];
-
-       
-
+      
         foreach ($paymentStatuses as $masterService => $paymentStatus) {
             // Get the student's email based on the user_id
             $student_email = Student::where('user_id', $studentDetails->user_id)->pluck('email')->first();
@@ -1889,97 +1985,228 @@ if ($user->hasRole('Digital Marketing')) {
                 'table_three_sixtee' => $table_three_sixtee
             ];
             return response()->json($data);
-        } elseif ($request->tab3) {
-            $status = DB::table('tbl_three_sixtee')
-                ->where('sba_id', $id)
-                ->first();
-            if ($status == NULL) {
-                DB::table('tbl_three_sixtee')->insert([
-                    'sba_id' => $id,
-                    'user_id' => $user_id,
-                    'application' => json_encode($request->all()),
-                    'remarks' => json_encode($request->all()),
-                    'selected_program' => implode(',', $request->program_ids)
-                ]);
-            } else {
-                DB::table('tbl_three_sixtee')
-                    ->Where('sba_id', $id)
-                    ->update([
-                        'sba_id' => $id,
-                        'user_id' => $user_id,
-                        'application' => json_encode($request->all()),
-                        'remarks' =>  json_encode($request->all()),
-                        'selected_program' => implode(',', $request->program_ids)
-                    ]);
-            }
+        } 
+        // elseif ($request->tab3) {
+        //     $status = DB::table('tbl_three_sixtee')
+        //         ->where('sba_id', $id)
+        //         ->first();
+        //     if ($status == NULL) {
+        //         DB::table('tbl_three_sixtee')->insert([
+        //             'sba_id' => $id,
+        //             'user_id' => $user_id,
+        //             'application' => json_encode($request->all()),
+        //             'remarks' => json_encode($request->all()),
+        //             'selected_program' => implode(',', $request->program_ids)
+        //         ]);
+        //     } else {
+        //         DB::table('tbl_three_sixtee')
+        //             ->Where('sba_id', $id)
+        //             ->update([
+        //                 'sba_id' => $id,
+        //                 'user_id' => $user_id,
+        //                 'application' => json_encode($request->all()),
+        //                 'remarks' =>  json_encode($request->all()),
+        //                 'selected_program' => implode(',', $request->program_ids)
+        //             ]);
+        //     }
 
 
-            $student = StudentByAgent::where('student_user_id', $request->sba_id)->select('email', 'name')->first();
-            $threesixetee = DB::table('tbl_three_sixtee')->where('sba_id', $id)->first();
+        //     $student = StudentByAgent::where('student_user_id', $request->sba_id)->select('email', 'name')->first();
+        //     $threesixetee = DB::table('tbl_three_sixtee')->where('sba_id', $id)->first();
 
-            $collegeValues = explode(',', $threesixetee->college);
+        //     $collegeValues = explode(',', $threesixetee->college);
 
-            $courseValues = explode(',', $threesixetee->courses);
+        //     $courseValues = explode(',', $threesixetee->courses);
 
-            $universities = University::whereIn('id', $collegeValues)->pluck('university_name')->implode(', ');
+        //     $universities = University::whereIn('id', $collegeValues)->pluck('university_name')->implode(', ');
 
-            $course_in_three_sixtee = DB::table('course_tags')->wherein('id', $courseValues)->pluck('tag_name')->implode(', ');
+        //     $course_in_three_sixtee = DB::table('course_tags')->wherein('id', $courseValues)->pluck('tag_name')->implode(', ');
 
-            $application = json_decode($threesixetee->application);
+        //     $application = json_decode($threesixetee->application);
 
-            foreach ($application->program_ids as $key => $value) {
-                // Get program details for each program id
-                $program = Program::where('id', $value)->first();
+        //     foreach ($application->program_ids as $key => $value) {
+        //         // Get program details for each program id
+        //         $program = Program::where('id', $value)->first();
 
-                // Get application status and remarks for the specific program
-                $app_status = $application->{$program->id . '_application_status'};
-                $app_remarks = $application->{'remarks_' . $program->id};
+        //         // Get application status and remarks for the specific program
+        //         $app_status = $application->{$program->id . '_application_status'};
+        //         $app_remarks = $application->{'remarks_' . $program->id};
 
-                // Build the course name, status, and remarks data
-                $programsData[] = [
-                    'name' => $program->name,
-                    'status' => $app_status,
-                    'remarks' => $app_remarks
-                ];
-            }
+        //         // Build the course name, status, and remarks data
+        //         $programsData[] = [
+        //             'name' => $program->name,
+        //             'status' => $app_status,
+        //             'remarks' => $app_remarks
+        //         ];
+        //     }
 
-            // Prepare the data to send in the email
-            $data = [
-                'university' => $universities,
-                'student' => $student->name,
-                'courses' => $programsData, // Array of courses with status and remarks
-            ];
-            // dd($data);
-            // Check if there's data to send
-            if ($data) {
+        //     // Prepare the data to send in the email
+        //     $data = [
+        //         'university' => $universities,
+        //         'student' => $student->name,
+        //         'courses' => $programsData, // Array of courses with status and remarks
+        //     ];
+        //      dd($data);
+        //     // Check if there's data to send
+        //     if ($data) {
 
-                Mail::to($student->email)->send(new ApplyOel360Email($data));
-            }
+        //         Mail::to($student->email)->send(new ApplyOel360Email($data));
+        //     }
 
-            // Handle the response based on application status
-            if ($request->application_status == 'rejected') {
-                $response = 'Rejected';
-            } else {
-                $response = true;
-            }
+        //     // Handle the response based on application status
+        //     if ($request->application_status == 'rejected') {
+        //         $response = 'Rejected';
+        //     } else {
+        //         $response = true;
+        //     }
 
-            $acceptedProgramIds = [];
-            $programIds = $request->input('program_ids', []);
-            foreach ($programIds as $programId) {
-                $applicationStatus = $request->input("{$programId}_application_status");
+        //     $acceptedProgramIds = [];
+        //     $programIds = $request->input('program_ids', []);
+        //     foreach ($programIds as $programId) {
+        //         $applicationStatus = $request->input("{$programId}_application_status");
 
-                if ($applicationStatus === "accepted") {
-                    $acceptedProgramIds[] = $programId;
-                }
-            }
-            $program = Program::whereIn('id', $acceptedProgramIds)->where('is_approved', 1)->select('id', 'name')->get();
-            $data = [
-                'success' => true,
-                'status' => $response,
-                'program' => $program
-            ];
-            return response()->json($data);
-        } elseif ($request->tab == 'tab4') {
+        //         if ($applicationStatus === "accepted") {
+        //             $acceptedProgramIds[] = $programId;
+        //         }
+        //     }
+        //     $program = Program::whereIn('id', $acceptedProgramIds)->where('is_approved', 1)->select('id', 'name')->get();
+        //     $data = [
+        //         'success' => true,
+        //         'status' => $response,
+        //         'program' => $program
+        //     ];
+        //     return response()->json($data);
+        // } 
+
+
+        elseif ($request->tab3) {
+
+    $status = DB::table('tbl_three_sixtee')
+        ->where('sba_id', $id)
+        ->first();
+
+    if ($status == NULL) {
+        DB::table('tbl_three_sixtee')->insert([
+            'sba_id' => $id,
+            'user_id' => $user_id,
+            'application' => json_encode($request->all()),
+            'remarks' => json_encode($request->all()),
+            'selected_program' => implode(',', $request->program_ids),
+            'mail_sent' => 0 // 👈 NEW
+        ]);
+    } else {
+        DB::table('tbl_three_sixtee')
+            ->Where('sba_id', $id)
+            ->update([
+                'sba_id' => $id,
+                'user_id' => $user_id,
+                'application' => json_encode($request->all()),
+                'remarks' =>  json_encode($request->all()),
+                'selected_program' => implode(',', $request->program_ids)
+            ]);
+    }
+
+    $student = StudentByAgent::where('student_user_id', $request->sba_id)
+        ->select('email', 'name')->first();
+
+    $threesixetee = DB::table('tbl_three_sixtee')
+        ->where('sba_id', $id)->first();
+
+    $collegeValues = explode(',', $threesixetee->college);
+    $courseValues = explode(',', $threesixetee->courses);
+
+    $universities = University::whereIn('id', $collegeValues)
+        ->pluck('university_name')->implode(', ');
+
+    $course_in_three_sixtee = DB::table('course_tags')
+        ->whereIn('id', $courseValues)
+        ->pluck('tag_name')->implode(', ');
+
+    $application = json_decode($threesixetee->application);
+
+    $programsData = [];
+$sendMail = false;
+
+foreach ($application->program_ids as $key => $value) {
+
+    $program = Program::where('id', $value)->first();
+
+    // SAFE KEYS
+    $statusKey = $program->id . '_application_status';
+    $remarksKey = 'remarks_' . $program->id;
+
+    $app_status = isset($application->$statusKey) ? $application->$statusKey : null;
+    $app_remarks = isset($application->$remarksKey) ? $application->$remarksKey : null;
+
+    // mail flag
+    if ($app_status === 'accepted') {
+        $sendMail = true;
+    }
+
+    $programsData[] = [
+        'name' => $program->name ?? '',
+        'status' => $app_status ?? '',
+        'remarks' => $app_remarks ?? ''
+    ];
+}
+
+    // Prepare email data
+    $data = [
+        'university' => $universities,
+        'student' => $student->name,
+        'courses' => $programsData,
+    ];
+
+    // ❌ REMOVE THIS (warna mail kabhi nahi jayega)
+    
+
+    // ✅ CHECK mail already sent or not
+    $alreadySent = DB::table('tbl_three_sixtee')
+        ->where('sba_id', $id)
+        ->value('mail_sent');
+
+    if ($sendMail && !$alreadySent) {
+
+        Mail::to($student->email)->send(new ApplyOel360Email($data));
+
+        // mark as sent
+        DB::table('tbl_three_sixtee')
+            ->where('sba_id', $id)
+            ->update(['mail_sent' => 1]);
+    }
+
+    // RESPONSE LOGIC (same as yours)
+    if ($request->application_status == 'rejected') {
+        $response = 'Rejected';
+    } else {
+        $response = true;
+    }
+
+    $acceptedProgramIds = [];
+    $programIds = $request->input('program_ids', []);
+
+    foreach ($programIds as $programId) {
+        $applicationStatus = $request->input("{$programId}_application_status");
+
+        if ($applicationStatus === "accepted") {
+            $acceptedProgramIds[] = $programId;
+        }
+    }
+
+    $program = Program::whereIn('id', $acceptedProgramIds)
+        ->where('is_approved', 1)
+        ->select('id', 'name')->get();
+
+    $data = [
+        'success' => true,
+        'status' => $response,
+        'program' => $program
+    ];
+
+    return response()->json($data);
+}
+        
+        elseif ($request->tab == 'tab4') {
 
 
             $status = DB::table('tbl_three_sixtee')->where('sba_id', $id)->first();
@@ -2415,6 +2642,9 @@ if ($user->hasRole('Digital Marketing')) {
         ];
         return response()->json($data);
     }
+
+
+
 
     public function get_lead_360_images(Request $request)
     {

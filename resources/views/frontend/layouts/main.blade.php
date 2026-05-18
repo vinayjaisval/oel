@@ -32,13 +32,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha512-1cK78a1o+ht2JcaW6g8OXYwqpev9+6GqOkz9xmBN9iUUhIndKtxwILGWYOSibOKjLsEdjyjZvYDq/cZwNeak0w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{asset('frontend/css/costoms.css')}}">
- <!-- Swiper CSS -->
- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
- <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@400;600;700;800&family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Intl-Tel-Input -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.10/build/css/intlTelInput.css">
-    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.10/build/js/intlTelInput.min.js"></script>
+        <!-- Swiper CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-T9PKC9W1V2"></script>
     
@@ -631,38 +626,36 @@
                         <a href="{{url('/')}}"><img src="{{ asset('frontend/img/oel (1) 1.png') }}"></a>
                     </div>
                     <ul class="nav_links d-flex" id="nav_links">
-                <li><a href="{{ route('index') }}">Home</a></li>
-                <li><a href="{{ route('about-oel') }}">About OEL</a></li>
-                <li><a href="{{ route('programs') }}">Programs</a></li>
-                <li><a href="{{ route('program-offered') }}">Courses Offered</a></li>
-                <li><a href="{{ route('contact_us') }}">Contact Us</a></li>
-                <li><a class="apply-btn rounded fn border-0 p-2" href="{{ route('check-eligible') }}"> Quick Search</a></li>
-                <li><a class="apply-btn rounded fn border-0 p-2" data-bs-toggle="modal" data-bs-target="#exampleModal"> Check My Eligibility</a>
-                </li>
-                <li>
-                    @if(Auth::check())
-                        <a href="{{ route('dashboard') }}">
-                            <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('frontend/images/user.png') }}" 
-                                alt="User" 
-                                class="rounded-circle" 
-                                style="width:40px; height:40px; object-fit:cover;" >
-                        </a>
-                    @else
-                        <a href="{{ route('user-login') }}">
-                            <button class="rounded apply-btn fn border-0 p-2">Login</button>
-                        </a>
-                    @endif
-                </li>
-                <li>
-                    <button type="button"
-                    onclick="openWizard()"
-                    class="apply-btn rounded fn border-0 text-decoration-none counseling-btn-header"
-                    style="cursor:pointer;">
-                    Book Online Counselling
-                    </button>
-                </li>
-
-            </ul>
+                        <li><a href="{{ route('index') }}">Home</a></li>
+                        <li><a href="{{ route('about-oel') }}">About OEL</a></li>
+                        <li><a href="{{ route('programs') }}">Programs</a></li>
+                        <!-- <li><a href="{{ route('program-offered') }}">Courses Offered</a></li> -->
+                        <li><a href="{{ route('contact_us') }}">Contact Us</a></li>
+                        <li><a class="apply-btn rounded fn border-0 p-2" href="{{ route('check-eligible') }}"> Quick Search</a></li>
+                        <li><a class="apply-btn rounded fn border-0 p-2" data-bs-toggle="modal" data-bs-target="#exampleModal"> Check My Eligibility</a>
+                        </li>
+                        <li><button class="rounded apply-btn fn border-0 p-2" onclick="openWizard()" style="background-color: red;">
+                               <i class="fa-solid fa-video"></i>
+                                Book Online Counselling                            </button>
+                        </li>
+                        <li>
+                            @if(Auth::check())
+                                <a href="{{ route('dashboard') }}">
+                                    <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('frontend/images/user.png') }}" 
+                                        alt="User" 
+                                        class="rounded-circle" 
+                                        style="width:40px; height:40px; object-fit:cover;" >
+                                </a>
+                            @else
+                                <a href="{{ route('user-login') }}">
+                                    <button class="rounded apply-btn fn border-0 p-2">Login</button>
+                                </a>
+                            @endif
+                        </li>
+                        <div class="students_img ">
+                            <img src="{{ asset('frontend/img/new-list.png') }}">
+                        </div>
+                   </ul>
                     <div class="nav_menu_btn" id="menu_btn">
                         <span><i class="ri-menu-line" onclick="toggleMenu()"></i></span>
                     </div>
@@ -670,8 +663,10 @@
             </div>
         </div>
     </section>
+    @include('frontend.layouts.onlinemeeting')
+
     @yield('content')
-  
+   /// footer section
     <section>
         <div class="bottom_footer bv_cs">
             <div class="fw_footer container text-white">
@@ -777,91 +772,97 @@
         </div>
        
     </section>
-    <section>
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-                <div class="modal-dialog modal-dialog-centered" style="min-width: 800px;">
-                    <div class="modal-content">
-                        <div class="row">
-                            <div class="col-md-6 p-0">
-                                <img src="https://overseaseducationlane.com/public/frontend/images/login.jpg"
-                                    style="height: 100%;width: 100%;object-fit: cover;">
-                            </div>
-                            <div class="col-md-6"
-                                style="background: #EAEAEA;">
-                                <div class="modal-header float-end">
 
-                                    <button type="button" class="btn-close position-relative p-3 border-0 bg-transparent" data-bs-dismiss="modal" aria-label="Close">
-                                        <span class="position-absolute  translate-middle fw-bold custom-close">&times;</span>
+
+   //modal section
+    <section>
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered" style="min-width: 800px;">
+                <div class="modal-content">
+                    <div class="row">
+                        <div class="col-md-6 p-0">
+                            <img src="https://overseaseducationlane.com/public/frontend/images/login.jpg"
+                                style="height: 100%;width: 100%;object-fit: cover;">
+                        </div>
+                        <div class="col-md-6"
+                            style="background: #EAEAEA;">
+                            <div class="modal-header float-end">
+
+                                <button type="button" class="btn-close position-relative p-3 border-0 bg-transparent" data-bs-dismiss="modal" aria-label="Close">
+                                    <span class="position-absolute  translate-middle fw-bold custom-close">&times;</span>
+                                </button>
+                            </div>
+                            <h4 style="text-align:center">REQUEST AN ENQUIRY<br>we usually respond in seconds</h4>
+                            <div class="modal-header">
+                                
+                            </div>
+                            <form class="mx-1 mx-md-4" id="enquiry_data" method="POST" autocomplete="off" novalidate="novalidate">
+                                <input type="hidden" name="_token" value="EtDPgMZlqrXdbXLqqmRFysU8re1mNncBoQPgqNA7">
+
+                                <div class="d-flex flex-row align-items-center mb-4">
+                                    <i class="fas fa-user-circle" style="width: 35px; font-size: 24px; color: #070758;"></i>
+                                    <input type="text" class="form-control" name="full_name" id="full_name" required
+                                        aria-describedby="emailHelp" placeholder="First Name">
+                                </div>
+
+                                <div class="d-flex flex-row align-items-center mb-4">
+                                    <i class="fas fa-at" style="width: 35px; font-size: 22px; color: #070758;"></i>
+                                    <input type="email" name="email" class="form-control" required id="email_name"
+                                        aria-describedby="emailHelp" placeholder="Enter email">
+                                </div>
+                                <span class="text-danger email_error"></span>
+                                <span style="margin-left: 37px; margin-bottom: 50px !important; position: relative; top: -8px; font-size: 12px;">
+                                    We'll never share your email with anyone else.
+                                </span>
+
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="d-flex flex-row align-items-center mb-4">
+                                            <i class="fas fa-phone-alt" style="width: 35px; font-size: 24px; color: #070758;"></i>
+                                            <input type="tel" name="mobile_number" class="form-control" aria-describedby="emailHelp"
+                                                pattern="[0-9]{10}" placeholder="Mobile number" id="mobile_number" required  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+                                        </div>
+                                        <span style="margin-left: 37px; position: relative; top: -8px; font-size: 12px;">
+                                            Please enter 10 digits only.
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="d-flex float-end mt-2">
+                                            <button type="button" id="verify_otp" class="btn btn-sm"
+                                                style="background-color: #070758; color: white;">
+                                                <span class="spinner-grow spinner-grow-sm d-none" role="status" aria-hidden="true"></span>
+                                                Verify OTP
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="text-danger error-phone"></span>
+
+                                <div class="d-flex flex-row align-items-center mb-4 otp-verify" style="display:none !important;">
+                                    <i class="fas fa-key" style="width: 35px; font-size: 24px; color: #070758;"></i>
+                                    <input type="number" name="otp" class="form-control" id="otp" required
+                                        aria-describedby="emailHelp" placeholder="Enter otp"  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);">
+                                </div>
+                                <span class="text-danger otp-error"></span>
+
+                                <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                                    <button type="button" id="booking_enquiry" class="btn btn-lg booking_enquiry"
+                                        style="background-color: #070758; color: white;" disabled>
+                                        <span class="spinner-grow spinner-grow-sm d-none" role="status" aria-hidden="true"></span>
+                                        Submit Now
                                     </button>
                                 </div>
-                                <h4 style="text-align:center">REQUEST AN ENQUIRY<br>we usually respond in seconds</h4>
-                                <div class="modal-header">
-                                    
-                                </div>
-                                <form class="mx-1 mx-md-4" id="enquiry_data" method="POST" autocomplete="off" novalidate="novalidate">
-                                    <input type="hidden" name="_token" value="EtDPgMZlqrXdbXLqqmRFysU8re1mNncBoQPgqNA7">
-
-                                    <div class="d-flex flex-row align-items-center mb-4">
-                                        <i class="fas fa-user-circle" style="width: 35px; font-size: 24px; color: #070758;"></i>
-                                        <input type="text" class="form-control" name="full_name" id="full_name" required
-                                            aria-describedby="emailHelp" placeholder="First Name">
-                                    </div>
-
-                                    <div class="d-flex flex-row align-items-center mb-4">
-                                        <i class="fas fa-at" style="width: 35px; font-size: 22px; color: #070758;"></i>
-                                        <input type="email" name="email" class="form-control" required id="email_name"
-                                            aria-describedby="emailHelp" placeholder="Enter email">
-                                    </div>
-                                    <span class="text-danger email_error"></span>
-                                    <span style="margin-left: 37px; margin-bottom: 50px !important; position: relative; top: -8px; font-size: 12px;">
-                                        We'll never share your email with anyone else.
-                                    </span>
-
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="d-flex flex-row align-items-center mb-4">
-                                                <i class="fas fa-phone-alt" style="width: 35px; font-size: 24px; color: #070758;"></i>
-                                                <input type="tel" name="mobile_number" class="form-control" aria-describedby="emailHelp"
-                                                    pattern="[0-9]{10}" placeholder="Mobile number" id="mobile_number" required  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
-                                            </div>
-                                            <span style="margin-left: 37px; position: relative; top: -8px; font-size: 12px;">
-                                                Please enter 10 digits only.
-                                            </span>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="d-flex float-end mt-2">
-                                                <button type="button" id="verify_otp" class="btn btn-sm"
-                                                    style="background-color: #070758; color: white;">
-                                                    <span class="spinner-grow spinner-grow-sm d-none" role="status" aria-hidden="true"></span>
-                                                    Verify OTP
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <span class="text-danger error-phone"></span>
-
-                                    <div class="d-flex flex-row align-items-center mb-4 otp-verify" style="display:none !important;">
-                                        <i class="fas fa-key" style="width: 35px; font-size: 24px; color: #070758;"></i>
-                                        <input type="number" name="otp" class="form-control" id="otp" required
-                                            aria-describedby="emailHelp" placeholder="Enter otp"  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);">
-                                    </div>
-                                    <span class="text-danger otp-error"></span>
-
-                                    <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                                        <button type="button" id="booking_enquiry" class="btn btn-lg booking_enquiry"
-                                            style="background-color: #070758; color: white;" disabled>
-                                            <span class="spinner-grow spinner-grow-sm d-none" role="status" aria-hidden="true"></span>
-                                            Submit Now
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
     </section>
+
+
+
     <section>
         <a href="{{url('contact-us')}}" class="chat-btn" title="Chat with us">
             <i class="fa-solid fa-comments"></i>
@@ -872,373 +873,34 @@
             <img src="{{asset('frontend/img/whatsapp.png')}}" alt="WhatsApp Logo">
         </a>
     </section>
-    
- <!-- PREMIUM EXACT-MATCH WIZARD MODAL -->
-    <div id="exactWizardModal" class="wizard-modal">
-        <div class="wizard-overlay-bg"></div>
-        <div id="wiz-wave" class="wizard-wave-bg">
-            <!-- New Top Wave - Exact Reference Match -->
-            <div class="wiz-wave-svg-top">
-                <svg viewBox="0 0 1920 217" preserveAspectRatio="none" style="transform: scaleX(-1);">
-                    <path d="M0,57.46875 C203.364583,135.217754 494.835938,156.564108 874.414062,121.507813 C1192.61198,-13.9827666 1541.14063,-35.3291208 1920,57.46875 L1920,207 L0,207 L0,57.46875 Z" opacity=".3" style="fill: #d4e3ff;"></path>
-                    <path d="M0,79 C292.46875,165.453125 612.46875,165.453125 960,79 C1307.53125,-7.453125 1627.53125,-7.453125 1920,79 L1920,207 L0,207 L0,79 Z" opacity=".6" style="fill: #d4e3ff;"></path>
-                    <path d="M0,89 C288.713542,146.786458 608.713542,146.786458 960,89 C1311.28646,31.2135417 1631.28646,31.2135417 1920,89 L1920,217 L0,217 L0,89 Z" style="fill: #d4e3ff;"></path>
-                </svg>
-            </div>
-            <!-- Institutional Multi-Layered SVG Wave - Exact Reference Match -->
-            <div class="wiz-wave-svg">
-                <svg viewBox="0 0 1920 217" preserveAspectRatio="none">
-                    <path d="M0,57.46875 C203.364583,135.217754 494.835938,156.564108 874.414062,121.507813 C1192.61198,-13.9827666 1541.14063,-35.3291208 1920,57.46875 L1920,207 L0,207 L0,57.46875 Z" opacity=".3" style="fill: #edf3ff;"></path>
-                    <path d="M0,79 C292.46875,165.453125 612.46875,165.453125 960,79 C1307.53125,-7.453125 1627.53125,-7.453125 1920,79 L1920,207 L0,207 L0,79 Z" opacity=".6" style="fill: #edf3ff;"></path>
-                    <path d="M0,89 C288.713542,146.786458 608.713542,146.786458 960,89 C1311.28646,31.2135417 1631.28646,31.2135417 1920,89 L1920,217 L0,217 L0,89 Z" style="fill: #edf3ff;"></path>
-                </svg>
-            </div>
-        </div>
-        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-        
-        <div class="wizard-container">
-            <!-- PAGE 1: DESTINATION -->
-            <div id="wiz-p1" class="wiz-page active">
-                <div class="wiz-logo-top">
-                    <img src="{{ asset('frontend/img/oel (1) 1.png') }}" alt="OEL Logo">
-                </div>
-                
-                <div class="dest-title-main">
-                    <h1 class="dest-title-blue">Book Your Free Online Counselling & <br> Start Your Study Abroad Journey</h1>
-                    <h2 class="dest-title-red l YC c">Select Your Dream Study Destination !</h2>
-                </div>
-                
-                <div class="dest-grid-exact">
-                    <div class="dest-card-exact" onclick="selectDest('United States')">
-                        <img src="https://flagcdn.com/w80/us.png" class="dest-flag-img">
-                        <span class="dest-name-exact">United States</span>
-                    </div>
-                    <div class="dest-card-exact" onclick="selectDest('Canada')">
-                        <img src="https://flagcdn.com/w80/ca.png" class="dest-flag-img">
-                        <span class="dest-name-exact">Canada</span>
-                    </div>
-                    <div class="dest-card-exact" onclick="selectDest('United Kingdom')">
-                        <img src="https://flagcdn.com/w80/gb.png" class="dest-flag-img">
-                        <span class="dest-name-exact">United Kingdom</span>
-                    </div>
-                    <div class="dest-card-exact" onclick="selectDest('Ireland')">
-                        <img src="https://flagcdn.com/w80/ie.png" class="dest-flag-img">
-                        <span class="dest-name-exact">Ireland</span>
-                    </div>
-                    <div class="dest-card-exact" onclick="selectDest('Australia')">
-                        <img src="https://flagcdn.com/w80/au.png" class="dest-flag-img">
-                        <span class="dest-name-exact">Australia</span>
-                    </div>
-                    <div class="dest-card-exact" onclick="selectDest('New Zealand')">
-                        <img src="https://flagcdn.com/w80/nz.png" class="dest-flag-img">
-                        <span class="dest-name-exact">New Zealand</span>
-                    </div>
-                    <div class="dest-card-exact" onclick="selectDest('Europe')">
-                        <img src="https://flagcdn.com/w80/eu.png" class="dest-flag-img">
-                        <span class="dest-name-exact">Europe</span>
-                    </div>
-                    <div class="dest-card-exact" onclick="selectDest('Asia')">
-                        <img src="https://flagcdn.com/w80/ae.png" class="dest-flag-img">
-                        <span class="dest-name-exact">Asia</span>
-                    </div>
-                    <div style="grid-column: 1 / -1; display: flex; justify-content: center;">
-                        <div class="dest-card-exact" onclick="selectDest('Germany')">
-                            <img src="https://flagcdn.com/w80/de.png" class="dest-flag-img">
-                            <span class="dest-name-exact">Germany</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="test-prep-title-main">
-                    <h2 class="dest-title-red l YC c">Book Free Test Prep & Education Loan Counselling !</h2>
-                    <div class="test-prep-grid-proper">
-                        <div class="dest-card-exact" onclick="selectDest('IELTS, PTE, TOEFL')">
-                            <img src="{{asset('frontend/img/test-prep-icon.png')}}" alt="Test Prep Icon" class="test-prep-emoji" style="width: 50px; height: 50px;" />
-                            <span class="test-prep-label">IELTS, PTE, TOEFL</span>
-                        </div>
-                        <div class="dest-card-exact" onclick="selectDest('GRE, GMAT, SAT, ACT')">
-                            <img src="{{asset('frontend/img/test-prep-icon.png')}}" alt="Test Prep Icon" class="test-prep-emoji" style="width: 50px; height: 50px;" />
-                            <span class="test-prep-label">GRE, GMAT, SAT, ACT</span>
-                        </div>
-                        <div class="dest-card-exact" onclick="selectDest('Duolingo, German Language')">
-                            <img src="{{asset('frontend/img/test-prep-icon.png')}}" alt="Test Prep Icon" class="test-prep-emoji" style="width: 50px; height: 50px;" />
-                            <span class="test-prep-label">Duolingo, German Language</span>
-                        </div>
-                        <div class="dest-card-exact" onclick="selectDest('Study Abroad Education Loan')">
-                            <img src="{{asset('frontend/img/elan-loan-icon.png')}}" alt="Élan Loan Icon" class="test-prep-emoji" style="width: 50px; height: 50px;" />
-                            <span class="test-prep-label">Study Abroad Education Loan</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PAGE 2: CALENDAR -->
-            <div id="wiz-p2" class="wiz-page">
-                <div class="wiz-split-container" style="max-width: 850px; border-radius: 8px; display: flex;">
-                    <div class="wiz-side-info" style="flex: 1; padding: 30px; border-right: 1px solid rgba(30,41,59,0.1); background: #fff;">
-                        <div class="wiz-back-btn" onclick="goToStep(1)" style="margin-bottom: 24px; border:none; width:auto; justify-content:flex-start;">
-                            <i class="fa fa-arrow-left" style="color: #226cf5; font-size: 18px;"></i>
-                        </div>
-                        <div style="margin-bottom: 24px;">
-                            <div style="color: #64748b; font-weight: 700; text-transform: capitalize; margin-bottom: 8px; font-size: 14px;">Overseas Education Lane</div>
-                            <div id="side-dest-name" style="color: #1e293b; font-weight: 700; font-size: 26px; line-height: 1.2;">USA</div>
-                        </div>
-                        
-                        <div class="wiz-side-meta" style="font-size: 14px; color: #64748b; gap: 12px;">
-                            <div id="side-selected-time" style="display:none; font-weight:700; color: #226cf5; display:flex; align-items:flex-start;"><span id="text-selected-time"></span></div>
-                        </div>
-                    </div>
-                    <div class="wiz-main-action" style="flex: 1; padding: 40px 30px 30px; display:flex; flex-direction:column; background: #fff;">
-                        <div class="wiz-main-title" style="margin-bottom: 24px; display:flex; align-items:center; gap: 12px;">
-                            <div style="position:relative;">
-                                <img src="https://cdn.zipteams.com/user-12003/profile/profile-picture-2025-09-23T05:25:19.905Z.jpeg" class="wiz-counselor-avatar" style="width: 40px; height: 40px; border-radius: 50%;">
-                            </div>
-                            <span style="font-size: 20px; font-weight: 700; color: #1e293b;">What day & time works best for you?</span>
-                        </div>
-                        
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                            <span style="font-weight: 700; color: #1e293b; font-size: 16px; text-decoration: underline;" id="week-label">This week</span>
-                            <div style="display:flex; gap: 8px;">
-                                <button onclick="shiftWeek(-1)" style="border:none; background:transparent; border-radius:50%; padding:4px; cursor:pointer; color: #1e293b;"><i class="fa fa-chevron-left"></i></button>
-                                <button onclick="shiftWeek(1)" style="border:none; background:transparent; border-radius:50%; padding:4px; cursor:pointer; color: #1e293b;"><i class="fa fa-chevron-right"></i></button>
-                            </div>
-                        </div>
-                        
-                        <div class="cal-week-row" id="cal-week-row-container">
-                            <!-- Populated by Javascript -->
-                        </div>
-
-                        <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-weight: 700; color: #1e293b; font-size: 16px; text-decoration: underline;">Time Slots</span>
-                            <div style="display:flex; gap: 8px;">
-                                <button type="button" id="time-prev-btn" onclick="shiftTimeSlots(-1)" style="border:none; background:transparent; border-radius:50%; padding:4px; cursor:pointer; color: #8F8F8F;"><i class="fa fa-chevron-left"></i></button>
-                                <button type="button" id="time-next-btn" onclick="shiftTimeSlots(1)" style="border:none; background:transparent; border-radius:50%; padding:4px; cursor:pointer; color: #8F8F8F;"><i class="fa fa-chevron-right"></i></button>
-                            </div>
-                        </div>
-                        
-                        <div class="time-slots-grid" id="time-slots-container" style="margin-bottom: 24px;">
-                            <!-- Populated by Javascript -->
-                        </div>
-
-                        <!-- Custom Timezone Dropdown -->
-                        <div class="wiz-timezone-container" id="timezone-container">
-                            <div class="wiz-timezone-trigger" onclick="toggleTimezoneMenu(event)">
-                                <i class="fa fa-globe"></i>
-                                <span id="current-timezone-text">(GMT+5:30) Chennai, Kolkata, Mumbai, New Delhi</span>
-                                <i class="fa fa-chevron-down"></i>
-                            </div>
-                            <div class="wiz-timezone-menu">
-                                <div class="wiz-timezone-search">
-                                    <input type="text" placeholder="Search timezone..." onkeyup="filterTimezones(this)" onclick="event.stopPropagation()">
-                                </div>
-                                <div class="wiz-timezone-options" id="timezone-options-list">
-                                    <div class="wiz-timezone-option" data-value="GMT-11:00">(GMT-11:00) Midway Island, Samoa</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-10:00">(GMT-10:00) Hawaii</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-08:00">(GMT-08:00) Alaska</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-07:00">(GMT-07:00) Dawson, Yukon</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-07:00">(GMT-07:00) Arizona</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-07:00">(GMT-07:00) Tijuana</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-07:00">(GMT-07:00) Pacific Time</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-06:00">(GMT-06:00) Mountain Time</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-06:00">(GMT-06:00) Saskatchewan</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-05:00">(GMT-05:00) Central Time</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-05:00">(GMT-05:00) Bogota, Lima, Quito</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-04:00">(GMT-04:00) Eastern Time</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-04:00">(GMT-04:00) Caracas, La Paz</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-03:30">(GMT-03:30) Newfoundland</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-03:00">(GMT-03:00) Brasilia</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-03:00">(GMT-03:00) Buenos Aires, Georgetown</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-02:00">(GMT-02:00) Mid-Atlantic</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-01:00">(GMT-01:00) Azores</div>
-                                    <div class="wiz-timezone-option" data-value="GMT-01:00">(GMT-01:00) Cape Verde Is.</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+00:00">(GMT+00:00) Casablanca, Monrovia</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+00:00">(GMT+00:00) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+01:00">(GMT+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+01:00">(GMT+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+01:00">(GMT+01:00) Brussels, Copenhagen, Madrid, Paris</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+01:00">(GMT+01:00) Sarajevo, Skopje, Warsaw, Zagreb</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+01:00">(GMT+01:00) West Central Africa</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+02:00">(GMT+02:00) Athens, Istanbul, Minsk</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+02:00">(GMT+02:00) Bucharest</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+02:00">(GMT+02:00) Cairo</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+02:00">(GMT+02:00) Harare, Pretoria</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+02:00">(GMT+02:00) Helsinki, Kyiv, Riga, Tallinn, Vilnius, Vilnius</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+02:00">(GMT+02:00) Jerusalem</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+03:00">(GMT+03:00) Baghdad</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+03:00">(GMT+03:00) Kuwait, Riyadh</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+03:00">(GMT+03:00) Moscow, St. Petersburg, Volgograd</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+03:00">(GMT+03:00) Nairobi</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+03:30">(GMT+03:30) Tehran</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+04:00">(GMT+04:00) Abu Dhabi, Muscat</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+04:00">(GMT+04:00) Baku, Tbilisi, Yerevan</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+04:30">(GMT+04:30) Kabul</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+05:00">(GMT+05:00) Ekaterinburg</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+05:00">(GMT+05:00) Islamabad, Karachi, Tashkent</div>
-                                    <div class="wiz-timezone-option selected" data-value="GMT+05:30">(GMT+5:30) Chennai, Kolkata, Mumbai, New Delhi</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+05:45">(GMT+05:45) Kathmandu</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+06:00">(GMT+06:00) Almaty, Novosibirsk</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+06:00">(GMT+06:00) Astana, Dhaka</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+06:00">(GMT+06:00) Sri Jayawardenepura</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+06:30">(GMT+06:30) Rangoon</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+07:00">(GMT+07:00) Bangkok, Hanoi, Jakarta</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+07:00">(GMT+07:00) Krasnoyarsk</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+08:00">(GMT+08:00) Beijing, Chongqing, Hong Kong, Urumqi</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+08:00">(GMT+08:00) Irkutsk, Ulaan Bataar</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+08:00">(GMT+08:00) Kuala Lumpur, Singapore</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+08:00">(GMT+08:00) Perth</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+08:00">(GMT+08:00) Taipei</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+09:00">(GMT+09:00) Osaka, Sapporo, Tokyo</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+09:00">(GMT+09:00) Seoul</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+09:00">(GMT+09:00) Yakutsk</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+09:30">(GMT+09:30) Adelaide</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+09:30">(GMT+09:30) Darwin</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+10:00">(GMT+10:00) Brisbane</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+10:00">(GMT+10:00) Canberra, Melbourne, Sydney</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+10:00">(GMT+10:00) Guam, Port Moresby</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+10:00">(GMT+10:00) Hobart</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+10:00">(GMT+10:00) Vladivostok</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+11:00">(GMT+11:00) Magadan, Solomon Is., New Caledonia</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+12:00">(GMT+12:00) Auckland, Wellington</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+12:00">(GMT+12:00) Fiji, Kamchatka, Marshall Is.</div>
-                                    <div class="wiz-timezone-option" data-value="GMT+13:00">(GMT+13:00) Nuku'alofa</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Add Participant -->
-                        <div class="wiz-participant-section">
-                            <button type="button" id="wiz-add-guest-btn" onclick="toggleParticipantInput()">
-                                <i class="fa fa-plus-circle"></i> Add Participant
-                            </button>
-                            <div id="participant-container" class="wiz-participant-container">
-                                <input type="email" id="participant-email" class="wiz-participant-input" placeholder="" onkeyup="updateGuestEmail()">
-                            </div>
-                        </div>
-
-                        <div style="margin-top: 10px;">
-                            <button class="wiz-confirm-btn" id="confirm-time-btn" disabled onclick="goToStep(3)">Confirm</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PAGE 3: FORM -->
-            <div id="wiz-p3" class="wiz-page">
-                <div class="wiz-split-container">
-                    <div class="wiz-side-info">
-                        <div class="wiz-back-btn" onclick="goToStep(2)" style="margin-bottom: 24px; border:none; width:auto; justify-content:flex-start; cursor:pointer;">
-                            <i class="fa fa-arrow-left" style="color: #226cf5; font-size: 18px;"></i>
-                        </div>
-                        <div style="margin-bottom: 24px;">
-                            <div style="color: #64748b; font-weight: 700; text-transform: capitalize; margin-bottom: 8px; font-size: 14px;">Overseas Education Lane</div>
-                            <div id="side-dest-name-final" style="color: #1e293b; font-weight: 700; font-size: 26px; line-height: 1.2;">USA</div>
-                        </div>
-                    </div>
-                    <div class="wiz-main-action">
-                        <div class="wiz-main-title" style="margin-bottom: 32px; display:flex; align-items:center; gap: 12px;">
-                            <img src="https://cdn.zipteams.com/user-12003/profile/profile-picture-2025-09-23T05:25:19.905Z.jpeg" class="wiz-counselor-avatar" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover;">
-                            <span style="font-size: 18px; font-weight: 700; color: #1c1d21;">Please help me with <br> some details about you</span>
-                        </div>
-                        
-                        <form id="wiz-booking-form" onsubmit="event.preventDefault(); goToStep(4);">
-                            @csrf
-                            <input type="hidden" name="destination" id="final-dest">
-                            <input type="hidden" name="schedule" id="final-time">
-                            <input type="hidden" name="guest_email" id="final-guest">
-                                                       <div class="wiz-form-group">
-                                <label class="wiz-form-label">Name *</label>
-                                <div class="wiz-input-wrapper">
-                                    <i class="fa-regular fa-user"></i>
-                                    <input type="text" name="name" class="wiz-input" placeholder="Name" required>
-                                </div>
-                            </div>
-                            
-                            <div class="wiz-form-group">
-                                <label class="wiz-form-label">Email address *</label>
-                                <div class="wiz-input-wrapper">
-                                    <i class="fa-regular fa-envelope"></i>
-                                    <input type="email" name="email" class="wiz-input" placeholder="Email address" required>
-                                </div>
-                            </div>
-                            
-                            <div class="wiz-form-group">
-                                 <label class="wiz-form-label">Your City *</label>
-                                 <div class="wiz-input-wrapper">
-                                     <select name="city" class="wiz-input" style="padding-left:14px;" required>
-                                         <option value="">Select</option>
-                                         <option value="Lucknow">Lucknow</option>
-                                         <option value="New Delhi">New Delhi</option>
-                                         <option value="Mumbai">Mumbai</option>
-                                         <option value="Pune">Pune</option>
-                                         <option value="Hyderabad">Hyderabad</option>
-                                     </select>
-                                 </div>
-                            </div>
-                            
-                            <div class="wiz-form-group">
-                                <label class="wiz-form-label">Phone number *</label>
-                                <input type="tel" id="wiz-mobile-input" name="mobile" class="wiz-input" placeholder="Phone number" required style="width: 100%;">
-                            </div>
-
-                            <button type="submit" class="wiz-confirm-btn" style="margin: 10px 0 0 50px; background:#226cf5; border-radius:16px; width:250px; height:48px; color:#fff; font-weight:700;">Schedule Event</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PAGE 4: CONFIRMATION (REFINED SIMPLE) -->
-            <div id="wiz-p4" class="wiz-page">
-                <div style="max-width: 780px; margin: 30px auto; background: #fff; padding: 40px; border-radius: 20px; text-align: center; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);">
-                    <div style="margin-bottom: 24px;">
-                        <img src="https://cdn.zipteams.com/user-12003/profile/profile-picture-2025-09-23T05:25:19.905Z.jpeg" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid #f8fafc; margin: 0 auto 16px; display: block; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-                        <h2 style="font-size: 22px; font-weight: 800; color: #1e293b; margin-bottom: 6px; line-height: 1.3;">Meeting is scheduled. <br> Look to meet you soon!</h2>
-                    </div>
-                    
-                    <div style="color: #475569; font-size: 14px; line-height: 1.6; margin-bottom: 24px; width: 100%;">
-                        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 20px;">
-                            <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #1e293b; font-size: 15px;">
-                                <i class="fa-regular fa-calendar-check" style="color: #226cf5; font-size: 16px;"></i>
-                                <span id="conf-time-range">01:00 PM - 01:30 PM, Tuesday, May 05, 2026</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 8px; color: #64748b; font-weight: 500; font-size: 13px;">
-                                <i class="fa-solid fa-globe" style="color: #94a3b8; font-size: 12px;"></i>
-                                <span>Asia/Calcutta</span>
-                            </div>
-                        </div>
-                        
-                        <div style="background: #f8fafc; padding: 12px 16px; border-radius: 12px; border: 1px dashed #cbd5e1; margin: 0 auto 16px; width: 100%; max-width: 600px; box-sizing: border-box;">
-                            <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; font-weight: 700; margin-bottom: 4px;">Meeting Link</div>
-                            <a href="#" style="color: #226cf5; text-decoration: none; font-size: 13px; word-break: break-all; font-weight: 600; display: block; line-height: 1.4;">https://meet.zipteams.com/69f9913b0076a9a631f875e2?org=KC+Overseas+Education&passcode=0918</a>
-                        </div>
-                        
-                        <p style="font-size: 13px; color: #64748b;">A calendar invitation has been sent to your email address.</p>
-                    </div>
-
-                    <button onclick="goToStep(2)" class="wiz-confirm-btn" style="width: 200px; height: 42px; font-size: 13px; border-radius: 10px; font-weight: 700; margin: 0 auto; background: #226cf5; box-shadow: 0 4px 6px -1px rgba(34, 108, 245, 0.2);">Book another meeting</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"
         integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+  
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11.0.5/swiper-bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11.0.5/swiper-bundle.min.js"></script>
+  
     @yield('javascript_section')
 
     <script>
         AOS.init();
     </script>
    <script>
-            document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function() {
             var logosSlide = document.querySelector(".logos-slide");
             var logoSlider = document.querySelector(".logo-slider");
 
@@ -1246,7 +908,7 @@
                 var copy = logosSlide.cloneNode(true);
                 logoSlider.appendChild(copy);
             }
-                });
+        });
    </script>
     <script>
         const menuBtn = document.getElementById("menu_btn");
@@ -1271,102 +933,72 @@
             alert("Form Submitted");
         });
     </script>
-    <script>
-        $(document).on('click', '#verify_otp', function(e) {
-            $('.error-phone').html('');
-            e.preventDefault();
-            let mobile_number = $('#mobile_number').val();
-            if (!mobile_number || mobile_number.length != 10 || !/^\d+$/.test(mobile_number)) {
-                alert('Please enter valid mobile number', 'error');
-                return false;
+  <script>
+    $(document).ready(function () {
+
+        // SEND OTP
+        $(document).on('click', '#verify_otp', function () {
+
+            let mobile = $('#mobile_number').val();
+
+            if (!mobile || mobile.length != 10) {
+                alert('Enter valid 10 digit mobile number');
+                return;
             }
-            var spinner = this.querySelector('.spinner-grow');
-            spinner.classList.remove('d-none');
+
             $.ajax({
                 url: "{{ route('send-otp') }}",
-                type: 'POST',
+                type: "POST",
                 data: {
-                    phone_number: mobile_number,
-                    _token: '{{ csrf_token() }}'
+                    _token: "{{ csrf_token() }}",
+                    phone_number: mobile
                 },
-                success: function(data) {
-                    spinner.classList.add('d-none');
-                    if (data.success) {
-                        $('.otp-sent').html(data.message);
-                    }
-                    if (data.success) {
+                success: function (res) {
+
+                    if (res.success) {
                         $('.otp-verify').show();
+                        $('.error-phone').text('');
+                        alert('OTP Sent');
                     } else {
-                        $('.error-phone').html(data.message);
-                    }
-                },
-                error: function(xhr) {
-                    spinner.classList.add('d-none');
-                    if (xhr.responseJSON.errors.phone_number) {
-                        $('.error-phone').html(xhr.responseJSON.errors.phone_number[0]);
-                    }
-                    if (xhr.responseJSON.errors.email) {
-                        $('.error-email').html(xhr.responseJSON.errors.email[0]);
+                        $('.error-phone').text(res.message);
                     }
                 }
-            })
-        })
-        $('.booking_enquiry').on('click', function(e) {
-            e.preventDefault();
-            let mobile_number = $('#mobile_number').val();
-            if (!mobile_number || mobile_number.length != 10 || !/^\d+$/.test(mobile_number)) {
-                alert('Please enter valid mobile number', 'error');
-                return false;
-            }
-            let full_name = $('#full_name').val();
-            if (!full_name) {
-                alert('Please enter your full name', 'error');
-                return false;
-            }
-            let email = $('#email_name').val();
-            let otp = $('#otp').val();
-            if (!otp) {
-                alert('Please enter otp', 'error');
-                return false;
-            }
-            var spinner = this.querySelector('.spinner-grow');
-            spinner.classList.remove('d-none');
+            });
+
+        });
+
+
+        // VERIFY OTP + REDIRECT
+        $(document).on('click', '#booking_enquiry', function () {
+
             $.ajax({
                 url: "{{ route('verify-otp') }}",
-                type: 'POST',
+                type: "POST",
                 data: {
-                    phone_number: mobile_number,
-                    full_name: full_name,
-                    email: email,
-                    otp: otp,
-                    _token: '{{ csrf_token() }}'
+                    _token: "{{ csrf_token() }}",
+                    phone_number: $('#mobile_number').val(),
+                    full_name: $('#full_name').val(),
+                    email: $('#email_name').val(),
+                    otp: $('#otp').val()
                 },
-                success: function(data) {
-                    spinner.classList.add('d-none');
-                    if (data.success) {
-                        window.location.href = "{{ url('check-eligibility') }}";
+
+                success: function (res) {
+
+                    if (res.success) {
+
+                        window.location.href = "{{ route('check-eligibility') }}";
+
                     } else {
-                        $('.otp-error').html(data.message);
-                        $('#exampleModal').css('display', 'none');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    spinner.classList.add('d-none');
-                    alert(xhr.responseJSON.errors.email[0]);
-                    if (xhr.responseJSON.errors.email) {
-                        $('.email_error').html(xhr.responseJSON.errors.email[0]);
-                    }
-                    if (xhr.status == 422) {
-                        $('.otp-error').html('Invalid OTP.');
+                        $('.otp-error').text(res.message);
                     }
                 }
-            })
-        })
-    </script>
-   
 
-<script>
-let iti = null;
+            });
+
+        });
+
+    });
+  </script>
 
 // FIX: safe init
 function initPhoneInput() {

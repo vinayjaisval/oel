@@ -12,33 +12,52 @@ class UserNotification extends Mailable
 
     public $subject;
     public $email_body;
-    public $attachmentData;
+    public $attachmentPath;
     public $attachmentName;
 
-    public function __construct($subject, $email_body, $attachmentData = null, $attachmentName = null)
+    public function __construct($subject, $email_body, $attachmentPath = null, $attachmentName = null)
     {
         $this->subject = $subject;
         $this->email_body = $email_body;
-        $this->attachmentData = $attachmentData;
+        $this->attachmentPath = $attachmentPath;
         $this->attachmentName = $attachmentName;
     }
 
     public function build()
     {
         $email = $this->subject($this->subject)
-                      ->view('admin.email.lead-user-email')
-                      ->with([
-                          'email_body' => $this->email_body,
-                          'subject' => $this->subject,
-                      ]);
+            ->view('admin.email.lead-user-email')
+            ->with([
+                'email_body' => $this->email_body,
+                'subject' => $this->subject,
+                'attachmentName' => $this->attachmentName 
+                    ? preg_replace('/^\d+_/', '', $this->attachmentName)
+                    : null,
+            ]);
 
-        if ($this->attachmentData) {
-            $email->attachData(
-                base64_decode($this->attachmentData),
-                $this->attachmentName
-            );
+        // ✅ FINAL FIX: attach from file path
+        if (!empty($this->attachmentPath) && file_exists($this->attachmentPath)) {
+
+            $email->attach($this->attachmentPath, [
+                'as' => preg_replace('/^\d+_/', '', $this->attachmentName),
+                'mime' => $this->getMimeType($this->attachmentName),
+            ]);
         }
 
         return $email;
+    }
+
+    private function getMimeType($filename)
+    {
+        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+        return match ($ext) {
+            'pdf' => 'application/pdf',
+            'jpg', 'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'doc' => 'application/msword',
+            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            default => 'application/octet-stream',
+        };
     }
 }

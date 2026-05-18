@@ -576,12 +576,12 @@ class UniversityController extends Controller
             'thumbnail' => 'image|mimes:jpeg,png,jpg|max:100',
             'banner' => '|image|mimes:jpeg,png,jpg|max:100',
          
-            'images.*' => 'image|mimes:jpeg,png,jpg|max:100',
+            // 'images.*' => 'image|mimes:jpeg,png,jpg|max:100',
             ], [
                 'logo.max' => 'Logo must be less than 100KB',
                 'thumbnail.max' => 'Thumbnail must be less than 100KB',
                 'banner.max' => 'Banner must be less than 100KB',
-                'images.*.max' => 'Each image must be less than 100KB',
+                // 'images.*.max' => 'Each image must be less than 100KB',
             ]);
     
         if ($validator->fails()) {

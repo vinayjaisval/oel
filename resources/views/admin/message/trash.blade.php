@@ -1,182 +1,262 @@
 @extends('admin.include.app')
+
 @section('style')
 <style>
-  .offcanvas.offcanvas-end{
+.offcanvas.offcanvas-end{
     width: 35vw !important;
-  }
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.custom-table {
+    min-width: 800px;
+}
+
+.custom-table td {
+    vertical-align: top;
+}
+
+/* Checkbox column */
+.custom-table th:first-child,
+.custom-table td:first-child {
+    width: 60px;
+    text-align: center;
+}
+
+/* Message preview */
+.message-box {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    color: #007bff;
+}
+
+.message-box:hover {
+    text-decoration: underline;
+}
 </style>
+
 <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.2/dist/sweetalert2.min.css" rel="stylesheet">
 @endsection
+
+
 @section('main-content')
-    <div class="row">
-        <div class="card card-buttons">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <ol class="breadcrumb text-muted mb-0">
-                            <li class="breadcrumb-item">
-                            <a href="{{route('dashboard')}}"> Dashboard</a>
-                            </li>
-                            <li class="breadcrumb-item text-muted">Trash </li>
-                        </ol>
-                    </div>
-                    {{-- <div class="col-md-2">
-                        <a href="{{ route('admin.create_new_lead') }}" class="btn add-btn">
-                            <i class="fa-solid fa-plus"></i> Add Lead </a>
-                    </div> --}}
-                </div>
-            </div>
+
+<div class="row">
+    <div class="card card-buttons">
+        <div class="card-body">
+            <ol class="breadcrumb text-muted mb-0">
+                <li class="breadcrumb-item">
+                    <a href="{{route('dashboard')}}">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item text-muted">Trash</li>
+            </ol>
         </div>
     </div>
-    <div class="row">
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
+</div>
+
+<div class="row">
+
+@if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
+<div class="col-md-12">
+<div class="table-responsive">
+
+<table class="table table-striped custom-table mb-0">
+<thead>
+<tr>
+    <th>
+        <input type="checkbox" class="checked_all_lead">
+        <button class="btn btn-warning btn-sm delete-message">
+            <i class="fa fa-trash"></i>
+        </button>
+    </th>
+    <th>S.N</th>
+    <th>Email</th>
+    <th>Subject</th>
+    <th>Message</th>
+</tr>
+</thead>
+
+<tbody>
+
+@php
+    $i = ($outbox->currentPage()-1)* $outbox->perPage()+1;
+@endphp
+
+@foreach ($outbox as $data)
+<tr id="row-{{ $data->id }}">
+
+<td>
+    <input type="checkbox" class="lead-id" value="{{ $data->id }}">
+</td>
+
+<td>{{ $i }}</td>
+@php $i++; @endphp
+
+<td>{{ $data->email }}</td>
+<td>{{ $data->subject }}</td>
+
+<td>
+    <div class="message-box view-message"
+         data-email="{{ $data->email }}"
+         data-subject="{{ $data->subject }}"
+         data-id="{{ $data->id }}">
+
+        {{ \Illuminate\Support\Str::limit(strip_tags($data->body), 10) }}
+    </div>
+
+    <!-- Hidden Full HTML -->
+    <div id="full-message-{{ $data->id }}" style="display:none;">
+        {!! $data->body !!}
+    </div>
+</td>
+
+</tr>
+@endforeach
+
+</tbody>
+</table>
+
+<div class="mt-3">
+    {{ $outbox->links() }}
+</div>
+
+</div>
+</div>
+</div>
+
+
+<!-- ✅ MODAL -->
+<div class="modal fade" id="messageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Message Details</h5>
+                <button type="button" class="close close-modal-btn">
+                    <span>&times;</span>
+                </button>
             </div>
-        @endif
 
-
-        <div class="col-md-12">
-            @php
-                $users =Auth::user();
-            @endphp
-            <div class="table-responsive">
-                <span class="text-danger error-message"></span>
-                <table class="table table-striped custom-table mb-0">
-                    <thead>
-                        <tr>
-                            <th><input type="checkbox" class="checked_all_lead"><a class="btn btn-warning mx-4 p-2 delete-message" ><i class="fa fa-trash"></i></a></th>
-                            <th>S.N</th>
-                            <th> Email</th>
-                            <th> Subject</th>
-                            <th> Message </th>
-                        </tr>
-                    </thead>
-                    <tbody id="lead-list">
-                        @php
-                            $i = ($outbox->currentPage()-1)* $outbox->perPage()+1;
-                        @endphp
-                        @foreach ($outbox as $data)
-                            <tr>
-                                <td>
-                                    <input type="checkbox" class="lead-id" leads-user-id="{{$data->id}}">
-                                </td>
-                                <td>
-                                    <a href="#">{{ $i }}</a>
-                                </td>
-                                @php
-                                    $i++;
-                                @endphp
-                                <td>{{ $data->email }}</td>
-                                <td>{{ $data->subject }}</td>
-                                <td>{!! $data->body !!}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-
-                <div class="row">
-                    <div class="col-sm-12 col-md-12">
-                        <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate">
-                            {{ $outbox->links() }}
-                        </div>
-                    </div>
-                </div>
+            <div class="modal-body">
+                <p><strong>Email:</strong> <span id="modalEmail"></span></p>
+                <p><strong>Subject:</strong> <span id="modalSubject"></span></p>
+                <hr>
+                <div id="modalMessage"></div>
             </div>
+
         </div>
     </div>
+</div>
+
 @endsection
 
-@section('scripts')
- <!-- summernotejs start -->
- <script src="{{ asset('assets/js/jquery-3.7.1.js') }}"></script>
- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
- {{-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> --}}
- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
- <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
- <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.2/dist/sweetalert2.all.min.js"></script>
- <script>
-     $('#summernote1').summernote({
-        placeholder: ' Write Here',
-        tabsize: 2,
-        height: 100
-    });
-</script>
-    <script>
-        $(document).ready(function() {
 
-            function setupCSRF() {
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+@section('scripts')
+
+<script src="{{ asset('assets/js/jquery-3.7.1.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.2/dist/sweetalert2.all.min.js"></script>
+
+<script>
+$(document).ready(function () {
+
+    // ✅ CSRF
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    // ✅ Select All
+    $(document).on('change', '.checked_all_lead', function () {
+        $('.lead-id').prop('checked', $(this).prop('checked'));
+    });
+
+    // ✅ Sync individual
+    $(document).on('change', '.lead-id', function () {
+        $('.checked_all_lead').prop(
+            'checked',
+            $('.lead-id:checked').length === $('.lead-id').length
+        );
+    });
+
+    // ✅ Open Modal
+    $(document).on('click', '.view-message', function () {
+
+        let email = $(this).data('email');
+        let subject = $(this).data('subject');
+        let id = $(this).data('id');
+
+        let message = $('#full-message-' + id).html();
+
+        $('#modalEmail').text(email);
+        $('#modalSubject').text(subject);
+        $('#modalMessage').html(message);
+
+        $('#messageModal').modal('show');
+    });
+
+    // ✅ Close Modal Fix
+    $(document).on('click', '.close-modal-btn', function () {
+        $('#messageModal').modal('hide');
+    });
+
+    // ✅ Delete Permanent
+    $('.delete-message').click(function () {
+
+        let selected = [];
+
+        $('.lead-id:checked').each(function () {
+            selected.push($(this).val());
+        });
+
+        if (selected.length === 0) {
+            Swal.fire('Warning', 'Please select at least one message', 'warning');
+            return;
+        }
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Delete permanently?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                $.post("{{ route('delete-sms-permanent') }}", { leadIds: selected }, function (res) {
+
+                    if (!res.status) {
+                        Swal.fire('Error', res.message, 'error');
+                    } else {
+
+                        selected.forEach(id => {
+                            $('#row-' + id).remove();
+                        });
+
+                        Swal.fire('Deleted!', res.message, 'success');
                     }
+
+                }).fail(function () {
+                    Swal.fire('Error', 'Something went wrong', 'error');
                 });
             }
-            const t = document.querySelector(".checked_all_lead"),
-                o = document.querySelectorAll('[type="checkbox"]');
-                t.addEventListener("change", t => {
-                o.forEach(e => {
-                    e.checked = t.target.checked
-                })
-            });
-            $('.delete-message').on('click', function(e) {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "Are you sure you want to delete permanently this message?",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
-                    }).then((result) => {
-                    if (result.isConfirmed) {
-                        $('.error-message').html('');
-                        $('.delete-message').addClass('disabled');
-                        var selectedLeads = [];
-                        $('.lead-id:checked').each(function() {
-                            selectedLeads.push($(this).attr('leads-user-id'));
-                        });
-                        setupCSRF();
-                        $.ajax({
-                            url: "{{route('delete-sms-permanent')}}",
-                            method: 'Post',
-                            data: {
-                                leadIds:selectedLeads,
-                            },
-                            success: function(response){
-                              if(response.status == false){
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
-                                    text: response.message,
-                                });
-                              }else{
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Success...',
-                                    text: response.message,
-                                }).then((result) => {
-                                  if (result.isConfirmed) {
-                                    location.reload();
-                                  }
-                                });
-                              }
-                              $('.delete-message').removeClass('disabled');
-                            },
-                            error: function(response){
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
-                                    text: response.responseJSON.message,
-                                });
-                                $('.delete-message').removeClass('disabled');
-                            }
-                        });
-                    }
-                });
-            });
-
         });
-    </script>
+    });
+
+});
+</script>
+
 @endsection

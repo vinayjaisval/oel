@@ -20,18 +20,21 @@
     </div>
 </section>
 <section>
-    <div class="quick_selection_title  my-5">
+    <div class="quick_selection_title my-5">
         <div class="container">
             <div class="row">
                 @forelse ($blogs as $item)
                 <div class="col-lg-4 col-md-6 mt-4">
                     <div class="card blogs_card blog_card shadow-sm">
-                        <a class="blog-btn text-decoration-none text-dark" href="{{url('blog-details', $item->slug)}}">
-                            <img src="{{asset('imagesapi/'.$item->image)}}" class="card-img-top" alt="blog"></a>
+                        <a class="blog-btn text-decoration-none text-dark" href="{{ url('blog-details', $item->slug) }}">
+                            <img src="{{ asset('imagesapi/'.$item->image) }}" class="card-img-top" alt="blog">
+                        </a>
                         <div class="card-body blog_content">
-                              <h6 class="fw-bold"> {!! Str::limit($item->title, 50) !!}</h6>
+                            <h6 class="fw-bold">{!! Str::limit($item->title, 50) !!}</h6>
                             <div class="blog-button">
-                                <a class="blog-btn text-decoration-none text-dark" href="{{url('blog-details', $item->slug)}}">Continue Reading <i class="fa-solid fa-arrow-right"></i></a>
+                                <a class="blog-btn text-decoration-none text-dark" href="{{ url('blog-details', $item->slug) }}">
+                                    Continue Reading <i class="fa-solid fa-arrow-right"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -42,6 +45,12 @@
                 </div>
                 @endforelse
             </div>
+
+            <!-- ✅ Pagination -->
+            <div class="d-flex justify-content-center mt-4">
+                {{ $blogs->links() }}
+            </div>
+
         </div>
     </div>
 </section>
