@@ -579,7 +579,7 @@
                     <div class="sidebar-country" id="finalCountry"></div>
 
                     <div style="margin-top: 30px; text-align: center;">
-                        <img src="{{ asset('frontend/images/login.jpg') }}" alt="Study Abroad Counseling" style="width: 100%; height: auto; border-radius: 16px; object-fit: contain; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                        <img src="{{ asset('frontend/images/login.jpg') }}" alt="Study Abroad Counseling" style="width: 100%; height: auto; border-radius: 16px; object-fit: contain;">
                     </div>
 
                 </div>
