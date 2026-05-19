@@ -634,6 +634,24 @@
 
                         </div>
 
+                        <div class="form-group">
+
+                            <label>Counselor *</label>
+
+                            <select name="counselor"
+                                    class="form-control"
+                                    required>
+
+                                <option value="">Select Counselor</option>
+
+                                <option value="23">Kavya Nair</option>
+                                <option value="19">Sophia Reed</option>
+                                <option value="16">Simran Arora</option>
+
+                            </select>
+
+                        </div>
+
                         <button type="submit"
                                 class="confirm-btn">
 
@@ -785,7 +803,7 @@
 
         $('#slotContainer').html('Loading...');
 
-        $.get('/get-slots/'+date,function(data){
+        $.get('/overseas/get-slots/'+date,function(data){
 
             let html='';
 
@@ -831,7 +849,7 @@
 
         $.ajax({
 
-            url:'/book',
+            url:'/overseas/book',
 
             type:'POST',
 

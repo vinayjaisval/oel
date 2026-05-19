@@ -24,19 +24,31 @@ class Booking extends Model
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public static function dailyMeetingCounts()
-    {
-        return self::selectRaw('date, COUNT(*) as total')
-            ->where('status', '!=', 'cancelled')
-            ->groupBy('date')
-            ->orderBy('date', 'desc')
-            ->get();
+ public static function dailyMeetingCounts()
+{
+    $query = self::selectRaw('date, COUNT(*) as total')
+        ->where('status', '!=', 'cancelled');
+
+    // Non-admin only own counts
+    if (auth()->check() && auth()->user()->role != 'Administrator') {
+        $query->where('counselor_id', auth()->id());
     }
 
-    public static function todayMeetingCount($timezone = 'Asia/Kolkata')
-    {
-        return self::whereDate('date', Carbon::today($timezone))
-            ->where('status', '!=', 'cancelled')
-            ->count();
+    return $query->groupBy('date')
+        ->orderBy('date', 'desc')
+        ->get();
+}
+
+public static function todayMeetingCount($timezone = 'Asia/Kolkata')
+{
+    $query = self::whereDate('date', Carbon::today($timezone))
+        ->where('status', '!=', 'cancelled');
+
+    // Non-admin only own counts
+    if (auth()->check() && auth()->user()->role != 'Administrator') {
+        $query->where('counselor_id', auth()->id());
     }
+
+    return $query->count();
+}
 }
