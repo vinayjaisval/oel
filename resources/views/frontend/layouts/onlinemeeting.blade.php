@@ -171,7 +171,7 @@
 
         .wiz-sidebar{
             width:32%;
-            background:#fff;
+            background:#f8fafc;
             padding:25px 30px;
             border-right:1px solid #e2e8f0;
         }
@@ -194,10 +194,9 @@
         }
 
         .sidebar-title{
-            font-size:22px;
+            font-size:28px;
             font-weight:800;
             color:#1e3a8a;
-            white-space:nowrap;
         }
 
         .sidebar-country{
@@ -297,26 +296,11 @@
         }
 
         .form-control{
-            width:100% !important;
-            height:52px !important;
-            border:1px solid #cbd5e1 !important;
-            border-radius:14px !important;
-            padding:0 15px !important;
-            box-sizing: border-box !important;
-            background: #fff !important;
-            color: #475569 !important;
-            font-size: 14px !important;
-            font-family: inherit !important;
-            transition: all 0.3s ease !important;
-        }
-        .form-control:hover {
-            border-color: #94a3b8 !important;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02) !important;
-        }
-        .form-control:focus {
-            outline: none !important;
-            border-color: #cbd5e1 !important;
-            box-shadow: none !important;
+            width:100%;
+            height:52px;
+            border:1px solid #cbd5e1;
+            border-radius:14px;
+            padding:0 15px;
         }
 
         .success-box{
@@ -403,7 +387,7 @@
     <div class="dest-header">
 
         <h2>
-            Book Your Free Online Counselling
+            Book Your Free Online   ing
         </h2>
 
     </div>
@@ -695,11 +679,11 @@
                             .custom-counselor-options { 
                                 position: absolute; top: 100%; left: 0; width: 100%; background: #fff; 
                                 border: 1px solid #cbd5e1; border-radius: 14px; margin-top: 5px; 
-                                box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 100; display: none; overflow: visible; max-height: none;
+                                box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 100; display: none; overflow: hidden;
                             }
                             .custom-counselor-options.open { display: block; }
                             .custom-counselor-option { 
-                                padding: 6px 15px; display: flex; align-items: center; cursor: pointer; border-bottom: 1px solid #f1f5f9; color: #000; font-size: inherit; font-family: inherit;
+                                padding: 12px 15px; display: flex; align-items: center; cursor: pointer; border-bottom: 1px solid #f1f5f9; color: #000; font-size: inherit; font-family: inherit;
                             }
                             .custom-counselor-option:last-child { border-bottom: none; }
                             .custom-counselor-option:hover { background: #f8fafc; }
@@ -709,32 +693,20 @@
                             <div class="custom-counselor-dropdown" id="counselor-dropdown-wrapper">
                                 <input type="hidden" name="counselor" id="counselor_input" required>
                                 <div class="form-control custom-counselor-selected" onclick="toggleCounselorDropdown(event)">
-                                    <div class="selected-content" id="counselor_selected_text"> 
+                                    <div class="selected-content" id="counselor_selected_text">
                                         <span style="color: #475569;">Select Counselor</span>
                                     </div>
                                     <i class="fa fa-chevron-down" style="font-size: 12px; color: #64748b;"></i>
                                 </div>
                                 <div class="custom-counselor-options" id="counselor_options">
-                                    <div class="custom-counselor-option" onclick="selectCounselor('Counselor 1', '{{ asset('frontend/img/counselor-avatar-1.png') }}?v=3', event)">
-                                        <img src="{{ asset('frontend/img/counselor-avatar-1.png') }}?v=3" alt="Counselor 1" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px;"> Counselor 1
+                                    <div class="custom-counselor-option" onclick="selectCounselor('Counselor 1', event)">
+                                        <i class="fa-solid fa-user-tie counselor-icon"></i> Counselor 1
                                     </div>
-                                    <div class="custom-counselor-option" onclick="selectCounselor('Counselor 2', '{{ asset('frontend/img/counselor-avatar-2.png') }}?v=3', event)">
-                                        <img src="{{ asset('frontend/img/counselor-avatar-2.png') }}?v=3" alt="Counselor 2" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px;"> Counselor 2
+                                    <div class="custom-counselor-option" onclick="selectCounselor('Counselor 2', event)">
+                                        <i class="fa-solid fa-user-tie counselor-icon"></i> Counselor 2
                                     </div>
-                                    <div class="custom-counselor-option" style="cursor: not-allowed; opacity: 0.6; justify-content: space-between;" onclick="event.stopPropagation()">
-                                        <div style="display: flex; align-items: center;">
-                                            <img src="{{ asset('frontend/img/counselor-avatar-3.png') }}?v=3" alt="Counselor 3" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px; filter: grayscale(100%);"> Counselor 3
-                                        </div>
-                                        <span style="font-size: 11px; background: #fee2e2; color: #ef4444; padding: 2px 8px; border-radius: 10px; font-weight: 700;">Busy</span>
-                                    </div>
-                                    <div class="custom-counselor-option" onclick="selectCounselor('Counselor 4', '{{ asset('frontend/img/counselor-avatar-4.png') }}?v=3', event)">
-                                        <img src="{{ asset('frontend/img/counselor-avatar-4.png') }}?v=3" alt="Counselor 4" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px;"> Counselor 4
-                                    </div>
-                                    <div class="custom-counselor-option" style="cursor: not-allowed; opacity: 0.6; justify-content: space-between;" onclick="event.stopPropagation()">
-                                        <div style="display: flex; align-items: center;">
-                                            <img src="{{ asset('frontend/img/counselor-avatar-5.png') }}?v=3" alt="Counselor 5" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px; filter: grayscale(100%);"> Counselor 5
-                                        </div>
-                                        <span style="font-size: 11px; background: #fee2e2; color: #ef4444; padding: 2px 8px; border-radius: 10px; font-weight: 700;">Busy</span>
+                                    <div class="custom-counselor-option" onclick="selectCounselor('Counselor 3', event)">
+                                        <i class="fa-solid fa-user-tie counselor-icon"></i> Counselor 3
                                     </div>
                                 </div>
                             </div>
@@ -746,13 +718,10 @@
                                 var cityOpts = document.getElementById('city_options');
                                 if(cityOpts) cityOpts.classList.remove('open');
                             }
-                            function selectCounselor(name, imgSrc, e) {
-                                if(e && e.stopPropagation) e.stopPropagation();
-                                if(!imgSrc || typeof imgSrc !== 'string' || imgSrc === '[object MouseEvent]') {
-                                    imgSrc = '{{ asset("frontend/images/user.png") }}';
-                                }
+                            function selectCounselor(name, e) {
+                                e.stopPropagation();
                                 document.getElementById('counselor_input').value = name;
-                                document.getElementById('counselor_selected_text').innerHTML = '<img src="' + imgSrc + '" class="counselor-icon" style="width:24px; height:24px; border-radius:50%; object-fit:cover; margin-right:12px;"> <span style="color: #000; font-weight: 500;">' + name + '</span>';
+                                document.getElementById('counselor_selected_text').innerHTML = '<i class="fa-solid fa-user-tie counselor-icon"></i> <span style="color: #000; font-weight: 500;">' + name + '</span>';
                                 document.getElementById('counselor_options').classList.remove('open');
                             }
                             document.addEventListener('click', function(event) {
