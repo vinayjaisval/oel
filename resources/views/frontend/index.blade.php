@@ -35,24 +35,66 @@
 }
 
 #yt-strip-1 .scroller {
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+}
+
+#yt-strip-1 .scroller::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
 }
 
 #yt-strip-1 .track {
     display: flex;
     gap: var(--gap);
     width: max-content;
-    animation: scroll var(--speed) linear infinite;
+    padding-bottom: 5px;
+}
+
+/* UPDATED PERFECT NAVIGATION BUTTONS */
+.yt-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #0061ff 0%, #60efff 100%);
+    color: #fff;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    width: 40px; 
+    height: 40px;
+    border-radius: 50%;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 5px 15px rgba(0, 97, 255, 0.4);
+    transition: all 0.3s ease;
+}
+
+.yt-nav-btn:hover {
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 8px 20px rgba(0, 97, 255, 0.6);
+}
+
+.yt-prev {
+    left: 10px;
+}
+
+.yt-next {
+    right: 10px; 
+}
+
+/* Responsive fix */
+@media (max-width: 768px) {
+    .yt-nav-btn { width: 35px; height: 35px; font-size: 18px; }
 }
 
 /* STOP WHEN VIDEO PLAYING */
 #yt-strip-1.playing .track {
     animation-play-state: paused;
-}
-
-@keyframes scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
 }
 
 /* CARD */
@@ -545,6 +587,8 @@
         <div class="anot_int text-center mt-4">
 
             <div id="yt-strip-1" class="yt-strip">
+                <button class="yt-nav-btn yt-prev" onclick="scrollStrip(-1)">❮</button>
+                <button class="yt-nav-btn yt-next" onclick="scrollStrip(1)">❯</button>
                 <div class="scroller">
                     <div class="track">
 
@@ -1329,7 +1373,20 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-     })("yt-strip-1");
+    // NATIVE SCROLL LOGIC
+    const scroller = root.querySelector(".scroller");
+
+    window.scrollStrip = function(direction) {
+        const cardWidth = 250 + 20; // width + gap
+        if (scroller) {
+            scroller.scrollBy({
+                left: direction * cardWidth,
+                behavior: 'smooth'
+            });
+        }
+    };
+
+    })("yt-strip-1");
 </script>
 
 @endsection

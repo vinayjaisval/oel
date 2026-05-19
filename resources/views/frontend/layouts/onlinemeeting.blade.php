@@ -13,10 +13,6 @@
    
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     
-
-    // startt work  hjjhj
-    //hjjjhhj
-    //jhjhjhj
     <style>
 
         *{
@@ -175,32 +171,35 @@
 
         .wiz-sidebar{
             width:32%;
-            background:#f8fafc;
-            padding:40px 30px;
+            background:#fff;
+            padding:25px 30px;
             border-right:1px solid #e2e8f0;
         }
 
         .wiz-main{
             width:68%;
-            padding:40px;
+            padding:25px 40px;
         }
 
         .back-btn{
             width:42px;
             height:42px;
             background:#fff;
+            border:1px solid #e2e8f0;
             border-radius:50%;
             display:flex;
             align-items:center;
             justify-content:center;
             cursor:pointer;
             margin-bottom:25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         .sidebar-title{
-            font-size:28px;
+            font-size:22px;
             font-weight:800;
             color:#1e3a8a;
+            white-space: nowrap;
         }
 
         .sidebar-country{
@@ -229,9 +228,9 @@
         }
 
         .main-title{
-            font-size:30px;
+            font-size:28px;
             font-weight:800;
-            margin-bottom:25px;
+            margin-bottom:15px;
         }
 
         .calendar-row{
@@ -290,12 +289,12 @@
         }
 
         .form-group{
-            margin-bottom:20px;
+            margin-bottom:10px;
         }
 
         .form-group label{
             display:block;
-            margin-bottom:8px;
+            margin-bottom:5px;
             font-weight:700;
         }
 
@@ -305,6 +304,19 @@
             border:1px solid #cbd5e1;
             border-radius:14px;
             padding:0 15px;
+            transition: all 0.25s ease-in-out;
+            outline: none !important;
+        }
+
+        .form-control:hover, .custom-counselor-selected:hover{
+            border-color: #94a3b8;
+        }
+
+        .form-control:focus, .custom-counselor-selected.active-focus{
+            border-color: #94a3b8;
+            box-shadow: none !important;
+            outline: none !important;
+            background-color: #fff;
         }
 
         .success-box{
@@ -391,7 +403,7 @@
     <div class="dest-header">
 
         <h2>
-            Book Your Free Online Counselling
+            Book Your Free Online   ing
         </h2>
 
     </div>
@@ -566,6 +578,10 @@
 
                     <div class="sidebar-country" id="finalCountry"></div>
 
+                    <div style="margin-top: 30px; text-align: center;">
+                        <img src="{{ asset('frontend/images/login.jpg') }}" alt="Study Abroad Counseling" style="width: 100%; height: auto; border-radius: 16px; object-fit: contain; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                    </div>
+
                 </div>
 
                 <div class="wiz-main">
@@ -607,19 +623,59 @@
 
                             <label>Your City *</label>
 
-                            <select name="city"
-                                    class="form-control"
-                                    required>
+                            <div class="custom-counselor-dropdown" id="city-dropdown-wrapper">
+                                <input type="hidden" name="city" id="city_input" required>
+                                <div class="form-control custom-counselor-selected" onclick="toggleCityDropdown(event)">
+                                    <div class="selected-content" id="city_selected_text">
+                                        <span style="color: #475569;">Select City</span>
+                                    </div>
+                                    <i class="fa fa-chevron-down" style="font-size: 12px; color: #64748b;"></i>
+                                </div>
+                                <div class="custom-counselor-options" id="city_options">
+                                    <div class="custom-counselor-option" onclick="selectCity('Lucknow', event)">Lucknow</div>
+                                    <div class="custom-counselor-option" onclick="selectCity('New Delhi', event)">New Delhi</div>
+                                    <div class="custom-counselor-option" onclick="selectCity('Mumbai', event)">Mumbai</div>
+                                    <div class="custom-counselor-option" onclick="selectCity('Pune', event)">Pune</div>
+                                    <div class="custom-counselor-option" onclick="selectCity('Hyderabad', event)">Hyderabad</div>
+                                </div>
+                            </div>
 
-                                <option value="">Select City</option>
-
-                                <option value="Lucknow">Lucknow</option>
-                                <option value="New Delhi">New Delhi</option>
-                                <option value="Mumbai">Mumbai</option>
-                                <option value="Pune">Pune</option>
-                                <option value="Hyderabad">Hyderabad</option>
-
-                            </select>
+                            <script>
+                            function toggleCityDropdown(e) {
+                                e.stopPropagation();
+                                var opts = document.getElementById('city_options');
+                                opts.classList.toggle('open');
+                                var sel = document.querySelector('#city-dropdown-wrapper .custom-counselor-selected');
+                                if(opts.classList.contains('open')) {
+                                    sel.classList.add('active-focus');
+                                } else {
+                                    sel.classList.remove('active-focus');
+                                }
+                                var cOpts = document.getElementById('counselor_options');
+                                if(cOpts) {
+                                    cOpts.classList.remove('open');
+                                    var cSel = document.querySelector('#counselor-dropdown-wrapper .custom-counselor-selected');
+                                    if(cSel) cSel.classList.remove('active-focus');
+                                }
+                            }
+                            function selectCity(name, e) {
+                                e.stopPropagation();
+                                document.getElementById('city_input').value = name;
+                                document.getElementById('city_selected_text').innerHTML = '<span style="color: #000; font-weight: 500;">' + name + '</span>';
+                                document.getElementById('city_options').classList.remove('open');
+                                var sel = document.querySelector('#city-dropdown-wrapper .custom-counselor-selected');
+                                if(sel) sel.classList.remove('active-focus');
+                            }
+                            document.addEventListener('click', function(event) {
+                                var dropdown = document.getElementById('city-dropdown-wrapper');
+                                if (dropdown && !dropdown.contains(event.target)) {
+                                    var options = document.getElementById('city_options');
+                                    if(options) options.classList.remove('open');
+                                    var sel = document.querySelector('#city-dropdown-wrapper .custom-counselor-selected');
+                                    if(sel) sel.classList.remove('active-focus');
+                                }
+                            });
+                            </script>
 
                         </div>
 
@@ -642,22 +698,107 @@
 
                             <label>Counselor *</label>
 
-                            <select name="counselor"
-                                    class="form-control"
-                                    required>
+                            <style>
+                            .custom-counselor-dropdown { position: relative; width: 100%; }
+                            .custom-counselor-selected { 
+                                height: 52px; border-radius: 14px; border: 1px solid #cbd5e1; 
+                                padding: 0 15px; display: flex !important; align-items: center; justify-content: space-between;
+                                background: #fff; cursor: pointer; color: #475569;
+                            }
+                            .custom-counselor-selected .selected-content { display: flex; align-items: center; font-size: inherit; font-family: inherit; }
+                            .custom-counselor-selected .counselor-icon { font-size: 18px; margin-right: 12px; color: #226cf5; }
+                            .custom-counselor-options { 
+                                position: absolute; top: 100%; left: 0; width: 100%; background: #fff; 
+                                border: 1px solid #cbd5e1; border-radius: 14px; margin-top: 5px; 
+                                box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 100; display: none; overflow: visible; max-height: none;
+                            }
+                            .custom-counselor-options.open { display: block; }
+                            .custom-counselor-option { 
+                                padding: 6px 15px; display: flex; align-items: center; cursor: pointer; border-bottom: 1px solid #f1f5f9; color: #000; font-size: inherit; font-family: inherit;
+                            }
+                            .custom-counselor-option:last-child { border-bottom: none; }
+                            .custom-counselor-option:hover { background: #f8fafc; }
+                            .custom-counselor-option .counselor-icon { font-size: 18px; margin-right: 12px; color: #226cf5; }
+                            </style>
 
-                                <option value="">Select Counselor</option>
+                            <div class="custom-counselor-dropdown" id="counselor-dropdown-wrapper">
+                                <input type="hidden" name="counselor" id="counselor_input" required>
+                                <div class="form-control custom-counselor-selected" onclick="toggleCounselorDropdown(event)">
+                                    <div class="selected-content" id="counselor_selected_text">
+                                        <span style="color: #475569;">Select Counselor</span>
+                                    </div>
+                                    <i class="fa fa-chevron-down" style="font-size: 12px; color: #64748b;"></i>
+                                </div>
+                                 <div class="custom-counselor-options" id="counselor_options">
+                                     <div class="custom-counselor-option" onclick="selectCounselor('Counselor 1', '{{ asset('frontend/img/counselor-avatar-1.png') }}?v=3', event)">
+                                         <img src="{{ asset('frontend/img/counselor-avatar-1.png') }}?v=3" alt="Counselor 1" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px;"> Counselor 1
+                                     </div>
+                                     <div class="custom-counselor-option" onclick="selectCounselor('Counselor 2', '{{ asset('frontend/img/counselor-avatar-2.png') }}?v=3', event)">
+                                         <img src="{{ asset('frontend/img/counselor-avatar-2.png') }}?v=3" alt="Counselor 2" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px;"> Counselor 2
+                                     </div>
+                                     <div class="custom-counselor-option" style="cursor: not-allowed; opacity: 0.6; justify-content: space-between;" onclick="event.stopPropagation()">
+                                         <div style="display: flex; align-items: center;">
+                                             <img src="{{ asset('frontend/img/counselor-avatar-3.png') }}?v=3" alt="Counselor 3" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px; filter: grayscale(100%);"> Counselor 3
+                                         </div>
+                                         <span style="font-size: 11px; background: #fee2e2; color: #ef4444; padding: 2px 8px; border-radius: 10px; font-weight: 700;">Busy</span>
+                                     </div>
+                                     <div class="custom-counselor-option" onclick="selectCounselor('Counselor 4', '{{ asset('frontend/img/counselor-avatar-4.png') }}?v=3', event)">
+                                         <img src="{{ asset('frontend/img/counselor-avatar-4.png') }}?v=3" alt="Counselor 4" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px;"> Counselor 4
+                                     </div>
+                                     <div class="custom-counselor-option" style="cursor: not-allowed; opacity: 0.6; justify-content: space-between;" onclick="event.stopPropagation()">
+                                         <div style="display: flex; align-items: center;">
+                                             <img src="{{ asset('frontend/img/counselor-avatar-5.png') }}?v=3" alt="Counselor 5" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px; filter: grayscale(100%);"> Counselor 5
+                                         </div>
+                                         <span style="font-size: 11px; background: #fee2e2; color: #ef4444; padding: 2px 8px; border-radius: 10px; font-weight: 700;">Busy</span>
+                                     </div>
+                                 </div>
+                            </div>
 
-                                <option value="23">Kavya Nair</option>
-                                <option value="19">Sophia Reed</option>
-                                <option value="16">Simran Arora</option>
-
-                            </select>
+                            <script>
+                            function toggleCounselorDropdown(e) {
+                                e.stopPropagation();
+                                var opts = document.getElementById('counselor_options');
+                                opts.classList.toggle('open');
+                                var sel = document.querySelector('#counselor-dropdown-wrapper .custom-counselor-selected');
+                                if(opts.classList.contains('open')) {
+                                    sel.classList.add('active-focus');
+                                } else {
+                                    sel.classList.remove('active-focus');
+                                }
+                                var cityOpts = document.getElementById('city_options');
+                                if(cityOpts) {
+                                    cityOpts.classList.remove('open');
+                                    var citySel = document.querySelector('#city-dropdown-wrapper .custom-counselor-selected');
+                                    if(citySel) citySel.classList.remove('active-focus');
+                                }
+                            }
+                            function selectCounselor(name, imgSrc, e) {
+                                if(e && e.stopPropagation) e.stopPropagation();
+                                if(!imgSrc || typeof imgSrc !== 'string' || imgSrc === '[object MouseEvent]') {
+                                    imgSrc = '{{ asset("frontend/images/user.png") }}';
+                                }
+                                document.getElementById('counselor_input').value = name;
+                                document.getElementById('counselor_selected_text').innerHTML = '<img src="' + imgSrc + '" class="counselor-icon" style="width:24px; height:24px; border-radius:50%; object-fit:cover; margin-right:12px;"> <span style="color: #000; font-weight: 500;">' + name + '</span>';
+                                document.getElementById('counselor_options').classList.remove('open');
+                                var sel = document.querySelector('#counselor-dropdown-wrapper .custom-counselor-selected');
+                                if(sel) sel.classList.remove('active-focus');
+                            }
+                            document.addEventListener('click', function(event) {
+                                var dropdown = document.getElementById('counselor-dropdown-wrapper');
+                                if (dropdown && !dropdown.contains(event.target)) {
+                                    var options = document.getElementById('counselor_options');
+                                    if(options) options.classList.remove('open');
+                                    var sel = document.querySelector('#counselor-dropdown-wrapper .custom-counselor-selected');
+                                    if(sel) sel.classList.remove('active-focus');
+                                }
+                            });
+                            </script>
 
                         </div>
 
                         <button type="submit"
-                                class="confirm-btn">
+                                class="confirm-btn"
+                                style="margin-top: 5px; margin-bottom: 120px;">
 
                             Schedule Event
 
@@ -807,7 +948,7 @@
 
         $('#slotContainer').html('Loading...');
 
-        $.get('/overseas/get-slots/'+date,function(data){
+        $.get('/oel/get-slots/'+date,function(data){
 
             let html='';
 
@@ -853,7 +994,7 @@
 
         $.ajax({
 
-            url:'/overseas/book',
+            url:'/oel/book',
 
             type:'POST',
 
