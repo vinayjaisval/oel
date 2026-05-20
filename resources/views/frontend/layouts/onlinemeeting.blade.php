@@ -721,43 +721,91 @@
                             .custom-counselor-option .counselor-icon { font-size: 18px; margin-right: 12px; color: #226cf5; }
                             </style>
 
-                            @php
-                                $dbCounselors = \App\Models\User::where('admin_type', 'counselor')
-                                    ->orWhere('email', 'like', 'counselor%')
-                                    ->orderBy('email', 'asc')
-                                    ->take(5)
-                                    ->get();
-                            @endphp
+                          @php
+    $counselors = [
+        [
+            'id' => 16,
+            'name' => 'Rahul Sharma',
+            'avatar' => asset('frontend/img/counselor-avatar-1.png'),
+        ],
+        [
+            'id' => 19,
+            'name' => 'Priya Verma',
+            'avatar' => asset('frontend/img/counselor-avatar-2.png'),
+        ],
+        [
+            'id' => 3,
+            'name' => 'Aman Singh',
+            'avatar' => asset('frontend/img/counselor-avatar-3.png'),
+        ],
+        [
+            'id' => 23,
+            'name' => 'Neha Gupta',
+            'avatar' => asset('frontend/img/counselor-avatar-4.png'),
+        ],
+        [
+            'id' => 5,
+            'name' => 'Vikas Yadav',
+            'avatar' => asset('frontend/img/counselor-avatar-5.png'),
+        ],
+    ];
+@endphp
 
-                            <div class="custom-counselor-dropdown" id="counselor-dropdown-wrapper">
-                                <input type="hidden" name="counselor" id="counselor_input" required>
-                                <div class="form-control custom-counselor-selected" onclick="toggleCounselorDropdown(event)">
-                                    <div class="selected-content" id="counselor_selected_text">
-                                        <span style="color: #475569;">Select Counselor</span>
-                                    </div>
-                                    <i class="fa fa-chevron-down" style="font-size: 12px; color: #64748b;"></i>
-                                </div>
-                                 <div class="custom-counselor-options" id="counselor_options">
-                                     @foreach($dbCounselors as $index => $counselor)
-                                         @php
-                                             $isBusy = ($index == 2 || $index == 4); // Counselor 3 (index 2) and Counselor 5 (index 4) are Busy
-                                             $avatar = $counselor->profile_image ? asset('storage/' . $counselor->profile_image) : asset('frontend/img/counselor-avatar-' . ($index + 1) . '.png') . '?v=3';
-                                         @endphp
-                                         @if($isBusy)
-                                             <div class="custom-counselor-option" style="cursor: not-allowed; opacity: 0.6; justify-content: space-between;" onclick="event.stopPropagation()">
-                                                 <div style="display: flex; align-items: center;">
-                                                     <img src="{{ $avatar }}" alt="{{ $counselor->name }}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px; filter: grayscale(100%);"> {{ $counselor->name }}
-                                                 </div>
-                                                 <span style="font-size: 11px; background: #fee2e2; color: #ef4444; padding: 2px 8px; border-radius: 10px; font-weight: 700;">Busy</span>
-                                             </div>
-                                         @else
-                                             <div class="custom-counselor-option" onclick="selectCounselor('{{ $counselor->id }}', '{{ $counselor->name }}', '{{ $avatar }}', event)">
-                                                 <img src="{{ $avatar }}" alt="{{ $counselor->name }}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px;"> {{ $counselor->name }}
-                                             </div>
-                                         @endif
-                                     @endforeach
-                                 </div>
-                            </div>
+<div class="custom-counselor-dropdown" id="counselor-dropdown-wrapper">
+    <input type="hidden" name="counselor" id="counselor_input" required>
+
+    <div class="form-control custom-counselor-selected" onclick="toggleCounselorDropdown(event)">
+        <div class="selected-content" id="counselor_selected_text">
+            <span style="color: #475569;">Select Counselor</span>
+        </div>
+
+        <i class="fa fa-chevron-down" style="font-size: 12px; color: #64748b;"></i>
+    </div>
+
+    <div class="custom-counselor-options" id="counselor_options">
+        @foreach($counselors as $index => $counselor)
+
+            @php
+                $isBusy = ($index == 2 || $index == 4);
+            @endphp
+
+            @if($isBusy)
+
+                <div class="custom-counselor-option"
+                     style="cursor: not-allowed; opacity: 0.6; justify-content: space-between;"
+                     onclick="event.stopPropagation()">
+
+                    <div style="display: flex; align-items: center;">
+
+                        <img src="{{ $counselor['avatar'] }}"
+                             alt="{{ $counselor['name'] }}"
+                             style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px; filter: grayscale(100%);">
+
+                        {{ $counselor['name'] }}
+                    </div>
+
+                    <span style="font-size: 11px; background: #fee2e2; color: #ef4444; padding: 2px 8px; border-radius: 10px; font-weight: 700;">
+                        Busy
+                    </span>
+                </div>
+
+            @else
+
+                <div class="custom-counselor-option"
+                     onclick="selectCounselor('{{ $counselor['id'] }}', '{{ $counselor['name'] }}', '{{ $counselor['avatar'] }}', event)">
+
+                    <img src="{{ $counselor['avatar'] }}"
+                         alt="{{ $counselor['name'] }}"
+                         style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px;">
+
+                    {{ $counselor['name'] }}
+                </div>
+
+            @endif
+
+        @endforeach
+    </div>
+</div>
 
                             <script>
                             function toggleCounselorDropdown(e) {
