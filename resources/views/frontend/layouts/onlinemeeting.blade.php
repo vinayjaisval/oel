@@ -360,25 +360,7 @@
 </head>
 <body>
 
-<!-- <div class="hero">
 
-    <img src="https://overseaseducationlane.com/public/frontend/img/oel%20(1)%201.png">
-
-    <h1>
-        Welcome to Overseas Education Lane
-    </h1>
-
-    <p>
-        Your dream study destination is just a few clicks away.
-        Book a session with our expert counselors today.
-    </p>
-
-    <button class="book-btn" onclick="openWizard()">
-        <i class="fa-solid fa-calendar-check"></i>
-        Book Online Meeting
-    </button>
-
-</div> -->
 
 <div class="wizard-modal" id="wizardModal">
 
@@ -403,7 +385,7 @@
     <div class="dest-header">
 
         <h2>
-            Book Your Free Online   ing
+            Book Your Free Online  Counseling Session
         </h2>
 
     </div>
