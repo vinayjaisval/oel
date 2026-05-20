@@ -77,6 +77,7 @@ class BookingController extends Controller
 
   public function store(Request $request)
 {
+    
 
     $request->validate([
 
@@ -125,7 +126,7 @@ class BookingController extends Controller
         'email'         => $request->email,
         'phone'         => $request->phone,
          'country_id'    => $request->destination,
-        'counselor_id'  => $counselor->counselor ?? null,
+        'counselor_id'  => $request->counselor,
         'date'          => $request->date,
         'time'          => $time,
         'meeting_link'  => $meetingLink,
