@@ -75,153 +75,185 @@ class BookingController extends Controller
 
 
 
-  public function store(Request $request)
+public function store(Request $request)
 {
-    
-// dd($request->all());
-    $request->validate([
+    try {
 
-        'name'  => 'required',
-        'email' => 'required|email',
-        'phone' => 'required',
-        'date'  => 'required',
-        'time'  => 'required',
-    ]);
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDATION
+        |--------------------------------------------------------------------------
+        */
 
-    // CONVERT TIME
-    $time = Carbon::createFromFormat('h:i A', $request->time)
-                ->format('H:i:s');
-
-    // DEFAULT COUNSELOR
-    // $counselor = Counselor::first();
-    // if (!$counselor) {
-    //     $counselor = Counselor::create([
-    //         'name'  => 'Default Counselor',
-    //         'email' => 'admin@gmail.com'
-    //     ]);
-    // }
-    // CHECK SLOT ALREADY BOOKED
-
-    $alreadyBooked = Booking::where('date', $request->date)
-        ->where('time', $time)
-        ->where('status', '!=', 'cancelled')
-        ->exists();
-
-    if ($alreadyBooked) {
-
-        return response()->json([
-            'success' => false,
-            'message' => 'This slot is already booked.'
+        $request->validate([
+            'name'        => 'required|string|max:255',
+            'email'       => 'required|email',
+            'phone'       => 'required|digits_between:10,15',
+            'date'        => 'required|date',
+            'time'        => 'required',
+            // 'destination' => 'required',
+            // 'counselor'   => 'required',
+            // 'city'        => 'required',
         ]);
-    }
 
-    // GENERATE JITSI ROOM
-    $roomName = 'study-abroad-' . time() . '-' . Str::random(5);
+        /*
+        |--------------------------------------------------------------------------
+        | FORMAT TIME
+        |--------------------------------------------------------------------------
+        */
 
-    $meetingLink = 'https://meet.jit.si/' . $roomName;
+        try {
 
-    // SAVE BOOKING
-    $booking = Booking::create([
-        'name'          => $request->name,
-        'email'         => $request->email,
-        'phone'         => $request->phone,
-         'country_id'    => $request->destination,
-        'counselor_id'  => $request->counselor,
-        'date'          => $request->date,
-        'time'          => $time,
-        'meeting_link'  => $meetingLink,
-        'status'        => 'scheduled'
-    ]);
+            $time = Carbon::createFromFormat('h:i A', $request->time)
+                        ->format('H:i:s');
 
-    /*
-    |--------------------------------------------------------------------------
-    | SEND MAIL
-    |--------------------------------------------------------------------------
-    */
+        } catch (\Exception $e) {
 
-   Mail::raw(
-
-        "Dear Student,\n\n" .
-
-        "Thank you for booking your counseling session with Overseas Education Lane (OEL). " .
-        "We are excited to connect with you and guide you toward your study abroad journey.\n\n" .
-
-        "Your session has been successfully confirmed.\n\n" .
-
-        "📅 Session Details\n" .
-        "Date: {$request->date}\n" .
-        "Time: {$request->time}\n\n" .
-
-        "🔗 Meeting Link\n" .
-        "{$meetingLink}\n\n" .
-
-        "Kindly be available and join the meeting on time so our counselor can assist you smoothly " .
-        "and provide the best guidance for your future plans.\n\n" .
-
-        "During the session, we will discuss about:\n" .
-        "• University and course selection\n" .
-        "• Scholarship opportunities\n" .
-        "• Admission guidance\n" .
-        "• Visa process\n" .
-        "• Career opportunities abroad\n\n" .
-
-        "If you have any questions, feel free to reply to this email or contact our team.\n\n" .
-
-        "We look forward to meeting you soon.\n\n" .
-
-        "Warm Regards,\n" .
-        "Team Overseas Education Lane (OEL)",
-
-        function ($message) use ($request) {
-
-            $message->to($request->email)
-                    ->subject('Study Abroad Consultation Booking Confirmation');
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid time format'
+            ], 422);
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | CHECK SLOT
+        |--------------------------------------------------------------------------
+        */
+
+        $alreadyBooked = Booking::where('date', $request->date)
+            ->where('time', $time)
+            ->where('status', '!=', 'cancelled')
+            ->exists();
+
+        if ($alreadyBooked) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'This slot is already booked.'
+            ], 409);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | GENERATE MEETING LINK
+        |--------------------------------------------------------------------------
+        */
+
+        $roomName = 'study-abroad-' . time() . '-' . Str::random(5);
+
+        $meetingLink = 'https://meet.jit.si/' . $roomName;
+
+        /*
+        |--------------------------------------------------------------------------
+        | SAVE BOOKING
+        |--------------------------------------------------------------------------
+        */
+
+        $booking = Booking::create([
+
+            'name'          => $request->name,
+            'email'         => $request->email,
+            'phone'         => $request->phone,
+            'city'          => $request->city,
+            'country_id'    => $request->destination,
+            'counselor_id'  => $request->counselor,
+            'date'          => $request->date,
+            'time'          => $time,
+            'meeting_link'  => $meetingLink,
+            'status'        => 'scheduled',
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | SEND EMAIL
+        |--------------------------------------------------------------------------
+        */
+
+        try {
+
+            Mail::raw(
+
+                "Dear {$request->name},\n\n" .
+
+                "Thank you for booking your counseling session with Overseas Education Lane (OEL).\n\n" .
+
+                "Your session has been successfully confirmed.\n\n" .
+
+                "Session Details:\n" .
+                "Date: {$request->date}\n" .
+                "Time: {$request->time}\n\n" .
+
+                "Meeting Link:\n{$meetingLink}\n\n" .
+
+                "Regards,\nTeam OEL",
+
+                function ($message) use ($request) {
+
+                    $message->to($request->email)
+                            ->subject('Study Abroad Consultation Booking Confirmation');
+                }
+
+            );
+
+        } catch (\Exception $e) {
+
+            \Log::error('Mail Error: ' . $e->getMessage());
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | WHATSAPP URL
+        |--------------------------------------------------------------------------
+        */
+
+        $phone = preg_replace('/[^0-9]/', '', $request->phone);
+
+        // REMOVE EXTRA 91
+        if (!Str::startsWith($phone, '91')) {
+            $phone = '91' . $phone;
+        }
+
+        $message = urlencode(
+
+            "Hello {$request->name},\n\n" .
+
+            "Your meeting is confirmed.\n\n" .
+
+            "Date: {$request->date}\n" .
+            "Time: {$request->time}\n\n" .
+
+            "Meeting Link:\n{$meetingLink}"
         );
 
-    /*
-    |--------------------------------------------------------------------------
-    | WHATSAPP LINK
-    |--------------------------------------------------------------------------
-    */
+        $whatsappLink = "https://wa.me/{$phone}?text={$message}";
 
-    // REMOVE SPACES
-    $phone = preg_replace('/[^0-9]/', '', $request->phone);
+        /*
+        |--------------------------------------------------------------------------
+        | SUCCESS RESPONSE
+        |--------------------------------------------------------------------------
+        */
 
-    // INDIA CODE
-    $phone = '91' . $phone;
+        return response()->json([
 
-    // MESSAGE
-    $message = urlencode(
+            'success'       => true,
+            'message'       => 'Meeting Booked Successfully',
+            'meeting_link'  => $meetingLink,
+            'whatsapp_url'  => $whatsappLink,
+            'booking_id'    => $booking->id,
+        ]);
 
-        "Hello {$request->name},\n\n" .
+    } catch (\Exception $e) {
 
-        "Your meeting is confirmed.\n\n" .
+        \Log::error('Booking Error: ' . $e->getMessage());
 
-        "Date: {$request->date}\n" .
-        "Time: {$request->time}\n\n" .
+        return response()->json([
 
-        "Meeting Link:\n{$meetingLink}"
-    );
+            'success' => false,
+            'message' => 'Something went wrong'
 
-    // FINAL URL
-    $whatsappLink = "https://wa.me/{$phone}?text={$message}";
-
-    /*
-    |--------------------------------------------------------------------------
-    | RETURN JSON
-    |--------------------------------------------------------------------------
-    */
-
-    return response()->json([
-
-        'success' => true,
-        'message' => 'Meeting Booked Successfully',
-
-        'meeting_link' => $meetingLink,
-
-        'whatsapp_url' => $whatsappLink
-    ]);
+        ], 500);
+    }
 }
 
     /*

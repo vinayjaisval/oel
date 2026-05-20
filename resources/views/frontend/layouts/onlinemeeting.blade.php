@@ -722,90 +722,90 @@
                             </style>
 
                           @php
-    $counselors = [
-        [
-            'id' => 16,
-            'name' => 'Rahul Sharma',
-            'avatar' => asset('frontend/img/counselor-avatar-1.png'),
-        ],
-        [
-            'id' => 19,
-            'name' => 'Priya Verma',
-            'avatar' => asset('frontend/img/counselor-avatar-2.png'),
-        ],
-        [
-            'id' => 3,
-            'name' => 'Aman Singh',
-            'avatar' => asset('frontend/img/counselor-avatar-3.png'),
-        ],
-        [
-            'id' => 23,
-            'name' => 'Neha Gupta',
-            'avatar' => asset('frontend/img/counselor-avatar-4.png'),
-        ],
-        [
-            'id' => 5,
-            'name' => 'Vikas Yadav',
-            'avatar' => asset('frontend/img/counselor-avatar-5.png'),
-        ],
-    ];
-@endphp
+                        $counselors = [
+                            [
+                                'id' => 16,
+                                'name' => 'Rahul Sharma',
+                                'avatar' => asset('frontend/img/counselor-avatar-1.png'),
+                            ],
+                            [
+                                'id' => 19,
+                                'name' => 'Priya Verma',
+                                'avatar' => asset('frontend/img/counselor-avatar-2.png'),
+                            ],
+                            [
+                                'id' => 3,
+                                'name' => 'Aman Singh',
+                                'avatar' => asset('frontend/img/counselor-avatar-3.png'),
+                            ],
+                            [
+                                'id' => 23,
+                                'name' => 'Neha Gupta',
+                                'avatar' => asset('frontend/img/counselor-avatar-4.png'),
+                            ],
+                            [
+                                'id' => 5,
+                                'name' => 'Vikas Yadav',
+                                'avatar' => asset('frontend/img/counselor-avatar-5.png'),
+                            ],
+                        ];
+                         @endphp
 
-<div class="custom-counselor-dropdown" id="counselor-dropdown-wrapper">
-    <input type="hidden" name="counselor" id="counselor_input" required>
+                            <div class="custom-counselor-dropdown" id="counselor-dropdown-wrapper">
+                                <input type="hidden" name="counselor" id="counselor_input" required>
 
-    <div class="form-control custom-counselor-selected" onclick="toggleCounselorDropdown(event)">
-        <div class="selected-content" id="counselor_selected_text">
-            <span style="color: #475569;">Select Counselor</span>
-        </div>
+                                <div class="form-control custom-counselor-selected" onclick="toggleCounselorDropdown(event)">
+                                    <div class="selected-content" id="counselor_selected_text">
+                                        <span style="color: #475569;">Select Counselor</span>
+                                    </div>
 
-        <i class="fa fa-chevron-down" style="font-size: 12px; color: #64748b;"></i>
-    </div>
+                                    <i class="fa fa-chevron-down" style="font-size: 12px; color: #64748b;"></i>
+                                </div>
 
-    <div class="custom-counselor-options" id="counselor_options">
-        @foreach($counselors as $index => $counselor)
+                                <div class="custom-counselor-options" id="counselor_options">
+                                    @foreach($counselors as $index => $counselor)
 
-            @php
-                $isBusy = ($index == 2 || $index == 4);
-            @endphp
+                                        @php
+                                            $isBusy = ($index == 2 || $index == 4);
+                                        @endphp
 
-            @if($isBusy)
+                                        @if($isBusy)
 
-                <div class="custom-counselor-option"
-                     style="cursor: not-allowed; opacity: 0.6; justify-content: space-between;"
-                     onclick="event.stopPropagation()">
+                                            <div class="custom-counselor-option"
+                                                style="cursor: not-allowed; opacity: 0.6; justify-content: space-between;"
+                                                onclick="event.stopPropagation()">
 
-                    <div style="display: flex; align-items: center;">
+                                                <div style="display: flex; align-items: center;">
 
-                        <img src="{{ $counselor['avatar'] }}"
-                             alt="{{ $counselor['name'] }}"
-                             style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px; filter: grayscale(100%);">
+                                                    <img src="{{ $counselor['avatar'] }}"
+                                                        alt="{{ $counselor['name'] }}"
+                                                        style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px; filter: grayscale(100%);">
 
-                        {{ $counselor['name'] }}
-                    </div>
+                                                    {{ $counselor['name'] }}
+                                                </div>
 
-                    <span style="font-size: 11px; background: #fee2e2; color: #ef4444; padding: 2px 8px; border-radius: 10px; font-weight: 700;">
-                        Busy
-                    </span>
-                </div>
+                                                <span style="font-size: 11px; background: #fee2e2; color: #ef4444; padding: 2px 8px; border-radius: 10px; font-weight: 700;">
+                                                    Busy
+                                                </span>
+                                            </div>
 
-            @else
+                                        @else
 
-                <div class="custom-counselor-option"
-                     onclick="selectCounselor('{{ $counselor['id'] }}', '{{ $counselor['name'] }}', '{{ $counselor['avatar'] }}', event)">
+                                            <div class="custom-counselor-option"
+                                                onclick="selectCounselor('{{ $counselor['id'] }}', '{{ $counselor['name'] }}', '{{ $counselor['avatar'] }}', event)">
 
-                    <img src="{{ $counselor['avatar'] }}"
-                         alt="{{ $counselor['name'] }}"
-                         style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px;">
+                                                <img src="{{ $counselor['avatar'] }}"
+                                                    alt="{{ $counselor['name'] }}"
+                                                    style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 12px;">
 
-                    {{ $counselor['name'] }}
-                </div>
+                                                {{ $counselor['name'] }}
+                                            </div>
 
-            @endif
+                                        @endif
 
-        @endforeach
-    </div>
-</div>
+                                    @endforeach
+                                </div>
+                            </div>
 
                             <script>
                             function toggleCounselorDropdown(e) {
@@ -849,13 +849,14 @@
 
                         </div>
 
-                        <button type="submit"
-                                class="confirm-btn"
-                                style="margin-top: 5px; margin-bottom: 120px;">
+                      <button type="submit"
+    class="confirm-btn"
+    id="scheduleBtn"
+    style="margin-top: 5px; margin-bottom: 120px;">
 
-                            Schedule Event
+    Schedule Event
 
-                        </button>
+</button>
 
                     </form>
 
@@ -894,7 +895,27 @@
     </div>
 
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
+    const form = document.querySelector('form');
+    const button = document.getElementById('scheduleBtn');
+
+    form.addEventListener('submit', function () {
+
+        // Disable button
+        button.disabled = true;
+
+        // Change text
+        button.innerHTML = 'Processing...';
+
+        // Optional style
+        button.style.opacity = '0.7';
+        button.style.cursor = 'not-allowed';
+    });
+
+});
+</script>
 <script>
 
     let selectedDestination = '';
