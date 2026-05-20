@@ -126,7 +126,7 @@
     @include('frontend.layouts.onlinemeeting')
 
     @yield('content')
-   /// footer section
+  
     <section>
         <div class="bottom_footer bv_cs">
             <div class="fw_footer container text-white">
@@ -234,7 +234,6 @@
     </section>
 
 
-   //modal section
     <section>
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
             aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
