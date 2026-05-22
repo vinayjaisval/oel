@@ -148,6 +148,100 @@
     border-radius: 5px;
 }
 
+
+/* Hero Title Scaling */
+@media (max-width: 1199px) {
+    .sec_air_Plane h1 {
+        font-size: 32px !important;
+        line-height: 1.3 !important;
+    }
+}
+@media (max-width: 991px) {
+    .sec_air_Plane h1 {
+        font-size: 28px !important;
+        line-height: 1.3 !important;
+    }
+}
+@media (max-width: 575px) {
+    .sec_air_Plane h1 {
+        font-size: 24px !important;
+        line-height: 1.2 !important;
+    }
+}
+
+/* About Us Section Responsiveness */
+@media (max-width: 991px) {
+    .forign_study {
+        margin: 30px 15px !important;
+        text-align: center !important;
+    }
+    .forign_study p {
+        text-align: center !important;
+    }
+    .forign_study li {
+        list-style: none !important;
+        text-align: center !important;
+    }
+}
+
+/* Our Values - */
+@media (max-width: 768px) {
+    .all_overses_edu {
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    .all_img_education_int {
+        margin-top: 15px !important;
+        margin-bottom: 15px !important;
+        text-align: center !important;
+    }
+    .all_img_education_int img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
+
+/* Button margins inside .all_btns */
+.all_btns button {
+    margin: 5px !important;
+}
+
+/* Gateway / Discovery Map & Layout Wrapping */
+@media (max-width: 991px) {
+    .scale_map .fg {
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    .world_famous {
+        text-align: center !important;
+        margin-top: 20px !important;
+    }
+    .explore_right {
+        justify-content: center !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    .rigt_img img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
+
+/* Google Reviews Layout */
+@media (max-width: 768px) {
+    .google_img {
+        text-align: center !important;
+        margin-bottom: 20px !important;
+    }
+    .google_img img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+    .sign_img {
+        margin-top: 15px !important;
+    }
+}
+
 </style>
 
 <section>
@@ -158,7 +252,7 @@
                     <div class="col-lg-5">
                         <div class="sec_air_Plane d-none d-lg-block">
                             <h1 class=" fw-bold">Dreaming of Studying <br>
-                                Abroad? <sapn class="text-black">We're Here to</sapn> <br>
+                                Abroad? <span class="text-black">We're Here to</span> <br>
                                 Guide You!</h1>
                             <div class="btns mt-5">
                                 <a href="{{url('contact-us')}}">
@@ -171,7 +265,7 @@
                     <div class="col-lg-7">
                         <div class="main_air">
                             <div class="airplane-gif">
-                                <img src="{{asset('frontend/gif/airplane.gif')}}" width="w-100" height="auto">
+                                <img src="{{asset('frontend/gif/airplane.gif')}}" class="w-100 img-fluid" height="auto">
                             </div>
                         </div>
                     </div>
@@ -209,7 +303,7 @@
             <div class="col-lg-12">
                 <div class="sec_air_Plane text-center mt-5 mb-5">
                     <h1 class="fw-bold">Dreaming of Studying <br>
-                        Abroad? <sapn class="text-black">We're Here to</sapn> <br>
+                        Abroad? <span class="text-black">We're Here to</span> <br>
                         Guide You!</h1>
                     <div class="btns mt-5">
                         <a href="{{url('contact-us')}}">
@@ -235,7 +329,7 @@
                 </div>
                 <div class="row g-4">
                     @foreach ($service as $item)
-                    <div class="col-lg-3">
+                    <div class="col-lg-3 col-md-6 col-sm-12">
                         <a href="{{ url('service-details') }}/{{$item->id}}" class=" text-dark text-decoration-none">
                             <div class="buddy_icon rounded">
                                 <div class="buddy_title"></div>
