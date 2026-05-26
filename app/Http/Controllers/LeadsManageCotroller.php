@@ -109,8 +109,6 @@ class LeadsManageCotroller extends Controller
         $total_leads = 0;
         if ($user_type == 'Administrator') {
             $total_leads = StudentByAgent::count();
-
-          
         } else if ($user_type == 'agent') {
 
 
@@ -124,8 +122,6 @@ class LeadsManageCotroller extends Controller
             $query = StudentByAgent::whereRaw("assigned_to IN($user)");
             $total_leads = $query->get();
             $total_leads = count($total_leads);
-           
-
         } else if ($user_type == 'sub_agent' || $user_type == 'visa' || $user_type == 'Digital Marketing' || $user_type == 'Data oprator') {
             $total_leads = StudentByAgent::where("assigned_to", $user_ids)->orwhere('user_id', $user_ids)->count();
         }
@@ -146,8 +142,6 @@ class LeadsManageCotroller extends Controller
             $query = StudentByAgent::whereRaw("assigned_to IN($user)");
             $query->where('lead_status', $lead_status_id)->get();
             $total_cold_leads =  $query->count();
-
-         
         } else if ($user_type == 'sub_agent'  || $user_type == 'visa' || $user_type == 'Digital Marketing' || $user_type == 'Data oprator') {
             $total_cold_leads = StudentByAgent::where(function ($q) use ($user_ids) {
                 return $q->where("assigned_to", $user_ids)
@@ -171,7 +165,6 @@ class LeadsManageCotroller extends Controller
             $query = StudentByAgent::whereRaw("assigned_to IN($user)");
             $query->where('lead_status', $lead_status_hot_id)->get();
             $total_hot_leads =  $query->count();
-
         } else if ($user_type == 'sub_agent'  || $user_type == 'visa' || $user_type == 'Digital Marketing' || $user_type == 'Data oprator') {
             $total_hot_leads = StudentByAgent::where(function ($q) use ($user_ids) {
                 return $q->where("assigned_to", $user_ids)
@@ -194,7 +187,6 @@ class LeadsManageCotroller extends Controller
             $query = StudentByAgent::whereRaw("assigned_to IN($user)");
             $query->where('lead_status', $lead_status_future_id)->get();
             $total_future_leads =  $query->count();
-
         } else if ($user_type == 'sub_agent'  || $user_type == 'visa' || $user_type == 'Digital Marketing' || $user_type == 'Data oprator') {
             $total_future_leads = StudentByAgent::where(function ($q) use ($user_ids) {
                 return $q->where("assigned_to", $user_ids)
@@ -205,7 +197,7 @@ class LeadsManageCotroller extends Controller
         $lead_status = MasterLeadStatus::where("name", "New")->first();
         $lead_status_new_id = $lead_status ? $lead_status->id : null;
         // $lead_status_new_id = MasterLeadStatus::where("name", "New")->first()->id;
-       
+
         $total_new_leads = 0;
         if ($user_type == 'Administrator') {
             $total_new_leads = StudentByAgent::where('lead_status', $lead_status_new_id)->count();
@@ -233,7 +225,7 @@ class LeadsManageCotroller extends Controller
         }
         $lead_status = MasterLeadStatus::where("name", "Not Useful")->first();
         $lead_status_not_userful_id = $lead_status ? $lead_status->id : null;
-        
+
         $total_not_useful_leads = 0;
         if ($user_type == 'Administrator') {
             $total_not_useful_leads = StudentByAgent::where('lead_status', $lead_status_not_userful_id)->count();
@@ -248,8 +240,6 @@ class LeadsManageCotroller extends Controller
             $query = StudentByAgent::whereRaw("assigned_to IN($user)");
             $query->where('lead_status', $lead_status_not_userful_id)->get();
             $total_not_useful_leads =  $query->count();
-
-
         } else if ($user_type == 'sub_agent'  || $user_type == 'visa' || $user_type == 'Digital Marketing' || $user_type == 'Data oprator') {
             $total_not_useful_leads = StudentByAgent::where(function ($q) use ($user_ids) {
                 return $q->where("assigned_to", $user_ids)
@@ -259,7 +249,7 @@ class LeadsManageCotroller extends Controller
         // Warm Lead
         $lead_status = MasterLeadStatus::where("name", "Warm")->first();
         $lead_status_warm_id = $lead_status ? $lead_status->id : null;
-        
+
         $total_warm_leads = 0;
         if ($user_type == 'Administrator') {
             $total_warm_leads = StudentByAgent::where('lead_status', $lead_status_warm_id)->count();
@@ -275,8 +265,6 @@ class LeadsManageCotroller extends Controller
             $query = StudentByAgent::whereRaw("assigned_to IN($user)");
             $query->where('lead_status', $lead_status_warm_id)->get();
             $total_warm_leads =  $query->count();
-
-
         } else if ($user_type == 'sub_agent'  || $user_type == 'visa' || $user_type == 'Digital Marketing' || $user_type == 'Data oprator') {
             $total_warm_leads = StudentByAgent::where(function ($q) use ($user_ids) {
                 return $q->where("assigned_to", $user_ids)
@@ -301,7 +289,6 @@ class LeadsManageCotroller extends Controller
             $query = StudentByAgent::whereRaw("assigned_to IN($user)");
             $query->where('lead_status', $lead_status_closed_id)->get();
             $total_closed_leads =  $query->count();
-
         } else if ($user_type == 'sub_agent'  || $user_type == 'visa' || $user_type == 'Digital Marketing' || $user_type == 'Data oprator') {
             $total_closed_leads = StudentByAgent::where(function ($q) use ($user_ids) {
                 return $q->where("assigned_to", $user_ids)
@@ -380,9 +367,6 @@ class LeadsManageCotroller extends Controller
         if (Auth::user()->hasRole('Administrator')) {
             $next_leads_missed = StudentByAgent::where(DB::raw('next_calling_date'), '<', $currentDateTime)->where('lead_status', '<>', '5')->where('lead_status', '<>', '7')->orderBy('next_calling_date', 'asc')
                 ->get();
-
-
-
         } elseif ($user_type == 'agent') {
             $agents = DB::select("SELECT id FROM `users` WHERE `added_by` = $user_ids");
             $commaList = null;
@@ -391,7 +375,7 @@ class LeadsManageCotroller extends Controller
             }
             $user = $commaList . $user_ids;
 
-                
+
             $next_leads_missed = StudentByAgent::whereRaw("assigned_to IN($user)")->where(DB::raw('next_calling_date'), '<', $currentDateTime)->where('lead_status', '<>', '5')->where('lead_status', '<>', '7')->orderBy('next_calling_date', 'asc')
                 ->get();
         } elseif ($user_type == 'sub_agent') {
@@ -401,11 +385,11 @@ class LeadsManageCotroller extends Controller
         $count_next_leads_miss = $next_leads_missed->count();
 
 
-        
-        
-       
-           
-           
+
+
+
+
+
         $baseQuery = StudentByAgent::orderBy('id', 'desc');
 
         // Apply role-based filtering to base query
@@ -418,42 +402,42 @@ class LeadsManageCotroller extends Controller
         } elseif ($user_type == 'sub_agent') {
             $baseQuery->where('assigned_to', $user_ids);
         }
-        
+
         // Define quality levels
         $lowLimit = 5;
         $mediumLimit = 7.5;
-        
+
         // Clone and apply filters for each quality
         $counts_quality_low = (clone $baseQuery)->whereHas('leadStatusQuality', function ($q) use ($lowLimit) {
             $q->where('total_status', '<=', $lowLimit);
         })->count();
-        
+
         $counts_quality_medium = (clone $baseQuery)->whereHas('leadStatusQuality', function ($q) use ($lowLimit, $mediumLimit) {
             $q->whereBetween('total_status', [$lowLimit + 0.1, $mediumLimit]);
         })->count();
-        
+
         $counts_quality_high = (clone $baseQuery)->whereHas('leadStatusQuality', function ($q) use ($mediumLimit) {
             $q->where('total_status', '>', $mediumLimit);
         })->count();
-        
+
         // Output or return
-       
-        
+
+
         // return response()->json([
         //     'Low' => $counts_quality_low,
         //     'Medium' => $counts_quality_medium,
         //     'High' => $counts_quality_high,
         // ]);
-        
-       
-        
+
+
+
         // $lowStatuses = 5; // Define Low Quality
         // $mediumStatuses = 7.5; // Define Medium Quality
         // $highStatuses = 10; // Define High Quality
 
         // $counts_quality = [
         //     'Low' => LeadStatusQuality::where('total_status', '<=', $lowStatuses)->count(),
-           
+
         //     'High' => LeadStatusQuality::where('total_status', '>', $mediumStatuses)->count(),
         // ];
 
@@ -486,11 +470,11 @@ class LeadsManageCotroller extends Controller
 
         $user = auth()->user();
         $castes = Caste::where("status", 1)->get();
-          $subjects = Program::where('is_approved', 1)
-        ->select('id', 'name')
-        ->orderBy('name', 'asc') // or 'desc'
-        ->take(20)
-        ->get();
+        $subjects = Program::where('is_approved', 1)
+            ->select('id', 'name')
+            ->orderBy('name', 'asc') // or 'desc'
+            ->take(20)
+            ->get();
         $countries = Country::where('is_active', 1)->get();
         $lead_status = MasterLeadStatus::where("status", 1)->orderBy('name', 'ASC')->get();
         $source = Source::where("status", 1)->orderBy('name', 'ASC')->get();
@@ -506,11 +490,11 @@ class LeadsManageCotroller extends Controller
 
         $user = auth()->user();
         $castes = Caste::where("status", 1)->get();
-          $subjects = Program::where('is_approved', 1)
-        ->select('id', 'name')
-        ->orderBy('name', 'asc') // or 'desc'
-        ->take(20)
-        ->get();
+        $subjects = Program::where('is_approved', 1)
+            ->select('id', 'name')
+            ->orderBy('name', 'asc') // or 'desc'
+            ->take(20)
+            ->get();
         $countries = Country::where('is_active', 1)->get();
         $lead_status = MasterLeadStatus::where("status", 1)->orderBy('name', 'ASC')->get();
         $source = Source::where("status", 1)->orderBy('name', 'ASC')->get();
@@ -722,7 +706,7 @@ class LeadsManageCotroller extends Controller
         }
 
         // Handling different roles
-       // if ($user->hasRole('visa') || $user->hasRole('Digital Marketing') || $user->hasRole('Application Punching') || $user->hasRole('sub_agent')) {
+        // if ($user->hasRole('visa') || $user->hasRole('Digital Marketing') || $user->hasRole('Application Punching') || $user->hasRole('sub_agent')) {
         //     $lead_list->where(function ($query) use ($user_id) {
         //         $query->where('assigned_to', $user_id)
         //             ->orWhere('user_id', $user_id);
@@ -730,10 +714,12 @@ class LeadsManageCotroller extends Controller
         // }
 
 
-                // Visa, Application Punching, Sub Agent — old logic
-        if ($user->hasRole('visa') 
-            || $user->hasRole('Application Punching') 
-            || $user->hasRole('sub_agent')) {
+        // Visa, Application Punching, Sub Agent — old logic
+        if (
+            $user->hasRole('visa')
+            || $user->hasRole('Application Punching')
+            || $user->hasRole('sub_agent')
+        ) {
 
             $lead_list->where(function ($query) use ($user_id) {
                 $query->where('assigned_to', $user_id)
@@ -795,7 +781,7 @@ class LeadsManageCotroller extends Controller
         if ($request->sub_agent) {
             $lead_list->where('assigned_to', $request->sub_agent);
         }
-       if ($request->agent) {
+        if ($request->agent) {
             $lead_list->where('added_by_agent_id', $request->agent);
         }
         if ($request->source) {
@@ -873,8 +859,8 @@ class LeadsManageCotroller extends Controller
                     ->orderBy('next_calling_date', 'asc');
             }
         }
-      
-          if ($request->lead_quality) {
+
+        if ($request->lead_quality) {
 
             $quality = $request->lead_quality; // expected: 'Low' or 'High'
 
@@ -905,21 +891,94 @@ class LeadsManageCotroller extends Controller
             }
         }
 
-        
+
 
         return $lead_list;
     }
 
-
-
-
     public function lead_list(Request $request, $export = null)
+    {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(0);
+
+        $lead_list = $this->filterLeads($request);
+
+        if ($request->has('export')) {
+
+            return Excel::download(
+                new LeadExport($lead_list),
+                'leads.xlsx'
+            );
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | PAGINATION
+    |--------------------------------------------------------------------------
+    */
+
+        $lead_list = $lead_list->paginate(20);
+
+        /*
+    |--------------------------------------------------------------------------
+    | OTHER DATA
+    |--------------------------------------------------------------------------
+    */
+
+        $countries = Country::where('is_active', 1)->get();
+
+        $lead_status = MasterLeadStatus::get();
+
+        if (Auth::user()->hasRole('Administrator')) {
+
+            $sub_agents = User::where('admin_type', 'sub_agent')
+                ->select('id', 'email', 'name')
+                ->where('is_active', 1)
+                ->get();
+
+            $agents = User::where('admin_type', 'agent')
+                ->select('id', 'email', 'name')
+                ->where('is_active', 1)
+                ->get();
+        } else {
+
+            $sub_agents = User::where('admin_type', 'sub_agent')
+                ->select('id', 'email', 'name')
+                ->where('added_by', Auth::id())
+                ->where('is_active', 1)
+                ->get();
+
+            $agents = User::where('admin_type', 'agent')
+                ->select('id', 'email', 'name')
+                ->where('added_by', Auth::id())
+                ->where('is_active', 1)
+                ->get();
+        }
+
+        $source = Source::select('name', 'id')->get();
+
+        return view(
+            'admin.leads.lead-list',
+            compact(
+                'lead_list',
+                'agents',
+                'countries',
+                'lead_status',
+                'sub_agents',
+                'source'
+            )
+        );
+    }
+
+
+    public function lead_list_old(Request $request, $export = null)
     {
         $lead_list = $this->filterLeads($request);
 
-        
+
 
         if ($request->has('export')) {
+
             return Excel::download(new LeadExport($lead_list->get()), 'leads.xlsx');
         }
         $lead_list = $lead_list->paginate(20);
@@ -931,17 +990,15 @@ class LeadsManageCotroller extends Controller
         }
         if (Auth::user()->hasRole('Administrator')) {
             $sub_agents = User::where('admin_type', 'sub_agent')->select('id', 'email', 'name')->where('is_active', 1)->get();
-                   $agents = User::where('admin_type', 'agent')->select('id', 'email', 'name')->where('is_active', 1)->get();
-
+            $agents = User::where('admin_type', 'agent')->select('id', 'email', 'name')->where('is_active', 1)->get();
         } else {
             $sub_agents = User::where('admin_type', 'sub_agent')->select('id', 'email', 'name')->where('added_by', Auth::user()->id)->where('is_active', 1)->get();
-                   $agents = User::where('admin_type', 'agent')->select('id', 'email', 'name')->where('added_by', Auth::user()->id)->where('is_active', 1)->get();
-
+            $agents = User::where('admin_type', 'agent')->select('id', 'email', 'name')->where('added_by', Auth::user()->id)->where('is_active', 1)->get();
         }
         $source = Source::select('name', 'id')->get();
 
 
-        return view('admin.leads.lead-list', compact('lead_list', 'agents','countries', 'lead_status', 'sub_agents', 'source'));
+        return view('admin.leads.lead-list', compact('lead_list', 'agents', 'countries', 'lead_status', 'sub_agents', 'source'));
     }
 
     public function assigned_leads(Request $request)
@@ -982,9 +1039,9 @@ class LeadsManageCotroller extends Controller
             ->select('user_follow_up.*', 'student_by_agent.name', 'student_by_agent.email')
             ->latest()
             ->get();
-      $leadQuality = LeadStatusQuality::where('student_id', $id)->first();
+        $leadQuality = LeadStatusQuality::where('student_id', $id)->first();
 
-        return view('admin.leads.manage-leads', compact('studentAgentData','leadQuality', 'master_service', 'student_id', 'masterLeadStatus', 'follow_up_list'));
+        return view('admin.leads.manage-leads', compact('studentAgentData', 'leadQuality', 'master_service', 'student_id', 'masterLeadStatus', 'follow_up_list'));
     }
     public function lead_quality(Request $request, $id)
     {
@@ -1092,11 +1149,11 @@ class LeadsManageCotroller extends Controller
 
 
             // Mail::to($studentdata->email)->send(new PaymentLinkEmail($paymentData, $attachmentPath, $attachmentName));
-           
+
             Mail::mailer('bravo')->to($studentdata->email)->send(new PaymentLinkEmail($paymentData, $attachmentPath, $attachmentName));
         }
 
-       $lead = StudentByAgent::where('id', $request->student_id)->first();
+        $lead = StudentByAgent::where('id', $request->student_id)->first();
 
         $diff = $lead->created_at->diff(now());
 
@@ -1179,10 +1236,10 @@ class LeadsManageCotroller extends Controller
 
             $attachmentName = 'studentPraposel.pdf';
 
-           // Mail::to($email)->send(new StudentPraposelMail($studentData, $attachmentPath, $attachmentName));
-           Mail::mailer('bravo')->to($studentdata->email)->send(new StudentPraposelMail($studentdata, $attachmentPath, $attachmentName));
-          
-          Payment::create([
+            // Mail::to($email)->send(new StudentPraposelMail($studentData, $attachmentPath, $attachmentName));
+            Mail::mailer('bravo')->to($studentdata->email)->send(new StudentPraposelMail($studentdata, $attachmentPath, $attachmentName));
+
+            Payment::create([
                 'payment_id' => $payments->id ?? null,
                 'payment_method' => $request->payment_mode ?? null,
                 'currency' => null,
@@ -1225,188 +1282,188 @@ class LeadsManageCotroller extends Controller
         DB::table('user_follow_up')->insert($data);
         return response()->json(['message' => 'Data Submitted Successfully ']);
     }
-  
-  public function add_user_follow_up(Request $request)
-{
-    $uniqueId = $this->uniqidgenrate();
 
-    // ============== ONLINE PAYMENT ===================
-    if ($request->paymentMode == 'Online') {
+    public function add_user_follow_up(Request $request)
+    {
+        $uniqueId = $this->uniqidgenrate();
 
-        $paymentType = $request->paymentType;
-        $paymentMode = $request->payment_mode;
-        $token       = $this->generateToken();
+        // ============== ONLINE PAYMENT ===================
+        if ($request->paymentMode == 'Online') {
 
-        $studentdata = StudentByAgent::select('email','name')
-            ->where('id', $request->student_id)
-            ->first();
+            $paymentType = $request->paymentType;
+            $paymentMode = $request->payment_mode;
+            $token       = $this->generateToken();
 
-        // Amount calculation
-        $discount = $request->discount ?? 0;
-        $pending  = $request->panding ?? 0;
-        $amount   = $request->amount - $discount - $pending;
+            $studentdata = StudentByAgent::select('email', 'name')
+                ->where('id', $request->student_id)
+                ->first();
 
-        $paymentLinkData = [
-            'token'                => $token,
-            'user_id'              => $request->student_id,
-            'email'                => $studentdata->email,
-            'payment_type'         => $paymentType,
-            'sub_service'          => isset($request->sub_service) ? implode(',', $request->sub_service) : null,
-            'is_discount'          => $request->is_discount ?? 0,
-            'discount'             => $discount,
-            'payment_type_remarks' => "",
-            'payment_mode'         => $paymentMode,
-            'payment_mode_remarks' => "",
-            'amount'               => $amount,
-            'expired_in'           => date('Y-m-d H:i:s', strtotime('+ 10 days')),
-            'fallowp_unique_id'    => $uniqueId,
-            'due_date'             => $request->due_date ?? 0,
-            'is_panding'           => $request->is_panding ?? 0,
-            'panding'              => $pending,
-            'master_service'       => $paymentMode,
-        ];
+            // Amount calculation
+            $discount = $request->discount ?? 0;
+            $pending  = $request->panding ?? 0;
+            $amount   = $request->amount - $discount - $pending;
 
-        PaymentsLink::create($paymentLinkData);
+            $paymentLinkData = [
+                'token'                => $token,
+                'user_id'              => $request->student_id,
+                'email'                => $studentdata->email,
+                'payment_type'         => $paymentType,
+                'sub_service'          => isset($request->sub_service) ? implode(',', $request->sub_service) : null,
+                'is_discount'          => $request->is_discount ?? 0,
+                'discount'             => $discount,
+                'payment_type_remarks' => "",
+                'payment_mode'         => $paymentMode,
+                'payment_mode_remarks' => "",
+                'amount'               => $amount,
+                'expired_in'           => date('Y-m-d H:i:s', strtotime('+ 10 days')),
+                'fallowp_unique_id'    => $uniqueId,
+                'due_date'             => $request->due_date ?? 0,
+                'is_panding'           => $request->is_panding ?? 0,
+                'panding'              => $pending,
+                'master_service'       => $paymentMode,
+            ];
 
-        $paymentData = [
-            'name'         => $studentdata->name,
-            'payment_link' => url('/pay-now/c?token=' . $token),
-            'amount'       => ($amount * 3 / 100) + $amount,
-        ];
+            PaymentsLink::create($paymentLinkData);
 
-        $attachmentPath = public_path('frontend/studentPraposel.pdf');
-        $attachmentName = 'studentPraposel.pdf';
-      
-       
+            $paymentData = [
+                'name'         => $studentdata->name,
+                'payment_link' => url('/pay-now/c?token=' . $token),
+                'amount'       => ($amount * 3 / 100) + $amount,
+            ];
 
-        // SEND EMAIL
-        Mail::mailer('bravo')
-            ->to($studentdata->email)
-            ->send(new PaymentLinkEmail($paymentData));
-    }
+            $attachmentPath = public_path('frontend/studentPraposel.pdf');
+            $attachmentName = 'studentPraposel.pdf';
 
-    // ============== FOLLOW-UP TIME CALCULATION ===================
-    $lead = StudentByAgent::where('id', $request->student_id)->first();
-    $diff = $lead->created_at->diff(now()); 
 
-    $parts = [];
-    if ($diff->d > 0) $parts[] = $diff->d . ' days';
-    if ($diff->h > 0) $parts[] = $diff->h . ' hours';
-    if ($diff->i > 0) $parts[] = $diff->i . ' minutes';
 
-    $followupText = $parts ? implode(' ', $parts) : '0 minutes';
-    $followupMinutes = now()->diffInMinutes($lead->created_at);
+            // SEND EMAIL
+            Mail::mailer('bravo')
+                ->to($studentdata->email)
+                ->send(new PaymentLinkEmail($paymentData));
+        }
 
-    // Update lead follow-up data
-    StudentByAgent::where('id', $request->student_id)->update([
-        'next_calling_date'       => $request->next_calling_date,
-        'lead_status'             => $request->lead_status,
-        'intake'                  => $request->intake,
-        'intake_year'             => $request->intake_year,
-        'student_comment'         => $request->comment,
-        'follow_up_delay_minutes' => $followupMinutes,
-        'follow_up_delay_text'    => $followupText,
-        'updated_at'              => now(),
-    ]);
+        // ============== FOLLOW-UP TIME CALCULATION ===================
+        $lead = StudentByAgent::where('id', $request->student_id)->first();
+        $diff = $lead->created_at->diff(now());
 
-    // ============== CASH / CHEQUE / BANK PAYMENT ===================
-    if (in_array($request->paymentMode, ['Cash','Cheque','Bank'])) {
+        $parts = [];
+        if ($diff->d > 0) $parts[] = $diff->d . ' days';
+        if ($diff->h > 0) $parts[] = $diff->h . ' hours';
+        if ($diff->i > 0) $parts[] = $diff->i . ' minutes';
 
-        $discount = $request->discount ?? 0;
-        $pending  = $request->panding ?? 0;
-        $amount   = $request->amount - $discount - $pending;
+        $followupText = $parts ? implode(' ', $parts) : '0 minutes';
+        $followupMinutes = now()->diffInMinutes($lead->created_at);
 
-        $email = StudentByAgent::where('id',$request->student_id)->value('email');
-        $name  = StudentByAgent::where('id',$request->student_id)->value('name');
-
-        $payments = PaymentsLink::create([
-            'token'                => $this->generateToken(),
-            'user_id'              => $request->student_id,
-            'email'                => $email,
-            'payment_type'         => $request->payment_type,
-            'sub_service'          => isset($request->sub_service) ? implode(',', $request->sub_service) : null,
-            'is_discount'          => $request->is_discount ?? 0,
-            'discount'             => $discount,
-            'payment_type_remarks' => "",
-            'payment_mode'         => $request->paymentMode,
-            'master_service'       => $request->paymentType,
-            'payment_mode_remarks' => "",
-            'amount'               => $amount,
-            'fallowp_unique_id'    => $this->uniqidgenrate(),
-            'due_date'             => $request->due_date,
-            'is_panding'           => $request->is_panding ?? 0,
-            'panding'              => $pending,
+        // Update lead follow-up data
+        StudentByAgent::where('id', $request->student_id)->update([
+            'next_calling_date'       => $request->next_calling_date,
+            'lead_status'             => $request->lead_status,
+            'intake'                  => $request->intake,
+            'intake_year'             => $request->intake_year,
+            'student_comment'         => $request->comment,
+            'follow_up_delay_minutes' => $followupMinutes,
+            'follow_up_delay_text'    => $followupText,
+            'updated_at'              => now(),
         ]);
 
-        // Convert to object for mail
-        $studentdata = (object)[
-            'name'  => $name,
-            'email' => $email,
-        ];
+        // ============== CASH / CHEQUE / BANK PAYMENT ===================
+        if (in_array($request->paymentMode, ['Cash', 'Cheque', 'Bank'])) {
 
-        //$attachmentPath = public_path('frontend/studentPraposel.pdf');
-        //$attachmentName = 'studentPraposel.pdf';
-       
+            $discount = $request->discount ?? 0;
+            $pending  = $request->panding ?? 0;
+            $amount   = $request->amount - $discount - $pending;
 
-                  Mail::to($studentdata->email)->send(new StudentPraposelMail($studentdata));
+            $email = StudentByAgent::where('id', $request->student_id)->value('email');
+            $name  = StudentByAgent::where('id', $request->student_id)->value('name');
 
-        // SEND EMAIL  
-        //Mail::mailer('bravo')
+            $payments = PaymentsLink::create([
+                'token'                => $this->generateToken(),
+                'user_id'              => $request->student_id,
+                'email'                => $email,
+                'payment_type'         => $request->payment_type,
+                'sub_service'          => isset($request->sub_service) ? implode(',', $request->sub_service) : null,
+                'is_discount'          => $request->is_discount ?? 0,
+                'discount'             => $discount,
+                'payment_type_remarks' => "",
+                'payment_mode'         => $request->paymentMode,
+                'master_service'       => $request->paymentType,
+                'payment_mode_remarks' => "",
+                'amount'               => $amount,
+                'fallowp_unique_id'    => $this->uniqidgenrate(),
+                'due_date'             => $request->due_date,
+                'is_panding'           => $request->is_panding ?? 0,
+                'panding'              => $pending,
+            ]);
+
+            // Convert to object for mail
+            $studentdata = (object)[
+                'name'  => $name,
+                'email' => $email,
+            ];
+
+            //$attachmentPath = public_path('frontend/studentPraposel.pdf');
+            //$attachmentName = 'studentPraposel.pdf';
+
+
+            Mail::to($studentdata->email)->send(new StudentPraposelMail($studentdata));
+
+            // SEND EMAIL  
+            //Mail::mailer('bravo')
             //->to($studentdata->email)
             //->send(new StudentPraposelMail($studentdata, $attachmentPath, $attachmentName));
 
-        // Create Payment
-        Payment::create([
-            'payment_id'        => $payments->id,
-            'payment_method'    => $request->paymentMode,
-            'currency'          => null,
-            'fallowp_unique_id' => $payments->fallowp_unique_id,
-            'customer_name'     => $name,
-            'user_id'           => $request->student_id,
-            'customer_email'    => $email,
-            'amount'            => $amount,
-            'payment_status'    => 'success',
-            'json_response'     => null,
-        ]);
+            // Create Payment
+            Payment::create([
+                'payment_id'        => $payments->id,
+                'payment_method'    => $request->paymentMode,
+                'currency'          => null,
+                'fallowp_unique_id' => $payments->fallowp_unique_id,
+                'customer_name'     => $name,
+                'user_id'           => $request->student_id,
+                'customer_email'    => $email,
+                'amount'            => $amount,
+                'payment_status'    => 'success',
+                'json_response'     => null,
+            ]);
+        }
+
+        // ============== FOLLOW-UP SAVE ===================
+        $data = [
+            'student_id'          => $request->student_id,
+            'status'              => $request->lead_status,
+            'paymentType'         => $request->paymentType,
+            'paymentTypeRemarks'  => $request->paymentTypeRemarks,
+            'paymentMode'         => $request->paymentMode,
+            'paymentModeRemarks'  => $request->paymentModeRemarks,
+            'intake'              => $request->intake,
+            'intake_year'         => $request->intake_year,
+            'user_id'             => Auth::user()->id,
+            'comment'             => $request->comment,
+            'next_calling_date'   => $request->next_calling_date,
+            'amount'              => $request->amount,
+            'fallowp_unique_id'   => isset($payments) ? $payments->fallowp_unique_id : $uniqueId,
+            'bankName'            => $request->bankName,
+            'accountNo'           => $request->accountNo,
+            'ifscCode'            => $request->ifscCode,
+            'sub_service'         => isset($request->sub_service) ? implode(',', $request->sub_service) : null,
+            'is_discount'         => $request->is_discount ?? 0,
+            'discount'            => $request->discount ?? 0,
+            'created_at'          => now(),
+            'due_date'            => $request->due_date ?? 0,
+            'is_panding'          => $request->is_panding ?? 0,
+            'panding'             => $request->panding ?? 0,
+        ];
+
+        DB::table('user_follow_up')->insert($data);
+
+        return response()->json(['message' => 'Data Submitted Successfully']);
     }
-
-    // ============== FOLLOW-UP SAVE ===================
-    $data = [
-        'student_id'          => $request->student_id,
-        'status'              => $request->lead_status,
-        'paymentType'         => $request->paymentType,
-        'paymentTypeRemarks'  => $request->paymentTypeRemarks,
-        'paymentMode'         => $request->paymentMode,
-        'paymentModeRemarks'  => $request->paymentModeRemarks,
-        'intake'              => $request->intake,
-        'intake_year'         => $request->intake_year,
-        'user_id'             => Auth::user()->id,
-        'comment'             => $request->comment,
-        'next_calling_date'   => $request->next_calling_date,
-        'amount'              => $request->amount,
-        'fallowp_unique_id'   => isset($payments) ? $payments->fallowp_unique_id : $uniqueId,
-        'bankName'            => $request->bankName,
-        'accountNo'           => $request->accountNo,
-        'ifscCode'            => $request->ifscCode,
-        'sub_service'         => isset($request->sub_service) ? implode(',', $request->sub_service) : null,
-        'is_discount'         => $request->is_discount ?? 0,
-        'discount'            => $request->discount ?? 0,
-        'created_at'          => now(),
-        'due_date'            => $request->due_date ?? 0,
-        'is_panding'          => $request->is_panding ?? 0,
-        'panding'             => $request->panding ?? 0,
-    ];
-
-    DB::table('user_follow_up')->insert($data);
-
-    return response()->json(['message' => 'Data Submitted Successfully']);
-}
 
 
 
     public function payment_view(Request $request)
     {
-       
+
         $token = $request->token;
         $paymentLink = PaymentsLink::where('token', $token)->first();
         if (!$paymentLink) {
@@ -1427,8 +1484,8 @@ class LeadsManageCotroller extends Controller
             'name' => $student_name->name
         ];
 
-        
-       
+
+
         return view('admin.leads.payment-view', compact('data'));
     }
 
@@ -1488,94 +1545,92 @@ class LeadsManageCotroller extends Controller
 
 
     public function store(Request $request)
-{
+    {
 
 
-    DB::beginTransaction();
-
-    try {
-        Log::info('PAYMENT REQUEST DATA:', $request->all());
-
-        $paymentResponse = $request->input('response', []);
-
-        if (empty($paymentResponse['razorpay_payment_id'])) {
-            Log::error('No Payment ID Found');
-            return response()->json(['success' => false, 'message' => 'No Payment ID Found']);
-        }
-
-        $api = new Api(env('RAZORPAY_API_KEY'), env('RAZORPAY_API_SECRET'));
+        DB::beginTransaction();
 
         try {
-            // Fetch & Capture Payment
-            $payment = $api->payment->fetch($paymentResponse['razorpay_payment_id']);
-            Log::info('PAYMENT FETCHED:', (array)$payment);
+            Log::info('PAYMENT REQUEST DATA:', $request->all());
 
-            $response = $payment->capture(['amount' => $payment['amount']]);
-            Log::info('PAYMENT CAPTURED:', (array)$response);
+            $paymentResponse = $request->input('response', []);
 
-            Payment::create([
-                'payment_id' => $response->id,
-                'payment_method' => $response->method,
-                'currency' => $response->currency,
-                'fallowp_unique_id' => $paymentResponse['fallowp_unique_id'] ?? null,
-                'customer_name' => $paymentResponse['name'] ?? null,
-                'user_id' => $paymentResponse['user_id'] ?? null,
-                'customer_email' => $response->email,
-                'amount' => $response->amount / 100,
-                'payment_status' => 'success',
-                'json_response' => json_encode((array)$response)
+            if (empty($paymentResponse['razorpay_payment_id'])) {
+                Log::error('No Payment ID Found');
+                return response()->json(['success' => false, 'message' => 'No Payment ID Found']);
+            }
+
+            $api = new Api(env('RAZORPAY_API_KEY'), env('RAZORPAY_API_SECRET'));
+
+            try {
+                // Fetch & Capture Payment
+                $payment = $api->payment->fetch($paymentResponse['razorpay_payment_id']);
+                Log::info('PAYMENT FETCHED:', (array)$payment);
+
+                $response = $payment->capture(['amount' => $payment['amount']]);
+                Log::info('PAYMENT CAPTURED:', (array)$response);
+
+                Payment::create([
+                    'payment_id' => $response->id,
+                    'payment_method' => $response->method,
+                    'currency' => $response->currency,
+                    'fallowp_unique_id' => $paymentResponse['fallowp_unique_id'] ?? null,
+                    'customer_name' => $paymentResponse['name'] ?? null,
+                    'user_id' => $paymentResponse['user_id'] ?? null,
+                    'customer_email' => $response->email,
+                    'amount' => $response->amount / 100,
+                    'payment_status' => 'success',
+                    'json_response' => json_encode((array)$response)
+                ]);
+
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Payment successfully recorded'
+                ]);
+            } catch (\Exception $e) {
+
+                Log::error('PAYMENT FAILED:', [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+
+                // ⚠️ Important: Yaha response use mat karo
+                Payment::create([
+                    'payment_id' => $paymentResponse['razorpay_payment_id'] ?? null,
+                    'payment_method' => null,
+                    'currency' => null,
+                    'fallowp_unique_id' => $paymentResponse['fallowp_unique_id'] ?? null,
+                    'customer_name' => $paymentResponse['name'] ?? null,
+                    'user_id' => $paymentResponse['user_id'] ?? null,
+                    'customer_email' => null,
+                    'amount' => 0,
+                    'payment_status' => 'failed',
+                    'json_response' => json_encode(['error' => $e->getMessage()])
+                ]);
+
+                DB::commit(); // ❗ rollback nahi karna (warna save nahi hoga)
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Payment failed but recorded'
+                ]);
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            Log::error('PAYMENT_STORE_ERROR:', [
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString()
             ]);
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Payment successfully recorded'
-            ]);
-
-        } catch (\Exception $e) {
-
-            Log::error('PAYMENT FAILED:', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            // ⚠️ Important: Yaha response use mat karo
-            Payment::create([
-                'payment_id' => $paymentResponse['razorpay_payment_id'] ?? null,
-                'payment_method' => null,
-                'currency' => null,
-                'fallowp_unique_id' => $paymentResponse['fallowp_unique_id'] ?? null,
-                'customer_name' => $paymentResponse['name'] ?? null,
-                'user_id' => $paymentResponse['user_id'] ?? null,
-                'customer_email' => null,
-                'amount' => 0,
-                'payment_status' => 'failed',
-                'json_response' => json_encode(['error' => $e->getMessage()])
-            ]);
-
-            DB::commit(); // ❗ rollback nahi karna (warna save nahi hoga)
 
             return response()->json([
                 'success' => false,
-                'message' => 'Payment failed but recorded'
-            ]);
+                'error' => 'Internal Server Error'
+            ], 500);
         }
-
-    } catch (\Throwable $th) {
-        DB::rollBack();
-
-        Log::error('PAYMENT_STORE_ERROR:', [
-            'error' => $th->getMessage(),
-            'trace' => $th->getTraceAsString()
-        ]);
-
-        return response()->json([
-            'success' => false,
-            'error' => 'Internal Server Error'
-        ], 500);
     }
-}
 
     public function success()
     {
@@ -1609,11 +1664,11 @@ class LeadsManageCotroller extends Controller
     }
 
 
-       public function paymentfailure()
-        {
-            return view('admin.leads.payment-failure');
-        }
-    
+    public function paymentfailure()
+    {
+        return view('admin.leads.payment-failure');
+    }
+
     public function oel_360(Request $request)
     {
         $studentData = Student::query();
@@ -1698,11 +1753,11 @@ class LeadsManageCotroller extends Controller
                 ->join('payments', 'payments.customer_email', '=', 'student.email')
                 ->join('payments_link', 'payments_link.fallowp_unique_id', '=', 'payments.fallowp_unique_id')
                 ->join('tbl_three_sixtee', 'tbl_three_sixtee.sba_id', '=', 'student.id')
-              
+
                 ->where('student.status_threesixty', 1)
                 ->where('student.profile_complete', 1)
-               
-                ->where('tbl_three_sixtee.application_punching' , 1)
+
+                ->where('tbl_three_sixtee.application_punching', 1)
                 ->select(
                     'student.email',
                     'student.user_id',
@@ -1716,7 +1771,7 @@ class LeadsManageCotroller extends Controller
                     DB::raw('MAX(payments.amount) as payment_amount'),
                     DB::raw('MAX(payments.payment_status) as payment_status'),
                     DB::raw('MAX(tbl_three_sixtee.application_punching) as application_punching')
-                 
+
 
                 )
                 ->groupBy(
@@ -1729,10 +1784,8 @@ class LeadsManageCotroller extends Controller
                 )
                 ->paginate(15);
 
-                // dd($studentData);
-        }
-
-        else {
+            // dd($studentData);
+        } else {
             // $studentData = Student::query();
             $studentData = $studentData
                 ->join('users', 'users.id', '=', 'student.added_by')
@@ -1863,7 +1916,7 @@ class LeadsManageCotroller extends Controller
         $paymentStatuses = MasterService::pluck('id', 'name');
 
         $paymentStatusDone = [];
-      
+
         foreach ($paymentStatuses as $masterService => $paymentStatus) {
             // Get the student's email based on the user_id
             $student_email = Student::where('user_id', $studentDetails->user_id)->pluck('email')->first();
@@ -1985,7 +2038,7 @@ class LeadsManageCotroller extends Controller
                 'table_three_sixtee' => $table_three_sixtee
             ];
             return response()->json($data);
-        } 
+        }
         // elseif ($request->tab3) {
         //     $status = DB::table('tbl_three_sixtee')
         //         ->where('sba_id', $id)
@@ -2081,132 +2134,130 @@ class LeadsManageCotroller extends Controller
 
         elseif ($request->tab3) {
 
-    $status = DB::table('tbl_three_sixtee')
-        ->where('sba_id', $id)
-        ->first();
+            $status = DB::table('tbl_three_sixtee')
+                ->where('sba_id', $id)
+                ->first();
 
-    if ($status == NULL) {
-        DB::table('tbl_three_sixtee')->insert([
-            'sba_id' => $id,
-            'user_id' => $user_id,
-            'application' => json_encode($request->all()),
-            'remarks' => json_encode($request->all()),
-            'selected_program' => implode(',', $request->program_ids),
-            'mail_sent' => 0 // 👈 NEW
-        ]);
-    } else {
-        DB::table('tbl_three_sixtee')
-            ->Where('sba_id', $id)
-            ->update([
-                'sba_id' => $id,
-                'user_id' => $user_id,
-                'application' => json_encode($request->all()),
-                'remarks' =>  json_encode($request->all()),
-                'selected_program' => implode(',', $request->program_ids)
-            ]);
-    }
+            if ($status == NULL) {
+                DB::table('tbl_three_sixtee')->insert([
+                    'sba_id' => $id,
+                    'user_id' => $user_id,
+                    'application' => json_encode($request->all()),
+                    'remarks' => json_encode($request->all()),
+                    'selected_program' => implode(',', $request->program_ids),
+                    'mail_sent' => 0 // 👈 NEW
+                ]);
+            } else {
+                DB::table('tbl_three_sixtee')
+                    ->Where('sba_id', $id)
+                    ->update([
+                        'sba_id' => $id,
+                        'user_id' => $user_id,
+                        'application' => json_encode($request->all()),
+                        'remarks' =>  json_encode($request->all()),
+                        'selected_program' => implode(',', $request->program_ids)
+                    ]);
+            }
 
-    $student = StudentByAgent::where('student_user_id', $request->sba_id)
-        ->select('email', 'name')->first();
+            $student = StudentByAgent::where('student_user_id', $request->sba_id)
+                ->select('email', 'name')->first();
 
-    $threesixetee = DB::table('tbl_three_sixtee')
-        ->where('sba_id', $id)->first();
+            $threesixetee = DB::table('tbl_three_sixtee')
+                ->where('sba_id', $id)->first();
 
-    $collegeValues = explode(',', $threesixetee->college);
-    $courseValues = explode(',', $threesixetee->courses);
+            $collegeValues = explode(',', $threesixetee->college);
+            $courseValues = explode(',', $threesixetee->courses);
 
-    $universities = University::whereIn('id', $collegeValues)
-        ->pluck('university_name')->implode(', ');
+            $universities = University::whereIn('id', $collegeValues)
+                ->pluck('university_name')->implode(', ');
 
-    $course_in_three_sixtee = DB::table('course_tags')
-        ->whereIn('id', $courseValues)
-        ->pluck('tag_name')->implode(', ');
+            $course_in_three_sixtee = DB::table('course_tags')
+                ->whereIn('id', $courseValues)
+                ->pluck('tag_name')->implode(', ');
 
-    $application = json_decode($threesixetee->application);
+            $application = json_decode($threesixetee->application);
 
-    $programsData = [];
-$sendMail = false;
+            $programsData = [];
+            $sendMail = false;
 
-foreach ($application->program_ids as $key => $value) {
+            foreach ($application->program_ids as $key => $value) {
 
-    $program = Program::where('id', $value)->first();
+                $program = Program::where('id', $value)->first();
 
-    // SAFE KEYS
-    $statusKey = $program->id . '_application_status';
-    $remarksKey = 'remarks_' . $program->id;
+                // SAFE KEYS
+                $statusKey = $program->id . '_application_status';
+                $remarksKey = 'remarks_' . $program->id;
 
-    $app_status = isset($application->$statusKey) ? $application->$statusKey : null;
-    $app_remarks = isset($application->$remarksKey) ? $application->$remarksKey : null;
+                $app_status = isset($application->$statusKey) ? $application->$statusKey : null;
+                $app_remarks = isset($application->$remarksKey) ? $application->$remarksKey : null;
 
-    // mail flag
-    if ($app_status === 'accepted') {
-        $sendMail = true;
-    }
+                // mail flag
+                if ($app_status === 'accepted') {
+                    $sendMail = true;
+                }
 
-    $programsData[] = [
-        'name' => $program->name ?? '',
-        'status' => $app_status ?? '',
-        'remarks' => $app_remarks ?? ''
-    ];
-}
+                $programsData[] = [
+                    'name' => $program->name ?? '',
+                    'status' => $app_status ?? '',
+                    'remarks' => $app_remarks ?? ''
+                ];
+            }
 
-    // Prepare email data
-    $data = [
-        'university' => $universities,
-        'student' => $student->name,
-        'courses' => $programsData,
-    ];
+            // Prepare email data
+            $data = [
+                'university' => $universities,
+                'student' => $student->name,
+                'courses' => $programsData,
+            ];
 
-    // ❌ REMOVE THIS (warna mail kabhi nahi jayega)
-    
+            // ❌ REMOVE THIS (warna mail kabhi nahi jayega)
 
-    // ✅ CHECK mail already sent or not
-    $alreadySent = DB::table('tbl_three_sixtee')
-        ->where('sba_id', $id)
-        ->value('mail_sent');
 
-    if ($sendMail && !$alreadySent) {
+            // ✅ CHECK mail already sent or not
+            $alreadySent = DB::table('tbl_three_sixtee')
+                ->where('sba_id', $id)
+                ->value('mail_sent');
 
-        Mail::to($student->email)->send(new ApplyOel360Email($data));
+            if ($sendMail && !$alreadySent) {
 
-        // mark as sent
-        DB::table('tbl_three_sixtee')
-            ->where('sba_id', $id)
-            ->update(['mail_sent' => 1]);
-    }
+                Mail::to($student->email)->send(new ApplyOel360Email($data));
 
-    // RESPONSE LOGIC (same as yours)
-    if ($request->application_status == 'rejected') {
-        $response = 'Rejected';
-    } else {
-        $response = true;
-    }
+                // mark as sent
+                DB::table('tbl_three_sixtee')
+                    ->where('sba_id', $id)
+                    ->update(['mail_sent' => 1]);
+            }
 
-    $acceptedProgramIds = [];
-    $programIds = $request->input('program_ids', []);
+            // RESPONSE LOGIC (same as yours)
+            if ($request->application_status == 'rejected') {
+                $response = 'Rejected';
+            } else {
+                $response = true;
+            }
 
-    foreach ($programIds as $programId) {
-        $applicationStatus = $request->input("{$programId}_application_status");
+            $acceptedProgramIds = [];
+            $programIds = $request->input('program_ids', []);
 
-        if ($applicationStatus === "accepted") {
-            $acceptedProgramIds[] = $programId;
-        }
-    }
+            foreach ($programIds as $programId) {
+                $applicationStatus = $request->input("{$programId}_application_status");
 
-    $program = Program::whereIn('id', $acceptedProgramIds)
-        ->where('is_approved', 1)
-        ->select('id', 'name')->get();
+                if ($applicationStatus === "accepted") {
+                    $acceptedProgramIds[] = $programId;
+                }
+            }
 
-    $data = [
-        'success' => true,
-        'status' => $response,
-        'program' => $program
-    ];
+            $program = Program::whereIn('id', $acceptedProgramIds)
+                ->where('is_approved', 1)
+                ->select('id', 'name')->get();
 
-    return response()->json($data);
-}
-        
-        elseif ($request->tab == 'tab4') {
+            $data = [
+                'success' => true,
+                'status' => $response,
+                'program' => $program
+            ];
+
+            return response()->json($data);
+        } elseif ($request->tab == 'tab4') {
 
 
             $status = DB::table('tbl_three_sixtee')->where('sba_id', $id)->first();
@@ -2235,7 +2286,7 @@ foreach ($application->program_ids as $key => $value) {
             }
 
             $status = DB::table('tbl_three_sixtee_course_status')->where('sba_id', $id)->where('course_id', $request->course_details_status)->first();
-           
+
             if ($status == NULL && $request->course_details_status && $request->university_details_status && $request->offer_amount) {
                 DB::table('tbl_three_sixtee_course_status')->insert([
                     'sba_id' =>  $id,
@@ -2831,7 +2882,7 @@ foreach ($application->program_ids as $key => $value) {
                 ]);
                 $franchise_user = User::find($request->agentId);
                 $count = count($request->leadIds);
-               // if ($franchise_user) {
+                // if ($franchise_user) {
                 //     $data = [
                 //         'user_id' => $franchise_user->name,
                 //         'message' => " . $count . A Lead has been assigned to you",
@@ -2847,7 +2898,7 @@ foreach ($application->program_ids as $key => $value) {
                 $franchise_user = User::find($request->agentId);
                 $count = count($request->leadIds);
 
-               // if ($franchise_user) {
+                // if ($franchise_user) {
                 //     $data = [
                 //         'user_id' => $franchise_user->name,
                 //         'message' => "  . $count . A Lead has been assigned to you",
@@ -2869,7 +2920,7 @@ foreach ($application->program_ids as $key => $value) {
 
     public function create_student_profile_old(Request $request, $id)
     {
-      
+
         $student_agent = StudentByAgent::where('id', $id)->first();
         $input['is_active'] = 1;
         $input['name'] = $student_agent->name;
@@ -2912,7 +2963,7 @@ foreach ($application->program_ids as $key => $value) {
                 "student_user_id" => $user->id ?? null,
             ]);
 
-          
+
             DB::table('student')->insert($student_data);
             if ($role) {
                 $user->assignRole([$role->id]);
@@ -2922,17 +2973,16 @@ foreach ($application->program_ids as $key => $value) {
             } catch (\Exception $e) {
                 Log::info('Mail not send to ' . $student_agent->email);
             }
-           
         }
         return redirect()->route('leads-filter')->with('success', 'User Profile Created Successfully');
     }
-  
-   public function create_student_profile1(Request $request, $id)
+
+    public function create_student_profile1(Request $request, $id)
     {
-     
+
         // Retrieve the student by agent record
         $student_agent = StudentByAgent::find($id);
-    
+
 
         if (!$student_agent) {
             return redirect()->back()->with('error', 'Student agent record not found.');
@@ -2942,7 +2992,7 @@ foreach ($application->program_ids as $key => $value) {
         DB::beginTransaction();
 
         try {
-           
+
             // Create new user
             $user = User::create([
                 'is_active'   => 1,
@@ -3007,98 +3057,97 @@ foreach ($application->program_ids as $key => $value) {
             return redirect()->back()->with('error', 'Something went wrong while creating the profile.');
         }
     }
-  
-      public function create_student_profile(Request $request, $id)
-{
-    $student_agent = StudentByAgent::find($id);
 
-    if (!$student_agent) {
-        return back()->with('error', 'Student agent record not found.');
-    }
+    public function create_student_profile(Request $request, $id)
+    {
+        $student_agent = StudentByAgent::find($id);
 
-    // STOP DUPLICATE USER
-    if (User::where('email', $student_agent->email)->exists()) {
-        return redirect()->route('leads-filter')
-            ->with('success', 'User already created.');
-    }
-
-    DB::beginTransaction();
-
-    try {
-
-        // Create User
-        $plain_password = $student_agent->name; // or random
-
-        $user = User::create([
-            'is_active'     => 1,
-            'name'          => $student_agent->name,
-            'password'      => Hash::make($plain_password),
-            'admin_type'    => 'student',
-            'email'         => $student_agent->email,
-            'phone_number'  => $student_agent->phone_number,
-            'added_by'      => Auth::id(),
-        ]);
-
-        // FAST ROLE INSERT
-        $roleId = Role::where('name', 'student')->value('id');
-        DB::table('model_has_roles')->insert([
-            'role_id' => $roleId,
-            'model_type' => User::class,
-            'model_id' => $user->id
-        ]);
-
-        // Insert Student & GET ID
-        $student_id = DB::table('student')->insertGetId([
-            'user_id' => $user->id,
-            'first_name' => $student_agent->name,
-            'middle_name' => $student_agent->middle_name,
-            'last_name' => $student_agent->last_name,
-            'country_id' => $student_agent->country_id,
-            'gender' => $student_agent->gender,
-            'dob' => $student_agent->dob,
-            'province_id' => $student_agent->province_id,
-            'zip' => $student_agent->zip,
-            'email' => $student_agent->email,
-            'phone_number' => $student_agent->phone_number,
-            'country_preference_completed' => $student_agent->preferred_country_id,
-            'pref_subjects' => $student_agent->subject,
-            'added_by' => Auth::id(),
-            'added_by_agent_id' => Auth::user()->added_by,
-        ]);
-
-        // Fetch inserted student data
-        $student_data = DB::table('student')->where('id', $student_id)->first();
-        $student_data->password = $plain_password; // add password
-
-        // Update agent
-        $student_agent->update(['student_user_id' => $user->id]);
-
-        DB::commit();
-
-        // SEND MAIL QUEUE
-        if ($student_agent->mail_count == 0) {
-
-            Log::info("📤 Dispatching registration mail job for: " . $student_agent->email);
-
-            dispatch(new \App\Jobs\SendStudentRegistrationMailJob(
-                $student_agent->email,
-                (array)$student_data
-            ));
-
-            $student_agent->update(['mail_count' => 1]);
+        if (!$student_agent) {
+            return back()->with('error', 'Student agent record not found.');
         }
 
-        return redirect()->route('leads-filter')
-            ->with('success', 'User profile created successfully.');
+        // STOP DUPLICATE USER
+        if (User::where('email', $student_agent->email)->exists()) {
+            return redirect()->route('leads-filter')
+                ->with('success', 'User already created.');
+        }
 
-    } catch (\Exception $e) {
+        DB::beginTransaction();
 
-        DB::rollBack();
-        Log::error($e->getMessage());
+        try {
 
-        return back()->with('error', 'Something went wrong.');
+            // Create User
+            $plain_password = $student_agent->name; // or random
+
+            $user = User::create([
+                'is_active'     => 1,
+                'name'          => $student_agent->name,
+                'password'      => Hash::make($plain_password),
+                'admin_type'    => 'student',
+                'email'         => $student_agent->email,
+                'phone_number'  => $student_agent->phone_number,
+                'added_by'      => Auth::id(),
+            ]);
+
+            // FAST ROLE INSERT
+            $roleId = Role::where('name', 'student')->value('id');
+            DB::table('model_has_roles')->insert([
+                'role_id' => $roleId,
+                'model_type' => User::class,
+                'model_id' => $user->id
+            ]);
+
+            // Insert Student & GET ID
+            $student_id = DB::table('student')->insertGetId([
+                'user_id' => $user->id,
+                'first_name' => $student_agent->name,
+                'middle_name' => $student_agent->middle_name,
+                'last_name' => $student_agent->last_name,
+                'country_id' => $student_agent->country_id,
+                'gender' => $student_agent->gender,
+                'dob' => $student_agent->dob,
+                'province_id' => $student_agent->province_id,
+                'zip' => $student_agent->zip,
+                'email' => $student_agent->email,
+                'phone_number' => $student_agent->phone_number,
+                'country_preference_completed' => $student_agent->preferred_country_id,
+                'pref_subjects' => $student_agent->subject,
+                'added_by' => Auth::id(),
+                'added_by_agent_id' => Auth::user()->added_by,
+            ]);
+
+            // Fetch inserted student data
+            $student_data = DB::table('student')->where('id', $student_id)->first();
+            $student_data->password = $plain_password; // add password
+
+            // Update agent
+            $student_agent->update(['student_user_id' => $user->id]);
+
+            DB::commit();
+
+            // SEND MAIL QUEUE
+            if ($student_agent->mail_count == 0) {
+
+                Log::info("📤 Dispatching registration mail job for: " . $student_agent->email);
+
+                dispatch(new \App\Jobs\SendStudentRegistrationMailJob(
+                    $student_agent->email,
+                    (array)$student_data
+                ));
+
+                $student_agent->update(['mail_count' => 1]);
+            }
+
+            return redirect()->route('leads-filter')
+                ->with('success', 'User profile created successfully.');
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Something went wrong.');
+        }
     }
-}
 
 
     public function show_lead($id)
@@ -3191,7 +3240,7 @@ foreach ($application->program_ids as $key => $value) {
     }
 
 
-      public function lead_quality_store(Request $request)
+    public function lead_quality_store(Request $request)
     {
 
 
@@ -3247,7 +3296,7 @@ foreach ($application->program_ids as $key => $value) {
             ->selectRaw('COUNT(*) as count') // Count rows for each group
             ->get();
 
-      
+
         return response()->json($counts, 200, $counts_quality);
     }
 }
