@@ -707,27 +707,27 @@
                         $counselors = [
                             [
                                 'id' => 16,
-                                'name' => 'Rahul Sharma',
+                                'name' => 'Myra K',
                                 'avatar' => asset('frontend/img/counselor-avatar-1.png'),
                             ],
                             [
                                 'id' => 19,
-                                'name' => 'Priya Verma',
+                                'name' => 'Alina R',
                                 'avatar' => asset('frontend/img/counselor-avatar-2.png'),
                             ],
                             [
                                 'id' => 3,
-                                'name' => 'Aman Singh',
+                                'name' => 'Sonia S',
                                 'avatar' => asset('frontend/img/counselor-avatar-3.png'),
                             ],
                             [
                                 'id' => 23,
-                                'name' => 'Neha Gupta',
+                                'name' => 'Rian M',
                                 'avatar' => asset('frontend/img/counselor-avatar-4.png'),
                             ],
                             [
                                 'id' => 5,
-                                'name' => 'Vikas Yadav',
+                                'name' => 'Aarav T',
                                 'avatar' => asset('frontend/img/counselor-avatar-5.png'),
                             ],
                         ];
@@ -831,14 +831,14 @@
 
                         </div>
 
-                      <button type="submit"
-    class="confirm-btn"
-    id="scheduleBtn"
-    style="margin-top: 5px; margin-bottom: 120px;">
+                       <button type="submit"
+                            class="confirm-btn"
+                            id="scheduleBtn"
+                            style="margin-top: 5px; margin-bottom: 120px;">
 
-    Schedule Event
+                            Schedule Event
 
-</button>
+                        </button>
 
                     </form>
 

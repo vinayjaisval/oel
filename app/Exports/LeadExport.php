@@ -4,26 +4,40 @@ namespace App\Exports;
 
 use App\Models\StudentByAgent;
 use Illuminate\Support\Facades\Schema;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class LeadExport implements FromCollection, WithHeadings
+class LeadExport implements FromQuery, WithHeadings, WithChunkReading, ShouldAutoSize
 {
-    protected $leads;
+    protected $query;
 
-    public function __construct($leads)
+    public function __construct($query)
     {
-        $this->leads = $leads;
+        $this->query = $query;
+    }
+
+    public function query()
+    {
+        return $this->query;
     }
 
     public function headings(): array
     {
-        $tableColumns = Schema::getColumnListing((new StudentByAgent())->getTable());
-        $headings = array_map('ucfirst', $tableColumns);
-        return $headings;
+        $tableColumns = Schema::getColumnListing(
+            (new StudentByAgent())->getTable()
+        );
+
+        return array_map(function ($column) {
+
+            return ucwords(str_replace('_', ' ', $column));
+
+        }, $tableColumns);
     }
-    public function collection()
+
+    public function chunkSize(): int
     {
-        return $this->leads;
+        return 1000;
     }
 }
