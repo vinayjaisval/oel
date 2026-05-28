@@ -56,7 +56,7 @@ class DashboardController extends Controller
         view()->share('page_title', 'Dashboard');
     }
 
-    public function index( Request $request)
+    public function index_old( Request $request)
     {
         $id = Auth::user()->id;
         $users = User::WHERE('id', $id)->first();
@@ -184,33 +184,12 @@ class DashboardController extends Controller
             ->get() // Retrieve all records
             ->unique('program_id') // Get unique program_id values
             ->count(); // Count the unique programs
-
-
-
-               
+  
         }else{
             $program_applied = null;
         }
         if(count($total_student_id)>0){
-            // $total_program_applied = PaymentsLink::with([
-            //     'program:id,name,school_id',
-            //     'program.university_name:id,university_name',
-            //     'payments'
-            // ])
-            // ->when(auth()->user()->role == 'student', function ($query) {
-            //     $query->orWhere('payment_type_remarks', 'applied_program_pay_later')
-            //           ->orWhere('payment_type_remarks', 'applied_program');
-            // })
-            // ->whereIn('user_id', $total_student_id)
-            // ->get() // Retrieve all records
-            // ->unique('program_id') // Get unique program_id values
-            // ->count(); // Count the unique programs
-
-
-
-            
-
-            //  dd($total_program_applied);
+           
             $total_program_applied = PaymentsLink::with([
                 'program:id,name,school_id',
                 'program.university_name:id,university_name',
@@ -244,10 +223,6 @@ class DashboardController extends Controller
                 ->get();
             $total_program_applied = $total_program_applied->count();
 
-          
-
-
-
         }else{
             $total_program_applied = 0;
         }
@@ -256,7 +231,7 @@ class DashboardController extends Controller
         if(auth::user()->hasRole('agent') || auth::user()->hasRole('sub_agent')) {
             $user_ids = $user_ids->where('id', auth::user()->id)->orwhere('added_by', auth::user()->id);
         }
-        $user_follow_up = DB::table('user_follow_up as uf')
+                    $user_follow_up = DB::table('user_follow_up as uf')
                           ->select('uf.student_id', DB::raw('MAX(uf.created_at) as latest_followup'), 'u.name','uf.user_id')
                           ->join('users as u', 'uf.user_id', '=', 'u.id')
                           ->whereIn('uf.user_id', $user_ids->pluck('id'))
@@ -330,6 +305,426 @@ class DashboardController extends Controller
       
         return view('dashboard', compact('data'));
     }
+
+public function index(Request $request)
+{
+    $id = Auth::user()->id;
+
+    $users = User::where('id', $id)->first();
+
+    $user_type = $users->admin_type;
+
+    $user_ids = $users->id;
+
+    /*
+    |--------------------------------------------------------------------------
+    | TOTAL LEADS
+    |--------------------------------------------------------------------------
+    */
+
+    if ($user_type == 'Administrator') {
+
+        $total_leads = StudentByAgent::count();
+
+    } elseif ($user_type == 'agent') {
+
+        $total_leads = StudentByAgent::where(function ($q) use ($user_ids) {
+
+            $q->where("added_by_agent_id", $user_ids)
+                ->orWhere('user_id', $user_ids)
+                ->orWhere('assigned_to', $user_ids);
+
+        })->count();
+
+    } else {
+
+        $total_leads = StudentByAgent::where('assigned_to', $user_ids)
+            ->orWhere('user_id', $user_ids)
+            ->count();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | TOTAL ASSIGNED LEADS
+    |--------------------------------------------------------------------------
+    */
+
+    if ($user_type == 'Administrator') {
+
+        $total_assigned_leads = StudentByAgent::whereNotNull("assigned_to")->count();
+
+    } else {
+
+        $total_assigned_leads = StudentByAgent::where("assigned_to", $user_ids)->count();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | TOTAL NON ALLOCATED LEADS
+    |--------------------------------------------------------------------------
+    */
+
+    if ($user_type == 'Administrator') {
+
+        $total_non_allocated_leads = StudentByAgent::whereNull('assigned_to')->count();
+
+    } else {
+
+        $total_non_allocated_leads = StudentByAgent::where('user_id', $user_ids)
+            ->whereNull('assigned_to')
+            ->count();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | MEMBERS & STUDENTS
+    |--------------------------------------------------------------------------
+    */
+
+    if ($user_type == 'Administrator') {
+
+        $total_members = User::whereNotIn('admin_type', ['student'])->count();
+
+        $total_student = Student::where('profile_complete', 1)->count();
+
+        $total_student_id = Student::pluck('user_id');
+
+        $total_school_manager = User::where('admin_type', 'school_manager')->count();
+
+        $total_frenchise = User::where('admin_type', 'agent')->count();
+
+        $total_active_frenchise = Agent::where('is_active', 1)->count();
+
+        $total_inactive_frenchise = Agent::whereNull('is_active')
+            ->orWhere('is_active', 0)
+            ->count();
+
+        $total_approve_frenchise = Agent::where('is_approve', 1)->count();
+
+        $total_unapprove_frnchise = Agent::where('is_approve', 0)->count();
+
+        $total_sub_agent = User::where('admin_type', 'sub_agent')->count();
+
+    } else {
+
+        $total_members = User::where('added_by', $user_ids)->count();
+
+        $total_student = Student::where('added_by', $user_ids)
+            ->where('profile_complete', 1)
+            ->count();
+
+        $authuser = Auth::user();
+
+        if ($authuser->hasRole('agent')) {
+
+            $usersId = User::where('added_by', $authuser->id)
+                ->whereNotIn('admin_type', ['student'])
+                ->pluck('id')
+                ->toArray();
+
+            $usersId[] = $authuser->id;
+
+        } else {
+
+            $usersId = [$authuser->id];
+        }
+
+        $total_student_id = Student::whereIn('added_by', $usersId)->pluck('user_id');
+
+        $total_school_manager = User::where('admin_type', 'school_manager')
+            ->whereIn('added_by', $usersId)
+            ->count();
+
+        $total_frenchise = User::where('admin_type', 'agent')
+            ->whereIn('id', $usersId)
+            ->count();
+
+        $total_active_frenchise = Agent::where('is_active', 1)
+            ->whereIn('id', $usersId)
+            ->count();
+
+        $total_inactive_frenchise = Agent::where('user_id', $user_ids)
+            ->where(function ($query) {
+
+                $query->whereNull('is_active')
+                    ->orWhere('is_active', 0);
+
+            })->count();
+
+        $total_approve_frenchise = Agent::where('is_approve', 1)
+            ->where('user_id', $user_ids)
+            ->count();
+
+        $total_unapprove_frnchise = Agent::where('is_approve', 0)
+            ->where('user_id', $user_ids)
+            ->count();
+
+        $total_sub_agent = User::where('admin_type', 'sub_agent')
+            ->where('added_by', $user_ids)
+            ->count();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | UNIVERSITY & PROGRAM
+    |--------------------------------------------------------------------------
+    */
+
+    if ($user_type == 'Administrator') {
+
+        $total_university = University::count();
+
+        $total_program = Program::count();
+
+        $total_application = ApplicationsApplied::count();
+
+        $total_unapprove_universties = University::where(function ($query) {
+
+            $query->whereNull('is_approved')
+                ->orWhere('is_approved', 0);
+
+        })->count();
+
+        $total_approve_universties = University::where('is_approved', 1)->count();
+
+        $total_unapprove_program = Program::where(function ($query) {
+
+            $query->whereNull('is_approved')
+                ->orWhere('is_approved', 0);
+
+        })->count();
+
+        $total_approve_program = Program::where('is_approved', 1)->count();
+
+        $total_unapprove_counceler = User::where('admin_type', 'counselor')
+            ->where('profile_verify_for_agent', 0)
+            ->count();
+
+        $total_approve_counceler = User::where('admin_type', 'counselor')
+            ->where('profile_verify_for_agent', 1)
+            ->count();
+
+    } else {
+
+        $total_university = University::where('user_id', $user_ids)->count();
+
+        $total_program = Program::count();
+
+        $total_application = ApplicationsApplied::count();
+
+        $total_unapprove_universties = University::where(function ($query) {
+
+            $query->whereNull('is_approved')
+                ->orWhere('is_approved', 0);
+
+        })->where('user_id', $user_ids)->count();
+
+        $total_approve_universties = University::where('is_approved', 1)
+            ->where('user_id', $user_ids)
+            ->count();
+
+        $total_unapprove_program = Program::where(function ($query) {
+
+            $query->whereNull('is_approved')
+                ->orWhere('is_approved', 0);
+
+        })->where('user_id', $user_ids)->count();
+
+        $total_approve_program = Program::where('is_approved', 1)
+            ->where('user_id', $user_ids)
+            ->count();
+
+        $total_unapprove_counceler = User::where('admin_type', 'counselor')
+            ->where('added_by', $user_ids)
+            ->where('profile_verify_for_agent', 0)
+            ->count();
+
+        $total_approve_counceler = User::where('admin_type', 'counselor')
+            ->where('added_by', $user_ids)
+            ->where('profile_verify_for_agent', 1)
+            ->count();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROGRAM APPLIED
+    |--------------------------------------------------------------------------
+    */
+
+    $program_applied = null;
+
+    if ($user_type == 'student') {
+
+        $student_user = Auth::user();
+
+        $student_id = Student::where('user_id', $student_user->id)->first();
+
+        if (empty($student_id)) {
+
+            abort(404);
+        }
+
+        $program_applied = PaymentsLink::where('user_id', $student_id->user_id)
+            ->distinct('program_id')
+            ->count('program_id');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | TOTAL PROGRAM APPLIED
+    |--------------------------------------------------------------------------
+    */
+
+    if (count($total_student_id) > 0) {
+
+        $total_program_applied = PaymentsLink::whereIn('user_id', $total_student_id)
+            ->distinct('program_id')
+            ->count('program_id');
+
+    } else {
+
+        $total_program_applied = 0;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | FOLLOW UP
+    |--------------------------------------------------------------------------
+    */
+
+    $followupUsers = User::where('admin_type', 'sub_agent')
+        ->where('status', 1);
+
+    if (auth()->user()->hasRole('agent') || auth()->user()->hasRole('sub_agent')) {
+
+        $followupUsers->where(function ($q) {
+
+            $q->where('id', auth()->id())
+                ->orWhere('added_by', auth()->id());
+
+        });
+    }
+
+    $user_follow_up = DB::table('user_follow_up as uf')
+        ->select(
+            'uf.student_id',
+            DB::raw('MAX(uf.created_at) as latest_followup'),
+            'u.name',
+            'uf.user_id'
+        )
+        ->join('users as u', 'uf.user_id', '=', 'u.id')
+        ->whereIn('uf.user_id', $followupUsers->pluck('id'))
+        ->whereDate('uf.created_at', Carbon::today())
+        ->groupBy('uf.student_id', 'u.name', 'uf.user_id')
+        ->get();
+
+    /*
+    |--------------------------------------------------------------------------
+    | COMPLETE 360 FIXED
+    |--------------------------------------------------------------------------
+    */
+
+    $complete360Query = Student::query()
+
+        ->join('users', 'users.id', '=', 'student.added_by')
+
+        ->join(DB::raw('
+        (
+            SELECT MAX(id) as id, student_user_id
+            FROM student_by_agent
+            GROUP BY student_user_id
+        ) as sba_latest
+        '), function ($join) {
+
+            $join->on(
+                'sba_latest.student_user_id',
+                '=',
+                'student.user_id'
+            );
+        })
+
+        ->join(
+            'student_by_agent',
+            'student_by_agent.id',
+            '=',
+            'sba_latest.id'
+        )
+
+        ->leftJoin(
+            'payments',
+            'payments.customer_email',
+            '=',
+            'student.email'
+        )
+
+        ->leftJoin(
+            'payments_link',
+            'payments_link.fallowp_unique_id',
+            '=',
+            'payments.fallowp_unique_id'
+        )
+
+        ->where('student.status_threesixty', 1)
+
+        ->where('student.profile_complete', 1);
+
+    if (auth()->user()->hasRole('agent')) {
+
+        $complete360Query->where(function ($q) {
+
+            $q->where('student.added_by_agent_id', auth()->id())
+                ->orWhere('student.added_by', auth()->id());
+
+        });
+
+    } elseif (auth()->user()->hasRole('sub_agent')) {
+
+        $complete360Query->where('student.added_by', auth()->id());
+    }
+
+    $complete360 = $complete360Query
+        ->distinct('student.id')
+        ->count('student.id');
+
+    /*
+    |--------------------------------------------------------------------------
+    | FINAL DATA
+    |--------------------------------------------------------------------------
+    */
+
+    $data = array(
+
+        "user_follow_up" => $user_follow_up,
+        "program_applied" => $program_applied,
+        "total_program_applied" => $total_program_applied,
+        "total_leads" => $total_leads,
+        "total_assigned_leads" => $total_assigned_leads,
+        "total_non_allocated_leads" => $total_non_allocated_leads,
+        "total_members" => $total_members,
+        "total_student" => $total_student,
+        "total_school_manager" => $total_school_manager,
+        "total_frenchise" => $total_frenchise,
+        "total_active_frenchise" => $total_active_frenchise,
+        "total_inactive_frenchise" => $total_inactive_frenchise,
+        "total_approve_frenchise" => $total_approve_frenchise,
+        "total_approve_universties" => $total_approve_universties,
+        "total_unapprove_frnchise" => $total_unapprove_frnchise,
+        "total_sub_agent" => $total_sub_agent,
+        "total_university" => $total_university,
+        "total_program" => $total_program,
+        "total_application" => $total_application,
+        "total_unapprove_universties" => $total_unapprove_universties,
+        "total_unapprove_program" => $total_unapprove_program,
+        "total_approve_program" => $total_approve_program,
+        "total_unapprove_counceler" => $total_unapprove_counceler,
+        "total_approve_counceler" => $total_approve_counceler,
+        "complete360" => $complete360
+
+    );
+
+    return view('dashboard', compact('data'));
+}
+    
     public function dashboard_data(Request $request)
     {
 
