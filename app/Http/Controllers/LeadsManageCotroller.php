@@ -380,10 +380,10 @@ class LeadsManageCotroller extends Controller
                 ->get();
         } 
         
-        // elseif ($user_type == 'sub_agent') {
-        //     $next_leads_missed = StudentByAgent::where(DB::raw('next_calling_date'), '<', $currentDateTime)->where('lead_status', '<>', '5')->where('lead_status', '<>', '7')->Where('assigned_to', Auth::user()->id)->orderBy('next_calling_date', 'asc')
-        //         ->get();
-        // }
+                            // elseif ($user_type == 'sub_agent') {
+                            //     $next_leads_missed = StudentByAgent::where(DB::raw('next_calling_date'), '<', $currentDateTime)->where('lead_status', '<>', '5')->where('lead_status', '<>', '7')->Where('assigned_to', Auth::user()->id)->orderBy('next_calling_date', 'asc')
+                            //         ->get();
+                            // }
 
 
                         elseif (
