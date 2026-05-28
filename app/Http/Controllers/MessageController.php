@@ -171,7 +171,7 @@ public function twillio_email(Request $request, $users = null, $leadIds = null)
             $frenchise =User::where('admin_type', 'sub_agent')->paginate(20);
          
         } else {
-            $frenchise =User::where('added_by', $user->id)->where('admin_type', 'sub_agent')->paginate(20);
+            $frenchise =User::where('added_by', $user->id)->where('admin_type', 'sub_agent')->where('is_active', 1)->where('status', 1)->paginate(20);
         }
         $smsTemplates =SmsTemplate::get();
         $countries =Country::get();
