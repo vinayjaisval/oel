@@ -378,10 +378,29 @@ class LeadsManageCotroller extends Controller
 
             $next_leads_missed = StudentByAgent::whereRaw("assigned_to IN($user)")->where(DB::raw('next_calling_date'), '<', $currentDateTime)->where('lead_status', '<>', '5')->where('lead_status', '<>', '7')->orderBy('next_calling_date', 'asc')
                 ->get();
-        } elseif ($user_type == 'sub_agent') {
-            $next_leads_missed = StudentByAgent::where(DB::raw('next_calling_date'), '<', $currentDateTime)->where('lead_status', '<>', '5')->where('lead_status', '<>', '7')->Where('assigned_to', Auth::user()->id)->orderBy('next_calling_date', 'asc')
-                ->get();
-        }
+        } 
+        
+        // elseif ($user_type == 'sub_agent') {
+        //     $next_leads_missed = StudentByAgent::where(DB::raw('next_calling_date'), '<', $currentDateTime)->where('lead_status', '<>', '5')->where('lead_status', '<>', '7')->Where('assigned_to', Auth::user()->id)->orderBy('next_calling_date', 'asc')
+        //         ->get();
+        // }
+
+
+                        elseif (
+                    $user_type == 'sub_agent' ||
+                    $user_type == 'visa' ||
+                    $user_type == 'Digital Marketing' ||
+                    $user_type == 'Data oprator'
+                ) {
+
+                    $next_leads_missed = StudentByAgent::where('next_calling_date', '<', $currentDateTime)
+                        ->where('lead_status', '<>', '5')
+                        ->where('lead_status', '<>', '7')
+                        ->where('assigned_to', $user_ids)
+                        ->orderBy('next_calling_date', 'asc')
+                        ->get();
+                }
+
         $count_next_leads_miss = $next_leads_missed->count();
 
 
@@ -1669,7 +1688,7 @@ class LeadsManageCotroller extends Controller
         return view('admin.leads.payment-failure');
     }
 
-    public function oel_360(Request $request)
+    public function oel_360_old(Request $request)
     {
         $studentData = Student::query();
         $user = Auth::user();
@@ -1821,6 +1840,274 @@ class LeadsManageCotroller extends Controller
         $master_service = MasterService::select('name', 'id')->get();
         return view('admin.leads.oel-360', compact('studentData', 'sub_agents', 'master_service', 'agents'));
     }
+
+
+    public function oel_360(Request $request)
+{
+    $studentData = Student::query();
+
+    $user = Auth::user();
+
+    /*
+    |--------------------------------------------------------------------------
+    | SUB AGENTS & AGENTS
+    |--------------------------------------------------------------------------
+    */
+
+    if ($user->hasRole('Administrator')) {
+
+        $sub_agents = User::where('admin_type', 'sub_agent')
+            ->select('id', 'email', 'name')
+            ->get();
+
+        $agents = User::where('admin_type', 'agent')
+            ->select('id', 'email', 'name')
+            ->get();
+
+    } else {
+
+        $sub_agents = User::where('admin_type', 'sub_agent')
+            ->where('added_by', $user->id)
+            ->select('id', 'email', 'name')
+            ->get();
+
+        $agents = User::where('admin_type', 'agent')
+            ->where('added_by', $user->id)
+            ->select('id', 'email', 'name')
+            ->get();
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ROLE FILTER
+    |--------------------------------------------------------------------------
+    */
+
+    if ($user->hasRole('agent')) {
+
+        $studentData->where(function ($query) use ($user) {
+
+            $query->where('student.added_by_agent_id', $user->id)
+                  ->orWhere('student.added_by', $user->id);
+        });
+    }
+
+    if ($user->hasRole('sub_agent')) {
+
+        $studentData->where('student.added_by', $user->id);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SEARCH FILTER
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->first_name) {
+
+        $studentData->where(
+            'student.first_name',
+            'LIKE',
+            '%' . $request->first_name . '%'
+        );
+    }
+
+    if ($request->email) {
+
+        $studentData->where(
+            'student.email',
+            'LIKE',
+            '%' . $request->email . '%'
+        );
+    }
+
+    if ($request->subagent_id) {
+
+        $studentData->where(
+            'student.added_by',
+            $request->subagent_id
+        );
+    }
+
+    if ($request->agent_id) {
+
+        $studentData->where(
+            'student.added_by_agent_id',
+            $request->agent_id
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | MAIN QUERY
+    |--------------------------------------------------------------------------
+    */
+
+    $studentData = $studentData
+
+        ->join('users', 'users.id', '=', 'student.added_by')
+
+        /*
+        |--------------------------------------------------------------------------
+        | FIX DUPLICATE student_by_agent RECORDS
+        |--------------------------------------------------------------------------
+        */
+
+        ->join(DB::raw('
+            (
+                SELECT MAX(id) as id, student_user_id
+                FROM student_by_agent
+                GROUP BY student_user_id
+            ) as sba_latest
+        '), function ($join) {
+
+            $join->on(
+                'sba_latest.student_user_id',
+                '=',
+                'student.user_id'
+            );
+        })
+
+        ->join(
+            'student_by_agent',
+            'student_by_agent.id',
+            '=',
+            'sba_latest.id'
+        )
+
+        ->leftJoin(
+            'payments',
+            'payments.customer_email',
+            '=',
+            'student.email'
+        )
+
+        ->leftJoin(
+            'payments_link',
+            'payments_link.fallowp_unique_id',
+            '=',
+            'payments.fallowp_unique_id'
+        )
+
+        ->where('student.status_threesixty', 1)
+
+        ->where('student.profile_complete', 1);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | VISA FILTER
+    |--------------------------------------------------------------------------
+    */
+
+    if ($user->hasRole('visa')) {
+
+        $studentData->join(
+            'tbl_three_sixtee',
+            'tbl_three_sixtee.sba_id',
+            '=',
+            'student.id'
+        )
+        ->where(
+            'tbl_three_sixtee.visa_application',
+            'Accepted'
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | APPLICATION PUNCHING FILTER
+    |--------------------------------------------------------------------------
+    */
+
+    if ($user->hasRole('Application Punching')) {
+
+        $studentData->join(
+            'tbl_three_sixtee',
+            'tbl_three_sixtee.sba_id',
+            '=',
+            'student.id'
+        )
+        ->where(
+            'tbl_three_sixtee.application_punching',
+            1
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | FINAL SELECT
+    |--------------------------------------------------------------------------
+    */
+
+    $studentData = $studentData
+
+        ->select(
+
+            'student.id',
+
+            DB::raw('MAX(student.email) as email'),
+
+            DB::raw('MAX(student.user_id) as user_id'),
+
+            DB::raw('MAX(student.first_name) as first_name'),
+
+            DB::raw('MAX(student.last_name) as last_name'),
+
+            DB::raw('MAX(student.status_threesixty) as status_threesixty'),
+
+            DB::raw('MAX(student.profile_complete) as profile_complete'),
+
+            DB::raw('MAX(users.name) as added_by_name'),
+
+            DB::raw('MAX(users.email) as added_by_email'),
+
+            DB::raw('MAX(payments.id) as payment_id'),
+
+            DB::raw('MAX(payments.amount) as payment_amount'),
+
+            DB::raw('MAX(payments.payment_status) as payment_status')
+        )
+
+        ->groupBy('student.id')
+
+        ->orderByDesc('student.id')
+
+        ->paginate(15);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | MASTER SERVICE
+    |--------------------------------------------------------------------------
+    */
+
+    $master_service = MasterService::select('name', 'id')->get();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RETURN VIEW
+    |--------------------------------------------------------------------------
+    */
+
+    return view(
+        'admin.leads.oel-360',
+        compact(
+            'studentData',
+            'sub_agents',
+            'master_service',
+            'agents'
+        )
+    );
+}
+
+    
 
 
 

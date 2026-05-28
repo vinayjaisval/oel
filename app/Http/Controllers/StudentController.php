@@ -149,9 +149,9 @@ class StudentController extends Controller
 
     public function student_list(Request $request){
         $user = Auth::user();
-        $query = Student::with('country', 'province');
-        $user = Auth::user();
-        $query = Student::with('country', 'province');        
+        $query = Student::where('profile_complete', 1)
+            ->orderBy('created_at', 'desc');
+             
         // Filters (common for all roles)
         if ($request->name) {
             $query->where('first_name', 'like', '%' . $request->name . '%');

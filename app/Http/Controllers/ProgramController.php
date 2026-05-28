@@ -1258,169 +1258,264 @@ public function program_discipline(Request $request)
 
 
 
-    public function total_applied_program(Request $request)
-    {
+public function total_applied_program(Request $request)
+{
+    $authuser = Auth::user();
 
+    $user_type = $authuser->admin_type;
 
-        $id = Auth::user()->id;
-        $users = User::WHERE('id', $id)->first();
-        $user_type = $users->admin_type;
-        $user_ids = $users->id;
-        $total_leads = 0;
+    /*
+    |--------------------------------------------------------------------------
+    | TOTAL STUDENT IDS
+    |--------------------------------------------------------------------------
+    */
 
-        if ($user_type == 'Administrator') {
+    if ($user_type == 'Administrator') {
 
-            $total_student_id = Student::pluck('user_id');
-        } else {
-            $authuser = Auth::user();
-            if (($authuser->hasRole('agent'))) {
-                $userId = Auth::id();
+        $total_student_id = Student::pluck('user_id');
 
-                $usersId = User::where('added_by', $userId)->whereNotIn('admin_type', ['student'])
-                    ->pluck('id')->toArray();
+    } else {
 
+        if ($authuser->hasRole('agent')) {
 
-                if (!empty($usersId)) {
-                    array_push($usersId, $authuser->id);
-                }
-            } else {
-                $usersId = [$authuser->id];
-                
-            }
-            $total_student_id = Student::whereIn('added_by', $usersId)->pluck('user_id');
-            // dd($total_student_id);
-        }
-        $table_three_sixtee = DB::table('tbl_three_sixtee')->whereIn('user_id', $total_student_id)->select('application', 'visa_application')->get();
+            $usersId = User::where('added_by', $authuser->id)
+                ->whereNotIn('admin_type', ['student'])
+                ->pluck('id')
+                ->toArray();
 
-        if (isset($table_three_sixtee->application) && $table_three_sixtee->application != 'null' || isset($table_three_sixtee->visa_application) && $table_three_sixtee->visa_application != 'null') {
+            $usersId[] = $authuser->id;
 
-            $application = json_decode($table_three_sixtee->application, true);
-
-            $visa_application = $table_three_sixtee->visa_application;
-            $applied_application = [];
-            foreach ($application['program_ids'] as $program_id) {
-
-                $status_key = $program_id . '_application_status';
-                $remarks_key = 'remarks_' . $program_id;
-                if (isset($application[$status_key])) {
-                    $applied_application[$program_id] = $application[$status_key];
-                }
-            }
         } else {
 
-            $applied_application = [];
-            $visa_application = null;
+            $usersId = [$authuser->id];
         }
 
+        $total_student_id = Student::whereIn('added_by', $usersId)
+            ->pluck('user_id');
+    }
 
-        if ($user_type == 'student') {
-            $student_user = Auth::user();
-            $student_id = Student::where('user_id', $student_user->id)->first();
-            if (empty($student_id)) {
-                abort(404);
-            }
-            $program_applied = PaymentsLink::with([
-                'program:id,name,school_id',
-                'program.university_name:id,university_name',
-                'payments'
-            ])
-                ->when(auth()->user()->role == 'student', function ($query) {
-                    $query->Where('payment_type_remarks', 'applied_program_pay_later')
-                        ->orWhere('payment_type_remarks', 'applied_program');
-                })
-                ->where('user_id', $student_id->user_id)
-                ->count();
-        } else {
-            $program_applied = null;
+    /*
+    |--------------------------------------------------------------------------
+    | THREE SIXTY DATA
+    |--------------------------------------------------------------------------
+    */
+
+    $table_three_sixtee = DB::table('tbl_three_sixtee')
+        ->whereIn('user_id', $total_student_id)
+        ->select('application', 'visa_application')
+        ->get();
+
+    $applied_application = [];
+    $visa_application = null;
+
+    /*
+    |--------------------------------------------------------------------------
+    | STUDENT LOGIN
+    |--------------------------------------------------------------------------
+    */
+
+    if ($user_type == 'student') {
+
+        $student = Student::where('user_id', $authuser->id)->first();
+
+        if (!$student) {
+            abort(404);
         }
 
-      
-        if ($user_type == 'student') {
-            $student_user = Auth::user();
-            $student = Student::where('user_id', $student_user->id)->first();
-        
-            if (!$student) {
-                abort(404);
-            }
-        
-            $program_applied = PaymentsLink::with([
-                'program:id,name,school_id',
-                'program.university_name:id,university_name',
-                'payments'
-            ])
-            ->where('user_id', $student->user_id)
+        $program_applied = PaymentsLink::where('user_id', $student->user_id)
             ->where(function ($q) {
+
                 $q->where('payment_type_remarks', 'applied_program')
                   ->orWhere('payment_type_remarks', 'applied_program_pay_later');
+
             })
+            ->select('program_id')
+            ->distinct()
             ->count();
-        
-            $total_program_applied = null;
-        
-        } else {
-            $program_applied = null;
-            $total_program_applied = null;
-        
-            if (count($total_student_id) > 0) {
-                $total_query = PaymentsLink::with([
-                    'program:id,name,school_id',
-                    'program.university_name:id,university_name',
-                    'payments'
-                ])
-                ->whereIn('payments_link.user_id', $total_student_id)
-                ->where(function ($q) {
-                    $q->where('payment_type_remarks', 'applied_program')
-                      ->orWhere('payment_type_remarks', 'applied_program_pay_later');
-                })
-                ->join('users', 'users.id', '=', 'payments_link.user_id')
-                ->join('student_by_agent', 'student_by_agent.email', '=', 'payments_link.email')
-                ->groupBy(
-                    'payments_link.program_id',
-                    'student_by_agent.assigned_to',
-                    'student_by_agent.added_by_agent_id',
-                    'users.name'
-                )
-                ->select(
-                    'student_by_agent.assigned_to',
-                    'student_by_agent.added_by_agent_id',
-                    'users.name',
-                    \DB::raw('MAX(payments_link.id) as id'),
-                    \DB::raw('MAX(payments_link.program_id) as program_id'),
-                    \DB::raw('MAX(payments_link.payment_type) as payment_type'),
-                    \DB::raw('MAX(payments_link.payment_type_remarks) as payment_type_remarks'),
-                    \DB::raw('MAX(payments_link.payment_date) as payment_date'),
-                    \DB::raw('MAX(payments_link.app_id) as app_id'),
-                    \DB::raw('MAX(payments_link.status) as status'),
-                    \DB::raw('MAX(payments_link.user_id) as user_id'),
-                    \DB::raw('MAX(payments_link.fallowp_unique_id) as fallowp_unique_id'),
-                    \DB::raw('MAX(payments_link.email) as email'),
-                    \DB::raw('MAX(payments_link.created_at) as latest_payment_date'),
-                    \DB::raw('MAX(payments_link.created_at) as created_at')
-                );
-        
-                // Apply optional filters only on this query
-                if ($request->first_name) {
-                    $total_query->where('users.name', 'LIKE', '%' . $request->first_name . '%');
-                }
-                if ($request->email) {
-                    $total_query->where('users.email', 'LIKE', '%' . $request->email . '%');
-                }
-        
-                // Final count
-                $total_program_applied = (clone $total_query)->count();
-        
-                // Paginated results (if needed)
-                $program_applied = $total_query->paginate(10);
-            }
-        }
-        
-        
-      
 
-        
-
-        return view('admin.applied-program', compact('program_applied', 'table_three_sixtee', 'applied_application', 'visa_application'));
+        return view(
+            'admin.applied-program',
+            compact(
+                'program_applied',
+                'table_three_sixtee',
+                'applied_application',
+                'visa_application'
+            )
+        );
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | MAIN QUERY
+    |--------------------------------------------------------------------------
+    */
+
+    $query = PaymentsLink::query()
+
+        ->join('users', 'users.id', '=', 'payments_link.user_id')
+
+        ->leftJoin('payments', function ($join) {
+
+            $join->on(
+                'payments.fallowp_unique_id',
+                '=',
+                'payments_link.fallowp_unique_id'
+            );
+        })
+
+        /*
+        |--------------------------------------------------------------------------
+        | FIX DUPLICATE SBA
+        |--------------------------------------------------------------------------
+        */
+
+        ->join(DB::raw('
+            (
+                SELECT MAX(id) as id, email
+                FROM student_by_agent
+                GROUP BY email
+            ) as latest_sba
+        '), function ($join) {
+
+            $join->on(
+                'latest_sba.email',
+                '=',
+                'payments_link.email'
+            );
+        })
+
+        ->join(
+            'student_by_agent',
+            'student_by_agent.id',
+            '=',
+            'latest_sba.id'
+        )
+
+        ->whereIn('payments_link.user_id', $total_student_id)
+
+        ->where(function ($q) {
+
+            $q->where('payments_link.payment_type_remarks', 'applied_program')
+              ->orWhere('payments_link.payment_type_remarks', 'applied_program_pay_later');
+
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | FILTERS
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->first_name) {
+
+        $query->where(
+            'users.name',
+            'LIKE',
+            '%' . $request->first_name . '%'
+        );
+    }
+
+    if ($request->email) {
+
+        $query->where(
+            'users.email',
+            'LIKE',
+            '%' . $request->email . '%'
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SELECT
+    |--------------------------------------------------------------------------
+    */
+
+    $query->select(
+
+        'payments_link.program_id',
+        'payments_link.user_id',
+
+        DB::raw('MAX(payments_link.id) as id'),
+
+        DB::raw('MAX(users.name) as name'),
+
+        DB::raw('MAX(users.email) as user_email'),
+
+        DB::raw('MAX(payments_link.email) as email'),
+
+        DB::raw('MAX(payments_link.payment_type) as payment_type'),
+
+        DB::raw('MAX(payments_link.payment_type_remarks) as payment_type_remarks'),
+
+        DB::raw('MAX(payments_link.payment_date) as payment_date'),
+
+        DB::raw('MAX(payments_link.app_id) as app_id'),
+
+        DB::raw('MAX(payments_link.status) as status'),
+
+        DB::raw('MAX(payments_link.fallowp_unique_id) as fallowp_unique_id'),
+
+        DB::raw('MAX(payments_link.created_at) as created_at'),
+
+        DB::raw('MAX(student_by_agent.assigned_to) as assigned_to'),
+
+        DB::raw('MAX(student_by_agent.added_by_agent_id) as added_by_agent_id'),
+
+        DB::raw('MAX(payments.id) as payment_id'),
+
+        DB::raw('MAX(payments.amount) as payment_amount'),
+
+        DB::raw('MAX(payments.payment_status) as payment_status')
+    )
+
+    /*
+    |--------------------------------------------------------------------------
+    | IMPORTANT
+    |--------------------------------------------------------------------------
+    | SAME GROUPING FOR LIST & COUNT
+    |--------------------------------------------------------------------------
+    */
+
+    ->groupBy(
+        'payments_link.program_id',
+        'payments_link.user_id'
+    )
+
+    ->orderByDesc('id');
+
+    /*
+    |--------------------------------------------------------------------------
+    | SAME COUNT AS LIST
+    |--------------------------------------------------------------------------
+    */
+
+    $total_program_applied = (clone $query)->get()->count();
+
+    /*
+    |--------------------------------------------------------------------------
+    | PAGINATION
+    |--------------------------------------------------------------------------
+    */
+
+    $program_applied = $query->paginate(10);
+
+    /*
+    |--------------------------------------------------------------------------
+    | RETURN
+    |--------------------------------------------------------------------------
+    */
+
+    return view(
+        'admin.applied-program',
+        compact(
+            'program_applied',
+            'table_three_sixtee',
+            'applied_application',
+            'visa_application',
+            'total_program_applied'
+        )
+    );
+}
 
     public function edit_score_program($id)
     {
