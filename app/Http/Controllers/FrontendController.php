@@ -1462,17 +1462,18 @@ class FrontendController extends Controller
 
     public function storeContactus(Request $request)
     {
+       
         $validatedData = $request->validate([
             'first_name' => 'required|regex:/^[a-zA-Z]+$/',
             'last_name'  => 'required|regex:/^[a-zA-Z]+$/',
-            'phone'      => 'required|numeric',
+            'phone_display'      => 'required|numeric',
         ]);
 
         // 1️⃣ Store in Contactus
         $contact = Contactus::create([
             "first_name" => $request->first_name,
             "last_name"  => $request->last_name,
-            "phone"      => $request->phone,
+            "phone"      => $request->phone_display,
             "preferred_study_destination" => $request->preferred_study_destination,
             "preferred_study_year"        => $request->preferred_study_year,
             "preferred_study_intake"      => $request->preferred_study_intake,
@@ -1480,7 +1481,7 @@ class FrontendController extends Controller
 
         // 2️⃣ Store in StudentByAgent with source = contactus
         StudentByAgent::firstOrCreate(
-            ['phone_number' => $request->phone],
+            ['phone_number' => $request->phone_display],
             [
                 "first_name" => $request->first_name,
                 "last_name"  => $request->last_name,
