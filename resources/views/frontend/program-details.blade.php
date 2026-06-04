@@ -35,6 +35,11 @@
                                     <span class="label mx-2">Country</span>
                                     <span class="value">{{$program_data->university_name->country_name->name ?? null}}</span>
                                 </li>
+                                <li class="lectures-feature">
+                                    <i class="fa fa-flag"></i>
+                                    <span class="label mx-2">University </span>
+                                    <span class="value">{{$program_data->university_name->university_name ?? null}}</span>
+                                </li>
                                 <li class="quizzes-feature">
                                     <i class="fa fa-building"></i>
                                     <span class="label mx-2">Course Duration</span>

@@ -1093,10 +1093,20 @@ public function program_discipline(Request $request)
 
     public function program_subdiscipline_data(Request $request)
     {
-        // dd($request->all());
         if ($request->ajax()) {
-            $program_sub_discipline = ProgramSubdiscipline::where('status', 1)->whereIn('program_discipline_id', $request->program_displine)->get();
-            return response()->json($program_sub_discipline);
+            $disciplineIds = $request->program_displine ?? [];
+            $disciplineIds = is_array($disciplineIds) ? $disciplineIds : explode(',', $disciplineIds);
+            $disciplineIds = array_filter($disciplineIds, fn ($id) => $id !== null && $id !== '');
+
+            $program_sub_discipline = ProgramSubdiscipline::where('status', 1);
+
+            if (!empty($disciplineIds)) {
+                $program_sub_discipline->whereIn('program_discipline_id', $disciplineIds);
+            } else {
+                $program_sub_discipline->whereRaw('0 = 1');
+            }
+
+            return response()->json($program_sub_discipline->get());
         }
     }
 

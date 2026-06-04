@@ -120,7 +120,7 @@
     )->get();
     $program_sub_discipline_name = App\Models\ProgramSubdiscipline::whereIn(
     'id',
-    explode(',', $_GET['program_sub_discipline'] ?? null),
+    explode(',', $_GET['program_subdiscipline'] ?? null),
     )->get();
     $eng_proficiency_level_name = App\Models\EngProficiencyLevel::whereIn(
     'id',
@@ -818,14 +818,8 @@
     });
 
     // ---------- PROGRAM DISCIPLINE ----------
-    function loadProgramSubdisciplineOptions() {
+    $(document).on('click', '.subdiscipline', function () {
         const selected = $("input[name='program_discipline[]']:checked").map(function () { return this.value; }).get();
-
-        if (selected.length === 0) {
-            $('.program_subdiscipline').html('<li><label>No Program Discipline selected</label></li>');
-            return;
-        }
-
         csrf();
         $.post("{{ route('program-subdiscipline-data') }}", { program_displine: selected }, function (data) {
             const selectedIds = @json($program_sub_discipline_name).map(item => item.id);
@@ -840,10 +834,6 @@
                 : '<li><label>Not Found</label></li>';
             $('.program_subdiscipline').html(list);
         });
-    }
-
-    $(document).on('click', '.subdiscipline', function () {
-        loadProgramSubdisciplineOptions();
     });
 
     // ---------- OTHER EXAM ----------
@@ -875,6 +865,7 @@
           
 
 
+        $(document).ready(function () {
           // Function to collect all selected options (if you need it later)
             function collectSelectedOptions(page = 1) {
                 const getCheckedValues = (name) => $(`input[name='${name}[]']:checked`).map(function () {
@@ -958,7 +949,6 @@
 
             $(document).on('click', '.program_discipline_checkbox', function () {
                 handleFilterClick('program_discipline', '.program_discipline_name', 'program_discipline');
-                loadProgramSubdisciplineOptions();
             });
 
             $(document).on('click', '.program-sub-discipline-checkbox', function () {
@@ -972,9 +962,8 @@
             $(document).on('click', '.other_exam_check', function () {
                 handleFilterClick('other_exam', '.other_exam_name', 'other_exam');
             });
-
-            loadProgramSubdisciplineOptions();
-            loadData(1);
         });
+     loadData(1);
+    });
 </script>
 @endsection
