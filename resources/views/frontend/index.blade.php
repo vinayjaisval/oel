@@ -573,7 +573,7 @@
     <img class="thumb"
          src="https://img.youtube.com/vi/{{ trim($videoId) }}/hqdefault.jpg"
          alt="Video Thumbnail">
-    <figcaption>Feedback Student</figcaption>
+   
 </figure>
                             @endif
                         @endforeach
