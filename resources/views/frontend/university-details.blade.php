@@ -534,7 +534,7 @@
                                             <button class="nav-link un-nav-link" id="nav-contacts-tabs" data-bs-toggle="tab" data-bs-target="#nav-contacts" type="button"
                                                 role="tab" aria-controls="nav-contacts" aria-selected="false">Ranking</button>
                                             <button class="nav-link un-nav-link" id="nav-notes-tabs" data-bs-toggle="tab" data-bs-target="#nav-notes" type="button"
-                                                role="tab" aria-controls="nav-notes" aria-selected="false">Accomadation</button>
+                                                role="tab" aria-controls="nav-notes" aria-selected="false">Accommodation</button>
                                             <button class="nav-link un-nav-link" id="nav-tabing-tabs" data-bs-toggle="tab" data-bs-target="#nav-tabing" type="button"
                                                 role="tab" aria-controls="nav-tabing" aria-selected="false">Accreditation</button>
                                             <button class="nav-link un-nav-link" id="nav-place-tabs" data-bs-toggle="tab" data-bs-target="#nav-place" type="button"

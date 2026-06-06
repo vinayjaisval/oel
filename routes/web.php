@@ -227,6 +227,8 @@ Route::get('/clear-all', function () {
             Route::get('bulk-upload/', [LeadsManageCotroller::class, 'bulk_upload'])->name('bulk-upload');
             Route::post('excel-sheet-uplod-lead', [LeadsManageCotroller::class, 'excel_sheet_leads'])->name('excel-sheet-leads');
             Route::Post('add-user-follow-up', [LeadsManageCotroller::class, 'add_user_follow_up'])->name('add-user-follow-up');
+            Route::post('resend-payment-link', [LeadsManageCotroller::class, 'resendPaymentLink'])->name('resend-payment-link');
+            Route::post('update-follow-up', [LeadsManageCotroller::class, 'updateFollowUp'])->name('update-follow-up');
             Route::get('fetch-follow-up-date', [LeadsManageCotroller::class, 'follow_up_list'])->name('follow-up-list');
             Route::post("update-user-status", [UserController::class, 'updateUserStatus'])->name('statusUpdateUser');
             Route::post("approve-user-status", [UserController::class, 'approveUserStatus'])->name('approveStatusUpdate');

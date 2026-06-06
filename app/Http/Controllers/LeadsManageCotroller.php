@@ -1103,6 +1103,145 @@ class LeadsManageCotroller extends Controller
         return $token;
     }
 
+    /**
+     * Resend a payment link or reminder for pending payment.
+     * For Online: sends payment link via email
+     * For Cash/Cheque/Bank/COD: sends pending payment reminder
+     * Expects `payment_id` (PaymentsLink.id) and optional `payment_mode` in the request.
+     */
+    public function resendPaymentLink(Request $request)
+    {
+        $request->validate(["payment_id" => "required|integer"]);
+
+        $payment = PaymentsLink::find($request->payment_id);
+        if (! $payment) {
+            return response()->json(["message" => "Payment not found"], 404);
+        }
+
+        // Only proceed if there is a pending amount
+        $pending = $payment->panding ?? 0;
+        if ($pending <= 0) {
+            return response()->json(["message" => "No pending amount to send reminder for"], 400);
+        }
+
+        $paymentMode = $request->input('payment_mode') ?? $payment->payment_mode ?? 'Online';
+
+        try {
+            if ($paymentMode === 'Online') {
+                // Online payment: regenerate token and send payment link
+                $token = $this->generateToken();
+                $payment->token = $token;
+                $payment->expired_in = date('Y-m-d H:i:s', strtotime('+10 days'));
+                $payment->save();
+
+                $paymentData = [
+                    'name' => $payment->name ?? '',
+                    'payment_link' => url('/pay-now/c?token=' . $token),
+                    'amount' => ($pending * 3 / 100) + $pending,
+                ];
+                Mail::mailer('bravo')
+                    ->to($payment->email)
+                    ->send(new \App\Mail\PaymentLinkEmail($paymentData));
+                
+                $message = 'Payment link resent successfully';
+            } else {
+                // Offline payment (Cash/Cheque/Bank/COD): send reminder with pending details
+                $studentData = (object)[
+                    'name' => $payment->name ?? '',
+                    'email' => $payment->email ?? '',
+                ];
+                
+                $reminderData = [
+                    'name' => $studentData->name,
+                    'amount' => $payment->amount ?? 0,
+                    'pending_amount' => $pending,
+                    'payment_mode' => $paymentMode,
+                    'due_date' => $payment->due_date ?? null,
+                ];
+                
+                // Send generic reminder - you can customize this mail
+                Mail::to($studentData->email)->send(new \App\Mail\StudentPraposelMail($studentData));
+                
+                $message = 'Pending payment reminder sent successfully';
+            }
+        } catch (\Exception $e) {
+            \Log::error('Resend payment reminder failed: ' . $e->getMessage());
+            return response()->json(["message" => "Failed to send reminder: " . $e->getMessage()], 500);
+        }
+
+        return response()->json(["message" => $message]);
+    }
+    
+    /**
+     * Update a follow-up record.
+     * Expects followup_id, student_id, lead_status, next_calling_date, paymentMode, amount, discount, is_panding, panding, due_date, comment
+     */
+    public function updateFollowUp(Request $request)
+    {
+       
+        $request->validate([
+            'followup_id' => 'required|string',
+            'student_id' => 'required|integer',
+            'lead_status' => 'required|integer',
+            'next_calling_date' => 'required|date',
+            // 'paymentMode' => 'required|in:Cash,Cheque,Online,Bank,COD',
+            'amount' => 'required|numeric|min:0',
+            'is_panding' => 'required|in:0,1',
+        ]);
+        
+        if ($request->input('is_panding') == '1') {
+            $request->validate([
+                'panding' => 'required|numeric|min:0',
+                'due_date' => 'required|date',
+            ]);
+        }
+        
+        try {
+            $followupId = $request->followup_id;
+            $discount = $request->discount ?? 0;
+            $pending = $request->panding ?? 0;
+            
+            // Update user_follow_up record
+            \DB::table('user_follow_up')
+                ->where('fallowp_unique_id', $followupId)
+                ->update([
+                    'status' => $request->lead_status,
+                    'next_calling_date' => $request->next_calling_date,
+                    'paymentMode' => $request->paymentMode,
+                    'amount' => $request->amount,
+                    'discount' => $discount,
+                    'is_panding' => $request->is_panding,
+                    'panding' => $pending,
+                    'due_date' => $request->due_date,
+                    'comment' => $request->comment,
+                    'updated_at' => now(),
+                ]);
+            
+            // Update PaymentsLink record
+            $paymentLink = PaymentsLink::where('fallowp_unique_id', $followupId)->first();
+            if ($paymentLink) {
+                $paymentLink->update([
+                    'payment_mode' => $request->paymentMode,
+                    'amount' => $request->amount - $discount - $pending,
+                    'discount' => $discount,
+                    'is_panding' => $request->is_panding,
+                    'panding' => $pending,
+                    'due_date' => $request->due_date,
+                ]);
+            }
+            
+            return response()->json([
+                'status' => true,
+                'message' => 'Follow-up updated successfully'
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Update follow-up failed: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Failed to update follow-up: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function uniqidgenrate()
     {
         $uniqueId = uniqid() . bin2hex(random_bytes(5));
@@ -1306,6 +1445,19 @@ class LeadsManageCotroller extends Controller
     {
         $uniqueId = $this->uniqidgenrate();
 
+        // Validate sub_service when payment is involved
+        $rules = [];
+        if ($request->has('paymentMode') && in_array($request->paymentMode, ['Cash', 'Cheque', 'Bank', 'Online'])) {
+            $rules['sub_service'] = 'required|array|min:1';
+        }
+
+        if (!empty($rules)) {
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json(['message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+            }
+        }
+
         // ============== ONLINE PAYMENT ===================
         if ($request->paymentMode == 'Online') {
 
@@ -1392,6 +1544,8 @@ class LeadsManageCotroller extends Controller
             $pending  = $request->panding ?? 0;
             $amount   = $request->amount - $discount - $pending;
 
+          
+
             $email = StudentByAgent::where('id', $request->student_id)->value('email');
             $name  = StudentByAgent::where('id', $request->student_id)->value('name');
 
@@ -1473,9 +1627,16 @@ class LeadsManageCotroller extends Controller
             'panding'             => $request->panding ?? 0,
         ];
 
-        DB::table('user_follow_up')->insert($data);
-
-        return response()->json(['message' => 'Data Submitted Successfully']);
+        try {
+            DB::beginTransaction();
+            DB::table('user_follow_up')->insert($data);
+            DB::commit();
+            return response()->json(['message' => 'Data Submitted Successfully']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Follow up save error: ' . $e->getMessage(), ['request' => $request->all()]);
+            return response()->json(['message' => 'Server error saving follow up'], 500);
+        }
     }
 
 
@@ -1563,7 +1724,7 @@ class LeadsManageCotroller extends Controller
     }
 
 
-    public function store(Request $request)
+    public function storeold5(Request $request)
     {
 
 
@@ -1650,6 +1811,131 @@ class LeadsManageCotroller extends Controller
             ], 500);
         }
     }
+
+
+    public function store(Request $request)
+{
+    DB::beginTransaction();
+
+    try {
+
+        Log::info('PAYMENT REQUEST DATA:', $request->all());
+
+        $paymentResponse = $request->input('response', []);
+
+        if (empty($paymentResponse['razorpay_payment_id'])) {
+
+            Log::error('No Payment ID Found');
+
+            return response()->json([
+                'success' => false,
+                'message' => 'No Payment ID Found'
+            ]);
+        }
+
+        // Duplicate Entry Check
+        $alreadyExists = Payment::where(
+            'payment_id',
+            $paymentResponse['razorpay_payment_id']
+        )->first();
+
+        if ($alreadyExists) {
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment already recorded'
+            ]);
+        }
+
+        $api = new Api(
+            env('RAZORPAY_API_KEY'),
+            env('RAZORPAY_API_SECRET')
+        );
+
+        try {
+
+            $payment = $api->payment->fetch(
+                $paymentResponse['razorpay_payment_id']
+            );
+
+            Log::info('PAYMENT FETCHED:', (array) $payment);
+
+            /**
+             * IMPORTANT:
+             * Order create time payment_capture = 1 hai,
+             * isliye payment already captured hoga.
+             * Dobara capture mat karo.
+             */
+
+            $response = $payment;
+
+            Payment::create([
+                'payment_id'        => $response->id,
+                'payment_method'    => $response->method,
+                'currency'          => $response->currency,
+                'fallowp_unique_id' => $paymentResponse['fallowp_unique_id'] ?? null,
+                'customer_name'     => $paymentResponse['name'] ?? null,
+                'user_id'           => $paymentResponse['user_id'] ?? null,
+                'customer_email'    => $response->email,
+                'amount'            => $response->amount / 100,
+                'payment_status'    => $response->status,
+                'json_response'     => json_encode($response->toArray())
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment successfully recorded'
+            ]);
+
+        } catch (\Exception $e) {
+
+            Log::error('PAYMENT FAILED:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            Payment::create([
+                'payment_id'        => $paymentResponse['razorpay_payment_id'] ?? null,
+                'payment_method'    => null,
+                'currency'          => null,
+                'fallowp_unique_id' => $paymentResponse['fallowp_unique_id'] ?? null,
+                'customer_name'     => $paymentResponse['name'] ?? null,
+                'user_id'           => $paymentResponse['user_id'] ?? null,
+                'customer_email'    => null,
+                'amount'            => 0,
+                'payment_status'    => 'failed',
+                'json_response'     => json_encode([
+                    'error' => $e->getMessage()
+                ])
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+
+    } catch (\Throwable $th) {
+
+        DB::rollBack();
+
+        Log::error('PAYMENT_STORE_ERROR:', [
+            'error' => $th->getMessage(),
+            'trace' => $th->getTraceAsString()
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'error' => $th->getMessage()
+        ], 500);
+    }
+}
 
     public function success()
     {

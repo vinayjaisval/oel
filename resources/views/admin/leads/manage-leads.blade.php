@@ -541,6 +541,7 @@
                             <th>Payment Status</th>
                             <th>Pending</th>
                             <th>Due Date</th>
+                            <th>Actions</th>
 
                              <!-- <th>Delete</th> -->
                         </tr>
@@ -596,6 +597,15 @@
                             </td> -->
                             <td>{{$item->panding ?? null}}</td>
                             <td>{{$item->due_date ?? null}}</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editFollowupModal" onclick="loadEditForm({{ json_encode($item) }}, '{{ $master_service->pluck('name', 'id')->toJson() }}')" title="Edit follow-up">Edit</button>
+                                @php
+                                    $paymentLink = \App\Models\PaymentsLink::where('fallowp_unique_id', $item->fallowp_unique_id)->latest()->first();
+                                @endphp
+                                @if($paymentLink && (($item->panding ?? 0) > 0 ))
+                                    <button class="btn btn-sm btn-primary" onclick="resendPaymentLink({{ $paymentLink->id }}, '{{ $item->paymentMode }}')" title="Send pending amount reminder">Send Reminder</button>
+                                @endif
+                            </td>
 
                         <tr>
                             @php
@@ -614,6 +624,96 @@
             </div>
         </div>
     </div>
+    <!-- Edit Follow-up Modal -->
+    <div class="modal fade" id="editFollowupModal" tabindex="-1" aria-labelledby="editFollowupLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editFollowupLabel">Edit Follow-up</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editFollowupForm">
+                        <input type="hidden" id="edit_student_id" name="student_id">
+                        <input type="hidden" id="edit_followup_id" name="followup_id">
+                        <input type="hidden" id="edit_paymentType" name="edit_paymentType">
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Lead Status <span class="text-danger">*</span></label>
+                                <select name="edit_lead_status" id="edit_lead_status" class="form-control leads-select">
+                                    <option value="">--Select Lead Status--</option>
+                                    @foreach ($masterLeadStatus as $data)
+                                      <option value="{{$data->id}}">{{$data->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Next Calling Date <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control leads-form-control" name="edit_next_calling_date" id="edit_next_calling_date" placeholder="Next Calling Date">
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label>Payment Mode <span class="text-danger">*</span></label>
+                                <select name="edit_paymentMode" id="edit_paymentMode" class="form-control">
+                                    <option value="">Select Payment Mode</option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="Cheque">Cheque</option>
+                                    <option value="Online">Online</option>
+                                    <option value="Bank">Bank</option>
+                                    <option value="COD">COD</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Amount <span class="text-danger">*</span></label>
+                                <input type="number" name="edit_amount" id="edit_amount" class="form-control" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label>Discount</label>
+                                <input type="number" name="edit_discount" id="edit_discount" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label>Select Pending <span class="text-danger">*</span></label>
+                                <select name="edit_is_panding" id="edit_is_panding" class="form-control" onchange="editPandingField()">
+                                    <option value="">--Select Pending--</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3 edit-panding-field" style="display: none;">
+                            <div class="col-md-6">
+                                <label>Pending Amount <span class="text-danger">*</span></label>
+                                <input type="number" name="edit_panding" id="edit_panding" class="form-control" placeholder="Pending Amount">
+                            </div>
+                            <div class="col-md-6">
+                                <label>Due Date <span class="text-danger">*</span></label>
+                                <input type="date" name="edit_due_date" id="edit_due_date" class="form-control" placeholder="Due Date">
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <label>Comment</label>
+                                <textarea class="form-control" name="edit_comment" id="edit_comment" placeholder="Comment" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitEditFollowup()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 @section('scripts')
 <script src="{{asset('assets/js/jquery-3.7.1.js')}}"></script>
@@ -737,7 +837,7 @@
                     return;
                 }
                    sub_service = $('#sub_service').val();
-                if(!sub_service){
+                if(!sub_service || (Array.isArray(sub_service) && sub_service.length === 0)){
                     $('.error-sub-service').html('Sub Service Field Required');
                     $('.btnDiv').removeClass('disabled');
                     return;
@@ -759,7 +859,7 @@
 
 
                 is_panding = $('#is_panding').val();
-                if(!is_discount){
+                if(!is_panding){
                     $('.error-panding').html('Panding Field Required');
                     $('.btnDiv').removeClass('disabled');
                     return;
@@ -823,6 +923,8 @@
                 return;
             }
             var comment = $('#comment').val();
+            // ensure sub_service is always an array when sending
+            sub_service = sub_service || [];
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -887,7 +989,7 @@
         });
        $('#paymentMode').on('change', function() {
             var selectedValue = $(this).val();
-            if (selectedValue === 'Cash' || selectedValue === 'Cheque') {
+            if (selectedValue === 'Cash' || selectedValue === 'Cheque' || selectedValue === 'COD') {
                 $('.paymentModeRemarks').show();
                 $('.bank-details').hide();
                 $('.submit-amount').show();
@@ -904,6 +1006,105 @@
                 $('.payment-button').show();
             }
         });
+    
+        window.resendPaymentLink = function(payment_id, paymentMode){
+            if(!payment_id) return;
+            $.ajax({
+                url: '{{ route('resend-payment-link') }}',
+                type: 'post',
+                data: { payment_id: payment_id, payment_mode: paymentMode, _token: '{{ csrf_token() }}' },
+                success: function(res){
+                    Swal.fire({ title: 'Success', text: res.message, icon: 'success' });
+                },
+                error: function(xhr){
+                    var msg = 'Failed to send reminder';
+                    try { msg = JSON.parse(xhr.responseText).message || msg; } catch(e) {}
+                    Swal.fire({ title: 'Error', text: msg, icon: 'error' });
+                }
+            });
+        }
+        
+        window.loadEditForm = function(item, masterServices){
+            $('#edit_followup_id').val(item.fallowp_unique_id);
+            $('#edit_student_id').val(item.student_id);
+            $('#edit_lead_status').val(item.status);
+            $('#edit_next_calling_date').val(item.next_calling_date);
+            $('#edit_paymentMode').val(item.paymentMode);
+            $('#edit_amount').val(item.amount);
+            $('#edit_discount').val(item.discount);
+            $('#edit_is_panding').val(item.is_panding);
+            $('#edit_panding').val(item.panding);
+            $('#edit_due_date').val(item.due_date);
+            $('#edit_comment').val(item.comment);
+            
+            if(item.is_panding == '1'){
+                $('.edit-panding-field').show();
+            } else {
+                $('.edit-panding-field').hide();
+            }
+        }
+        
+        window.editPandingField = function(){
+            if ($('#edit_is_panding').val() == '1') {
+                $('.edit-panding-field').show();
+            } else {
+                $('.edit-panding-field').hide();
+            }
+        }
+        
+        window.submitEditFollowup = function(){
+            var followup_id = $('#edit_followup_id').val();
+            var student_id = $('#edit_student_id').val();
+            var lead_status = $('#edit_lead_status').val();
+            var next_calling_date = $('#edit_next_calling_date').val();
+            var paymentMode = $('#edit_paymentMode').val();
+            var amount = $('#edit_amount').val()||0;
+            var discount = $('#edit_discount').val() || 0;
+            var is_panding = $('#edit_is_panding').val();
+            var panding = $('#edit_panding').val() || 0;
+            var due_date = $('#edit_due_date').val();
+            var comment = $('#edit_comment').val();
+            
+            if(!lead_status || !next_calling_date ){
+                Swal.fire({ title: 'Error', text: 'Please fill all required fields', icon: 'error' });
+                return;
+            }
+            
+            if(is_panding == '1' && (!panding || !due_date)){
+                Swal.fire({ title: 'Error', text: 'Please fill pending amount and due date', icon: 'error' });
+                return;
+            }
+            
+            $.ajax({
+                url: '{{ route('update-follow-up') }}',
+                type: 'post',
+                data: {
+                    followup_id: followup_id,
+                    student_id: student_id,
+                    lead_status: lead_status,
+                    next_calling_date: next_calling_date,
+                    paymentMode: paymentMode,
+                    amount: amount,
+                    discount: discount,
+                    is_panding: is_panding,
+                    panding: panding,
+                    due_date: due_date,
+                    comment: comment,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(res){
+                    $('#editFollowupModal').modal('hide');
+                    Swal.fire({ title: 'Success', text: res.message, icon: 'success' }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function(xhr){
+                    var msg = 'Failed to update follow-up';
+                    try { msg = JSON.parse(xhr.responseText).message || msg; } catch(e) {}
+                    Swal.fire({ title: 'Error', text: msg, icon: 'error' });
+                }
+            });
+        }
         $('#paymentType').on('change', function() {
             var selectedValue = $(this).val();
             if (selectedValue === 'Course Fee') {
