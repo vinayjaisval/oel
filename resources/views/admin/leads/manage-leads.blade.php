@@ -598,12 +598,12 @@
                             <td>{{$item->panding ?? null}}</td>
                             <td>{{$item->due_date ?? null}}</td>
                             <td>
-                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editFollowupModal" onclick="loadEditForm({{ json_encode($item) }}, '{{ $master_service->pluck('name', 'id')->toJson() }}')" title="Edit follow-up">Edit</button>
+                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editFollowupModal" onclick='loadEditForm(@json($item))' title="Edit follow-up">Edit</button>
                                 @php
                                     $paymentLink = \App\Models\PaymentsLink::where('fallowp_unique_id', $item->fallowp_unique_id)->latest()->first();
                                 @endphp
                                 @if($paymentLink && (($item->panding ?? 0) > 0 ))
-                                    <button class="btn btn-sm btn-primary" onclick="resendPaymentLink({{ $paymentLink->id }}, '{{ $item->paymentMode }}')" title="Send pending amount reminder">Send Reminder</button>
+                                    <button class="btn btn-sm btn-primary" onclick='resendPaymentLink({{ $paymentLink->id }}, @json($paymentLink->payment_mode ?? $item->paymentMode ?? "Online"))' title="Send pending amount reminder">Send Reminder</button>
                                 @endif
                             </td>
 
@@ -1024,7 +1024,7 @@
             });
         }
         
-        window.loadEditForm = function(item, masterServices){
+        window.loadEditForm = function(item){
             $('#edit_followup_id').val(item.fallowp_unique_id);
             $('#edit_student_id').val(item.student_id);
             $('#edit_lead_status').val(item.status);

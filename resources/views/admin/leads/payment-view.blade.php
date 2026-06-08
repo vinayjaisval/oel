@@ -66,80 +66,94 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
-    var options = {
-        key: "{{ env('RAZORPAY_API_KEY') }}",
-        amount: "{{ $data['amount'] * 100 }}",
-        currency: "INR",
-        name: "Oel Overseas",
-        description: "Payment",
-        image: "{{ asset('assets/img/logo2.png') }}",
 
-        prefill: {
-            name: "{{ $data['name'] }}",
-            email: "{{ $data['email'] ?? '' }}"
-        },
+var options = {
 
-        theme: {
-            color: "#0F408F"
-        },
+    key: "{{ env('RAZORPAY_API_KEY') }}",
 
-        handler: function (response) {
+    amount: "{{ $data['amount'] * 100 }}",
 
-            $.ajax({
-                url: "{{ url('payment/create') }}",
-                type: "POST",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    response: {
-                        razorpay_payment_id: response.razorpay_payment_id,
-                        user_id: $('#user_id').val(),
-                        fallowp_unique_id: $('#fallowp_unique_id').val(),
-                        name: $('#name').val()
-                    }
-                },
-                success: function (res) {
+    currency: "INR",
 
-                    if (res.success === true) {
-                        window.location.href = "{{ url('payment/success') }}";
-                    } else {
-                        window.location.href = "{{ url('payment/failure') }}";
-                    }
-                },
-                error: function (err) {
-                    console.log('AJAX ERROR:', err);
-                }
-            });
-        }
-    };
+    order_id: "{{ $data['order_id'] }}",
 
-    var rzp = new Razorpay(options);
+    name: "Oel Overseas",
 
-    // Button Click
-    document.getElementById('payBtn').onclick = function (e) {
-        e.preventDefault();
-        rzp.open();
-    };
+    description: "Payment",
 
-    // Payment Failed
-    rzp.on('payment.failed', function (response) {
+    image: "{{ asset('assets/img/logo2.png') }}",
+
+    prefill: {
+        name: "{{ $data['name'] }}",
+        email: "{{ $data['email'] }}"
+    },
+
+    theme: {
+        color: "#0F408F"
+    },
+
+    handler: function(response) {
 
         $.ajax({
+
             url: "{{ url('payment/create') }}",
+
             type: "POST",
+
             data: {
+
                 _token: "{{ csrf_token() }}",
+
                 response: {
-                    razorpay_payment_id: response.error.metadata.payment_id,
+
+                    razorpay_payment_id: response.razorpay_payment_id,
+
+                    razorpay_order_id: response.razorpay_order_id,
+
+                    razorpay_signature: response.razorpay_signature,
+
                     user_id: $('#user_id').val(),
+
                     fallowp_unique_id: $('#fallowp_unique_id').val(),
+
                     name: $('#name').val()
                 }
             },
-            success: function () {
-                window.location.href = "{{ url('payment/failure-page') }}";
+
+            success: function(res) {
+
+                if(res.success){
+
+                    window.location.href =
+                        "{{ url('payment/success') }}";
+
+                } else {
+
+                    window.location.href =
+                        "{{ url('payment/failure') }}";
+                }
             }
         });
-    });
+    }
+};
+
+var rzp = new Razorpay(options);
+
+document.getElementById('payBtn').onclick = function(e){
+
+    e.preventDefault();
+
+    rzp.open();
+};
+
+rzp.on('payment.failed', function(response){
+
+    console.log(response);
+
+    window.location.href =
+        "{{ url('payment/failure-page') }}";
+});
+
 </script>
 
 </body>

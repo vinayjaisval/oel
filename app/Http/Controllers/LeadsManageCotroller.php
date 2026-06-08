@@ -1124,7 +1124,14 @@ class LeadsManageCotroller extends Controller
             return response()->json(["message" => "No pending amount to send reminder for"], 400);
         }
 
-        $paymentMode = $request->input('payment_mode') ?? $payment->payment_mode ?? 'Online';
+        $paymentMode = $payment->payment_mode ?? 'Online';
+        if ($request->filled('payment_mode')) {
+            $requestedMode = trim($request->input('payment_mode'));
+            if ($requestedMode !== '') {
+                $paymentMode = $requestedMode;
+            }
+        }
+        $paymentMode = ucfirst(strtolower($paymentMode));
 
         try {
             if ($paymentMode === 'Online') {
@@ -1445,8 +1452,9 @@ class LeadsManageCotroller extends Controller
     {
         $uniqueId = $this->uniqidgenrate();
 
-        // Validate sub_service when payment is involved
-        $rules = [];
+         // Validate sub_service when payment is involved
+       
+         $rules = [];
         if ($request->has('paymentMode') && in_array($request->paymentMode, ['Cash', 'Cheque', 'Bank', 'Online'])) {
             $rules['sub_service'] = 'required|array|min:1';
         }
@@ -1580,12 +1588,12 @@ class LeadsManageCotroller extends Controller
 
             Mail::to($studentdata->email)->send(new StudentPraposelMail($studentdata));
 
-            // SEND EMAIL  
-            //Mail::mailer('bravo')
-            //->to($studentdata->email)
-            //->send(new StudentPraposelMail($studentdata, $attachmentPath, $attachmentName));
+                  // SEND EMAIL  
+                 //Mail::mailer('bravo')
+                //->to($studentdata->email)
+              //->send(new StudentPraposelMail($studentdata, $attachmentPath, $attachmentName));
+             // Create Payment
 
-            // Create Payment
             Payment::create([
                 'payment_id'        => $payments->id,
                 'payment_method'    => $request->paymentMode,
@@ -1600,8 +1608,8 @@ class LeadsManageCotroller extends Controller
             ]);
         }
 
-        // ============== FOLLOW-UP SAVE ===================
-        $data = [
+         //============== FOLLOW-UP SAVE ===================
+         $data = [
             'student_id'          => $request->student_id,
             'status'              => $request->lead_status,
             'paymentType'         => $request->paymentType,
@@ -1641,7 +1649,7 @@ class LeadsManageCotroller extends Controller
 
 
 
-    public function payment_view(Request $request)
+    public function payment_view_old(Request $request)
     {
 
         $token = $request->token;
@@ -1669,277 +1677,174 @@ class LeadsManageCotroller extends Controller
         return view('admin.leads.payment-view', compact('data'));
     }
 
-    public function store_old(Request $request)
-    {
-
-        DB::beginTransaction();
-        try {
-            $paymentResponse = $request->input('response', []);
-            if (count($paymentResponse) > 0 && empty($paymentResponse['razorpay_payment_id'])) {
-                Session::put('error', 'No Payment ID Found');
-                return redirect()->back();
-            }
-            $api = new Api(env('RAZORPAY_API_KEY'), env('RAZORPAY_API_SECRET'));
-            try {
-                $payment = $api->payment->fetch($paymentResponse['razorpay_payment_id']);
-                $response = $payment->capture(['amount' => $payment['amount']]);
-                // dd($response);
-                Payment::create([
-                    'payment_id' => $response->id,
-                    'payment_method' => $response->method,
-                    'currency' => $response->currency,
-                    'fallowp_unique_id' => $request->response['fallowp_unique_id'],
-                    'customer_name' => $request->response['name'],
-                    'user_id' => $request->response['user_id'],
-                    'customer_email' => $response->email,
-                    'amount' => $response->amount / 100,
-                    'payment_status' => 'success',
-                    'json_response' => json_encode((array)$response)
-                ]);
-                DB::commit();
-                return response()->json(['success' => true, 'message' => 'Payment successfully recorded']);
-            } catch (\Exception $e) {
-                Payment::create([
-                    'payment_id' => $paymentResponse['razorpay_payment_id'] ?? null,
-                    'payment_method' => $response->method,
-                    'currency' => $response->currency,
-                    'fallowp_unique_id' => $request->response['fallowp_unique_id'],
-                    'customer_name' => $request->response['name'],
-                    'user_id' => $request->response['user_id'],
-                    'customer_email' => $response->email,
-                    'amount' => $response->amount / 100,
-                    'payment_status' => 'failed',
-                    'json_response' => json_encode(['error' => $e->getMessage()])
-                ]);
-                Session::put('error', 'Payment Failed: ' . $e->getMessage());
-                DB::rollBack();
-                return response()->json(['success' => false, 'message' => 'Payment failed to record']);
-            }
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            Log::error('PAYMENT_STORE_ERROR: ' . $th->getMessage());
-            Session::put('error', 'Internal Server Error');
-            return response()->json(['success' => false, 'error' => 'Internal Server Error'], 500);
-        }
-    }
-
-
-    public function storeold5(Request $request)
+    public function payment_view(Request $request)
     {
 
 
-        DB::beginTransaction();
+    $token = $request->token;
 
-        try {
-            Log::info('PAYMENT REQUEST DATA:', $request->all());
+    $paymentLink = PaymentsLink::where('token', $token)->first();
 
-            $paymentResponse = $request->input('response', []);
+    if (!$paymentLink) {
+    Session::flash('error', 'Token Expired');
+    return redirect()->back();
+    }
 
-            if (empty($paymentResponse['razorpay_payment_id'])) {
-                Log::error('No Payment ID Found');
-                return response()->json(['success' => false, 'message' => 'No Payment ID Found']);
-            }
+    if (!$paymentLink->user_id) {
+    Session::flash('error', 'User ID Not Found');
+    return redirect()->back();
+    }
 
-            $api = new Api(env('RAZORPAY_API_KEY'), env('RAZORPAY_API_SECRET'));
+    $student = StudentbyAgent::where('email', $paymentLink->email)
+    ->select('name')
+    ->first();
 
-            try {
-                // Fetch & Capture Payment
-                $payment = $api->payment->fetch($paymentResponse['razorpay_payment_id']);
-                Log::info('PAYMENT FETCHED:', (array)$payment);
 
-                $response = $payment->capture(['amount' => $payment['amount']]);
-                Log::info('PAYMENT CAPTURED:', (array)$response);
+    if ($paymentLink->is_panding == 1) {
+    $baseAmount = $paymentLink->panding;
+} else {
+    $baseAmount = $paymentLink->amount;
+}
 
-                Payment::create([
-                    'payment_id' => $response->id,
-                    'payment_method' => $response->method,
-                    'currency' => $response->currency,
-                    'fallowp_unique_id' => $paymentResponse['fallowp_unique_id'] ?? null,
-                    'customer_name' => $paymentResponse['name'] ?? null,
-                    'user_id' => $paymentResponse['user_id'] ?? null,
-                    'customer_email' => $response->email,
-                    'amount' => $response->amount / 100,
-                    'payment_status' => 'success',
-                    'json_response' => json_encode((array)$response)
-                ]);
+$amount = round(
+    $baseAmount + ($baseAmount * 2.5 / 100)
+);
 
-                DB::commit();
+    // $amount = round(
+    // $paymentLink->amount +
+    // ($paymentLink->amount * 2.5 / 100)
+    // );
 
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Payment successfully recorded'
-                ]);
-            } catch (\Exception $e) {
+    $api = new Api(
+    env('RAZORPAY_API_KEY'),
+    env('RAZORPAY_API_SECRET')
+    );
 
-                Log::error('PAYMENT FAILED:', [
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
-                ]);
+    $order = $api->order->create([
+    'receipt' => $paymentLink->fallowp_unique_id,
+    'amount' => $amount * 100,
+    'currency' => 'INR',
+    'notes' => [
+        'user_id' => $paymentLink->user_id,
+        'fallowp_unique_id' => $paymentLink->fallowp_unique_id,
+    ]
+    ]);
 
-                // ⚠️ Important: Yaha response use mat karo
-                Payment::create([
-                    'payment_id' => $paymentResponse['razorpay_payment_id'] ?? null,
-                    'payment_method' => null,
-                    'currency' => null,
-                    'fallowp_unique_id' => $paymentResponse['fallowp_unique_id'] ?? null,
-                    'customer_name' => $paymentResponse['name'] ?? null,
-                    'user_id' => $paymentResponse['user_id'] ?? null,
-                    'customer_email' => null,
-                    'amount' => 0,
-                    'payment_status' => 'failed',
-                    'json_response' => json_encode(['error' => $e->getMessage()])
-                ]);
+    $data = [
+    'order_id' => $order['id'],
+    'fallowp_unique_id' => $paymentLink->fallowp_unique_id,
+    'user_id' => $paymentLink->user_id,
+    'email' => $paymentLink->email,
+    'amount' => $amount,
+    'name' => $student->name ?? ''
+    ];
 
-                DB::commit(); // ❗ rollback nahi karna (warna save nahi hoga)
-
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Payment failed but recorded'
-                ]);
-            }
-        } catch (\Throwable $th) {
-            DB::rollBack();
-
-            Log::error('PAYMENT_STORE_ERROR:', [
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString()
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'error' => 'Internal Server Error'
-            ], 500);
-        }
+    return view('admin.leads.payment-view', compact('data'));
     }
 
 
-    public function store(Request $request)
-{
-    DB::beginTransaction();
-
-    try {
-
-        Log::info('PAYMENT REQUEST DATA:', $request->all());
-
-        $paymentResponse = $request->input('response', []);
-
-        if (empty($paymentResponse['razorpay_payment_id'])) {
-
-            Log::error('No Payment ID Found');
-
-            return response()->json([
-                'success' => false,
-                'message' => 'No Payment ID Found'
-            ]);
-        }
-
-        // Duplicate Entry Check
-        $alreadyExists = Payment::where(
-            'payment_id',
-            $paymentResponse['razorpay_payment_id']
-        )->first();
-
-        if ($alreadyExists) {
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Payment already recorded'
-            ]);
-        }
-
-        $api = new Api(
-            env('RAZORPAY_API_KEY'),
-            env('RAZORPAY_API_SECRET')
-        );
+     public function store(Request $request)
+    {
+        DB::beginTransaction();
 
         try {
+
+            $paymentResponse = $request->response;
+
+            $api = new Api(
+                env('RAZORPAY_API_KEY'),
+                env('RAZORPAY_API_SECRET')
+            );
+
+            $attributes = [
+
+                'razorpay_order_id' =>
+                    $paymentResponse['razorpay_order_id'],
+
+                'razorpay_payment_id' =>
+                    $paymentResponse['razorpay_payment_id'],
+
+                'razorpay_signature' =>
+                    $paymentResponse['razorpay_signature']
+            ];
+
+            $api->utility->verifyPaymentSignature($attributes);
 
             $payment = $api->payment->fetch(
                 $paymentResponse['razorpay_payment_id']
             );
 
-            Log::info('PAYMENT FETCHED:', (array) $payment);
+            $alreadyExists = Payment::where(
+                'payment_id',
+                $payment->id
+            )->first();
 
-            /**
-             * IMPORTANT:
-             * Order create time payment_capture = 1 hai,
-             * isliye payment already captured hoga.
-             * Dobara capture mat karo.
-             */
+            if ($alreadyExists) {
 
-            $response = $payment;
+                DB::commit();
+
+                return response()->json([
+                    'success' => true
+                ]);
+            }
 
             Payment::create([
-                'payment_id'        => $response->id,
-                'payment_method'    => $response->method,
-                'currency'          => $response->currency,
-                'fallowp_unique_id' => $paymentResponse['fallowp_unique_id'] ?? null,
-                'customer_name'     => $paymentResponse['name'] ?? null,
-                'user_id'           => $paymentResponse['user_id'] ?? null,
-                'customer_email'    => $response->email,
-                'amount'            => $response->amount / 100,
-                'payment_status'    => $response->status,
-                'json_response'     => json_encode($response->toArray())
+
+                'payment_id'        => $payment->id,
+
+                'payment_method'    => $payment->method,
+
+                'currency'          => $payment->currency,
+
+                'fallowp_unique_id' =>
+                    $paymentResponse['fallowp_unique_id'],
+
+                'customer_name' =>
+                    $paymentResponse['name'],
+
+                'user_id' =>
+                    $paymentResponse['user_id'],
+
+                'customer_email' =>
+                    $payment->email,
+
+                'amount' =>
+                    $payment->amount / 100,
+
+                'payment_status' =>
+                    $payment->status,
+
+                'json_response' =>
+                    json_encode($payment->toArray())
             ]);
 
             DB::commit();
 
             return response()->json([
-                'success' => true,
-                'message' => 'Payment successfully recorded'
+                'success' => true
             ]);
 
         } catch (\Exception $e) {
 
-            Log::error('PAYMENT FAILED:', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
+            DB::rollBack();
 
-            Payment::create([
-                'payment_id'        => $paymentResponse['razorpay_payment_id'] ?? null,
-                'payment_method'    => null,
-                'currency'          => null,
-                'fallowp_unique_id' => $paymentResponse['fallowp_unique_id'] ?? null,
-                'customer_name'     => $paymentResponse['name'] ?? null,
-                'user_id'           => $paymentResponse['user_id'] ?? null,
-                'customer_email'    => null,
-                'amount'            => 0,
-                'payment_status'    => 'failed',
-                'json_response'     => json_encode([
-                    'error' => $e->getMessage()
-                ])
+            Log::error('PAYMENT ERROR', [
+                'message' => $e->getMessage()
             ]);
-
-            DB::commit();
 
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
             ]);
         }
-
-    } catch (\Throwable $th) {
-
-        DB::rollBack();
-
-        Log::error('PAYMENT_STORE_ERROR:', [
-            'error' => $th->getMessage(),
-            'trace' => $th->getTraceAsString()
-        ]);
-
-        return response()->json([
-            'success' => false,
-            'error' => $th->getMessage()
-        ], 500);
     }
-}
+
+
 
     public function success()
     {
         return view('admin.leads.payment-success');
+        
     }
 
 
