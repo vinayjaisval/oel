@@ -1139,6 +1139,7 @@ class LeadsManageCotroller extends Controller
                 $token = $this->generateToken();
                 $payment->token = $token;
                 $payment->expired_in = date('Y-m-d H:i:s', strtotime('+10 days'));
+                $payment->is_panding = 1;
                 $payment->save();
 
                 $paymentData = [
@@ -1497,7 +1498,9 @@ class LeadsManageCotroller extends Controller
                 'expired_in'           => date('Y-m-d H:i:s', strtotime('+ 10 days')),
                 'fallowp_unique_id'    => $uniqueId,
                 'due_date'             => $request->due_date ?? 0,
-                'is_panding'           => $request->is_panding ?? 0,
+                // 'is_panding'           => $request->is_panding ?? 0,
+                'is_panding'           => 0,
+
                 'panding'              => $pending,
                 'master_service'       => $paymentMode,
             ];
@@ -1572,7 +1575,9 @@ class LeadsManageCotroller extends Controller
                 'amount'               => $amount,
                 'fallowp_unique_id'    => $this->uniqidgenrate(),
                 'due_date'             => $request->due_date,
-                'is_panding'           => $request->is_panding ?? 0,
+                // 'is_panding'           => $request->is_panding ?? 0,
+                'is_panding'           =>  0,
+
                 'panding'              => $pending,
             ]);
 
@@ -1631,7 +1636,8 @@ class LeadsManageCotroller extends Controller
             'discount'            => $request->discount ?? 0,
             'created_at'          => now(),
             'due_date'            => $request->due_date ?? 0,
-            'is_panding'          => $request->is_panding ?? 0,
+            // 'is_panding'          => $request->is_panding ?? 0,
+              'is_panding'          => 0,
             'panding'             => $request->panding ?? 0,
         ];
 
@@ -1700,15 +1706,15 @@ class LeadsManageCotroller extends Controller
     ->first();
 
 
-    if ($paymentLink->is_panding == 1) {
+   if ((int)$paymentLink->is_panding === 1 && $paymentLink->panding > 0) {
     $baseAmount = $paymentLink->panding;
 } else {
     $baseAmount = $paymentLink->amount;
 }
 
-$amount = round(
-    $baseAmount + ($baseAmount * 2.5 / 100)
-);
+    $amount = round(
+        $baseAmount + ($baseAmount * 3 / 100)
+    );
 
     // $amount = round(
     // $paymentLink->amount +
@@ -1844,7 +1850,7 @@ $amount = round(
     public function success()
     {
         return view('admin.leads.payment-success');
-        
+
     }
 
 
