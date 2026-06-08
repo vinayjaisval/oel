@@ -1485,6 +1485,7 @@ class LeadsManageCotroller extends Controller
 
             $paymentLinkData = [
                 'token'                => $token,
+                'app_id'              => $request->student_id,
                 'user_id'              => $request->student_id,
                 'email'                => $studentdata->email,
                 'payment_type'         => $paymentType,
@@ -1563,6 +1564,7 @@ class LeadsManageCotroller extends Controller
             $payments = PaymentsLink::create([
                 'token'                => $this->generateToken(),
                 'user_id'              => $request->student_id,
+                'app_id'              => $request->student_id,
                 'email'                => $email,
                 'payment_type'         => $request->payment_type,
                 'sub_service'          => isset($request->sub_service) ? implode(',', $request->sub_service) : null,
