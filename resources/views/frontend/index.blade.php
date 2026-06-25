@@ -116,7 +116,7 @@
                     <div class="col-lg-5">
                         <div class="sec_air_Plane d-none d-lg-block">
                             <h1 class=" fw-bold">Dreaming of Studying <br>
-                                Abroad? <sapn class="text-black">We're Here to</sapn> <br>
+                                Abroad? <span class="text-black">We're Here to</span> <br>
                                 Guide You!</h1>
                             <div class="btns mt-5">
                                 <a href="{{url('contact-us')}}">
@@ -151,13 +151,13 @@
 </section>
 <section>
     <div class="marquee_section ">
-        <img src="{{asset('frontend/img/transparent gif.gif')}}">
+        <img src="{{asset('frontend/img/transparent.gif')}}">
     </div>
 </section>
 <section>
     <div class="marquee_section_text ">
         <marquee>
-            <P> <b>Study in Italy for FREE: 100% tuition waiver + €7,000 stipend<b> <a href="https://overseas.skylabserp.com/contact-us"> Apply Now</a> || <b> Study in the USA: Application Fee waiver + up to $9,840 scholarships –</b><a href="https://overseas.skylabserp.com/contact-us"> Apply Now </a> || <b>Study Master’s/MBA in the UK for just ₹12 lakhs:</b> <a href="https://overseas.skylabserp.com/contact-us"> Apply Now </a> || <b>Study in Barcelona! UK-quality education in €6,500/year, –</b> <a href="https://overseas.skylabserp.com/contact-us"> Apply Now </a> || <b>Study in South Korea: upto 100% scholarship!<b> <a href="https://overseas.skylabserp.com/contact-us"> Apply Now </a> || <b>Applications are currently open For March 2026 Intake-<b> <a href="https://overseas.skylabserp.com/contact-us"> Apply Now </a></P>
+            <P> <b>Study in Italy for FREE: 100% tuition waiver + €7,000 stipend<b> <a href="{{ url('contact-us') }}"> Apply Now</a> || <b> Study in the USA: Application Fee waiver + up to $9,840 scholarships –</b><a href="https://overseas.skylabserp.com/contact-us"> Apply Now </a> || <b>Study Master’s/MBA in the UK for just ₹12 lakhs:</b> <a href="https://overseas.skylabserp.com/contact-us"> Apply Now </a> || <b>Study in Barcelona! UK-quality education in €6,500/year, –</b> <a href="https://overseas.skylabserp.com/contact-us"> Apply Now </a> || <b>Study in South Korea: upto 100% scholarship!<b> <a href="https://overseas.skylabserp.com/contact-us"> Apply Now </a> || <b>Applications are currently open For March 2026 Intake-<b> <a href="https://overseas.skylabserp.com/contact-us"> Apply Now </a></P>
         </marquee>
     </div>
 </section>
@@ -167,7 +167,7 @@
             <div class="col-lg-12">
                 <div class="sec_air_Plane text-center mt-5 mb-5">
                     <h1 class="fw-bold">Dreaming of Studying <br>
-                        Abroad? <sapn class="text-black">We're Here to</sapn> <br>
+                        Abroad? <span class="text-black">We're Here to</span> <br>
                         Guide You!</h1>
                     <div class="btns mt-5">
                         <a href="{{url('contact-us')}}">
@@ -186,9 +186,9 @@
         <div class="students_form">
             <div class="container">
                 <div class="main_form_students">
-                    <h1 class="text-center heading text-center fw-bold">
+                    <h2 class="text-center heading text-center fw-bold">
                         WE TAKE STUDENTS FROM A STAGE OF
-                    </h1>
+                    </h2>
                     <P class="text-center frd mb-5">We are a dedicated team of experienced education counselors and registered visa agents, committed to guiding you through every stage of the admissions and visa process. Reach out to us today for personalized assistance and expert support..</P>
                 </div>
                 <div class="row g-4">
@@ -292,9 +292,9 @@
                 <!-- Founded In Section -->
                 <div class="col-12 col-md-4 mb-4">
                     <div class="founded_p">
-                        <img src="{{asset('frontend/img/Clip path group.png')}}" alt="flag" class="img-fluid">
+                        <img src="{{asset('frontend/img/Clip path group.png')}}" alt="Founded in 2013 Overseas Education Lane" class="img-fluid">
                         <div class="yr_txt mt-3">
-                            <h1 class="fw-bold">2013</h1>
+                            <h3 class="fw-bold">2013</h3>
                             <p class="fw-semibold text-black fd_s">Founded In</p>
                         </div>
                     </div>
@@ -316,8 +316,8 @@
                             <div class="counter_wrapper">
                                 <div class="counter_item text-center">
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <h1 class="counter fw-bold me-1" data-number="2500" data-speed="200">2500</h1>
-                                        <h1 class="fw-bold">+</h1>
+                                        <h3 class="counter fw-bold me-1" data-number="2500" data-speed="200">2500</h3>
+                                        <h3 class="fw-bold">+</h3>
                                     </div>
                                     <p class="fw-semibold text-black fd_s">Successful Students</p>
                                 </div>
@@ -329,14 +329,14 @@
                 <!-- Success Rate Section -->
                 <div class="col-12 col-md-4 mb-4">
                     <div class="founded_p">
-                        <img src="{{asset('frontend/img/SVG.png')}}" alt="svg" class="img-fluid">
+                        <img src="{{asset('frontend/img/SVG.png')}}" alt="99 Percent Student Success Rate" class="img-fluid">
                         <div class="yr_txt">
                             <div class="counter_wrapper">
                               
                                 <div class="counter_item text-center">
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <h1 class="counter fw-bold me-1" data-number="99" data-speed="0.84">99</h1>
-                                        <h1 class="fw-bold">%</h1>
+                                        <h3 class="counter fw-bold me-1" data-number="99" data-speed="0.84">99</h3>
+                                        <h3 class="fw-bold">%</h3>
                                     </div>
                                     <p class="fw-semibold text-black fd_s">Success Rate
                                     </p>
@@ -360,19 +360,19 @@
             </div>
             <div class="all_overses_edu  d-flex justify-content-center mt-md-4 gap-3">
                 <div class="all_img_education_int  px-md-3 " data-aos="fade-up" data-aos-duration="3000" class="aos-init aos-animate">
-                    <img src="{{asset('frontend/img/b5.png')}}" alt="bc">
+                    <img src="{{asset('frontend/img/b5.png')}}" alt="Transparent">
                 </div>
                 <div class="all_img_education_int  px-md-3 mt" data-aos="fade-up" data-aos-duration="3000" class="aos-init aos-animate">
-                    <img src="{{asset('frontend/img/b1.png')}}" alt="bc">
+                    <img src="{{asset('frontend/img/b1.png')}}" alt="Mutual Respect">
                 </div>
                 <div class="all_img_education_int  px-md-3  mt mtcp" data-aos="fade-up" data-aos-duration="3000" class="aos-init aos-animate">
-                    <img src="{{asset('frontend/img/b4.png')}}" alt="bc">
+                    <img src="{{asset('frontend/img/b4.png')}}" alt="Quality">
                 </div>
                 <div class="all_img_education_int  px-md-3 mt" data-aos="fade-up" data-aos-duration="3000" class="aos-init aos-animate">
-                    <img src="{{asset('frontend/img/b3.png')}}" alt="bc">
+                    <img src="{{asset('frontend/img/b3.png')}}" alt="Excellence">
                 </div>
                 <div class="all_img_education_int  px-md-3 mt bg_rotate" data-aos="fade-up" data-aos-duration="3000" class="aos-init aos-animate">
-                    <img src="{{asset('frontend/img/b2.png')}}" alt="bc">
+                    <img src="{{asset('frontend/img/b2.png')}}" alt="Customer Orientation">
                 </div>
             </div>
         </div>
@@ -574,7 +574,7 @@
          src="https://img.youtube.com/vi/{{ trim($videoId) }}/hqdefault.jpg"
          alt="Video Thumbnail">
    
-</figure>
+   </figure>
                             @endif
                         @endforeach
 
@@ -668,7 +668,7 @@
                             <p>Application Fees:{{($item->application_fee == 0) ? 'Free' : $item->application_fee}}</p>
                             <ul>
                                 <li>
-                                    <a href="">
+                                   <a href="{{ route('course-details',$item->id) }}">
                                         <img src="{{asset('frontend/img/Vector.png')}}">
                                         <span>{{substr($item->university_name->university_name ?? null, 0,25)}}</span>{{$item->university_name->country_name->name ?? null}}</a>
                                 </li>
@@ -782,7 +782,7 @@
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="lady_img d-none d-sm-block">
-                                        <img src="{{asset('/frontend/img/ub.png')}}" alt="untiled">
+                                        <img src="{{asset('/frontend/img/ub.png')}}" alt="Overseas">
                                     </div>
                                 </div>
                                 <div class="col-lg-4 ">
@@ -814,7 +814,7 @@
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="lady_img d-block d-sm-none">
-                                        <img src="{{asset('frontend/img/ub.png')}}" alt="untiled">
+                                        <img src="{{asset('frontend/img/ub.png')}}" alt="Programs Category">
                                     </div>
                                 </div>
                                 <div class="col-lg-4 ">
@@ -829,7 +829,7 @@
                                                     <a href="{{route('programs')}}"><button>ART & DESIGN</button></a>
                                                     <a href="{{route('programs')}}"><button>MEDIA</button></a>
                                                     <a href="{{route('programs')}}"><button>ENGINEERING</button></a>
-                                                    <a href="{{route('programs')}}"><button>LOW</button></a>
+                                                    <a href="{{route('programs')}}"><button>LAW</button></a>
                                                 </div>
                                                 <div class="all_design_btn  d-flex mt-3 gap-3">
                                                     <a href="{{route('programs')}}"><button>COMPUTER SCIENCE</button></a>
@@ -843,7 +843,7 @@
                                                 </div>
                                                 <div class="all_design_btn  d-flex mt-3 gap-3 justify-content-center">
                                                     <a href="{{route('programs')}}"><button>TOURISM HOSPITALITY </button></a>
-                                                    <a href="{{route('programs')}}"><button>MADICINE &amp; HEALTH</button></a>
+                                                    <a href="{{route('programs')}}"><button>MEDICINE &amp; HEALTH</button></a>
 
                                                 </div>
                                             </div>
@@ -897,7 +897,7 @@
                                         <div class="logos">
 
                                             @foreach($universitiesrtl as $value )
-                                            <img src="{{asset($value->logo)}}" alt="image">
+                                            <img src="{{asset($value->logo)}}" alt="Partner University Logo">
                                             @endforeach
                                         </div>
                                         <br>
@@ -930,7 +930,7 @@
                                                 </div>
                                             </div>
                                             <div class="rigt_img ">
-                                                <img src="{{asset('/frontend/img/cam1.png')}}" alt="image">
+                                                <img src="{{asset('/frontend/img/cam1.png')}}" alt="Partner University Logo">
 
                                             </div>
 

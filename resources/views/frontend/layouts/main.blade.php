@@ -2,41 +2,61 @@
 <html lang="en">
 
 <head>
-  
-   <title>@yield('title')</title>
+
+    <title>@yield('title','Overseas Education Lane')</title>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="Oe5_d5HHQe8RRzzpFWOXFaG4Z2zARTYHtgRyID8X1_c" />
-    <meta name="keywords" content="Study Abroad Consultant">
-   <meta name="meta_title" content="@yield('meta_title','Overseas Education Lane')">
-    <meta name="meta_keywords" content="@yield('meta_keywords','Overseas Education Lane')">
 
-    <meta name="meta_description" content="@yield('meta_description','Overseas Education Lane')">
+    <meta name="description"
+        content="@yield('meta_description',
+      'Overseas Education Lane can help you learn about your options for international education.')">
 
-    <meta name="description" content="Overseas Education Lane can help you learn about your options for international education. Our knowledgeable consultants provide individualized assistance to enhance your abroad education experience.">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta property="og:title" content="Study Abroad Consultant - Overseas Education Lane">
-    <meta property="og:site_name" content="Overseas Education Lane">
-    <meta property="og:url" content=https://www.overseaseducationlane.com />
-    <meta property="og:description" content="Unlock your international education potential with Overseas Education Lane. Our dedicated consultants provide personalized support for your study abroad experience">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content=https://www.overseaseducationlane.com/public/frontend/img/oel%20(1)%201.png>
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@Overseas Education Lane">
-    <meta name="twitter:description" content="Unlock your international education potential with Overseas Education Lane. Our dedicated consultants provide personalized support for your study abroad experience.">
+    <meta name="keywords"
+        content="@yield('meta_keywords','Study Abroad Consultant')">
+
+    <link rel="canonical"
+        href="{{ url()->current() }}" />
+
+    <meta property="og:title"
+        content="@yield('og_title', View::yieldContent('title'))">
+
+    <meta property="og:description"
+        content="@yield('og_description', View::yieldContent('meta_description'))">
+
+    <meta property="og:url"
+        content="{{ url()->current() }}">
+
+    <meta property="og:type"
+        content="website">
+
+    <meta property="og:image"
+        content="@yield('og_image', asset('frontend/img/default-og.jpg'))">
+
+    <meta name="twitter:card"
+        content="summary_large_image">
+
+    <meta name="twitter:title"
+        content="@yield('title','Overseas Education Lane')">
+
+    <meta name="twitter:description"
+        content="@yield('meta_description')">
+
+    <meta name="twitter:image"
+        content="@yield('og_image', asset('frontend/img/default-og.jpg'))">
     <link rel="stylesheet" href="{{asset('frontend/css/style.css')}}">
     <link id="favicon" rel="shortcut icon" type="image/png" href="https://www.overseaseducationlane.com/public/frontend/img/oel (1) 1.png" />
-    <link rel="canonical" href="https://www.overseaseducationlane.com/" />
+    <link rel="canonical" href="{{ url()->current() }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css" integrity="sha512-/VYneElp5u4puMaIp/4ibGxlTd2MV3kuUIroR3NSQjS2h9XKQNebRQiyyoQKeiGE9mRdjSCIZf9pb7AVJ8DhCg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha512-1cK78a1o+ht2JcaW6g8OXYwqpev9+6GqOkz9xmBN9iUUhIndKtxwILGWYOSibOKjLsEdjyjZvYDq/cZwNeak0w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{asset('frontend/css/costoms.css')}}">
-        <!-- Swiper CSS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-T9PKC9W1V2"></script>
-    
+
     <!-- End Google Tag Manager -->
 
     <script type="application/ld+json">
@@ -61,7 +81,7 @@
 </head>
 
 <body>
-  
+
     <div class="oel_main_title">
         <div class="oel_title">
             <div class="container">
@@ -95,27 +115,27 @@
                         <li><a class="apply-btn rounded fn border-0 p-2" data-bs-toggle="modal" data-bs-target="#exampleModal"> Check My Eligibility</a>
                         </li>
                         <li><button class="rounded apply-btn fn border-0 p-2" onclick="openWizard()" style="background-color: red;">
-                               <i class="fa-solid fa-video"></i>
-                                Book Online Counselling                            </button>
+                                <i class="fa-solid fa-video"></i>
+                                Book Online Counselling </button>
                         </li>
                         <li>
                             @if(Auth::check())
-                                <a href="{{ route('dashboard') }}">
-                                    <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('frontend/images/user.png') }}" 
-                                        alt="User" 
-                                        class="rounded-circle" 
-                                        style="width:40px; height:40px; object-fit:cover;" >
-                                </a>
+                            <a href="{{ route('dashboard') }}">
+                                <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('frontend/images/user.png') }}"
+                                    alt="User"
+                                    class="rounded-circle"
+                                    style="width:40px; height:40px; object-fit:cover;">
+                            </a>
                             @else
-                                <a href="{{ route('user-login') }}">
-                                    <button class="rounded apply-btn fn border-0 p-2">Login</button>
-                                </a>
+                            <a href="{{ route('user-login') }}">
+                                <button class="rounded apply-btn fn border-0 p-2">Login</button>
+                            </a>
                             @endif
                         </li>
                         <div class="students_img ">
                             <img src="{{ asset('frontend/img/new-list.png') }}">
                         </div>
-                   </ul>
+                    </ul>
                     <div class="nav_menu_btn" id="menu_btn">
                         <span><i class="ri-menu-line" onclick="toggleMenu()"></i></span>
                     </div>
@@ -126,12 +146,12 @@
     @include('frontend.layouts.onlinemeeting')
 
     @yield('content')
-  
+
     <section>
         <div class="bottom_footer bv_cs">
             <div class="fw_footer container text-white">
                 <div class="row  ratio-text-row">
-                    <div class="col-lg-2">
+                    <div class="col-lg-3">
                         <div class="bottom_heading_fooet">
                             <h5 class="text-uppercase fw-bold">Other Links</h5>
                             <ul class="mt-3">
@@ -149,7 +169,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-lg-2">
+                    <!-- <div class="col-lg-2">
                         <div class="bottom_heading_fooet">
                             <h5 class="text-uppercase fw-bold">Hot Courses</h5>
                             <ul class=" mt-3">
@@ -162,8 +182,8 @@
                                 <li><a href="{{ url('programs') }}">Business</a></li>
                             </ul>
                         </div>
-                    </div>
-                    <div class="col-lg-2">
+                    </div> -->
+                    <div class="col-lg-3">
                         <div class="bottom_heading_fooet">
                             <h5 class="text-uppercase fw-bold">Top Destination</h5>
                             <ul class="mt-3">
@@ -181,7 +201,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-lg-2">
+                    <div class="col-lg-3">
                         <div class="bottom_heading_fooet">
                             <h5 class="text-uppercase fw-bold">Our services</h5>
                             <ul class="mt-3">
@@ -196,7 +216,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-lg-3">
+                    <div class="col-lg-2">
                         <div class="bottom_heading_fooet list_st_grup">
                             <h5 class="text-uppercase fw-bold">Address</h5>
                             <ul class="mt-3">
@@ -218,7 +238,7 @@
                 <hr>
                 <div class="sub-footer mt-2 d-flex justify-content-between align-items-center">
                     <div class="sub-right fw-medium">
-                        <h6>Â© {{date('Y')}} Copyright <span>Overseas Education Lane</span> All Rights Reserved.</h6>
+                        <h6>© {{date('Y')}} Copyright <span>Overseas Education Lane</span> All Rights Reserved.</h6>
                     </div>
                     <div class="sub-left">
                         <a href="https://www.facebook.com/overseaseducationlane.oel/" style="color:white"> <i class="fa-brands fa-facebook-f mx-1"></i></a>
@@ -230,7 +250,7 @@
                 </div>
             </div>
         </div>
-       
+
     </section>
 
 
@@ -254,7 +274,7 @@
                             </div>
                             <h4 style="text-align:center">REQUEST AN ENQUIRY<br>we usually respond in seconds</h4>
                             <div class="modal-header">
-                                
+
                             </div>
                             <form class="mx-1 mx-md-4" id="enquiry_data" method="POST" autocomplete="off" novalidate="novalidate">
                                 <input type="hidden" name="_token" value="EtDPgMZlqrXdbXLqqmRFysU8re1mNncBoQPgqNA7">
@@ -280,7 +300,7 @@
                                         <div class="d-flex flex-row align-items-center mb-4">
                                             <i class="fas fa-phone-alt" style="width: 35px; font-size: 24px; color: #070758;"></i>
                                             <input type="tel" name="mobile_number" class="form-control" aria-describedby="emailHelp"
-                                                pattern="[0-9]{10}" placeholder="Mobile number" id="mobile_number" required  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+                                                pattern="[0-9]{10}" placeholder="Mobile number" id="mobile_number" required oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
                                         </div>
                                         <span style="margin-left: 37px; position: relative; top: -8px; font-size: 12px;">
                                             Please enter 10 digits only.
@@ -301,7 +321,7 @@
                                 <div class="d-flex flex-row align-items-center mb-4 otp-verify" style="display:none !important;">
                                     <i class="fas fa-key" style="width: 35px; font-size: 24px; color: #070758;"></i>
                                     <input type="number" name="otp" class="form-control" id="otp" required
-                                        aria-describedby="emailHelp" placeholder="Enter otp"  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);">
+                                        aria-describedby="emailHelp" placeholder="Enter otp" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);">
                                 </div>
                                 <span class="text-danger otp-error"></span>
 
@@ -341,24 +361,24 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"
         integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11.0.5/swiper-bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11.0.5/swiper-bundle.min.js"></script>
-  
+
     @yield('javascript_section')
 
     <script>
         AOS.init();
     </script>
-   <script>
+    <script>
         document.addEventListener("DOMContentLoaded", function() {
             var logosSlide = document.querySelector(".logos-slide");
             var logoSlider = document.querySelector(".logo-slider");
@@ -368,7 +388,7 @@
                 logoSlider.appendChild(copy);
             }
         });
-   </script>
+    </script>
     <script>
         const menuBtn = document.getElementById("menu_btn");
         const navLinks = document.getElementById("nav_links");
@@ -387,72 +407,72 @@
             });
         });
     </script>
-  <script>
-    $(document).ready(function () {
+    <script>
+        $(document).ready(function() {
 
-        // SEND OTP
-        $(document).on('click', '#verify_otp', function () {
+            // SEND OTP
+            $(document).on('click', '#verify_otp', function() {
 
-            let mobile = $('#mobile_number').val();
+                let mobile = $('#mobile_number').val();
 
-            if (!mobile || mobile.length != 10) {
-                alert('Enter valid 10 digit mobile number');
-                return;
-            }
-
-            $.ajax({
-                url: "{{ route('send-otp') }}",
-                type: "POST",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    phone_number: mobile
-                },
-                success: function (res) {
-
-                    if (res.success) {
-                        $('.otp-verify').show();
-                        $('.error-phone').text('');
-                        alert('OTP Sent');
-                    } else {
-                        $('.error-phone').text(res.message);
-                    }
+                if (!mobile || mobile.length != 10) {
+                    alert('Enter valid 10 digit mobile number');
+                    return;
                 }
-            });
 
-        });
+                $.ajax({
+                    url: "{{ route('send-otp') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        phone_number: mobile
+                    },
+                    success: function(res) {
 
-
-        // VERIFY OTP + REDIRECT
-        $(document).on('click', '#booking_enquiry', function () {
-
-            $.ajax({
-                url: "{{ route('verify-otp') }}",
-                type: "POST",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    phone_number: $('#mobile_number').val(),
-                    full_name: $('#full_name').val(),
-                    email: $('#email_name').val(),
-                    otp: $('#otp').val()
-                },
-
-                success: function (res) {
-
-                    if (res.success) {
-
-                        window.location.href = "{{ route('check-eligibility') }}";
-
-                    } else {
-                        $('.otp-error').text(res.message);
+                        if (res.success) {
+                            $('.otp-verify').show();
+                            $('.error-phone').text('');
+                            alert('OTP Sent');
+                        } else {
+                            $('.error-phone').text(res.message);
+                        }
                     }
-                }
+                });
 
             });
 
-        });
 
-    });
-  </script>
+            // VERIFY OTP + REDIRECT
+            $(document).on('click', '#booking_enquiry', function() {
+
+                $.ajax({
+                    url: "{{ route('verify-otp') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        phone_number: $('#mobile_number').val(),
+                        full_name: $('#full_name').val(),
+                        email: $('#email_name').val(),
+                        otp: $('#otp').val()
+                    },
+
+                    success: function(res) {
+
+                        if (res.success) {
+
+                            window.location.href = "{{ route('check-eligibility') }}";
+
+                        } else {
+                            $('.otp-error').text(res.message);
+                        }
+                    }
+
+                });
+
+            });
+
+        });
+    </script>
 
 </body>
 
