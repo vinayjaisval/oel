@@ -157,7 +157,7 @@
 <section>
     <div class="marquee_section_text ">
         <marquee>
-            <P> <b>Study in Italy for FREE: 100% tuition waiver + €7,000 stipend<b> <a href="{{ url('contact-us') }}"> Apply Now</a> || <b> Study in the USA: Application Fee waiver + up to $9,840 scholarships –</b><a href="https://overseas.skylabserp.com/contact-us"> Apply Now </a> || <b>Study Master’s/MBA in the UK for just ₹12 lakhs:</b> <a href="https://overseas.skylabserp.com/contact-us"> Apply Now </a> || <b>Study in Barcelona! UK-quality education in €6,500/year, –</b> <a href="https://overseas.skylabserp.com/contact-us"> Apply Now </a> || <b>Study in South Korea: upto 100% scholarship!<b> <a href="https://overseas.skylabserp.com/contact-us"> Apply Now </a> || <b>Applications are currently open For March 2026 Intake-<b> <a href="https://overseas.skylabserp.com/contact-us"> Apply Now </a></P>
+            <P> <b>Study in Italy for FREE: 100% tuition waiver + €7,000 stipend<b> <a href="{{ url('contact-us') }}"> Apply Now</a> || <b> Study in the USA: Application Fee waiver + up to $9,840 scholarships –</b><a href="{{ url('contact-us') }}"> Apply Now </a> || <b>Study Master’s/MBA in the UK for just ₹12 lakhs:</b> <a href="{{ url('contact-us') }}"> Apply Now </a> || <b>Study in Barcelona! UK-quality education in €6,500/year, –</b> <a href="{{ url('contact-us') }}"> Apply Now </a> || <b>Study in South Korea: upto 100% scholarship!<b> <a href="{{ url('contact-us') }}"> Apply Now </a> || <b>Applications are currently open For March 2026 Intake-<b> <a href="{{ url('contact-us') }}"> Apply Now </a></P>
         </marquee>
     </div>
 </section>
