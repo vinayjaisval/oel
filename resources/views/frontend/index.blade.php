@@ -394,48 +394,48 @@
                                 into reality. By aligning your studies with your unique goals,
                                 you'll be empowered to achieve both personal and professional growth on a global scale. </p>
                             <div class="all_btns d-none d-sm-block">
-                                <a href="{{url('universities?country=13')}}">
+                                <a href="{{url('universities?country=Australia')}}">
                                     <button class="border-0 text-white fw-light rounded p-2 px-3">Study in
                                         Australia</button>
                                 </a>
-                                <a href="{{url('universities?country=38')}}">
+                                <a href="{{url('universities?country=Canada')}}">
                                     <button class="border-0 text-white fw-light rounded p-2 px-3">Study in
                                         Canada</button>
                                 </a>
-                                <a href="{{url('universities?country=157')}}">
+                                <a href="{{url('universities?country=New Zealand')}}">
                                     <button class="border-0 text-white fw-light rounded  p-2 px-3 ">Study in New
                                         Zealand</button>
                                 </a>
-                                <a href="{{url('universities?country=231')}}">
+                                <a href="{{url('universities?country=United States')}}">
                                     <button class="border-0 text-white fw-light rounded p-2 px-3 pv">Study in
                                         USA</button>
                                 </a>
                             </div>
                             <div class="d-block d-sm-none all_btns text-center mt-5">
-                                <a href="{{url('universities?country=13')}}">
+                                <a href="{{url('universities?country=Australia')}}">
                                     <button class="border-0 text-white fw-light rounded p-2 px-3">Study in
                                         Australia</button>
                                 </a>
-                                <a href="{{url('universities?country=38')}}">
+                                <a href="{{url('universities?country=Canada')}}">
                                     <button class="border-0 text-white fw-light rounded p-2 px-3">Study in
                                         Canada</button>
                                 </a>
                             </div>
                             <div class="d-block d-sm-none all_btns text-center mt-3">
-                                <a href="{{url('universities?country=230')}}">
+                                <a href="{{url('universities?country=United Kingdom')}}">
                                     <button class="border-0 text-white fw-light rounded p-2 px-3 ">Study in UK</button>
                                 </a>
-                                <a href="{{url('universities?country=231')}}">
+                                <a href="{{url('universities?country=United States')}}">
                                     <button class="border-0 text-white fw-light rounded p-2 px-3 ">Study in USA</button>
                                 </a>
-                                <a href="{{url('universities?country=157')}}">
+                                <a href="{{url('universities?country=New Zealand')}}">
                                     <button class="border-0 text-white fw-light pgo rounded p-2 px-3 ">Study in New
                                         Zealand</button>
                                 </a>
                             </div>
 
                             <div class="all_btns mt-3 d-none d-sm-block">
-                                <a href="{{url('universities?country=230')}}">
+                                <a href="{{url('universities?country=United Kingdom')}}">
                                     <button class="border-0 text-white fw-light rounded p-2 px-3">Study in UK</button>
                                 </a>
                                 <a href="{{url('programs')}}">

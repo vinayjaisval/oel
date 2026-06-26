@@ -1038,6 +1038,7 @@ class FrontendController extends Controller
 
     public function course_details($id = null)
     {
+        
         $program_data = Program::where('id', $id)->with('university_name', 'educationLevelprogram', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')
             ->where('is_approved', 1)->first();
         $exam_text = DB::table('program_english_required')
@@ -1280,14 +1281,18 @@ class FrontendController extends Controller
 
     public function universities(Request $request)
     {
+       
         $country = Country::select('name', 'id')->where('is_active', 1)->get();
         $universities = University::select('id', 'university_name')->where('is_approved', 1)->get();
-
+        $country_name = Country::select('name', 'id')->where('is_active', 1)->where('name', $request->country )->first();
+     
+         $country_by_id =    $country_name->id ?? $request->country;
    
         if ($request->ajax()) {
             if ($request->has('university_name') || $request->has('country') || $request->has('country_name')) {
                 $country_id = $country->where('name', 'like', '%' . $request->country_name . '%')->pluck('id')->first();
                 $universities = University::select('universities.*')->with('country', 'Program:name', 'province', 'university_type', 'program.programLevel', 'program.programSubLevel', 'program.educationLevelprogram');
+                
                 if (!empty($request->university_name)) {
                     $universities = $universities->where('id', $request->university_name);
                 }
@@ -1295,8 +1300,8 @@ class FrontendController extends Controller
                     $universities = $universities->where('country_id', $country_id);
                 }
 
-                if (!empty($request->country)) {
-                    $universities = $universities->where('country_id', $request->country);
+                if (!empty($country_by_id)) {
+                    $universities = $universities->where('country_id', $country_by_id);
                 }
                 $universities = $universities->latest()->paginate(12);
             } else {
@@ -1360,6 +1365,7 @@ class FrontendController extends Controller
     // AJAX search for universities
     public function searchUniversities(Request $request)
     {
+       
 
         $term = $request->get('term', '');
 

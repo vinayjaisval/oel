@@ -147,111 +147,169 @@
 
     @yield('content')
 
-    <section>
-        <div class="bottom_footer bv_cs">
-            <div class="fw_footer container text-white">
-                <div class="row  ratio-text-row">
-                    <div class="col-lg-3">
-                        <div class="bottom_heading_fooet">
-                            <h5 class="text-uppercase fw-bold">Other Links</h5>
-                            <ul class="mt-3">
-                                <li><a href="{{ route('about-oel') }}">About OEL</a></li>
-                                <li><a href="{{ route('contact_us') }}">Contact Us</a></li>
-                                <li><a href="{{ route('all-blogs') }}">Blogs</a></li>
-                                <li><a href="{{ route('testimonials') }}">Testimonials</a></li>
-                                <li><a href="{{ route('frequently-asked-questions') }}">FAQ</a></li>
-                                <li><a href="{{ route('privacy-policy') }}">Privacy Policy</a></li>
-                                <li><a href="{{ route('terms-and-conditions') }}">Terms&Conditions</a></li>
-                                <li><a href="{{ route('user-login') }}">Franchise Login</a></li>
-                                <li><a href="{{ route('user-login') }}">Counselor Login</a></li>
-                                <li><a href="{{ route('user-login') }}">Student Login</a></li>
-                                <li><a href="{{ route('landing-page') }}">Apply Now</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <!-- <div class="col-lg-2">
-                        <div class="bottom_heading_fooet">
-                            <h5 class="text-uppercase fw-bold">Hot Courses</h5>
-                            <ul class=" mt-3">
-                                <li><a href="{{ url('programs') }}">Hospitality</a></li>
-                                <li><a href="{{ url('programs') }}">Nursing</a></li>
-                                <li><a href="{{ url('programs') }}">Design/Media</a></li>
-                                <li><a href="{{ url('programs') }}">Engineering</a></li>
-                                <li><a href="{{ url('programs') }}">Management</a></li>
-                                <li><a href="{{ url('programs') }}">Medicine</a></li>
-                                <li><a href="{{ url('programs') }}">Business</a></li>
-                            </ul>
-                        </div>
-                    </div> -->
-                    <div class="col-lg-3">
-                        <div class="bottom_heading_fooet">
-                            <h5 class="text-uppercase fw-bold">Top Destination</h5>
-                            <ul class="mt-3">
-                                <li><a href="{{url('universities?country=38')}}">Canada</a></li>
-                                <li><a href="{{url('universities?country=231')}}">USA</a></li>
-                                <li><a href="{{url('universities?country=13')}}">Australia</a></li>
-                                <li><a href="{{url('universities?country=230')}}">UK</a></li>
-                                <li><a href="{{url('universities?country=157')}}">New Zealand</a></li>
-                                <li><a href="{{url('universities?country=116')}}">South korea</a></li>
-                                <li><a href="{{url('universities?country=109')}}">Japan</a></li>
-                                <li><a href="{{url('universities?country=107')}}">Italy</a></li>
-                                <li><a href="{{url('universities?country=181')}}">Russia</a></li>
-                                <li><a href="{{url('universities?country=105')}}">Ireland</a></li>
-                                <li><a href="{{url('universities?country=82')}}">Germany</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="bottom_heading_fooet">
-                            <h5 class="text-uppercase fw-bold">Our services</h5>
-                            <ul class="mt-3">
-                                <li><a href="{{url('/testprepration')}}">IELTS/DET/TOEFL/PTE</a></li>
-                                <li><a href="{{url('/meetoel')}}">Free Counseling</a></li>
-                                <li><a href="{{url('/resumeevaluation')}}">LOR</a></li>
-                                <li><a href="{{url('/resumeevaluation')}}">SOP</a></li>
-                                <li><a href="{{url('/pretestprepration')}}">Other Exam</a></li>
-                                <li><a href="{{url('/financialcounselling')}}">Education Loan</a></li>
-                                <li><a href="{{url('/foreignexchange')}}">Forex</a></li>
-                                <li><a href="{{url('/admissionguidance')}}">Scholarship</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-2">
-                        <div class="bottom_heading_fooet list_st_grup">
-                            <h5 class="text-uppercase fw-bold">Address</h5>
-                            <ul class="mt-3">
-                                <li><img src="{{ asset('frontend/img/address.png') }}"><a href=""
-                                        class="mx-3">Overseas Education Lane</a>
-                                </li>
-                                <li><img src="{{ asset('frontend/img/phone.png') }}"><a href="tel:+91892992525"
-                                        class="mx-3">+(91) 892 992 2525</a>
-                                </li>
-                                <li><img src="{{ asset('frontend/img/enveloper.png') }}"><a href="mailto:info@overseaseducationlane.com"
-                                        class="mx-3">info@overseaseducationlane.com</a></li>
-                                <li><img src="{{ asset('frontend/img/enveloper.png') }}"><a href="mailto:help@overseaseducationlane.com"
-                                        class="mx-3">help@overseaseducationlane.com</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <hr>
-                <div class="sub-footer mt-2 d-flex justify-content-between align-items-center">
-                    <div class="sub-right fw-medium">
-                        <h6>© {{date('Y')}} Copyright <span>Overseas Education Lane</span> All Rights Reserved.</h6>
-                    </div>
-                    <div class="sub-left">
-                        <a href="https://www.facebook.com/overseaseducationlane.oel/" style="color:white"> <i class="fa-brands fa-facebook-f mx-1"></i></a>
-                        <a href="https://in.linkedin.com/in/overseaseducationlane?trk=public_profile_samename-profile" style="color:white"> <i class="fa-brands fa-linkedin-in mx-1"></i></a>
-                        <a href="https://www.youtube.com/@OverseasEducationLane1" style="color:white"><i class="fa-brands fa-youtube mx-1"></i></a>
-                        <a href="https://www.instagram.com/overseaseducation_lane/" style="color:white"> <i class="fa-brands fa-instagram mx-1"></i></a>
-                        <a href="https://twitter.com/LaneEducation" style="color:white"> <i class="fa-brands fa-twitter mx-1"></i> </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+   <section>
+    <div class="bottom_footer bv_cs py-5">
+        <div class="container text-white">
 
-    </section>
+            <div class="row g-4">
+
+                <!-- Other Links -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="bottom_heading_fooet">
+                        <h5 class="text-uppercase fw-bold">Other Links</h5>
+
+                        <ul class="footer-links mt-3">
+                            <li><a href="{{ route('about-oel') }}">About OEL</a></li>
+                            <li><a href="{{ route('contact_us') }}">Contact Us</a></li>
+                            <li><a href="{{ route('all-blogs') }}">Blogs</a></li>
+                            <li><a href="{{ route('testimonials') }}">Testimonials</a></li>
+                            <li><a href="{{ route('frequently-asked-questions') }}">FAQ</a></li>
+                            <li><a href="{{ route('privacy-policy') }}">Privacy Policy</a></li>
+                            <li><a href="{{ route('terms-and-conditions') }}">Terms & Conditions</a></li>
+                            <li><a href="{{ route('user-login') }}">Franchise Login</a></li>
+                            <li><a href="{{ route('user-login') }}">Counselor Login</a></li>
+                            <li><a href="{{ route('user-login') }}">Student Login</a></li>
+                            <li><a href="{{ route('landing-page') }}">Apply Now</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Top Destination -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="bottom_heading_fooet">
+                        <h5 class="text-uppercase fw-bold">Top Destinations</h5>
+
+                        <ul class="footer-links mt-3">
+                            <li><a href="{{url('universities?country=Canada')}}">Canada</a></li>
+                            <li><a href="{{url('universities?country=United States')}}">USA</a></li>
+                            <li><a href="{{url('universities?country=Australia')}}">Australia</a></li>
+                            <li><a href="{{url('universities?country=United Kingdom')}}">United Kingdom</a></li>
+                            <li><a href="{{url('universities?country=New Zealand')}}">New Zealand</a></li>
+                            <li><a href="{{url('universities?country=South Korea')}}">South Korea</a></li>
+                            <li><a href="{{url('universities?country=Japan')}}">Japan</a></li>
+                            <li><a href="{{url('universities?country=Italy')}}">Italy</a></li>
+                            <li><a href="{{url('universities?country=Russia')}}">Russia</a></li>
+                            <li><a href="{{url('universities?country=Ireland')}}">Ireland</a></li>
+                            <li><a href="{{url('universities?country=Germany')}}">Germany</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Services -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="bottom_heading_fooet">
+                        <h5 class="text-uppercase fw-bold">Our Services</h5>
+
+                        <ul class="footer-links mt-3">
+                            <li><a href="{{url('/testprepration')}}">IELTS / DET / TOEFL / PTE</a></li>
+                            <li><a href="{{url('/meetoel')}}">Free Counseling</a></li>
+                            <li><a href="{{url('/resumeevaluation')}}">LOR Assistance</a></li>
+                            <li><a href="{{url('/resumeevaluation')}}">SOP Assistance</a></li>
+                            <li><a href="{{url('/pretestprepration')}}">Other Exams</a></li>
+                            <li><a href="{{url('/financialcounselling')}}">Education Loan</a></li>
+                            <li><a href="{{url('/foreignexchange')}}">Forex Services</a></li>
+                            <!-- <li><a href="{{url('/admissionguidance')}}">Scholarships</a></li> -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Address -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="bottom_heading_fooet">
+                        <h5 class="text-uppercase fw-bold">Contact Us</h5>
+
+                        <ul class="footer-links mt-3">
+
+                            <li class="d-flex align-items-start">
+                                <img src="{{ asset('frontend/img/address.png') }}"
+                                     width="18"
+                                     height="18"
+                                     class="mt-1">
+                                <span class="ms-2">
+                                    Overseas Education Lane
+                                </span>
+                            </li>
+
+                            <li class="d-flex align-items-center">
+                                <img src="{{ asset('frontend/img/phone.png') }}"
+                                     width="18"
+                                     height="18">
+
+                                <a href="tel:+91892992525" class="ms-2">
+                                    +91 892 992 2525
+                                </a>
+                            </li>
+
+                            <li class="d-flex align-items-center">
+                                <img src="{{ asset('frontend/img/enveloper.png') }}"
+                                     width="18"
+                                     height="18">
+
+                                <a href="mailto:info@overseaseducationlane.com"
+                                   class="ms-2">
+                                    info@overseaseducationlane.com
+                                </a>
+                            </li>
+
+                            <li class="d-flex align-items-center">
+                                <img src="{{ asset('frontend/img/enveloper.png') }}"
+                                     width="18"
+                                     height="18">
+
+                                <a href="mailto:help@overseaseducationlane.com"
+                                   class="ms-2">
+                                    help@overseaseducationlane.com
+                                </a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <hr class="border-light my-4">
+
+            <!-- Bottom Footer -->
+            <div class="sub-footer d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start">
+
+                <div class="sub-right mb-3 mb-md-0">
+                    <h6 class="mb-0">
+                        © {{ date('Y') }}
+                        <span class="fw-bold">Overseas Education Lane</span>.
+                        All Rights Reserved.
+                    </h6>
+                </div>
+
+                <div class="sub-left d-flex gap-3">
+
+                    <a href="https://www.facebook.com/overseaseducationlane.oel/" target="_blank">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+
+                    <a href="https://in.linkedin.com/in/overseaseducationlane?trk=public_profile_samename-profile" target="_blank">
+                        <i class="fa-brands fa-linkedin-in"></i>
+                    </a>
+
+                    <a href="https://www.youtube.com/@OverseasEducationLane1" target="_blank">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+
+                    <a href="https://www.instagram.com/overseaseducation_lane/" target="_blank">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+
+                    <a href="https://twitter.com/LaneEducation" target="_blank">
+                        <i class="fa-brands fa-x-twitter"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</section>
 
 
     <section>
