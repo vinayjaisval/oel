@@ -44,6 +44,7 @@
 
     <meta name="twitter:image"
         content="@yield('og_image', asset('frontend/img/default-og.jpg'))">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{asset('frontend/css/style.css')}}">
     <link id="favicon" rel="shortcut icon" type="image/png" href="https://www.overseaseducationlane.com/public/frontend/img/oel (1) 1.png" />
     <link rel="canonical" href="{{ url()->current() }}" />
