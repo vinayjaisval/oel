@@ -44,7 +44,7 @@
                     <!-- Footer -->
                     <tr>
                         <td style="background:#eef2ff; padding:15px; text-align:center; font-size:12px; color:#666;">
-                            <p style="margin:0;">© {{ date('Y') }} Your Company. All rights reserved.</p>
+                            <p style="margin:0;">© {{ date('Y') }} Overseas Education Lane. All rights reserved.</p>
                         </td>
                     </tr>
 
