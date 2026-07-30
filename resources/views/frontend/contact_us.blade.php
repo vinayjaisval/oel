@@ -16,7 +16,7 @@
                     <div class="location-visit mb-4 d-flex gap-4">
                     <i class="fa fa-map-marker" aria-hidden="true"></i>
                     <span  class="fw-bold">Corporate office
-                 B-37, 1st FLOOR, -Sector 2 Noida, 201301</span>
+                Unit No. 616,6th Floor , Wave silver Tower, Sector - 18,  Noida, Uttar Pradesh    201301</span>
                     </div>
                     <!-- <div class="google-title mb-4">
                         <span  class="fw-bold">Open on Google Maps</span>
