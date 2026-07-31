@@ -21,6 +21,19 @@
             align-items: stretch;
         }
     }
+
+    /* Select2 Custom Styling */
+    .select2-container--default .select2-selection--single {
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        padding: 0.375rem 0.75rem;
+        min-height: 38px;
+    }
+
+    .select2-container--default.select2-container--focus .select2-selection--single {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
 </style>
 
 <section>
@@ -30,25 +43,37 @@
                 <div class="col-12 text-center">
                     <h1 class="fw-bold">Find your Program</h1>
                 </div>
-                <form action="{{ route('programs') }}" method="get">
+                <form action="{{ route('programs') }}" method="get" id="filter_form">
                     <div class="row g-2 mt-4">
+                        <!-- Country Dropdown (Static) -->
                         <div class="col-md-3 col-sm-6 col-12">
                             <select id="country_search" name="country" class="form-control">
                                 <option value="">--Select Country--</option>
-                                @foreach(\App\Models\Country::where('is_active', 1)->select('id','name')->get() as $c) <option value="{{ $c->id }}">{{ $c->name }}</option> @endforeach
+                                @foreach(\App\Models\Country::where('is_active', 1)->select('id','name')->get() as $c) 
+                                <option value="{{ \Illuminate\Support\Str::slug($c->name).'-'.$c->id }}">
+                                    {{ $c->name }}
+                                </option>
+                                @endforeach
                             </select>
                         </div>
 
+                        <!-- University Dropdown (Dynamic AJAX) -->
                         <div class="col-md-3 col-sm-6 col-12">
-                            <select id="university_search" name="university_id" class="form-control"></select>
+                            <select id="university_search" name="university_id" class="form-control">
+                                <option value="">Search University...</option>
+                            </select>
                         </div>
 
+                        <!-- Program Dropdown (Dynamic AJAX) -->
                         <div class="col-md-3 col-sm-6 col-12">
-                            <select id="program_search" name="program_id" class="form-control"></select>
+                            <select id="program_search" name="program_id" class="form-control">
+                                <option value="">Search Program...</option>
+                            </select>
                         </div>
 
+                        <!-- Search Button -->
                         <div class="col-md-3 col-sm-6 col-12">
-                            <button class="serch_btn w-100 border-0 text-white rounded px-4 py-2" style="background:#007bff;">
+                            <button type="submit" class="serch_btn w-100 border-0 text-white rounded px-4 py-2" style="background:#007bff;">
                                 Search
                             </button>
                         </div>
@@ -65,7 +90,7 @@
         <div class="container">
             <div class="row h-100 gy-4" id="program-data"></div>
             <div class="ajax-load text-center" style="display:none">
-                <i class="fa fa-spinner"></i> Loading ...
+                <i class="fa fa-spinner fa-spin"></i> Loading ...
             </div>
             <div class="no-data text-center mb-4" style="display:none">
                 <b>No data - last page</b>
@@ -81,9 +106,14 @@
 
 <script>
 $(document).ready(function () {
-    function getParams() {
-        return new URLSearchParams(window.location.search).toString();
-    }
+    
+    // ==========================================
+    // Helper Functions
+    // ==========================================
+    
+  function getParams() {
+    return $('#filter_form').serialize();
+}
 
     function renderPrograms(data) {
         let assetBaseUrl = "{{ asset('') }}/";
@@ -114,7 +144,7 @@ $(document).ready(function () {
                     <div class="uni_king">
                         <span>${item.university_name?.country_name?.name || ''} - ${item.programType || ''}</span>
                         <div class="deatils_view mt-2">
-                            <a href="{{ url('course-details') }}/${item.id}" class="btn btn-sm btn-outline-primary">View Details</a>
+                            <a href="course-details/${encodeURIComponent(item.name.replace(/\s+/g, '-'))}-${item.id}" class="btn btn-sm btn-outline-primary">View Details</a>
                         </div>
                     </div>
                 </div>
@@ -122,26 +152,40 @@ $(document).ready(function () {
         `).join('');
     }
 
-    function loadData(page) {
-        $.ajax({
-            url: `?page=${page}&${getParams()}`,
-            type: 'GET',
-            beforeSend: () => $('.ajax-load').show(),
-            success: (response) => {
-                $('.ajax-load').hide();
-                if (response.data.data.length === 0) {
-                    $('.no-data').show();
-                    return;
-                }
-                $('#program-data').append(renderPrograms(response.data.data));
-            }
-        });
-    }
+   function loadData(page) {
+    $.ajax({
+        url: "{{ route('programs') }}",
+        type: "GET",
+        data: $('#filter_form').serialize() + '&page=' + page,
+        beforeSend: function () {
+            $('.ajax-load').show();
+        },
+        success: function (response) {
+            $('.ajax-load').hide();
 
-    // Initial load
+            if (response.data.data.length === 0) {
+                $('.no-data').show();
+                return;
+            }
+
+            $('#program-data').append(renderPrograms(response.data.data));
+        },
+        error: function () {
+            $('.ajax-load').hide();
+        }
+    });
+}
+
+    // ==========================================
+    // Initial Load
+    // ==========================================
+    
     loadData(1);
 
-    // Infinite scroll
+    // ==========================================
+    // Infinite Scroll
+    // ==========================================
+    
     let page = 2, loading = false;
     $(window).scroll(function () {
         if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && !loading) {
@@ -151,9 +195,18 @@ $(document).ready(function () {
         }
     });
 
-    // Select2 dropdowns
-    $("#country_search").select2({ placeholder: "Select Country", allowClear: true, width: '100%' });
+    // ==========================================
+    // Select2 Initialization
+    // ==========================================
 
+    // Country Dropdown (Static)
+    $("#country_search").select2({
+        placeholder: "Select Country",
+        allowClear: true,
+        width: '100%'
+    });
+
+    // University Dropdown (AJAX Dynamic Search)
     $("#university_search").select2({
         placeholder: "Search University",
         allowClear: true,
@@ -162,13 +215,24 @@ $(document).ready(function () {
             url: "{{ route('ajax.universities') }}",
             dataType: 'json',
             delay: 250,
-            data: params => ({ term: params.term }),
-            processResults: data => ({
-                results: data.map(item => ({ id: item.id, text: item.university_name }))
-            })
+            data: function (params) {
+                return {
+                    term: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.map(item => ({
+                        id: item.id,      // e.g., "oxford-5"
+                        text: item.text   // e.g., "Oxford University"
+                    }))
+                };
+            },
+            cache: true
         }
     });
 
+    // Program Dropdown (AJAX Dynamic Search)
     $("#program_search").select2({
         placeholder: "Search Program",
         allowClear: true,
@@ -177,11 +241,47 @@ $(document).ready(function () {
             url: "{{ route('ajax.programs') }}",
             dataType: 'json',
             delay: 250,
-            data: params => ({ term: params.term }),
-            processResults: data => ({
-                results: data.map(item => ({ id: item.id, text: item.name }))
-            })
+            data: function (params) {
+                return {
+                    term: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.map(item => ({
+                        id: item.id,      // e.g., "bs-computer-science-12"
+                        text: item.text   // e.g., "BS Computer Science"
+                    }))
+                };
+            },
+            cache: true
         }
+    });
+
+    // ==========================================
+    // Form Submission
+    // ==========================================
+
+    $('#filter_form').on('submit', function (e) {
+        e.preventDefault();
+        
+        // Reset page number for new search
+        page = 1;
+        $('#program-data').html('');
+        $('.no-data').hide();
+        
+        // Load data with new filters
+        loadData(1);
+    });
+
+    // ==========================================
+    // Debug: Log selected values (Optional)
+    // ==========================================
+
+    $('#country_search, #university_search, #program_search').on('change', function () {
+        console.log('Country:', $('#country_search').val());
+        console.log('University:', $('#university_search').val());
+        console.log('Program:', $('#program_search').val());
     });
 });
 </script>

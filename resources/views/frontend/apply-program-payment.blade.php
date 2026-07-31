@@ -75,7 +75,7 @@
        <div class="program_details card_item">
           <div class="card_title">Selected Course/Program</div>
           <div class="program_name">
-             <div><a href="{{route('course-details',[$program_data->id])}}">{{$program_data->name}}</a></div>
+             <div><a href="{{ route('course-details', [str_replace(' ', '-', $program_data->name) . '-' . $program_data->id]) }}">{{$program_data->name}}</a></div>
              <div class="university_label">
                 <a href="">{{$program_data->university_name->university_name}}</a>
              </div>

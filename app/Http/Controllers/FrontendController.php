@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Mail\ContactMail;
 
-use App\Models\{Ads, Blog, Documents, GradingScheme, Contactus,OnlineCountry, AdditionalQualification, SchoolAttended, TestScore, Country, EducationLevel, EngProficiencyLevel, Fieldsofstudytype, Exam, Instagram, Payment, Program, ProgramDiscipline, ProgramLevel, ProgramSubdiscipline, ProgramSubLevel, Student, StudentByAgent, University, Faq, FeedBackVideo, PaymentsLink, ServiceLanding, Testimonials};
+use App\Models\{Ads, Blog, Documents, GradingScheme, Contactus, OnlineCountry, AdditionalQualification, SchoolAttended, TestScore, Country, EducationLevel, EngProficiencyLevel, Fieldsofstudytype, Exam, Instagram, Payment, Program, ProgramDiscipline, ProgramLevel, ProgramSubdiscipline, ProgramSubLevel, Student, StudentByAgent, University, Faq, FeedBackVideo, PaymentsLink, ServiceLanding, Testimonials};
 use App\Jobs\SendOTPJob;
 use App\Models\VerificationOtp;
 use App\Mail\SendOtp;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\{Auth, DB, Mail, RateLimiter, Log};
+use Illuminate\Support\Str;
 use Validator;
 use App\Models\SubServiceLanding;
 use Crypt;
@@ -42,21 +43,26 @@ class FrontendController extends Controller
 
             'ads' => Ads::select('image', 'title')->get(),
 
-            // 'program_level'=>ProgramLevel::select()->get(),
-            // 'program_sublevel'=>ProgramSubLevel::get(),
-
             'feedback_video' => FeedBackVideo::where('status', 1)->get(),
             'testimonials' => Testimonials::where('status', 1)->Select('profile_picture', 'designation', 'name', 'location', 'testimonial_desc')->where('status', 1)->take(6)->get(),
             'universitiesltl' => University::select('id', 'university_name', 'logo')->where('is_approved', 1)->take(16)->get(),
             'universitiesrtl' => University::select('id', 'university_name', 'logo')->where('is_approved', 1)->latest()->take(16)->get(),
             'country' => Country::select('name', 'id')->where('is_active', 1)->get(),
-            'online_country' => OnlineCountry::select('name', 'id','flag')->get()
+            'online_country' => OnlineCountry::select('name', 'id', 'flag')->get()
 
 
         ]);
     }
 
+    public function about_oel()
+    {
+        return view('frontend.about_oel');
+    }
 
+    public function contact_us()
+    {
+        return view('frontend.contact_us');
+    }
     public function get_testimonials(Request $request)
     {
 
@@ -66,9 +72,56 @@ class FrontendController extends Controller
         return response()->json($testimonials);
     }
 
-    public function termscondition()
+
+    public  function blogs()
+    {
+        $blogs = Blog::where('status', 1)
+            ->orderBy('created_at', 'desc')
+            ->paginate(12);
+        return view('frontend.blogs', compact('blogs'));
+    }
+
+    public function blog_details($title)
+    {
+        $blog = Blog::where('slug', $title)
+            ->where('status', 1)
+            ->first();
+
+        if (!$blog) {
+            abort(404);
+        }
+
+        return view('frontend.blog_details', compact('blog'));
+    }
+
+    public function testimonials()
+    {
+        $testimonials = Testimonials::where('status', 1)->get();
+        return view('frontend.testimonials', compact('testimonials'));
+    }
+
+
+  
+
+    public function frequently_asked_questions()
+    {
+        $faqs = Faq::where('status', 1)->get();
+        return view('frontend.faq', compact('faqs'));
+    }
+
+    public function privacy_policy()
+    {
+        return view('frontend.privacy_policy');
+    }
+
+      public function termscondition()
     {
         return view('frontend.termscondition');
+    }
+
+    public function program_offered()
+    {
+        return view('frontend.program-offered');
     }
 
 
@@ -80,33 +133,33 @@ class FrontendController extends Controller
         return view('frontend.service_details', compact('service_detials'));
     }
 
-   public function check_eligibility()
-{
-    // 🔒 OTP SECURITY CHECK
-    if (!session()->has('otp_verified')) {
-        return redirect('/');
+    public function check_eligibility()
+    {
+        // 🔒 OTP SECURITY CHECK
+        if (!session()->has('otp_verified')) {
+            return redirect('/');
+        }
+
+        $country = Country::select('name', 'id')
+            ->where('is_active', 1)
+            ->get();
+
+        $program_level = ProgramLevel::select('name', 'id')->get();
+
+        $sub_program_level = ProgramSubLevel::select('name', 'id', 'program_id')->get();
+
+        $program_discipline = ProgramDiscipline::select('name', 'id')->get();
+
+        $eng_proficiency_level = EngProficiencyLevel::select('name', 'id')->get();
+
+        return view('frontend.check-my-eligibility', compact(
+            'country',
+            'eng_proficiency_level',
+            'program_level',
+            'sub_program_level',
+            'program_discipline'
+        ));
     }
-
-    $country = Country::select('name', 'id')
-        ->where('is_active', 1)
-        ->get();
-
-    $program_level = ProgramLevel::select('name', 'id')->get();
-
-    $sub_program_level = ProgramSubLevel::select('name', 'id', 'program_id')->get();
-
-    $program_discipline = ProgramDiscipline::select('name', 'id')->get();
-
-    $eng_proficiency_level = EngProficiencyLevel::select('name', 'id')->get();
-
-    return view('frontend.check-my-eligibility', compact(
-        'country',
-        'eng_proficiency_level',
-        'program_level',
-        'sub_program_level',
-        'program_discipline'
-    ));
-}
 
     public function get_country(Request $request)
     {
@@ -122,8 +175,8 @@ class FrontendController extends Controller
         $programLevelIds = is_array($programLevelIds) ? $programLevelIds : explode(',', $programLevelIds);
         $programSubLevelIds = is_array($programSubLevelIds) ? $programSubLevelIds : explode(',', $programSubLevelIds);
 
-        $programLevelIds = array_filter($programLevelIds, fn ($id) => $id !== null && $id !== '');
-        $programSubLevelIds = array_filter($programSubLevelIds, fn ($id) => $id !== null && $id !== '');
+        $programLevelIds = array_filter($programLevelIds, fn($id) => $id !== null && $id !== '');
+        $programSubLevelIds = array_filter($programSubLevelIds, fn($id) => $id !== null && $id !== '');
 
         $educationLevelQuery = EducationLevel::query();
 
@@ -475,510 +528,9 @@ class FrontendController extends Controller
     }
 
 
-    public function course_university_old(Request $request)
-    {
-
-
-        $course = Program::where('is_approved', 1)->paginate(1);
-        $country = Country::select('name', 'id')->where('is_active', 1)->get();
-        $program_level = ProgramLevel::select('name', 'id')->get();
-        $sub_program_level = ProgramSubLevel::select('name', 'id', 'program_id')->get();
-        $program_discipline = ProgramDiscipline::select('name', 'id')->get();
-        $eng_proficiency_level = EngProficiencyLevel::select('name', 'id')->get();
-
-        $exam = Exam::select('name', 'id')->where('program_level_id', $request->program_level)->get();
-        DB::statement("SET SESSION group_concat_max_len = 1000000"); //  Increase limit
-
-
-        if ($request->ajax()) {
-
-
-            if ($request->has('country') || $request->has('intake') || $request->has('other_exam') || $request->has('program_level') ||  $request->has('program_sub_level') ||  $request->has('education_level') ||  $request->has('program_discipline') ||  $request->has('program_subdispline') ||  $request->has('eng_proficiency_level') ||  $request->has('eng_pro_input') ||  $request->has('other_exam')) {
-
-                $course = Program::with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)
-                    ->when($request->has('program_level'), function ($query) use ($request) {
-                        return $query->whereIn('program_level_id', explode(',', $request->program_level));
-                    })
-                    ->when($request->has('country'), function ($query) use ($request) {
-                        return $query->whereHas('university_name', function ($query) use ($request) {
-                            return $query->whereIn('country_id', explode(',', $request->country));
-                        });
-                    })
-                    ->when($request->has('intake'), function ($query) use ($request) {
-                        $intakes = array_map(function ($intake) {
-                            return str_pad($intake, 2, "0", STR_PAD_LEFT);
-                        }, explode(',', $request->intake));
-                        $query->whereIn('intake', $intakes);
-                    })
-                    ->when($request->has('other_exam'), function ($query) use ($request) {
-                        return $query->whereIn('other_exam', explode(',', $request->other_exam));
-                    })
-                    ->when($request->has('program_sub_level'), function ($query) use ($request) {
-                        return $query->whereIn('program_sub_level', explode(',', $request->program_sub_level));
-                    })
-                    ->when($request->has('education_level'), function ($query) use ($request) {
-                        return $query->whereIn('education_level_id', explode(',', $request->education_level));
-                    })
-                    ->when($request->has('program_discipline'), function ($query) use ($request) {
-                        return $query->whereIn('program_discipline', explode(',', $request->program_discipline));
-                    })
-                    ->when($request->has('program_subdispline'), function ($query) use ($request) {
-                        return $query->whereIn('program_subdiscipline', explode(',', $request->program_subdispline));
-                    })
-                    ->when($request->has('other_exam'), function ($query) use ($request) {
-                        return $query->whereIn('other_exam', explode(',', $request->other_exam));
-                    })
-                    ->paginate(12);
-
-                $applyProgramFilters = function ($query) use ($request) {
-                    $query->when($request->program_level, function ($query) use ($request) {
-                        $query->whereIn('program_level_id', explode(',', $request->program_level));
-                    })
-                        ->when($request->has('intake'), function ($query) use ($request) {
-                            return $query->whereIn('intake', explode(',', $request->intake));
-                        })
-                        ->when($request->has('other_exam'), function ($query) use ($request) {
-                            return $query->whereIn('other_exam', explode(',', $request->other_exam));
-                        })
-                        ->when($request->program_sub_level, function ($query) use ($request) {
-                            $query->whereIn('program_sub_level', explode(',', $request->program_sub_level));
-                        })
-                        ->when($request->education_level, function ($query) use ($request) {
-                            $query->whereIn('education_level_id', explode(',', $request->education_level));
-                        })
-                        ->when($request->program_discipline, function ($query) use ($request) {
-                            $query->whereIn('program_discipline', explode(',', $request->program_discipline));
-                        })
-                        ->when($request->program_subdiscipline, function ($query) use ($request) {
-                            $query->whereIn('program_subdiscipline', explode(',', $request->program_subdiscipline));
-                        });
-                };
-
-                $universities = University::select('universities.*')
-                    ->with([
-                        'country',
-                        'university_type',
-                        'program.programLevel',
-                        'program.programSubLevel',
-                        'program.educationLevelprogram'
-                    ])
-                    ->where('is_approved', 1) // ✅ Only approved universities
-                    ->selectSub(function ($query) use ($applyProgramFilters) {
-                        $query->from('program')
-                            ->selectRaw('COUNT(*)')
-                            ->whereColumn('universities.id', 'program.school_id')
-                            ->where(function ($query) use ($applyProgramFilters) {
-                                $applyProgramFilters($query);
-                            });
-                    }, 'program_count')
-                    ->addSelect(['program_ids' => function ($query) use ($applyProgramFilters) {
-                        $query->from('program')
-                            ->selectRaw('GROUP_CONCAT(DISTINCT id ORDER BY id ASC)')
-                            ->whereColumn('program.school_id', 'universities.id')
-                            ->where(function ($query) use ($applyProgramFilters) {
-                                $applyProgramFilters($query);
-                            });
-                    }])
-                    ->when($request->has('country'), function ($query) use ($request) {
-                        return $query->whereIn('country_id', explode(',', $request->country));
-                    })
-                    ->whereExists(function ($query) use ($applyProgramFilters) {
-                        $query->from('program')
-                            ->selectRaw('1')
-                            ->whereColumn('universities.id', 'program.school_id')
-                            ->where(function ($query) use ($applyProgramFilters) {
-                                $applyProgramFilters($query);
-                            });
-                    })
-
-                    ->paginate(12);
-
-                return response()->json(['data' => $universities, 'course_data' => $course]);
-            } else {
-
-                $user = Auth::user();
-
-                if (!empty($user)) {
-                    if ($user->hasRole('student')) {
-                        $student_data = DB::table('student')->where('user_id', $user->id)->first();
-
-                        $program_id = DB::table('education_history')->select('education_level_id')
-                            ->where('student_id', $student_data->id  ?? null)
-                            ->pluck('education_level_id')->toArray();
-
-                        $program_level_name = ProgramLevel::where('id', $program_id)->pluck('name')->first();
-                        $documents_id = Documents::where('name', 'like', '%' . $program_level_name . '%')->pluck('id')->first();
-                        $last_school_attended = SchoolAttended::where('student_id', $student_data->id)->where('documents', $documents_id)
-                            ->select('grading_scheme_id', 'max_score', 'grading_average')
-                            ->first();
-
-                        //$grading_scheme_id = explode('-', $last_school_attended->grading_scheme_id );
-                        $grading_scheme_id = [];
-
-                        if ($last_school_attended && isset($last_school_attended->grading_scheme_id)) {
-                            $grading_scheme_id = explode('-', $last_school_attended->grading_scheme_id);
-                        }
-
-                        $grading_scheme_value = end($grading_scheme_id);
-                        if ($grading_scheme_value == null) {
-                            $grading_scheme_id = GradingScheme::where('name', 'like', '%Out of 100%')->pluck('id')->toArray();
-                        } else {
-
-                            $grading_scheme_id = GradingScheme::where('name', 'like', '%Out of ' . $grading_scheme_value . '%')->pluck('id')->toArray();
-                        }
-
-                        $Additional_qualification = AdditionalQualification::where('student_id', $student_data->id)
-                            ->whereIn('type', ['GRE', 'GMAT'])
-                            ->select('type', 'total_score')
-                            ->get();
-                        $test_score = TestScore::where('student_id', $student_data->id)
-                            ->select('type', 'total_score')
-                            ->get();
-                        $test_score_additional_qualification = [];
-                        foreach ($test_score as $key => $value) {
-                            $test_score_additional_qualification[$value->type] = $value->total_score;
-                        }
-                        foreach ($Additional_qualification as $key => $value) {
-                            $test_score_additional_qualification[$value->type] = $value->total_score;
-                        }
-                        $test_scores = collect($test_score_additional_qualification)
-                            ->filter(function ($score) {
-                                return !is_null($score);
-                            });
-                        $program_id = array_map(function ($item) {
-                            if ($item == 1) {
-                                return 2;
-                            } elseif ($item == 2) {
-                                return 3;
-                            } elseif ($item == 3) {
-                                return 3;
-                            } elseif ($item == 4) {
-                                return 1;
-                            }
-                        }, $program_id);
-
-                        if (!empty($program_ids) || !empty($program_id) || !empty($student_data)) {
-                            $course = Program::with([
-                                'university_name',
-                                'programLevel',
-                                'university_name.country_name',
-                                'university_name.university_type_name'
-                            ])
-                                ->when(!empty($program_id), function ($query) use ($program_id) {
-                                    return $query->whereIn('program_level_id', $program_id);
-                                })
-                                ->when(!empty($grading_scheme_id), function ($query) use ($grading_scheme_id) {
-                                    return $query->whereIn('grading_scheme_id', $grading_scheme_id);
-                                })
-                                ->when(!empty($last_school_attended->grading_average), function ($query) use ($last_school_attended) {
-                                    return $query->where('grading_number', '<=', $last_school_attended->grading_average);
-                                })
-                                // ->when($test_scores->isNotEmpty(), function ($query) use ($test_scores) {
-                                //     $query->join('program_english_required', 'program.id', '=', 'program_english_required.program_id')
-                                //         ->where(function ($subQuery) use ($test_scores) {
-                                //             foreach ($test_scores as $type => $score) {
-                                //                 $subQuery->orWhere(function ($subQuery) use ($type, $score) {
-                                //                     $subQuery->where('program_english_required.type', $type)
-                                //                         ->where('program_english_required.overall_score', '<=', $score);
-                                //                 });
-                                //             }
-                                //         });
-                                // })
-                                ->when(!empty($student_data->work_experience), function ($query) use ($student_data) {
-                                    $query->where('work_experience', $student_data->work_experience);
-                                })
-                                ->where('is_approved', 1)
-                                ->paginate(12);
-
-
-                            $applyFilter = function ($query) use ($program_id, $grading_scheme_id, $last_school_attended, $test_scores, $student_data) {
-                                $query->when(!empty($program_id), function ($query) use ($program_id) {
-                                    $query->whereIn('program_level_id', $program_id);
-                                });
-                                $query->when(!empty($grading_scheme_id), function ($query) use ($grading_scheme_id) {
-                                    $query->whereIn('grading_scheme_id', $grading_scheme_id);
-                                });
-                                $query->when(!empty($last_school_attended->grading_average), function ($query) use ($last_school_attended) {
-                                    $query->where('grading_number', '<=', $last_school_attended->grading_average);
-                                });
-                                // $query->when(!empty($test_scores), function ($query) use ($test_scores) {
-                                //     $query->join('program_english_required as per', 'program.id', '=', 'per.program_id')
-                                //         ->where(function ($subQuery) use ($test_scores) {
-                                //             foreach ($test_scores as $type => $score) {
-                                //                 $subQuery->orWhere(function ($subQuery) use ($type, $score) {
-                                //                     $subQuery->where('per.type', $type)
-                                //                         ->where('per.overall_score', '<=', $score);
-                                //                 });
-                                //             }
-                                //         });
-                                // });
-                                $query->when(!empty($student_data->work_experience), function ($query) use ($student_data) {
-                                    $query->where('work_experience', $student_data->work_experience);
-                                });
-                            };
-
-                            $universities = University::select('universities.*')
-                                ->with([
-                                    'country',
-                                    'university_type',
-                                    'program' => function ($query) use ($applyFilter) {
-                                        $applyFilter($query);
-                                    }
-                                ])
-                                ->withCount([
-                                    'program' => function ($query) use ($applyFilter) {
-                                        $applyFilter($query);
-                                    }
-                                ])
-                                ->addSelect([
-                                    'program_ids' => function ($query) use ($applyFilter) {
-                                        $query->from('program')
-                                            ->selectRaw('GROUP_CONCAT(id)')
-                                            ->whereColumn('school_id', 'universities.id')
-                                            ->where(function ($query) use ($applyFilter) {
-                                                $applyFilter($query);
-                                            });
-                                    }
-                                ])
-                                ->whereHas('program', function ($query) use ($applyFilter) {
-                                    $applyFilter($query);
-                                })
-                                ->paginate(12);
-                        } else {
-                            $course = Program::with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)->paginate(12);
-                            $universities = University::withCount('program')->with('country', 'province', 'university_type', 'program.programLevel', 'program.programSubLevel', 'program.educationLevelprogram')
-                                ->where('country_id', $student_data->country_id ?? null)
-                                ->paginate(12);
-                        }
-                    } else {
-
-                        $course = Program::with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)->paginate(12);
-                        // $universities = University::withCount('program')->with('country', 'university_type', 'program.programLevel', 'program.programSubLevel', 'program.educationLevelprogram')->paginate(12);
-
-                        $universities = University::withCount('program')
-                            ->with('country', 'university_type', 'program.programLevel', 'program.programSubLevel', 'program.educationLevelprogram')
-                            ->addSelect(['program_ids' => function ($query) {
-                                $query->from('program')
-                                    ->selectRaw('GROUP_CONCAT(id)')
-                                    ->whereColumn('school_id', 'universities.id');
-                            }])
-                            ->paginate(12);
-                    }
-                } else {
-                    $course = Program::with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)->paginate(12);
-                    $universities = University::withCount('program')
-                        ->with('country', 'university_type', 'program.programLevel', 'program.programSubLevel', 'program.educationLevelprogram')
-                        ->addSelect(['program_ids' => function ($query) {
-                            $query->from('program')
-                                ->selectRaw('GROUP_CONCAT(id)')
-                                ->whereColumn('school_id', 'universities.id');
-                        }])
-                        ->paginate(12);
-                    return response()->json(['data' => $universities, 'course_data' => $course]);
-                }
-
-
-                return response()->json(['data' => $universities, 'course_data' => $course]);
-            }
-        }
-        return view('frontend.course-finder', compact('country', 'exam', 'program_level', 'program_discipline', 'eng_proficiency_level'));
-    }
 
 
 
-    public function send_otp_job($details)
-    {
-        dispatch(new SendOTPJob($details));
-    }
-
-    public function send_otp(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => [
-                'required|email',
-            ],
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
-        }
-        $email = request()->get('email');
-        $otp = rand(100000, 999999);
-        $exist_data = VerificationOtp::where("email", $email)->first();
-        if ($exist_data) {
-            VerificationOtp::where("email", $email)->delete();
-        }
-        session(['otp' => $otp]);
-
-        $smsmessage = "Your overseas education lane registration OTP is " . $otp;
-        $items = [
-            'method' => 'sms',
-            'api_key' => env('SMS_API_KEY'),
-            'to' => $request->phone_number,
-            'sender' => env('SMS_SENDER'),
-            'unicode' => 'auto',
-            'message' => $smsmessage,
-            'format' => 'json',
-            'otp' => $otp
-        ];
-
-        $data = VerificationOtp::create(['email' => $email, 'phone_number' => request()->input('phone_number'), 'email_otp' => $otp, 'type' => 'login']);
-        if ($email) {
-            try {
-                Mail::to($email)->queue(new SendOtp($otp));
-            } catch (\Exception $ex) {
-                $stack_trace = $ex->getTraceAsString();
-                $message = $ex->getMessage() . $stack_trace;
-                Log::error($message);
-            }
-        }
-
-
-        try {
-            Log::info('OTP sent successfully.', $items);
-
-            $this->send_otp_job($items); // Attempt to send OTP
-            session()->put('WithdrawEmailOtp', $otp); // Store OTP in session
-            Log::info('OTP sent successfully.');
-            return response()->json(['message' => 'OTP sent successfully.', 'success' => true]);
-        } catch (\Exception $e) {
-            // Log the exception if needed
-            Log::error('Error sending OTP: ' . $e->getMessage());
-
-            return response()->json(['message' => 'Failed to send OTP. Please try again later.', 'success' => false]);
-        }
-    }
-
-    public function send_otp_old(Request $request)
-    {
-
-
-
-        $validator = Validator::make($request->all(), [
-            'email' => [
-                'required|email',
-            ],
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
-        }
-        $email = request()->get('email');
-        $otp = rand(100000, 999999);
-        $exist_data = VerificationOtp::where("email", $email)->first();
-        if ($exist_data) {
-            VerificationOtp::where("email", $email)->delete();
-        }
-        session(['otp' => $otp]);
-        $smsmessage = "Your overseas education lane login OTP is " . $otp;
-        $items = [
-            'method' => 'sms',
-            'api_key' => env('SMS_API_KEY'),
-            'to' => $request->phone_number,
-            'sender' => env('SMS_SENDER'),
-            'unicode' => 'auto',
-            'message' => $smsmessage,
-            'format' => 'json',
-            'otp' => $otp
-        ];
-
-        $data = VerificationOtp::create(['email' => $email, 'phone_number' => request()->input('phone_number'), 'email_otp' => $otp, 'type' => 'login']);
-        if ($email) {
-            try {
-                Mail::to($email)->queue(new SendOtp($otp));
-            } catch (\Exception $ex) {
-                $stack_trace = $ex->getTraceAsString();
-                $message = $ex->getMessage() . $stack_trace;
-                Log::error($message);
-            }
-        }
-
-
-        try {
-            $this->send_otp_job($items); // Attempt to send OTP
-            session()->put('WithdrawEmailOtp', $otp); // Store OTP in session
-            return response()->json(['message' => 'OTP sent successfully.', 'success' => true]);
-        } catch (\Exception $e) {
-            // Log the exception if needed
-            Log::error('Error sending OTP: ' . $e->getMessage());
-
-            return response()->json(['message' => 'Failed to send OTP. Please try again later.', 'success' => false]);
-        }
-    }
-    public function verify_otp_old(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'otp' => 'required|numeric',
-            'email' => [
-                'required',
-                'email',
-                'unique:users,email',
-                'unique:student,email',
-                'unique:student_by_agent,email',
-            ],
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
-        }
-        $storedOtp = session('otp');
-        if ($request->otp == $storedOtp) {
-            session()->forget('otp');
-            VerificationOtp::where("email", $request->input("email"))->delete();
-            StudentByAgent::create([
-                'name' => $request->full_name,
-                'email' => $request->email,
-                'phone_number' => $request->phone_number,
-            ]);
-            return response()->json(['message' => 'OTP verified successfully.', 'success' => true]);
-        } else {
-            return response()->json(['message' => 'Invalid OTP.', 'success' => false], 401);
-        }
-    }
-
-        public function verify_otp(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'otp' => 'required|numeric',
-            'email' => [
-                'required',
-                'email',
-                'unique:users,email',
-                'unique:student,email',
-                'unique:student_by_agent,email',
-            ],
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
-        }
-
-        $storedOtp = session('otp');
-
-        if ($request->otp == $storedOtp) {
-
-            // ✅ OTP remove
-            session()->forget('otp');
-
-            // 🔥 IMPORTANT: OTP VERIFIED SESSION SET KARO
-            session(['otp_verified' => true]);
-
-            VerificationOtp::where("email", $request->email)->delete();
-
-            StudentByAgent::create([
-                'name' => $request->full_name,
-                'email' => $request->email,
-                'phone_number' => $request->phone_number,
-            ]);
-
-            return response()->json([
-                'message' => 'OTP verified successfully.',
-                'success' => true
-            ]);
-        }
-
-        return response()->json([
-            'message' => 'Invalid OTP.',
-            'success' => false
-        ], 401);
-    }
 
     public function view_program_data(Request $request, $id = null)
     {
@@ -1036,19 +588,71 @@ class FrontendController extends Controller
     }
 
 
-    public function course_details($id = null)
+    public function course_details($slug = null)
     {
-        
-        $program_data = Program::where('id', $id)->with('university_name', 'educationLevelprogram', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')
-            ->where('is_approved', 1)->first();
-        $exam_text = DB::table('program_english_required')
-            ->join('eng_proficiency_levels', 'program_english_required.type', '=', 'eng_proficiency_levels.id')
-            ->where('program_id', $id)->get();
+        if (!$slug) {
+            abort(404);
+        }
+
+        if (ctype_digit($slug)) {
+            $program_data = Program::with('university_name', 'educationLevelprogram', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')
+                ->where('id', $slug)
+                ->where('is_approved', 1)
+                ->first();
+
+            if (!$program_data) {
+                abort(404);
+            }
+
+            return redirect()->route('course-details', [$this->buildProgramDetailSlug($program_data)], 301);
+        }
+
+        $program_data = null;
+        $canonicalSlug = null;
+
+        if (preg_match('/-(\d+)$/', $slug, $matches)) {
+            $programId = $matches[1];
+
+            $program_data = Program::with('university_name', 'educationLevelprogram', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')
+                ->where('id', $programId)
+                ->where('is_approved', 1)
+                ->first();
+
+            if ($program_data) {
+                $canonicalSlug = $this->buildProgramDetailSlug($program_data);
+                if ($slug !== $canonicalSlug) {
+                    return redirect()->route('course-details', [$canonicalSlug], 301);
+                }
+            }
+        }
+
+        if (!$program_data) {
+            $courseName = str_replace('-', ' ', urldecode($slug));
+            $program_data = Program::with('university_name', 'educationLevelprogram', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')
+                ->where('name', $courseName)
+                ->where('is_approved', 1)
+                ->first();
+
+            if ($program_data) {
+                $canonicalSlug = $this->buildProgramDetailSlug($program_data);
+                return redirect()->route('course-details', [$canonicalSlug], 301);
+            }
+        }
 
         if (!$program_data) {
             abort(404);
         }
+
+        $exam_text = DB::table('program_english_required')
+            ->join('eng_proficiency_levels', 'program_english_required.type', '=', 'eng_proficiency_levels.id')
+            ->where('program_id', $program_data->id ?? 0)->get();
+
         return view('frontend.program-details', compact('program_data', 'exam_text'));
+    }
+
+    private function buildProgramDetailSlug($program)
+    {
+        return Str::slug($program->name) . '-' . $program->id;
     }
 
     public function apply_program_payment(Request $request, $student_id, $program_id)
@@ -1101,13 +705,13 @@ class FrontendController extends Controller
             'amount' => $fee,
         ]);
 
-     
+
 
         $currency = $rates['data']['INR'];
-        $basea=$currency * $fee;
+        $basea = $currency * $fee;
 
         $gst = ($basea * 18) / 100;
-       
+
         $razorpayCharge = ($basea * 3) / 100;
         $finalAmount = $basea + $razorpayCharge + $gst;
 
@@ -1281,18 +885,18 @@ class FrontendController extends Controller
 
     public function universities(Request $request)
     {
-       
+
         $country = Country::select('name', 'id')->where('is_active', 1)->get();
         $universities = University::select('id', 'university_name')->where('is_approved', 1)->get();
-        $country_name = Country::select('name', 'id')->where('is_active', 1)->where('name', $request->country )->first();
-     
-         $country_by_id =    $country_name->id ?? $request->country;
-   
+        $country_name = Country::select('name', 'id')->where('is_active', 1)->where('name', $request->country)->first();
+
+        $country_by_id =    $country_name->id ?? $request->country;
+
         if ($request->ajax()) {
             if ($request->has('university_name') || $request->has('country') || $request->has('country_name')) {
                 $country_id = $country->where('name', 'like', '%' . $request->country_name . '%')->pluck('id')->first();
                 $universities = University::select('universities.*')->with('country', 'Program:name', 'province', 'university_type', 'program.programLevel', 'program.programSubLevel', 'program.educationLevelprogram');
-                
+
                 if (!empty($request->university_name)) {
                     $universities = $universities->where('id', $request->university_name);
                 }
@@ -1314,8 +918,8 @@ class FrontendController extends Controller
     }
 
 
-   
-    public function programs(Request $request)
+
+    public function programs_old31(Request $request)
     {
         if ($request->ajax()) {
             $programs = Program::with([
@@ -1362,10 +966,82 @@ class FrontendController extends Controller
         return view('frontend.programs');
     }
 
+    
+    public function programs(Request $request)
+    {
+        // Extract numeric IDs from SEO-friendly parameters
+        $countryId = null;
+        if (!empty($request->country)) {
+            preg_match('/(\d+)$/', $request->country, $matches);
+            $countryId = $matches[1] ?? null;
+        }
+
+        $universityId = null;
+        if (!empty($request->university_id)) {
+            preg_match('/(\d+)$/', $request->university_id, $matches);
+            $universityId = $matches[1] ?? null;
+        }
+
+        $programId = null;
+        if (!empty($request->program_id)) {
+            preg_match('/(\d+)$/', $request->program_id, $matches);
+            $programId = $matches[1] ?? null;
+        }
+
+        if ($request->ajax()) {
+
+            $programs = Program::with([
+                'university_name:id,university_name,logo,country_id,testrequired',
+                'programLevel:id,name',
+                'university_name.country_name:id,name'
+            ])
+                ->select(
+                    'id',
+                    'name',
+                    'school_id',
+                    'program_level_id',
+                    'length',
+                    'application_fee',
+                    'tution_fee',
+                    'currency',
+                    'is_approved',
+                    'programType'
+                )
+                ->where('is_approved', 1)
+
+                ->when($countryId, function ($q) use ($countryId) {
+                    $q->whereHas('university_name', function ($sub) use ($countryId) {
+                        $sub->where('country_id', $countryId);
+                    });
+                })
+
+                ->when($universityId, function ($q) use ($universityId) {
+                    $q->where('school_id', $universityId);
+                })
+
+                ->when($request->course, function ($q) use ($request) {
+                    $q->where('name', 'like', '%' . $request->course . '%');
+                })
+
+                ->when($programId, function ($q) use ($programId) {
+                    $q->where('id', $programId);
+                })
+
+                ->latest()
+                ->paginate(12);
+
+            return response()->json([
+                'data' => $programs
+            ]);
+        }
+
+        return view('frontend.programs');
+    }
+
     // AJAX search for universities
     public function searchUniversities(Request $request)
     {
-       
+
 
         $term = $request->get('term', '');
 
@@ -1394,15 +1070,7 @@ class FrontendController extends Controller
         return response()->json($programs);
     }
 
-    public function about_oel()
-    {
-        return view('frontend.about_oel');
-    }
 
-    public function contact_us()
-    {
-        return view('frontend.contact_us');
-    }
 
     public function  user_query(Request $request)
     {
@@ -1430,65 +1098,11 @@ class FrontendController extends Controller
         return redirect()->back();
     }
 
-    public function storeContactusold(Request $request)
-    {
 
-
-        $validatedData = $request->validate([
-            'first_name' => 'required|regex:/^[a-zA-Z]+$/',
-            'last_name' => 'required|regex:/^[a-zA-Z]+$/',
-            'phone' => 'required|numeric',
-
-        ]);
-        Contactus::create([
-            "first_name" => $request->first_name,
-            "last_name" => $request->last_name,
-
-            // "phone_code" => $request->phone_cod e,
-            "phone" => $request->phone ?? null,
-            "preferred_study_destination" => $request->preferred_study_destination,
-            "preferred_study_year" => $request->preferred_study_year,
-            "preferred_study_intake" => $request->preferred_study_intake
-        ]);
-        try {
-            // Rate limiting check should be done first, before any email sending.
-            if (RateLimiter::tooManyAttempts('email:' . $request->ip(), 5)) {
-                return response()->json([
-                    'message' => 'Too many email requests. Please wait a minute before trying again.'
-                ], 429);
-            }
-            $country_name =  Country::where('id', $request->preferred_study_destination)->first();
-            $name = $country_name->name;
-            // Prepare the email details
-            $mail_details = [
-                'name' => $request->first_name,
-                "phone" => $request->phone,
-                "preferred_study_destination" => $name,
-                "preferred_study_year" => $request->preferred_study_year,
-                "preferred_study_intake" => $request->preferred_study_intake
-            ];
-
-            // Send the email to the admin
-            Mail::to('vinay.jaisval2015@gmail.com')->send(new ContactMail($mail_details));
-
-            // Send the email to the system's configured address
-            Mail::to(env('MAIL_FROM_ADDRESS'))->send(new ContactMail($mail_details));
-
-            // Record the attempt to prevent rate limiting
-            RateLimiter::hit('email:' . $request->ip());
-
-            // Flash success message to the session and redirect
-            session()->flash('message', 'We have successfully received your message. We are working hard to get in touch with you as soon as possible. Thank you for your patience.');
-            return redirect()->back();
-        } catch (\Exception $e) {
-            // Catch any errors that occur during the email sending process
-            return response()->json(['message' => 'Failed to send email: ' . $e->getMessage()], 500);
-        }
-    }
 
     public function storeContactus(Request $request)
     {
-       
+
         $validatedData = $request->validate([
             'first_name' => 'required|regex:/^[a-zA-Z]+$/',
             'last_name'  => 'required|regex:/^[a-zA-Z]+$/',
@@ -1554,48 +1168,8 @@ class FrontendController extends Controller
     }
 
 
-    public  function blogs()
-    {
-        $blogs = Blog::where('status', 1)
-        ->orderBy('created_at', 'desc')
-        ->paginate(12);
-        return view('frontend.blogs', compact('blogs'));
-    }
 
-    public function blog_details($title)
-    {
-        $blog = Blog::where('slug', $title)
-            ->where('status', 1)
-            ->first();
 
-        if (!$blog) {
-            abort(404);
-        }
-
-        return view('frontend.blog_details', compact('blog'));
-    }
-
-    public function testimonials()
-    {
-        $testimonials = Testimonials::where('status', 1)->get();
-        return view('frontend.testimonials', compact('testimonials'));
-    }
-
-    public function frequently_asked_questions()
-    {
-        $faqs = Faq::where('status', 1)->get();
-        return view('frontend.faq', compact('faqs'));
-    }
-
-    public function privacy_policy()
-    {
-        return view('frontend.privacy_policy');
-    }
-
-    public function program_offered()
-    {
-        return view('frontend.program-offered');
-    }
 
 
     public function programs_offered_filter(Request $request)
@@ -1619,5 +1193,126 @@ class FrontendController extends Controller
             'items' => $countries->items(),
             'total_count' => $countries->total(),
         ]);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    public function send_otp_job($details)
+    {
+        dispatch(new SendOTPJob($details));
+    }
+
+    public function send_otp(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => [
+                'required|email',
+            ],
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
+        }
+        $email = request()->get('email');
+        $otp = rand(100000, 999999);
+        $exist_data = VerificationOtp::where("email", $email)->first();
+        if ($exist_data) {
+            VerificationOtp::where("email", $email)->delete();
+        }
+        session(['otp' => $otp]);
+
+        $smsmessage = "Your overseas education lane registration OTP is " . $otp;
+        $items = [
+            'method' => 'sms',
+            'api_key' => env('SMS_API_KEY'),
+            'to' => $request->phone_number,
+            'sender' => env('SMS_SENDER'),
+            'unicode' => 'auto',
+            'message' => $smsmessage,
+            'format' => 'json',
+            'otp' => $otp
+        ];
+
+        $data = VerificationOtp::create(['email' => $email, 'phone_number' => request()->input('phone_number'), 'email_otp' => $otp, 'type' => 'login']);
+        if ($email) {
+            try {
+                Mail::to($email)->queue(new SendOtp($otp));
+            } catch (\Exception $ex) {
+                $stack_trace = $ex->getTraceAsString();
+                $message = $ex->getMessage() . $stack_trace;
+                Log::error($message);
+            }
+        }
+
+
+        try {
+            Log::info('OTP sent successfully.', $items);
+
+            $this->send_otp_job($items); // Attempt to send OTP
+            session()->put('WithdrawEmailOtp', $otp); // Store OTP in session
+            Log::info('OTP sent successfully.');
+            return response()->json(['message' => 'OTP sent successfully.', 'success' => true]);
+        } catch (\Exception $e) {
+            // Log the exception if needed
+            Log::error('Error sending OTP: ' . $e->getMessage());
+
+            return response()->json(['message' => 'Failed to send OTP. Please try again later.', 'success' => false]);
+        }
+    }
+
+
+    public function verify_otp(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'otp' => 'required|numeric',
+            'email' => [
+                'required',
+                'email',
+                'unique:users,email',
+                'unique:student,email',
+                'unique:student_by_agent,email',
+            ],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        $storedOtp = session('otp');
+
+        if ($request->otp == $storedOtp) {
+
+            // ✅ OTP remove
+            session()->forget('otp');
+
+            // 🔥 IMPORTANT: OTP VERIFIED SESSION SET KARO
+            session(['otp_verified' => true]);
+
+            VerificationOtp::where("email", $request->email)->delete();
+
+            StudentByAgent::create([
+                'name' => $request->full_name,
+                'email' => $request->email,
+                'phone_number' => $request->phone_number,
+            ]);
+
+            return response()->json([
+                'message' => 'OTP verified successfully.',
+                'success' => true
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Invalid OTP.',
+            'success' => false
+        ], 401);
     }
 }

@@ -135,7 +135,7 @@
                                                     <!-- <span>Kingdom</span> -->
                                                 </div>
                                                 <div class="details mt-3">
-                                                    <a href="{{url('university-details')}}/${item.id}">View Details</a><i class="fa-solid fa-arrow-right mx-2"></i>
+                                                    <a href="university-details/${encodeURIComponent(item.university_name.replace(/\s+/g, '-'))}-${item.id}">View Details</a><i class="fa-solid fa-arrow-right mx-2"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -182,12 +182,13 @@
                                                     <!-- <span>Kingdom</span> -->
                                                 </div>
                                                 <div class="details mt-3">
-                                                    <a href="{{url('university-details')}}/${item.id}">View Details</a><i class="fa-solid fa-arrow-right mx-2"></i>
+                                                    <a href="university-details/${encodeURIComponent(item.university_name.replace(/\s+/g, '-'))}-${item.id}">View Details</a><i class="fa-solid fa-arrow-right mx-2"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>`;
+
                        });
                        $('#university-data').append(html);
                    }

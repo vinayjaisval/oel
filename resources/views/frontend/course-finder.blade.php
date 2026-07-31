@@ -695,7 +695,7 @@
                     <li><i class="fa fa-tasks"></i> <b>Total Program:</b> ${programUrl}</li>
                 </ul>
                 <div class="bottom-part text-end">
-                    <a href="university-details/${item.id}" class="btn btn-outline-primary btn-sm">View Details <i class="flaticon-right-arrow"></i></a>
+                    <a href="university-details/${encodeURIComponent(item.university_name.replace(/\s+/g, '-'))}-${item.id}" class="btn btn-outline-primary btn-sm">View Details <i class="flaticon-right-arrow"></i></a>
                 </div>
             </div>
         </div><hr class="mt-10">
@@ -708,12 +708,12 @@
             <div class="courses-item course-logo card border-lg shadow-sm rounded-3">
                 <div class="course_card_logo_sec d-flex gap-5">
                     <div class="img-part" style="margin: 2px 5px;">
-                        <a href="{{url('course-details')}}/${item.id}">
+                        <a href="{{url('course-details')}}/${encodeURIComponent(item.name.replace(/\s+/g, '-'))}-${item.id}">
                             <img src="${window.location.origin}/public/${item.university_name?.logo || ''}" class="img-thumbnail university_logo" alt="university logo">
                         </a>
                     </div>
                     <div class="text-end flex-grow-1">
-                        <h5 class="fw-bold mb-1"><a href="{{url('course-details')}}/${item.id}">${item.name || ''}</a></h5>
+                        <h5 class="fw-bold mb-1"><a href="{{url('course-details')}}/${encodeURIComponent(item.name.replace(/\s+/g, '-'))}-${item.id}">${item.name || ''}</a></h5>
                         <a href="${item.university_name?.website || '#'}" class="text-muted">${item.university_name?.university_name || ''}</a>
                     </div>
                 </div>
@@ -726,7 +726,7 @@
                     </ul>
                     <small>Fees may vary according to university structure and policy</small>
                     <div class="bottom-part text-end mt-2">
-                        <a href="course-details/${item.id}" class="btn btn-outline-primary btn-sm">View Details <i class="flaticon-right-arrow"></i></a>
+                        <a href="course-details/${encodeURIComponent(item.name.replace(/\s+/g, '-'))}-${item.id}" class="btn btn-outline-primary btn-sm">View Details <i class="flaticon-right-arrow"></i></a>
                     </div>
                 </div>
             </div>

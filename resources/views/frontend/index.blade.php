@@ -668,7 +668,7 @@
                             <p>Application Fees:{{($item->application_fee == 0) ? 'Free' : $item->application_fee}}</p>
                             <ul>
                                 <li>
-                                   <a href="{{ route('course-details',$item->id) }}">
+                                   <a href="{{ route('course-details', [str_replace(' ', '-', $item->name) . '-' . $item->id]) }}">
                                         <img src="{{asset('frontend/img/Vector.png')}}">
                                         <span>{{substr($item->university_name->university_name ?? null, 0,25)}}</span>{{$item->university_name->country_name->name ?? null}}</a>
                                 </li>
@@ -678,7 +678,7 @@
                                    
                                 </div>
                                 <div class="details">
-                                    <a href="{{route('course-details',$item->id)}}">View Details</a><i class="fa-solid fa-arrow-right mx-2"></i>
+                                    <a href="{{ route('course-details', [str_replace(' ', '-', $item->name) . '-' . $item->id]) }}">View Details</a><i class="fa-solid fa-arrow-right mx-2"></i>
                                 </div>
                             </div>
                         </div>

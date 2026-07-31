@@ -32,8 +32,8 @@
                                        <tr>
                                           <td><a href="">{{$item->app_id}}</a></td>
                                           <td>{{$item->created_at}}</td>
-                                          <td><a class="text-success" href="{{url('university_details')}}/{{$item->program->university_name->id ?? null}}">{{$item->program->university_name->university_name ?? null}}</a></td>
-                                          <td><a class="text-info" href="{{route('course-details')}}/{{$item->program->id ?? null}}">{{$item->program->name ?? null}}</a> </td>
+                                          <td><a class="text-success" href="{{ route('view-university', [str_replace(' ', '-', $item->program->university_name->university_name ?? '') . '-' . ($item->program->university_name->id ?? '')]) }}">{{$item->program->university_name->university_name ?? null}}</a></td>
+                                          <td><a class="text-info" href="{{ route('course-details', [str_replace(' ', '-', $item->program->name ?? '') . '-' . ($item->program->id ?? '')]) }}">{{$item->program->name ?? null}}</a> </td>
                                           <td>
                                              @if((!empty($item->payments->payment_status) == 'success'))
                                              {{'Success'}}

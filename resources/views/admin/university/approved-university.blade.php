@@ -120,7 +120,7 @@
                         <td class="text-wrap">{{ $value->country->name ?? null }}</td>
                         <td class="text-wrap">{{ $value->province->name ?? null  }}</td>
                         <td class="text-end">
-                            <a class=" btn btn-success" href="{{ route('view-university', $value->id) }}" data-item-id="{{ $value->id }}">
+                            <a class=" btn btn-success" href="{{ route('view-university', [str_replace(' ', '-', $value->university_name) . '-' . $value->id]) }}" data-item-id="{{ $value->id }}">
                                 <i class="fa-solid fa-eye "></i> </a>
                         </td>
                         <td class="text-end">

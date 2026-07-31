@@ -87,31 +87,60 @@ Route::get('/clear-all', function () {
     });
     Route::get('/send-daily-report', [ReportController::class, 'sendDailyUserReport']);
 
-    Route::get('/', [FrontendController::class, 'index'])->name('index');
-    Route::post('/query_submit', [FrontendController::class, 'user_query'])->name('query');
-    Route::get('/apply-program', [FrontendController::class, 'course_university'])->name('check-eligible');
-    Route::post('/get-country-flags', [FrontendController::class, 'get_country'])->name('get-country-flags');
-    Route::post('/get-item-details', [FrontendController::class, 'get_country'])->name('get-item-details');
-    Route::post('get-program-sublevel', [ProgramController::class, 'get_program_sublevel'])->name('get-program-sublevel');
-    Route::post('get-education-level-data', [ProgramController::class, 'get_education_level'])->name('get-education-level-data');
-    Route::post('program-subdiscipline-data', [ProgramController::class, 'program_subdiscipline_data'])->name('program-subdiscipline-data');
-    Route::post('fetch-other-exam-data', [ProgramController::class, 'other_exam'])->name('fetch-other-exam-data');
-    Route::get('course-finder', [FrontendController::class, 'course_university'])->name('course-finder');
-    Route::get('fetch-university-course', [FrontendController::class, 'course_university'])->name('fetch-university-course');
-    Route::post('get-education-level-filter', [FrontendController::class, 'education_level_filter'])->name('get-education-level-filter');
-    Route::post('get-university-course', [FrontendController::class, 'get_university_course'])->name('get-university-course');
-    Route::get('course-details/{id?}', [FrontendController::class, 'course_details'])->name('course-details');
-    Route::get('view-program-data/{id?}', [FrontendController::class, 'view_program_data'])->name('view-program-data');
-    Route::get('selected-program-data', [FrontendController::class, 'view_program_data'])->name('view-program-data');
-    Route::get('apply-program-payment/{student_id}/{program_id}', [FrontendController::class, 'apply_program_payment'])->name('apply-program-payment');
-    Route::get('pay-later/{student_id}/{program_id}/{amount?}/{intake_month?}/{intake_year?}', [FrontendController::class, 'pay_later'])->name('pay-later');
+    // Route::get('/', [FrontendController::class, 'index'])->name('index');
+    // Route::post('/query_submit', [FrontendController::class, 'user_query'])->name('query');
+    // Route::get('/apply-program', [FrontendController::class, 'course_university'])->name('check-eligible');
+    // Route::post('/get-country-flags', [FrontendController::class, 'get_country'])->name('get-country-flags');
+    // Route::post('/get-item-details', [FrontendController::class, 'get_country'])->name('get-item-details');
+    // Route::post('get-program-sublevel', [ProgramController::class, 'get_program_sublevel'])->name('get-program-sublevel');
+    // Route::post('get-education-level-data', [ProgramController::class, 'get_education_level'])->name('get-education-level-data');
+    // Route::post('program-subdiscipline-data', [ProgramController::class, 'program_subdiscipline_data'])->name('program-subdiscipline-data');
+    // Route::post('fetch-other-exam-data', [ProgramController::class, 'other_exam'])->name('fetch-other-exam-data');
+    // Route::get('course-finder', [FrontendController::class, 'course_university'])->name('course-finder');
+    // Route::get('fetch-university-course', [FrontendController::class, 'course_university'])->name('fetch-university-course');
+    // Route::post('get-education-level-filter', [FrontendController::class, 'education_level_filter'])->name('get-education-level-filter');
+    // Route::post('get-university-course', [FrontendController::class, 'get_university_course'])->name('get-university-course');
+    // Route::get('course-details/{slug}', [FrontendController::class, 'course_details'])->name('course-details');
+    // Route::get('view-program-data/{id?}', [FrontendController::class, 'view_program_data'])->name('view-program-data');
+    // Route::get('selected-program-data', [FrontendController::class, 'view_program_data'])->name('view-program-data');
+    // Route::get('apply-program-payment/{student_id}/{program_id}', [FrontendController::class, 'apply_program_payment'])->name('apply-program-payment');
+    // Route::get('pay-later/{student_id}/{program_id}/{amount?}/{intake_month?}/{intake_year?}', [FrontendController::class, 'pay_later'])->name('pay-later');
    
-    Route::get('check-eligibility', [FrontendController::class, 'check_eligibility'])->name('check-eligibility');
+    // Route::get('check-eligibility', [FrontendController::class, 'check_eligibility'])->name('check-eligibility');
    
    
-   
+   // Add these routes alongside your existing routes
+
+Route::get('/', [FrontendController::class, 'index'])->name('index');
+Route::post('/query_submit', [FrontendController::class, 'user_query'])->name('query');
+
+// Updated: Support both GET and POST for apply-program
+Route::match(['get', 'post'], '/apply-program', [FrontendController::class, 'course_university'])->name('check-eligible');
+
+Route::post('/get-country-flags', [FrontendController::class, 'get_country'])->name('get-country-flags');
+Route::post('/get-item-details', [FrontendController::class, 'get_country'])->name('get-item-details');
+Route::post('get-program-sublevel', [ProgramController::class, 'get_program_sublevel'])->name('get-program-sublevel');
+Route::post('get-education-level-data', [ProgramController::class, 'get_education_level'])->name('get-education-level-data');
+Route::post('program-subdiscipline-data', [ProgramController::class, 'program_subdiscipline_data'])->name('program-subdiscipline-data');
+Route::post('fetch-other-exam-data', [ProgramController::class, 'other_exam'])->name('fetch-other-exam-data');
+
+// Updated: Support both GET and POST for course-finder
+Route::match(['get', 'post'], 'course-finder', [FrontendController::class, 'course_university'])->name('course-finder');
+Route::match(['get', 'post'], 'fetch-university-course', [FrontendController::class, 'course_university'])->name('fetch-university-course');
+
+Route::post('get-education-level-filter', [FrontendController::class, 'education_level_filter'])->name('get-education-level-filter');
+Route::post('get-university-course', [FrontendController::class, 'get_university_course'])->name('get-university-course');
+Route::get('course-details/{slug}', [FrontendController::class, 'course_details'])->name('course-details');
+
+// Updated: Support both GET and POST for view-program-data
+Route::match(['get', 'post'], 'view-program-data/{id?}', [FrontendController::class, 'view_program_data'])->name('view-program-data');
+Route::match(['get', 'post'], 'selected-program-data', [FrontendController::class, 'view_program_data'])->name('view-program-data');
+
+Route::get('apply-program-payment/{student_id}/{program_id}', [FrontendController::class, 'apply_program_payment'])->name('apply-program-payment');
+Route::get('pay-later/{student_id}/{program_id}/{amount?}/{intake_month?}/{intake_year?}', [FrontendController::class, 'pay_later'])->name('pay-later');
+Route::get('check-eligibility', [FrontendController::class, 'check_eligibility'])->name('check-eligibility');
     Route::get('universities/{page?}', [FrontendController::class, 'universities'])->name('universities');
-    Route::get("university-details/{id}", [UniversityController::class, 'view_university'])->name('view-university');
+    Route::get("university-details/{slug}", [UniversityController::class, 'view_university'])->name('view-university');
     Route::get('continue-course/{student_id}/{program_id}/{amount?}/{intake_month?}/{intake_year?}', [FrontendController::class, 'continue_course'])->name('continue-course');
     Route::get('programs/{page?}', [FrontendController::class, 'programs'])->name('programs');
     Route::get('about-oel', [FrontendController::class, 'about_oel'])->name('about-oel');
@@ -893,6 +922,7 @@ Route::get('/clear-all', function () {
     Route::get('/search-data', [FrontendController::class, '/search'])->name('/search-data');
 
     Route::get('/programs', [FrontendController::class, 'programs'])->name('programs');
+   
     Route::get('/ajax/universities', [FrontendController::class, 'searchUniversities'])->name('ajax.universities');
     Route::get('/ajax/programs', [FrontendController::class, 'searchPrograms'])->name('ajax.programs');
 

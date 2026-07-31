@@ -195,7 +195,7 @@
                     <div class="my-2">
                         <div class="r-w-s">
                             <h3 class="mb-10 c-desc-t-h-r">Programs</h3>
-                            <form action="{{ url('university-details/'.$about_university->id) }}" method="get" class="input-group col-md-12">
+                            <form action="{{ route('view-university', [str_replace(' ', '-', $about_university->university_name) . '-' . $about_university->id]) }}" method="get" class="input-group col-md-12">
                                 <input type="hidden" name="tab" value="programs">
                                 <input name="program_name" class="col-md-12 form-control py-2" type="search" id="example-search-input" value=""
                                     placeholder="Search Degree, Program or Courses">
@@ -243,7 +243,7 @@
                                                             <li class="user"><i class="fa fa-flag"></i> <span>{{$country->name ?? null}}</span> <span>-</span> <span>Full Time</span></li>
                                                         </ul>
                                                     </div>
-                                                    <div class="btn-part"><a href="{{url('course-details/'.$item->id)}}" class="btn btn-primary">View Details<i class="flaticon-right-arrow"></i></a></div>
+                                                    <div class="btn-part"><a href="{{ route('course-details', [str_replace(' ', '-', $item->name) . '-' . $item->id]) }}" class="btn btn-primary">View Details<i class="flaticon-right-arrow"></i></a></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -605,7 +605,7 @@
                                                 <h1>Programs</h1>
                                             </div>
                                             <form
-                                                action="{{ url('university-details/'.$about_university->id) }}"
+                                                action="{{ route('view-university', [str_replace(' ', '-', $about_university->university_name) . '-' . $about_university->id]) }}"
                                                 method="get" class="input-group col-md-12">
                                                 <input type="hidden" name="tab" value="programs">
                                                 <input name="program_name" class="col-md-12 form-control py-2"
@@ -669,7 +669,7 @@
                                                         </ul>
                                                     </div>
                                                     <div class="btn-part"><a
-                                                            href="{{ url('course-details/'.$item->id) }}"
+                                                            href="{{ url('course-details/' . str_replace(' ', '-', $item->name) . '-' . $item->id) }}"
                                                             class="btn btn-primary">View Details<i
                                                                 class="flaticon-right-arrow"></i></a></div>
                                                 </div>
