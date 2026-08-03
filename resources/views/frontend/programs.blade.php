@@ -59,14 +59,14 @@
 
                         <!-- University Dropdown (Dynamic AJAX) -->
                         <div class="col-md-3 col-sm-6 col-12">
-                            <select id="university_search" name="university_id" class="form-control">
+                            <select id="university_search" name="university" class="form-control">
                                 <option value="">Search University...</option>
                             </select>
                         </div>
 
                         <!-- Program Dropdown (Dynamic AJAX) -->
                         <div class="col-md-3 col-sm-6 col-12">
-                            <select id="program_search" name="program_id" class="form-control">
+                            <select id="program_search" name="program" class="form-control">
                                 <option value="">Search Program...</option>
                             </select>
                         </div>
@@ -125,7 +125,13 @@ $(document).ready(function () {
                             <img src="${assetBaseUrl}${item.university_name?.logo || ''}" alt="logo" style="max-width:60px;">
                         </div>
                         <div class="low_title fw-bold">
-                            <h2 class="fw-bold">${item.name}</h2>
+                            <a href="{{ url('/') }}/study-in-${slugify(item.university_name?.country_name?.name)}/${slugify(item.university_name?.university_name)}-${item.university_name?.id ?? 0}/${slugify(item.name)}-${item.id}"
+                            style="text-decoration: none; color: inherit;">
+
+                                <h2 class="fw-bold">
+                                    ${item.name}
+                                </h2>
+                            </a>
                             <span class="fw-medium">${item.university_name?.university_name || ''}</span>
                         </div>
                     </div>
@@ -144,8 +150,9 @@ $(document).ready(function () {
                     <div class="uni_king">
                         <span>${item.university_name?.country_name?.name || ''} - ${item.programType || ''}</span>
                         <div class="deatils_view mt-2">
-                            <a href="course-details/${encodeURIComponent(item.name.replace(/\s+/g, '-'))}-${item.id}" class="btn btn-sm btn-outline-primary">View Details</a>
-                        </div>
+                            <a href="{{ url('/') }}/study-in-${slugify(item.university_name?.country_name?.name)}/${slugify(item.university_name?.university_name)}-${item.university_name?.id ?? 0}/${slugify(item.name)}-${item.id}" class="btn btn-sm btn-outline-primary">View Details</a>
+                      
+                            </div>
                     </div>
                 </div>
             </div>
@@ -188,7 +195,7 @@ $(document).ready(function () {
     
     let page = 2, loading = false;
     $(window).scroll(function () {
-        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200 && !loading) {
+        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 1000 && !loading) {
             loading = true;
             loadData(page++);
             setTimeout(() => loading = false, 500);

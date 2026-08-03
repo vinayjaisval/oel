@@ -849,10 +849,13 @@ class UniversityController extends Controller
         }
     }
 
+   /**
+    * Legacy entry point. Every resolvable request 301s to the canonical
+    * study-in.university URL instead of rendering here directly.
+    */
    public function view_university(Request $request, $slug)
 {
     $about_university = null;
-    $canonicalSlug = null;
     $universityId = null;
 
     if (ctype_digit($slug)) {
@@ -862,6 +865,33 @@ class UniversityController extends Controller
     }
 
     if ($universityId) {
+        $about_university = University::where('id', $universityId)->first();
+    }
+
+    if (!$about_university && !ctype_digit($slug)) {
+        $universityName = str_replace('-', ' ', urldecode($slug));
+        $about_university = University::where('university_name', $universityName)->first();
+    }
+
+    // 🔥 Prevent null error in Blade
+    if (!$about_university) {
+        abort(404);
+    }
+
+    return redirect()->route('study-in.university', $this->buildStudyInUniversitySlugs($about_university), 301);
+}
+
+    public function studyInUniversity(Request $request, $country, $university)
+    {
+        $universityId = null;
+        if (preg_match('/(\d+)$/', $university, $matches)) {
+            $universityId = $matches[1];
+        }
+
+        if (!$universityId) {
+            abort(404);
+        }
+
         $about_university = University::with([
             'program',
             'program.programLevel',
@@ -870,53 +900,42 @@ class UniversityController extends Controller
             'university_type:id,name'
         ])->where('id', $universityId)->first();
 
-        if ($about_university) {
-            $canonicalSlug = $this->buildUniversityDetailSlug($about_university);
-            if ($slug !== $canonicalSlug) {
-                return redirect()->route('view-university', [$canonicalSlug], 301);
-            }
+        if (!$about_university) {
+            abort(404);
         }
-    }
 
-    if (!$about_university && !ctype_digit($slug)) {
-        $universityName = str_replace('-', ' ', urldecode($slug));
-        $about_university = University::with([
-            'program',
-            'program.programLevel',
-            'country:id,name',
-            'province:id,name',
-            'university_type:id,name'
-        ])->where('university_name', $universityName)->first();
-
-        if ($about_university) {
-            return redirect()->route('view-university', [$this->buildUniversityDetailSlug($about_university)], 301);
+        $canonical = $this->buildStudyInUniversitySlugs($about_university);
+        if ($country !== $canonical['country'] || $university !== $canonical['university']) {
+            return redirect()->route('study-in.university', $canonical, 301);
         }
+
+        $program = Program::with(
+            'university_name:id,logo,website,university_name,country_id',
+            'programSubLevel:program_id,name,id',
+            'educationLevelprogram:name,id,program_level_id,program_sublevel_id',
+            'educationLevel',
+            'currency_data:id,currency'
+        )
+        ->where('school_id', $about_university->id)
+        ->where('is_approved', 1)   // ✅ ONLY APPROVED PROGRAMS
+        ->when($request->program_name, function ($query) use ($request) {
+            $query->where('name', 'like', '%'.$request->program_name.'%');
+        })
+        ->get();
+
+        return view('frontend.university-details', compact('about_university','program'));
     }
-
-    // 🔥 Prevent null error in Blade
-    if (!$about_university) {
-        abort(404);
-    }
-
-    $program = Program::with(
-        'university_name:id,logo,website,university_name,country_id',
-        'programSubLevel:program_id,name,id',
-        'educationLevelprogram:name,id,program_level_id,program_sublevel_id',
-        'educationLevel',
-        'currency_data:id,currency'
-    )
-    ->where('school_id', $about_university->id)
-    ->where('is_approved', 1)   // ✅ ONLY APPROVED PROGRAMS
-    ->when($request->program_name, function ($query) use ($request) {
-        $query->where('name', 'like', '%'.$request->program_name.'%');
-    })
-    ->get();
-
-    return view('frontend.university-details', compact('about_university','program'));
-}
 
     private function buildUniversityDetailSlug($university)
     {
         return Str::slug($university->university_name) . '-' . $university->id;
+    }
+
+    private function buildStudyInUniversitySlugs($university)
+    {
+        return [
+            'country' => Str::slug($university->country->name ?? 'unknown'),
+            'university' => $this->buildUniversityDetailSlug($university),
+        ];
     }
 }

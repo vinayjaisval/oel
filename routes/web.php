@@ -900,7 +900,7 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
     
         });
 
-    Route::get('/study-in-south-korea/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'index'])->name('study-in-south-korea');
+    Route::get('/study-in-south-Korea/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'index'])->name('study-in-south-Korea');
     Route::get('/landing-page/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'index'])->name('landing-page');
    
    
@@ -919,6 +919,15 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
     Route::get('/study-in-usa/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'usa'])->name('study-in-usa');
     Route::get('/study-in-canada/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'canada'])->name('study-in-canada');
     Route::get('thank-you', [App\Http\Controllers\LandingPage\HomeController::class, 'thankss'])->name('thank-you');
+
+    // SEO-friendly university/program URLs: study-in-{country}/{university}[/{program}]
+    // The country segment excludes the reserved landing-page slugs above so those routes keep winning.
+    Route::get('study-in-{country}/{university}', [UniversityController::class, 'studyInUniversity'])
+        ->where('country', '(?!uk$|usa$|canada$|south-korea$)[a-z0-9-]+')
+        ->name('study-in.university');
+    Route::get('study-in-{country}/{university}/{program}', [FrontendController::class, 'studyInProgram'])
+        ->where('country', '(?!uk$|usa$|canada$|south-korea$)[a-z0-9-]+')
+        ->name('study-in.program');
     Route::get('/search-data', [FrontendController::class, '/search'])->name('/search-data');
 
     Route::get('/programs', [FrontendController::class, 'programs'])->name('programs');

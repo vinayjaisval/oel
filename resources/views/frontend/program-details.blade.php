@@ -1,6 +1,48 @@
 @extends('frontend.layouts.main')
-@section('title', "OverseasEducationLane")
+@section('title', ($program_data->name ?? 'Program') . ' at ' . ($program_data->university_name->university_name ?? '') . ' | Overseas Education Lane')
+@section('meta_description', 'Apply for ' . ($program_data->name ?? '') . ' at ' . ($program_data->university_name->university_name ?? '') . ' in ' . ($program_data->university_name->country_name->name ?? '') . '. Duration: ' . ($program_data->length ?? 'N/A') . ' months. Tuition: ' . ($program_data->currency ?? '') . ' ' . ($program_data->tution_fee ?? 'N/A') . '.')
+@section('og_title', $program_data->name ?? 'Program')
+@section('og_description', Str::limit(strip_tags($program_data->description ?? ''), 160))
+@section('og_image', $program_data->university_name->banner ? asset($program_data->university_name->banner) : asset('frontend/img/default-og.jpg'))
+@php
+    $studyInProgramSlugs = [
+        'country' => \Illuminate\Support\Str::slug($program_data->university_name->country_name->name ?? 'unknown'),
+        'university' => \Illuminate\Support\Str::slug($program_data->university_name->university_name ?? 'unknown') . '-' . ($program_data->university_name->id ?? 0),
+        'program' => \Illuminate\Support\Str::slug($program_data->name) . '-' . $program_data->id,
+    ];
+@endphp
+@section('canonical_url', route('study-in.program', $studyInProgramSlugs))
 @section('content')
+
+@push('structured_data')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": @json($program_data->name),
+    "description": @json(strip_tags($program_data->description ?? '')),
+    "provider": {
+        "@type": "CollegeOrUniversity",
+        "name": @json($program_data->university_name->university_name ?? ''),
+        "sameAs": @json($program_data->university_name->website ?? '')
+    }
+}
+</script>
+@endpush
+
+<section>
+    <div class="container mt-3">
+        @include('frontend.partials.breadcrumb', ['items' => [
+            ['label' => 'Home', 'url' => url('/')],
+            ['label' => $program_data->university_name->country_name->name ?? ''],
+            ['label' => $program_data->university_name->university_name ?? '', 'url' => route('study-in.university', [
+                'country' => $studyInProgramSlugs['country'],
+                'university' => $studyInProgramSlugs['university'],
+            ])],
+            ['label' => $program_data->name ?? ''],
+        ]])
+    </div>
+</section>
 
 <section>
     <div class="coursedetail_title">
@@ -163,82 +205,106 @@
 
                         @if(isset($matching_scores) && count($matching_scores) > 0 && ($program_data->grading_number <= (isset($last_school_attended) ? $last_school_attended->grading_average : 0)) && in_array($program_data->grading_scheme_id, $grading_scheme_id))
 
-                            <a href="{{ route('apply-program-payment', ['student_id' => $student_id->id, 'program_id' => $program_data->id]) }}" class=" d-flex justify-content-start btn btn-primary">Apply</a>
+    <a href="{{ route('apply-program-payment', ['student_id' => $student_id->id, 'program_id' => $program_data->id]) }}"
+        class="d-flex justify-content-start btn btn-primary">
+        Apply
+    </a>
 
-                            @else
-                            <select class="form-select" name="intake_month" id="intakeMonth">
-                                <option value="">Select Intake Month</option>
-                                <option value="jan">January</option>
-                                <option value="feb">February</option>
-                                <option value="mar">March</option>
-                                <option value="apr">April</option>
-                                <option value="may">May</option>
-                                <option value="jun">June</option>
-                                <option value="jul">July</option>
-                                <option value="aug">August</option>
-                                <option value="sep">September</option>
-                            </select>
+@else
 
-                            <br>
+    <select class="form-select" name="intake_month" id="intakeMonth">
+        <option value="">Select Intake Month</option>
+        <option value="jan">January</option>
+        <option value="feb">February</option>
+        <option value="mar">March</option>
+        <option value="apr">April</option>
+        <option value="may">May</option>
+        <option value="jun">June</option>
+        <option value="jul">July</option>
+        <option value="aug">August</option>
+        <option value="sep">September</option>
+    </select>
 
-                            <select class="form-select" name="intake_year" id="intakeYear">
-                                <option value="">Select Intake Year</option>
-                                <option value="2024">2024</option>
-                                <option value="2025">2025</option>
-                                <option value="2026">2026</option>
-                                <option value="2027">2027</option>
-                                <option value="2028">2028</option>
-                                <option value="2029">2029</option>
-                                <option value="2030">2030</option>
-                            </select>
+    <br>
 
-                            <br>
+    <select class="form-select" name="intake_year" id="intakeYear">
+        <option value="">Select Intake Year</option>
+        <option value="2026">2026</option>
+        <option value="2027">2027</option>
+        <option value="2028">2028</option>
+        <option value="2029">2029</option>
+        <option value="2030">2030</option>
+    </select>
 
-                            <a href="{{ route('apply-program-payment', ['student_id' => $student_id->id, 'program_id' => $program_data->id]) }}"
-                                id="applyBtn" class="btn btn-primary btn-lg" style="pointer-events: none; opacity: 0.5;">Apply</a>
+    <br>
 
-                            <script>
-                                // Function to check if both intake month and year are selected and enable/disable the Apply button
-                                document.getElementById('intakeMonth').addEventListener('change', function() {
-                                    checkIfFieldsAreSelected();
-                                });
+    <a href="{{ route('apply-program-payment', ['student_id' => $student_id->id, 'program_id' => $program_data->id]) }}"
+        id="applyBtn"
+        class="btn btn-primary btn-lg"
+        style="pointer-events:none;opacity:0.5;">
+        Apply
+    </a>
 
-                                document.getElementById('intakeYear').addEventListener('change', function() {
-                                    checkIfFieldsAreSelected();
-                                });
+    <script>
+        const intakeMonth = document.getElementById('intakeMonth');
+        const intakeYear = document.getElementById('intakeYear');
+        const applyBtn = document.getElementById('applyBtn');
 
-                                function checkIfFieldsAreSelected() {
-                                    var intakeMonth = document.getElementById('intakeMonth').value;
-                                    var intakeYear = document.getElementById('intakeYear').value;
-                                    var applyBtn = document.getElementById('applyBtn');
+        const monthMap = {
+            jan: 0,
+            feb: 1,
+            mar: 2,
+            apr: 3,
+            may: 4,
+            jun: 5,
+            jul: 6,
+            aug: 7,
+            sep: 8
+        };
 
-                                    // If both month and year are selected, enable the Apply button
-                                    if (intakeMonth && intakeYear) {
-                                        applyBtn.style.pointerEvents = 'auto';
-                                        applyBtn.style.opacity = 1;
-                                    } else {
-                                        applyBtn.style.pointerEvents = 'none'; // Disable the Apply button
-                                        applyBtn.style.opacity = 0.5; // Reduce opacity to indicate it's disabled
-                                    }
-                                }
+        // Enable/Disable Apply button
+        function checkIfFieldsAreSelected() {
+            if (intakeMonth.value && intakeYear.value) {
+                applyBtn.style.pointerEvents = 'auto';
+                applyBtn.style.opacity = '1';
+            } else {
+                applyBtn.style.pointerEvents = 'none';
+                applyBtn.style.opacity = '0.5';
+            }
+        }
 
-                                // Modify the URL with both selected intake month and year when the Apply button is clicked
+        intakeMonth.addEventListener('change', checkIfFieldsAreSelected);
+        intakeYear.addEventListener('change', checkIfFieldsAreSelected);
 
-                                document.getElementById('applyBtn').addEventListener('click', function(event) {
-                                    var intakeMonth = document.getElementById('intakeMonth').value;
-                                    var intakeYear = document.getElementById('intakeYear').value;
-                                    var url = this.href;
+        applyBtn.addEventListener('click', function(event) {
 
-                                    // If both intake month and year are selected, append them to the URL
-                                    if (intakeMonth && intakeYear) {
-                                        url += `?intake_month=${intakeMonth}&intake_year=${intakeYear}`;
-                                    }
+            event.preventDefault();
 
-                                    // Update the href with the modified URL
-                                    this.href = url;
-                                });
-                            </script>
-                            @endif
+            const selectedMonth = monthMap[intakeMonth.value];
+            const selectedYear = parseInt(intakeYear.value);
+
+            const today = new Date();
+            const currentMonth = today.getMonth(); // 0 = Jan
+            const currentYear = today.getFullYear();
+
+            // Past intake check
+            if (
+                selectedYear < currentYear ||
+                (selectedYear === currentYear && selectedMonth < currentMonth)
+            ) {
+                alert("This intake is no longer available. Please select the current or a future intake.");
+                return;
+            }
+
+            // Redirect
+            let url = "{{ route('apply-program-payment', ['student_id' => $student_id->id, 'program_id' => $program_data->id]) }}";
+            url += "?intake_month=" + intakeMonth.value + "&intake_year=" + intakeYear.value;
+
+            window.location.href = url;
+        });
+    </script>
+
+@endif
                             @endif
                             @endif
                             @else

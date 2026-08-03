@@ -55,6 +55,7 @@ class AuthenticatedSessionController extends Controller
 
     public function sendOTP(Request $request)
     {
+       
         $request->validate([
             'email' => 'required',
         ]);

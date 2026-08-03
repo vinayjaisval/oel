@@ -194,6 +194,21 @@ class FrontendController extends Controller
     }
 
 
+    /**
+     * Extract numeric ids from an "seo-friendly" comma list such as
+     * "canada-14,india-1" (or a plain "14,1" list) back into raw ids.
+     */
+    private function extractIdsFromSeoValue($value)
+    {
+        return array_values(array_filter(array_map(function ($token) {
+            $token = trim($token);
+            if ($token === '') {
+                return null;
+            }
+            return preg_match('/(\d+)$/', $token, $matches) ? $matches[1] : $token;
+        }, explode(',', $value))));
+    }
+
     public function course_university(Request $request)
     {
 
@@ -220,7 +235,7 @@ class FrontendController extends Controller
                     })
                     ->when($request->has('country'), function ($query) use ($request) {
                         return $query->whereHas('university_name', function ($query) use ($request) {
-                            return $query->whereIn('country_id', explode(',', $request->country));
+                            return $query->whereIn('country_id', $this->extractIdsFromSeoValue($request->country));
                         });
                     })
                     ->when($request->has('intake'), function ($query) use ($request) {
@@ -236,7 +251,7 @@ class FrontendController extends Controller
                         return $query->whereIn('program_sub_level', explode(',', $request->program_sub_level));
                     })
                     ->when($request->has('education_level'), function ($query) use ($request) {
-                        return $query->whereIn('seducation_level_id', explode(',', $request->education_level));
+                        return $query->whereIn('education_level_id', explode(',', $request->education_level));
                     })
                     ->when($request->has('program_discipline'), function ($query) use ($request) {
                         return $query->whereIn('program_discipline', explode(',', $request->program_discipline));
@@ -306,7 +321,7 @@ class FrontendController extends Controller
                         }
                     ])
                     ->when($request->has('country'), function ($query) use ($request) {
-                        return $query->whereIn('country_id', explode(',', $request->country));
+                        return $query->whereIn('country_id', $this->extractIdsFromSeoValue($request->country));
                     })
                     ->whereExists(function ($query) use ($applyProgramFilters) {
                         $query->from('program')
@@ -534,7 +549,7 @@ class FrontendController extends Controller
 
     public function view_program_data(Request $request, $id = null)
     {
-        $programIds = $request->query('selected_program_id');
+        $programIds = $request->input('selected_program_id');
 
 
         $programIdsArray = explode(',', $programIds);
@@ -588,6 +603,10 @@ class FrontendController extends Controller
     }
 
 
+    /**
+     * Legacy entry point. Every resolvable request 301s to the canonical
+     * study-in.program URL instead of rendering here directly.
+     */
     public function course_details($slug = null)
     {
         if (!$slug) {
@@ -595,52 +614,56 @@ class FrontendController extends Controller
         }
 
         if (ctype_digit($slug)) {
-            $program_data = Program::with('university_name', 'educationLevelprogram', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')
-                ->where('id', $slug)
-                ->where('is_approved', 1)
-                ->first();
+            $program_data = Program::where('id', $slug)->where('is_approved', 1)->first();
 
             if (!$program_data) {
                 abort(404);
             }
 
-            return redirect()->route('course-details', [$this->buildProgramDetailSlug($program_data)], 301);
+            return redirect()->route('study-in.program', $this->buildStudyInProgramSlugs($program_data), 301);
         }
 
         $program_data = null;
-        $canonicalSlug = null;
 
         if (preg_match('/-(\d+)$/', $slug, $matches)) {
-            $programId = $matches[1];
-
-            $program_data = Program::with('university_name', 'educationLevelprogram', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')
-                ->where('id', $programId)
-                ->where('is_approved', 1)
-                ->first();
-
-            if ($program_data) {
-                $canonicalSlug = $this->buildProgramDetailSlug($program_data);
-                if ($slug !== $canonicalSlug) {
-                    return redirect()->route('course-details', [$canonicalSlug], 301);
-                }
-            }
+            $program_data = Program::where('id', $matches[1])->where('is_approved', 1)->first();
         }
 
         if (!$program_data) {
             $courseName = str_replace('-', ' ', urldecode($slug));
-            $program_data = Program::with('university_name', 'educationLevelprogram', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')
-                ->where('name', $courseName)
-                ->where('is_approved', 1)
-                ->first();
-
-            if ($program_data) {
-                $canonicalSlug = $this->buildProgramDetailSlug($program_data);
-                return redirect()->route('course-details', [$canonicalSlug], 301);
-            }
+            $program_data = Program::where('name', $courseName)->where('is_approved', 1)->first();
         }
 
         if (!$program_data) {
             abort(404);
+        }
+
+        return redirect()->route('study-in.program', $this->buildStudyInProgramSlugs($program_data), 301);
+    }
+
+    public function studyInProgram(Request $request, $country, $university, $program)
+    {
+        $programId = null;
+        if (preg_match('/(\d+)$/', $program, $matches)) {
+            $programId = $matches[1];
+        }
+
+        if (!$programId) {
+            abort(404);
+        }
+
+        $program_data = Program::with('university_name', 'educationLevelprogram', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')
+            ->where('id', $programId)
+            ->where('is_approved', 1)
+            ->first();
+
+        if (!$program_data) {
+            abort(404);
+        }
+
+        $canonical = $this->buildStudyInProgramSlugs($program_data);
+        if ($country !== $canonical['country'] || $university !== $canonical['university'] || $program !== $canonical['program']) {
+            return redirect()->route('study-in.program', $canonical, 301);
         }
 
         $exam_text = DB::table('program_english_required')
@@ -653,6 +676,15 @@ class FrontendController extends Controller
     private function buildProgramDetailSlug($program)
     {
         return Str::slug($program->name) . '-' . $program->id;
+    }
+
+    private function buildStudyInProgramSlugs($program)
+    {
+        return [
+            'country' => Str::slug($program->university_name->country_name->name ?? 'unknown'),
+            'university' => Str::slug($program->university_name->university_name ?? 'unknown') . '-' . ($program->university_name->id ?? 0),
+            'program' => $this->buildProgramDetailSlug($program),
+        ];
     }
 
     public function apply_program_payment(Request $request, $student_id, $program_id)
@@ -976,15 +1008,19 @@ class FrontendController extends Controller
             $countryId = $matches[1] ?? null;
         }
 
+        // Accept the new "university"/"program" param names, falling back
+        // to the older "university_id"/"program_id" names for compatibility.
         $universityId = null;
-        if (!empty($request->university_id)) {
-            preg_match('/(\d+)$/', $request->university_id, $matches);
+        $universityParam = $request->university ?? $request->university_id;
+        if (!empty($universityParam)) {
+            preg_match('/(\d+)$/', $universityParam, $matches);
             $universityId = $matches[1] ?? null;
         }
 
         $programId = null;
-        if (!empty($request->program_id)) {
-            preg_match('/(\d+)$/', $request->program_id, $matches);
+        $programParam = $request->program ?? $request->program_id;
+        if (!empty($programParam)) {
+            preg_match('/(\d+)$/', $programParam, $matches);
             $programId = $matches[1] ?? null;
         }
 
@@ -1051,7 +1087,13 @@ class FrontendController extends Controller
                 return $query->where('university_name', 'like', "%$term%");
             })
             ->limit(20)
-            ->get();
+            ->get()
+            ->map(function ($university) {
+                return [
+                    'id' => Str::slug($university->university_name) . '-' . $university->id,
+                    'text' => $university->university_name,
+                ];
+            });
 
         return response()->json($universities);
     }
@@ -1065,7 +1107,13 @@ class FrontendController extends Controller
             ->where('is_approved', 1)
             ->when($term, fn($q) => $q->where('name', 'like', "%$term%"))
             ->limit(20)
-            ->get();
+            ->get()
+            ->map(function ($program) {
+                return [
+                    'id' => Str::slug($program->name) . '-' . $program->id,
+                    'text' => $program->name,
+                ];
+            });
 
         return response()->json($programs);
     }
@@ -1199,20 +1247,9 @@ class FrontendController extends Controller
 
 
 
-
-
-
-
-
-
-
-    public function send_otp_job($details)
-    {
-        dispatch(new SendOTPJob($details));
-    }
-
     public function send_otp(Request $request)
     {
+       
         $validator = Validator::make($request->all(), [
             'email' => [
                 'required|email',
@@ -1266,6 +1303,10 @@ class FrontendController extends Controller
 
             return response()->json(['message' => 'Failed to send OTP. Please try again later.', 'success' => false]);
         }
+    }
+    public function send_otp_job($details)
+    {
+        dispatch(new SendOTPJob($details));
     }
 
 

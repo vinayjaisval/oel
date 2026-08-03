@@ -101,7 +101,14 @@
 </style>
 
 @php
-    $country_name = App\Models\Country::whereIn('id', explode(',', $_GET['country'] ?? null))->Select('name','id')->get();
+    $countryIds = array_values(array_filter(array_map(function ($token) {
+        $token = trim($token);
+        if ($token === '') {
+            return null;
+        }
+        return preg_match('/(\d+)$/', $token, $m) ? $m[1] : $token;
+    }, explode(',', $_GET['country'] ?? ''))));
+    $country_name = App\Models\Country::whereIn('id', $countryIds)->Select('name','id')->get();
     $program_level_name = App\Models\ProgramLevel::whereIn(
     'id',
     explode(',', $_GET['program_level'] ?? null),
@@ -254,7 +261,7 @@
                                                           <label for="{{ $item->id }}-country" class="country-name">
                                                   
                                                         <input type="checkbox" name="country[]" class="country-checkbox"
-                                                            value="{{ $item->id }}"
+                                                            value="{{ \Illuminate\Support\Str::slug($item->name) . '-' . $item->id }}"
                                                             id="{{ $item->id }}-country"
                                                             {{ in_array($item->id, $country_name->pluck('id')->toArray()) ? 'checked' : '' }}>
                                                         
@@ -660,20 +667,57 @@
         }
     });
 
+    // ---------- SUBMIT LONG PROGRAM-ID LISTS VIA POST (kept out of the URL) ----------
+    window.submitProgramIds = function (action, ids) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = action;
+        form.style.display = 'none';
+
+        const token = document.createElement('input');
+        token.type = 'hidden';
+        token.name = '_token';
+        token.value = '{{ csrf_token() }}';
+        form.appendChild(token);
+
+        const idsInput = document.createElement('input');
+        idsInput.type = 'hidden';
+        idsInput.name = 'selected_program_id';
+        idsInput.value = ids;
+        form.appendChild(idsInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    };
+
+    // ---------- SEO URL BUILDERS ----------
+      const BASE_URL = "{{ url('/') }}";
+
+    function buildUniversityUrl(item) {
+        return `${BASE_URL}/study-in-${slugify(item.country?.name)}/${slugify(item.university_name)}-${item.id}`;
+    }
+
+    function buildProgramUrl(item) {
+        const university = item.university_name || {};
+        return `${BASE_URL}/study-in-${slugify(university.country_name?.name)}/${slugify(university.university_name)}-${university.id ?? 0}/${slugify(item.name)}-${item.id}`;
+    }
+
     // ---------- UNIVERSAL RENDER HELPERS ----------
     function renderUniversity(item) {
         const urlParams = getParams();
-        let programUrl = '';
+        let programAction = '';
 
         if (!urlParams) {
             @if(auth()->check())
-                programUrl = `<a href="{{ url('selected-program-data') }}?selected_program_id=${item.program_ids}" class="badge bg-primary">${item.program_count ?? 0} View Programs</a>`;
+                programAction = "{{ url('selected-program-data') }}";
             @else
-                programUrl = `<a href="{{ url('view-program-data') }}?selected_program_id=${item.program_ids}" class="badge bg-primary">${item.program_count ?? 0} View Programs</a>`;
+                programAction = "{{ url('view-program-data') }}";
             @endif
         } else {
-            programUrl = `<a href="{{ url('view-program-data') }}?selected_program_id=${item.program_ids}" class="badge bg-primary">${item.program_count ?? 0} View Programs</a>`;
+            programAction = "{{ url('view-program-data') }}";
         }
+
+        const programUrl = `<a href="javascript:void(0)" onclick="submitProgramIds('${programAction}', '${item.program_ids}')" class="badge bg-primary">${item.program_count ?? 0} View Programs</a>`;
 
         return `
         <div class="university-item course-logo card border-lg shadow-sm rounded-3">
@@ -695,7 +739,7 @@
                     <li><i class="fa fa-tasks"></i> <b>Total Program:</b> ${programUrl}</li>
                 </ul>
                 <div class="bottom-part text-end">
-                    <a href="university-details/${encodeURIComponent(item.university_name.replace(/\s+/g, '-'))}-${item.id}" class="btn btn-outline-primary btn-sm">View Details <i class="flaticon-right-arrow"></i></a>
+                    <a href="${buildUniversityUrl(item)}" class="btn btn-outline-primary btn-sm">View Details <i class="flaticon-right-arrow"></i></a>
                 </div>
             </div>
         </div><hr class="mt-10">
@@ -708,12 +752,12 @@
             <div class="courses-item course-logo card border-lg shadow-sm rounded-3">
                 <div class="course_card_logo_sec d-flex gap-5">
                     <div class="img-part" style="margin: 2px 5px;">
-                        <a href="{{url('course-details')}}/${encodeURIComponent(item.name.replace(/\s+/g, '-'))}-${item.id}">
+                        <a href="${buildProgramUrl(item)}">
                             <img src="${window.location.origin}/public/${item.university_name?.logo || ''}" class="img-thumbnail university_logo" alt="university logo">
                         </a>
                     </div>
                     <div class="text-end flex-grow-1">
-                        <h5 class="fw-bold mb-1"><a href="{{url('course-details')}}/${encodeURIComponent(item.name.replace(/\s+/g, '-'))}-${item.id}">${item.name || ''}</a></h5>
+                        <h5 class="fw-bold mb-1"><a href="${buildProgramUrl(item)}">${item.name || ''}</a></h5>
                         <a href="${item.university_name?.website || '#'}" class="text-muted">${item.university_name?.university_name || ''}</a>
                     </div>
                 </div>
@@ -726,7 +770,7 @@
                     </ul>
                     <small>Fees may vary according to university structure and policy</small>
                     <div class="bottom-part text-end mt-2">
-                        <a href="course-details/${encodeURIComponent(item.name.replace(/\s+/g, '-'))}-${item.id}" class="btn btn-outline-primary btn-sm">View Details <i class="flaticon-right-arrow"></i></a>
+                        <a href="${buildProgramUrl(item)}" class="btn btn-outline-primary btn-sm">View Details <i class="flaticon-right-arrow"></i></a>
                     </div>
                 </div>
             </div>

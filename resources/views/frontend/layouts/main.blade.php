@@ -16,7 +16,7 @@
         content="@yield('meta_keywords','Study Abroad Consultant')">
 
     <link rel="canonical"
-        href="{{ url()->current() }}" />
+        href="@yield('canonical_url', url()->current())" />
 
     <meta property="og:title"
         content="@yield('og_title', View::yieldContent('title'))">
@@ -48,7 +48,6 @@
         <meta name="google-site-verification" content="Oe5_d5HHQe8RRzzpFWOXFaG4Z2zARTYHtgRyID8X1_c" />
     <link rel="stylesheet" href="{{asset('frontend/css/style.css')}}">
     <link id="favicon" rel="shortcut icon" type="image/png" href="https://www.overseaseducationlane.com/public/frontend/img/oel (1) 1.png" />
-    <link rel="canonical" href="{{ url()->current() }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css" integrity="sha512-/VYneElp5u4puMaIp/4ibGxlTd2MV3kuUIroR3NSQjS2h9XKQNebRQiyyoQKeiGE9mRdjSCIZf9pb7AVJ8DhCg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -79,6 +78,18 @@
                 "https://www.overseaseducationlane.com/"
             ]
         }
+    </script>
+    @stack('structured_data')
+    <script>
+        // Mirrors Laravel's Str::slug() default behavior for client-built SEO links.
+        window.slugify = function (value) {
+            return String(value ?? '')
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .replace(/-{2,}/g, '-');
+        };
     </script>
 </head>
 
