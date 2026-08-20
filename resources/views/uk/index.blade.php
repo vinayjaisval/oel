@@ -983,6 +983,8 @@
         .uk-landing-page .uk-mobile-sticky-btn.secondary {
             background: var(--uk-blue-light);
             color: var(--uk-blue);
+            height: 55px;
+            width: 300px;
         }
 
         /* ============ FLOATING CONTACT ============ */
@@ -1296,7 +1298,7 @@
 
                             <div class="uk-hero-ctas">
                                 <a href="#register-form" class="uk-btn uk-btn-primary uk-counselling-cta">Book Free Counselling</a>
-                                <a href="#eligibility" class="uk-btn uk-btn-secondary uk-eligibility-cta">Check Eligibility</a>
+                                <!-- <a href="#eligibility" class="uk-btn uk-btn-secondary uk-eligibility-cta">Check Eligibility</a> -->
                             </div>
                         </div>
 
@@ -1857,7 +1859,7 @@
                     <p>Get personalised guidance from our experienced UK education counsellors and take the first step toward your UK dream.</p>
                     <div class="uk-final-cta-buttons">
                         <a href="#register-form" class="uk-btn uk-btn-primary uk-final-cta-counsel">Get Free Counselling</a>
-                        <a href="#eligibility" class="uk-btn uk-btn-secondary uk-final-cta-eligibility">Check Eligibility</a>
+                        <!-- <a href="#eligibility" class="uk-btn uk-btn-secondary uk-final-cta-eligibility">Check Eligibility</a> -->
                     </div>
                 </div>
             </section>
