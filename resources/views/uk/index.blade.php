@@ -529,9 +529,19 @@
             padding: 1.1rem 0.8rem;
         }
 
-        .uk-landing-page .uk-uni-card .uk-card-icon {
-            font-size: 1.6rem;
+        .uk-landing-page .uk-uni-logo {
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-bottom: 0.6rem;
+        }
+
+        .uk-landing-page .uk-uni-logo img {
+            max-height: 56px;
+            max-width: 100%;
+            width: auto;
+            object-fit: contain;
         }
 
         .uk-landing-page .uk-uni-card h4 {
@@ -684,6 +694,24 @@
         .uk-landing-page .uk-testimonial-role {
             font-size: 0.8rem;
             opacity: 0.75;
+        }
+
+        .uk-landing-page .uk-testimonial-university {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #fff;
+            opacity: 0.9;
+        }
+
+        .uk-landing-page .uk-testimonial-university i {
+            color: var(--uk-accent);
         }
 
         /* ============ FAQ ============ */
@@ -1155,19 +1183,19 @@
                 <div class="uk-inner">
                     <div class="uk-hero-grid">
                         <div class="uk-hero-content">
-                            <span class="uk-badge">STUDY IN UK</span>
-                            <h1 class="uk-hero-title">Study in the UK with <span class="uk-highlight">Expert Guidance</span></h1>
+                            <span class="uk-badge">STUDY IN UK &middot; 2026 INTAKE</span>
+                            <h1 class="uk-hero-title">Get Admission in Top UK Universities with <span class="uk-highlight">Scholarships up to &pound;10,000</span></h1>
                             <p class="uk-hero-desc">Explore top UK universities, courses, scholarships and student visa guidance with personalised support from experienced education counsellors.</p>
 
                             <div class="uk-chip-row">
-                                <span class="uk-chip"><i class="fas fa-university"></i> Top UK Universities</span>
-                                <span class="uk-chip"><i class="fas fa-book"></i> Course Guidance</span>
-                                <span class="uk-chip"><i class="fas fa-medal"></i> Scholarship Support</span>
-                                <span class="uk-chip"><i class="fas fa-passport"></i> Visa Assistance</span>
+                                <span class="uk-chip"><i class="fas fa-check-circle"></i> Free Profile Evaluation</span>
+                                <span class="uk-chip"><i class="fas fa-check-circle"></i> No IELTS Options Available</span>
+                                <span class="uk-chip"><i class="fas fa-check-circle"></i> 2-Year PSW Visa</span>
+                                <span class="uk-chip"><i class="fas fa-check-circle"></i> Expert Visa Assistance</span>
                             </div>
 
                             <div class="uk-hero-ctas">
-                                <a href="#register-form" class="uk-btn uk-btn-primary uk-counselling-cta">Get Free Counselling</a>
+                                <a href="#register-form" class="uk-btn uk-btn-primary uk-counselling-cta">Book Free Counselling</a>
                                 <a href="#eligibility" class="uk-btn uk-btn-secondary uk-eligibility-cta">Check Eligibility</a>
                             </div>
                         </div>
@@ -1205,18 +1233,31 @@
                                             </div>
                                         </div>
 
-                                        <div class="uk-form-group">
-                                            <label for="phone" class="uk-label">Mobile Number *</label>
-                                            <input type="tel" id="phone" name="phone" class="uk-input form-control @error('phone') is-invalid @enderror"
-                                                   placeholder="Enter phone number" required>
-                                            <div class="uk-field-error" id="phone-error" style="display: {{ $errors->has('phone') ? 'block' : 'none' }};">
-                                                @if($errors->has('phone'))
-                                                    {{ $errors->first('phone') }}
-                                                @else
-                                                    Please enter a valid mobile number.
-                                                @endif
-                                            </div>
-                                        </div>
+                                      <div class="uk-form-group">
+    <label for="phone" class="uk-label">Mobile Number *</label>
+
+    <input
+        type="tel"
+        id="phone"
+        name="phone"
+        class="uk-input form-control @error('phone') is-invalid @enderror"
+        placeholder="Enter phone number"
+        required
+        maxlength="10"
+        inputmode="numeric"
+        pattern="[0-9]{10}"
+        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
+    >
+
+    <div class="uk-field-error" id="phone-error"
+         style="display: {{ $errors->has('phone') ? 'block' : 'none' }};">
+        @if($errors->has('phone'))
+            {{ $errors->first('phone') }}
+        @else
+            Please enter a valid mobile number.
+        @endif
+    </div>
+</div>
 
                                         <div class="uk-form-group">
                                             <label for="email" class="uk-label">Email Address *</label>
@@ -1322,39 +1363,39 @@
 
                     <div class="uk-uni-grid">
                         <div class="uk-card uk-uni-card">
-                            <div class="uk-card-icon"><i class="fas fa-university"></i></div>
-                            <h4>University of Oxford</h4>
-                            <p>Oxford, England</p>
+                            <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1717504808_leed.png') }}" alt="University of Leeds logo" loading="lazy"></div>
+                            <h4>University of Leeds</h4>
+                            <p>Leeds, England</p>
                             <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
                         </div>
                         <div class="uk-card uk-uni-card">
-                            <div class="uk-card-icon"><i class="fas fa-university"></i></div>
-                            <h4>University of Cambridge</h4>
-                            <p>Cambridge, England</p>
+                            <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1717573641_university-of-nottingham-logo.jpg') }}" alt="University of Nottingham logo" loading="lazy"></div>
+                            <h4>University of Nottingham</h4>
+                            <p>Nottingham, England</p>
                             <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
                         </div>
                         <div class="uk-card uk-uni-card">
-                            <div class="uk-card-icon"><i class="fas fa-university"></i></div>
-                            <h4>Imperial College London</h4>
-                            <p>London, England</p>
+                            <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1717736527_1631598055_512x512-pixels_logo-002.png') }}" alt="University of Liverpool logo" loading="lazy"></div>
+                            <h4>University of Liverpool</h4>
+                            <p>Liverpool, England</p>
                             <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
                         </div>
                         <div class="uk-card uk-uni-card">
-                            <div class="uk-card-icon"><i class="fas fa-university"></i></div>
-                            <h4>London School of Economics</h4>
-                            <p>London, England</p>
+                            <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1717581592_BRISTOL.jpeg') }}" alt="University of Bristol logo" loading="lazy"></div>
+                            <h4>University of Bristol</h4>
+                            <p>Bristol, England</p>
                             <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
                         </div>
                         <div class="uk-card uk-uni-card">
-                            <div class="uk-card-icon"><i class="fas fa-university"></i></div>
-                            <h4>University of Edinburgh</h4>
-                            <p>Edinburgh, Scotland</p>
+                            <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1717666306_glasgow logo.jpeg') }}" alt="University of Glasgow logo" loading="lazy"></div>
+                            <h4>University of Glasgow</h4>
+                            <p>Glasgow, Scotland</p>
                             <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
                         </div>
                         <div class="uk-card uk-uni-card">
-                            <div class="uk-card-icon"><i class="fas fa-university"></i></div>
-                            <h4>University of Manchester</h4>
-                            <p>Manchester, England</p>
+                            <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1718695222_birm logo.png') }}" alt="University of Birmingham logo" loading="lazy"></div>
+                            <h4>University of Birmingham</h4>
+                            <p>Birmingham, England</p>
                             <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
                         </div>
                     </div>
@@ -1556,6 +1597,7 @@
                             <p class="uk-testimonial-text">"Got admitted to Manchester University for MSc Computer Science with partial scholarship. The counselling team was very supportive throughout the process!"</p>
                             <p class="uk-testimonial-author">Priya Sharma</p>
                             <p class="uk-testimonial-role">MSc Computer Science</p>
+                            <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> University of Manchester</p>
                         </div>
                         <div class="uk-testimonial-card">
                             <img src="{{ asset('southkorea/images/img/t4.png') }}" alt="Student" class="uk-testimonial-avatar">
@@ -1565,6 +1607,7 @@
                             <p class="uk-testimonial-text">"Exceptional guidance for my visa application and university selection. The team helped me choose the best fit for my career goals."</p>
                             <p class="uk-testimonial-author">Sakshi Patel</p>
                             <p class="uk-testimonial-role">BA Business Administration</p>
+                            <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> University of Edinburgh</p>
                         </div>
                         <div class="uk-testimonial-card">
                             <img src="{{ asset('southkorea/images/img/t3.png') }}" alt="Student" class="uk-testimonial-avatar">
@@ -1574,6 +1617,7 @@
                             <p class="uk-testimonial-text">"From profile evaluation to visa approval, every step was smooth. The team's expertise made my UK journey stress-free!"</p>
                             <p class="uk-testimonial-author">Anjali Desai</p>
                             <p class="uk-testimonial-role">LLM Law</p>
+                            <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> London School of Economics</p>
                         </div>
                     </div>
                 </div>
