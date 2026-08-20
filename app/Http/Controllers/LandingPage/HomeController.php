@@ -162,12 +162,68 @@ class HomeController extends Controller
 
         }
 
-    public function uk()
-
+    public function send_mail_uk(Request $request)
     {
-        return view('southkorea.index');
+        // Validate incoming request
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|regex:/^[0-9\-\+\s()]+$/',
+            'study_level' => 'nullable|string|max:255',
+            'course' => 'nullable|string|max:255',
+            'qualification' => 'nullable|string|max:255',
+            'intake' => 'nullable|string|max:255',
+        ]);
 
+        // Check if phone already exists
+        $existingStudent = StudentByAgent::where('phone_number', $request->phone)->first();
+        if ($existingStudent) {
+            return redirect()->back()->with('error', 'This phone number is already registered. Please contact us at +918929922525 for further assistance.');
+        }
 
+        // DB fields — only columns that actually exist on student_by_agent.
+        // 'qualification' and 'country' have no matching column on this table,
+        // so they must never be inserted here (they go to the email only, below).
+        $dbData = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone_number' => $request->phone,
+            'lead_status' => 1,
+            'source' => 'UK Landing Page - Google Ads',
+            'course' => $request->course ?? null,
+            'intake' => $request->intake ?? null,
+        ];
+
+        // Save to database
+        StudentByAgent::create($dbData);
+
+        // Email-only fields — useful for the enquiry email but have no DB column,
+        // so they are merged in for the mail send and never touch the database.
+        $emailData = array_merge($dbData, [
+            'study_level' => $request->study_level ?? null,
+            'qualification' => $request->qualification ?? null,
+            'country' => 'United Kingdom',
+        ]);
+
+        // Flash success message
+        session()->flash('success', 'Thank you! We have received your enquiry. Our UK counsellors will contact you within 24 hours.');
+
+        // Try sending confirmation email
+        try {
+            Mail::to('info@overseaseducationlane.com')
+                ->cc($request->email)
+                ->send(new SouthMail($emailData));
+        } catch (\Exception $e) {
+            Log::error('Error sending UK lead email: ' . $e->getMessage());
+        }
+
+        // Redirect to thank you page
+        return redirect()->route('thank-you');
+    }
+
+    public function uk()
+    {
+        return view('uk.index');
     }
 
     public function usa()

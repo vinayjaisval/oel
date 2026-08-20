@@ -915,6 +915,7 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
     Route::get('/get-countries', [FrontendController::class, 'getCountries']);
     Route::get('/get-testimonials', [FrontendController::class, 'get_testimonials']);
     Route::post('send-mail-south', [App\Http\Controllers\LandingPage\HomeController::class, 'send_mail_south'])->name('send-mail-south');
+    Route::post('send-mail-uk', [App\Http\Controllers\LandingPage\HomeController::class, 'send_mail_uk'])->name('send-mail-uk');
     Route::get('/study-in-uk/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'uk'])->name('study-in-uk');
     Route::get('/study-in-usa/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'usa'])->name('study-in-usa');
     Route::get('/study-in-canada/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'canada'])->name('study-in-canada');

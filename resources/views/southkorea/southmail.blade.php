@@ -21,6 +21,18 @@
                 <p style="margin: 10px 0;"><strong>Email:</strong> {{ $data['email'] }}</p>
                 <p style="margin: 10px 0;"><strong>Phone Number:</strong> {{ $data['phone_number'] }}</p>
                 <p style="margin: 10px 0;"><strong>Interested Course:</strong> {{ $data['course'] }}</p>
+                @if(!empty($data['study_level']))
+                <p style="margin: 10px 0;"><strong>Study Level:</strong> {{ $data['study_level'] }}</p>
+                @endif
+                @if(!empty($data['qualification']))
+                <p style="margin: 10px 0;"><strong>Current Qualification:</strong> {{ $data['qualification'] }}</p>
+                @endif
+                @if(!empty($data['intake']))
+                <p style="margin: 10px 0;"><strong>Preferred Intake:</strong> {{ $data['intake'] }}</p>
+                @endif
+                @if(!empty($data['country']))
+                <p style="margin: 10px 0;"><strong>Country:</strong> {{ $data['country'] }}</p>
+                @endif
               </td>
             </tr>
             <tr>
