@@ -169,7 +169,7 @@ class HomeController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'required|regex:/^[0-9\-\+\s()]+$/',
-            'study_level' => 'nullable|string|max:255',
+            // 'study_level' => 'nullable|string|max:255',
             'course' => 'nullable|string|max:255',
             'qualification' => 'nullable|string|max:255',
             'intake' => 'nullable|string|max:255',
@@ -200,7 +200,7 @@ class HomeController extends Controller
         // Email-only fields — useful for the enquiry email but have no DB column,
         // so they are merged in for the mail send and never touch the database.
         $emailData = array_merge($dbData, [
-            'study_level' => $request->study_level ?? null,
+            // 'study_level' => $request->study_level ?? null,
             'qualification' => $request->qualification ?? null,
             'country' => 'United Kingdom',
         ]);

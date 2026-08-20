@@ -517,16 +517,82 @@
             color: var(--uk-navy);
         }
 
-        /* ============ UNIVERSITY GRID ============ */
-        .uk-landing-page .uk-uni-grid {
-            display: grid;
-            grid-template-columns: repeat(6, minmax(0, 1fr));
-            gap: 0.9rem;
+        /* ============ CAROUSEL (shared: universities) ============ */
+        .uk-landing-page .uk-carousel-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
         }
 
+        .uk-landing-page .uk-carousel-track {
+            display: flex;
+            gap: 0.9rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            flex: 1;
+            min-width: 0;
+            padding-bottom: 0.25rem;
+        }
+
+        .uk-landing-page .uk-carousel-track::-webkit-scrollbar {
+            display: none;
+        }
+
+        .uk-landing-page .uk-carousel-arrow {
+            flex: 0 0 auto;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--uk-border);
+            background: #fff;
+            color: var(--uk-navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .uk-landing-page .uk-carousel-arrow:hover {
+            background: var(--uk-navy);
+            color: #fff;
+            border-color: var(--uk-navy);
+        }
+
+        .uk-landing-page .uk-carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.25rem;
+        }
+
+        .uk-landing-page .uk-carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: none;
+            padding: 0;
+            background: var(--uk-border);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .uk-landing-page .uk-carousel-dot.active {
+            background: var(--uk-blue);
+            width: 22px;
+            border-radius: 999px;
+        }
+
+        /* ============ UNIVERSITY CARDS ============ */
         .uk-landing-page .uk-uni-card {
             text-align: center;
             padding: 1.1rem 0.8rem;
+            scroll-snap-align: start;
+            flex: 0 0 auto;
+            width: calc((100% - 3 * 0.9rem) / 4);
         }
 
         .uk-landing-page .uk-uni-logo {
@@ -648,10 +714,24 @@
             opacity: 0.8;
         }
 
-        .uk-landing-page .uk-testimonial-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 1.1rem;
+        .uk-landing-page .uk-testimonial-section .uk-carousel-arrow {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.25);
+            color: #fff;
+        }
+
+        .uk-landing-page .uk-testimonial-section .uk-carousel-arrow:hover {
+            background: var(--uk-accent);
+            border-color: var(--uk-accent);
+            color: var(--uk-navy-dark);
+        }
+
+        .uk-landing-page .uk-testimonial-section .uk-carousel-dot {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .uk-landing-page .uk-testimonial-section .uk-carousel-dot.active {
+            background: var(--uk-accent);
         }
 
         .uk-landing-page .uk-testimonial-card {
@@ -661,6 +741,9 @@
             padding: 1.5rem;
             text-align: center;
             min-width: 0;
+            scroll-snap-align: start;
+            flex: 0 0 auto;
+            width: calc((100% - 0.9rem) / 2);
         }
 
         .uk-landing-page .uk-testimonial-avatar {
@@ -976,8 +1059,8 @@
                 font-size: 40px;
             }
 
-            .uk-landing-page .uk-uni-grid {
-                grid-template-columns: repeat(3, 1fr);
+            .uk-landing-page .uk-uni-card {
+                width: calc((100% - 2 * 0.9rem) / 3);
             }
         }
 
@@ -992,8 +1075,7 @@
 
             .uk-landing-page .uk-course-grid,
             .uk-landing-page .uk-why-grid,
-            .uk-landing-page .uk-scholarship-grid,
-            .uk-landing-page .uk-testimonial-grid {
+            .uk-landing-page .uk-scholarship-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
@@ -1057,14 +1139,22 @@
                 gap: 1.25rem;
             }
 
-            .uk-landing-page .uk-uni-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+            .uk-landing-page .uk-uni-card {
+                width: calc((100% - 0.9rem) / 2);
+            }
+
+            .uk-landing-page .uk-carousel-arrow {
+                width: 34px;
+                height: 34px;
+            }
+
+            .uk-landing-page .uk-testimonial-card {
+                width: 88%;
             }
 
             .uk-landing-page .uk-course-grid,
             .uk-landing-page .uk-why-grid,
-            .uk-landing-page .uk-scholarship-grid,
-            .uk-landing-page .uk-testimonial-grid {
+            .uk-landing-page .uk-scholarship-grid {
                 grid-template-columns: minmax(0, 1fr);
             }
 
@@ -1143,6 +1233,16 @@
 
             .uk-landing-page .uk-logo img {
                 height: 30px;
+            }
+
+            .uk-landing-page .uk-uni-card {
+                width: 82%;
+            }
+
+            .uk-landing-page .uk-carousel-arrow {
+                width: 32px;
+                height: 32px;
+                font-size: 0.85rem;
             }
         }
     </style>
@@ -1234,30 +1334,30 @@
                                         </div>
 
                                       <div class="uk-form-group">
-    <label for="phone" class="uk-label">Mobile Number *</label>
+                                            <label for="phone" class="uk-label">Mobile Number *</label>
 
-    <input
-        type="tel"
-        id="phone"
-        name="phone"
-        class="uk-input form-control @error('phone') is-invalid @enderror"
-        placeholder="Enter phone number"
-        required
-        maxlength="10"
-        inputmode="numeric"
-        pattern="[0-9]{10}"
-        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
-    >
+                                            <input
+                                                type="tel"
+                                                id="phone"
+                                                name="phone"
+                                                class="uk-input form-control @error('phone') is-invalid @enderror"
+                                                placeholder="Enter phone number"
+                                                required
+                                                maxlength="10"
+                                                inputmode="numeric"
+                                                pattern="[0-9]{10}"
+                                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
+                                            >
 
-    <div class="uk-field-error" id="phone-error"
-         style="display: {{ $errors->has('phone') ? 'block' : 'none' }};">
-        @if($errors->has('phone'))
-            {{ $errors->first('phone') }}
-        @else
-            Please enter a valid mobile number.
-        @endif
-    </div>
-</div>
+                                            <div class="uk-field-error" id="phone-error"
+                                                style="display: {{ $errors->has('phone') ? 'block' : 'none' }};">
+                                                @if($errors->has('phone'))
+                                                    {{ $errors->first('phone') }}
+                                                @else
+                                                    Please enter a valid mobile number.
+                                                @endif
+                                            </div>
+                                        </div>
 
                                         <div class="uk-form-group">
                                             <label for="email" class="uk-label">Email Address *</label>
@@ -1272,7 +1372,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="uk-form-group">
+                                        <!-- <div class="uk-form-group">
                                             <label for="study-level" class="uk-label">Study Level</label>
                                             <select id="study-level" name="study_level" class="uk-input">
                                                 <option value="">Select an option</option>
@@ -1283,7 +1383,7 @@
                                                 <option value="Diploma">Diploma</option>
                                                 <option value="Other">Other</option>
                                             </select>
-                                        </div>
+                                        </div> -->
 
                                         <div class="uk-form-group">
                                             <label for="course" class="uk-label">Preferred Course</label>
@@ -1361,44 +1461,56 @@
                         <p>Explore universities that match your academic goals.</p>
                     </div>
 
-                    <div class="uk-uni-grid">
-                        <div class="uk-card uk-uni-card">
-                            <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1717504808_leed.png') }}" alt="University of Leeds logo" loading="lazy"></div>
-                            <h4>University of Leeds</h4>
-                            <p>Leeds, England</p>
-                            <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
+                    <div class="uk-carousel-wrap">
+                        <button type="button" class="uk-carousel-arrow uk-carousel-prev" id="uni-prev" aria-label="Previous universities">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+
+                        <div class="uk-carousel-track uk-uni-carousel" id="uni-carousel">
+                            <div class="uk-card uk-uni-card">
+                                <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1717504808_leed.png') }}" alt="University of Leeds logo" loading="lazy"></div>
+                                <h4>University of Leeds</h4>
+                                <p>Leeds, England</p>
+                                <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
+                            </div>
+                            <div class="uk-card uk-uni-card">
+                                <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1717573641_university-of-nottingham-logo.jpg') }}" alt="University of Nottingham logo" loading="lazy"></div>
+                                <h4>University of Nottingham</h4>
+                                <p>Nottingham, England</p>
+                                <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
+                            </div>
+                            <div class="uk-card uk-uni-card">
+                                <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1717736527_1631598055_512x512-pixels_logo-002.png') }}" alt="University of Liverpool logo" loading="lazy"></div>
+                                <h4>University of Liverpool</h4>
+                                <p>Liverpool, England</p>
+                                <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
+                            </div>
+                            <div class="uk-card uk-uni-card">
+                                <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1717581592_BRISTOL.jpeg') }}" alt="University of Bristol logo" loading="lazy"></div>
+                                <h4>University of Bristol</h4>
+                                <p>Bristol, England</p>
+                                <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
+                            </div>
+                            <div class="uk-card uk-uni-card">
+                                <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1717666306_glasgow logo.jpeg') }}" alt="University of Glasgow logo" loading="lazy"></div>
+                                <h4>University of Glasgow</h4>
+                                <p>Glasgow, Scotland</p>
+                                <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
+                            </div>
+                            <div class="uk-card uk-uni-card">
+                                <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1718695222_birm logo.png') }}" alt="University of Birmingham logo" loading="lazy"></div>
+                                <h4>University of Birmingham</h4>
+                                <p>Birmingham, England</p>
+                                <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
+                            </div>
                         </div>
-                        <div class="uk-card uk-uni-card">
-                            <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1717573641_university-of-nottingham-logo.jpg') }}" alt="University of Nottingham logo" loading="lazy"></div>
-                            <h4>University of Nottingham</h4>
-                            <p>Nottingham, England</p>
-                            <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
-                        </div>
-                        <div class="uk-card uk-uni-card">
-                            <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1717736527_1631598055_512x512-pixels_logo-002.png') }}" alt="University of Liverpool logo" loading="lazy"></div>
-                            <h4>University of Liverpool</h4>
-                            <p>Liverpool, England</p>
-                            <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
-                        </div>
-                        <div class="uk-card uk-uni-card">
-                            <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1717581592_BRISTOL.jpeg') }}" alt="University of Bristol logo" loading="lazy"></div>
-                            <h4>University of Bristol</h4>
-                            <p>Bristol, England</p>
-                            <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
-                        </div>
-                        <div class="uk-card uk-uni-card">
-                            <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1717666306_glasgow logo.jpeg') }}" alt="University of Glasgow logo" loading="lazy"></div>
-                            <h4>University of Glasgow</h4>
-                            <p>Glasgow, Scotland</p>
-                            <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
-                        </div>
-                        <div class="uk-card uk-uni-card">
-                            <div class="uk-uni-logo"><img src="{{ asset('imagesapi/1718695222_birm logo.png') }}" alt="University of Birmingham logo" loading="lazy"></div>
-                            <h4>University of Birmingham</h4>
-                            <p>Birmingham, England</p>
-                            <a href="#register-form" class="uk-mini-link">Explore &rarr;</a>
-                        </div>
+
+                        <button type="button" class="uk-carousel-arrow uk-carousel-next" id="uni-next" aria-label="Next universities">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
                     </div>
+
+                    <div class="uk-carousel-dots" id="uni-dots"></div>
                 </div>
             </section>
 
@@ -1588,38 +1700,61 @@
                         <p>Real experiences from students we have guided.</p>
                     </div>
 
-                    <div class="uk-testimonial-grid">
-                        <div class="uk-testimonial-card">
-                            <img src="{{ asset('southkorea/images/img/t2.png') }}" alt="Student" class="uk-testimonial-avatar">
-                            <div class="uk-stars">
-                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    <div class="uk-carousel-wrap">
+                        <button type="button" class="uk-carousel-arrow uk-carousel-prev" id="testi-prev" aria-label="Previous testimonials">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+
+                        <div class="uk-carousel-track uk-testimonial-carousel" id="testi-carousel">
+                            <div class="uk-testimonial-card">
+                                <img src="{{ asset('southkorea/images/img/t2.png') }}" alt="Student" class="uk-testimonial-avatar">
+                                <div class="uk-stars">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                </div>
+                                <p class="uk-testimonial-text">"Got admitted to Manchester University for MSc Computer Science with partial scholarship. The counselling team was very supportive throughout the process!"</p>
+                                <p class="uk-testimonial-author">Priya Sharma</p>
+                                <p class="uk-testimonial-role">MSc Computer Science</p>
+                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> University of Manchester</p>
                             </div>
-                            <p class="uk-testimonial-text">"Got admitted to Manchester University for MSc Computer Science with partial scholarship. The counselling team was very supportive throughout the process!"</p>
-                            <p class="uk-testimonial-author">Priya Sharma</p>
-                            <p class="uk-testimonial-role">MSc Computer Science</p>
-                            <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> University of Manchester</p>
-                        </div>
-                        <div class="uk-testimonial-card">
-                            <img src="{{ asset('southkorea/images/img/t4.png') }}" alt="Student" class="uk-testimonial-avatar">
-                            <div class="uk-stars">
-                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            <div class="uk-testimonial-card">
+                                <img src="{{ asset('southkorea/images/img/t4.png') }}" alt="Student" class="uk-testimonial-avatar">
+                                <div class="uk-stars">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                </div>
+                                <p class="uk-testimonial-text">"Exceptional guidance for my visa application and university selection. The team helped me choose the best fit for my career goals."</p>
+                                <p class="uk-testimonial-author">Sakshi Patel</p>
+                                <p class="uk-testimonial-role">BA Business Administration</p>
+                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> University of Edinburgh</p>
                             </div>
-                            <p class="uk-testimonial-text">"Exceptional guidance for my visa application and university selection. The team helped me choose the best fit for my career goals."</p>
-                            <p class="uk-testimonial-author">Sakshi Patel</p>
-                            <p class="uk-testimonial-role">BA Business Administration</p>
-                            <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> University of Edinburgh</p>
-                        </div>
-                        <div class="uk-testimonial-card">
-                            <img src="{{ asset('southkorea/images/img/t3.png') }}" alt="Student" class="uk-testimonial-avatar">
-                            <div class="uk-stars">
-                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            <div class="uk-testimonial-card">
+                                <img src="{{ asset('southkorea/images/img/t3.png') }}" alt="Student" class="uk-testimonial-avatar">
+                                <div class="uk-stars">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                </div>
+                                <p class="uk-testimonial-text">"From profile evaluation to visa approval, every step was smooth. The team's expertise made my UK journey stress-free!"</p>
+                                <p class="uk-testimonial-author">Anjali Desai</p>
+                                <p class="uk-testimonial-role">LLM Law</p>
+                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> London School of Economics</p>
                             </div>
-                            <p class="uk-testimonial-text">"From profile evaluation to visa approval, every step was smooth. The team's expertise made my UK journey stress-free!"</p>
-                            <p class="uk-testimonial-author">Anjali Desai</p>
-                            <p class="uk-testimonial-role">LLM Law</p>
-                            <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> London School of Economics</p>
+
+                             <div class="uk-testimonial-card">
+                                <img src="{{ asset('imagesapi/1737972987.jpg') }}" alt="Student" class="uk-testimonial-avatar">
+                                <div class="uk-stars">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                </div>
+                                <p class="uk-testimonial-text">"I am truly grateful to Overseas Education Lane for their exceptional support throughout my study abroad journey. Their team, especially the counselors, provided personalized and detailed guidance"</p>
+                                <p class="uk-testimonial-author">BEMIN JOHN BENNY</p>
+                                <p class="uk-testimonial-role">Btech</p>
+                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> HERIOT WATT UNIVERSITY, UK</p>
+                            </div>
                         </div>
+
+                        <button type="button" class="uk-carousel-arrow uk-carousel-next" id="testi-next" aria-label="Next testimonials">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
                     </div>
+
+                    <div class="uk-carousel-dots" id="testi-dots"></div>
                 </div>
             </section>
 
@@ -1828,6 +1963,51 @@
                 });
             }
         });
+
+        // CARD CAROUSEL (arrows + dots, scroll-snap based)
+        function initUkCarousel(trackId, prevId, nextId, dotsId) {
+            const track = document.getElementById(trackId);
+            const prevBtn = document.getElementById(prevId);
+            const nextBtn = document.getElementById(nextId);
+            const dotsWrap = document.getElementById(dotsId);
+            if (!track || !prevBtn || !nextBtn || !dotsWrap) return;
+
+            const cards = Array.from(track.children);
+            if (!cards.length) return;
+
+            dotsWrap.innerHTML = '';
+            const dots = cards.map((card, i) => {
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = 'uk-carousel-dot' + (i === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+                dot.addEventListener('click', () => {
+                    card.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+                });
+                dotsWrap.appendChild(dot);
+                return dot;
+            });
+
+            const scrollStep = () => (cards[0].getBoundingClientRect().width + 14) * 1 || 250;
+            prevBtn.addEventListener('click', () => track.scrollBy({ left: -scrollStep(), behavior: 'smooth' }));
+            nextBtn.addEventListener('click', () => track.scrollBy({ left: scrollStep(), behavior: 'smooth' }));
+
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (!entry.isIntersecting) return;
+                        const idx = cards.indexOf(entry.target);
+                        if (idx === -1) return;
+                        dots.forEach(d => d.classList.remove('active'));
+                        dots[idx].classList.add('active');
+                    });
+                }, { root: track, threshold: 0.6 });
+                cards.forEach(card => observer.observe(card));
+            }
+        }
+
+        initUkCarousel('uni-carousel', 'uni-prev', 'uni-next', 'uni-dots');
+        initUkCarousel('testi-carousel', 'testi-prev', 'testi-next', 'testi-dots');
 
         // FAQ ACCORDION
         document.querySelectorAll('.uk-faq-header').forEach(header => {
