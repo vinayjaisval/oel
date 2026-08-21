@@ -9,7 +9,7 @@
               <h5 class="card-title">{{$item->name ?? null}}</h5>
                 <p>Program level - {{$item->programLevel->name ?? null}}
                 <br> Duration  - {{$item->length ?? null}}.
-                <br> Tution Fees  - {{$item->currency}} {{$item->tution_fee ?? null}}.
+                <br> Tuition Fees  - {{$item->currency}} {{$item->tution_fee ?? null}}.
                 <br> Application Fees  - {{$item->currency}} {{$item->application_fee ?? null}}.
                 </p>
               <a href="{{ route('study-in.program', ['country' => \Illuminate\Support\Str::slug($item->university_name->country_name->name ?? 'unknown'), 'university' => \Illuminate\Support\Str::slug($item->university_name->university_name ?? 'unknown') . '-' . ($item->university_name->id ?? 0), 'program' => \Illuminate\Support\Str::slug($item->name) . '-' . $item->id]) }}" class="btn btn-primary">Course Details</a>

@@ -14,7 +14,7 @@
                   <h5 class="card-title">{{$item->name ?? null}}</h5>
                     <p>Program level - {{$item->programLevel->name ?? null}}
                     <br> Duration  - {{$item->length ?? null}}.
-                    <br> Tution Fees  - {{$item->currency}} {{$item->tution_fee ?? null}}.
+                    <br> Tuition Fees  - {{$item->currency}} {{$item->tution_fee ?? null}}.
                     <br> Application Fees  - {{$item->currency}} {{$item->application_fee ?? null}}.
                     </p>
                   <a href="{{ route('course-details', [str_replace(' ', '-', $item->name) . '-' . $item->id]) }}" class="btn btn-primary">Course Details</a>

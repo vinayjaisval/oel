@@ -66,7 +66,7 @@
                                        <td class="txt-oflo">85</td>
                                     </tr>
                                     <tr>
-                                       <th class="txt-oflo">Tution Fee</th>
+                                       <th class="txt-oflo">Tuition Fee</th>
                                        <td class="txt-oflo">50928</td>
                                     </tr>
                                     <tr>

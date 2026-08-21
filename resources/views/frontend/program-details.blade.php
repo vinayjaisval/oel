@@ -342,7 +342,7 @@
                                                 <table class="mb-5">
                                                     <tr>
                                                         <th scope="col">Application Fee</th>
-                                                        <th scope="col">Tution Fee</th>
+                                                        <th scope="col">Tuition Fee</th>
                                                     </tr>
                                                     <tr>
                                                         <td> @if (empty($program_data->application_fee))
