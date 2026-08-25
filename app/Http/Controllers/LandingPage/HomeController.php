@@ -199,23 +199,23 @@ class HomeController extends Controller
 
         // Email-only fields — useful for the enquiry email but have no DB column,
         // so they are merged in for the mail send and never touch the database.
-        $emailData = array_merge($dbData, [
-            // 'study_level' => $request->study_level ?? null,
-            'qualification' => $request->qualification ?? null,
-            'country' => 'United Kingdom',
-        ]);
+        // $emailData = array_merge($dbData, [
+        //     // 'study_level' => $request->study_level ?? null,
+        //     'qualification' => $request->qualification ?? null,
+        //     'country' => 'United Kingdom',
+        // ]);
 
         // Flash success message
         session()->flash('success', 'Thank you! We have received your enquiry. Our UK counsellors will contact you within 24 hours.');
 
         // Try sending confirmation email
-        try {
-            Mail::to('info@overseaseducationlane.com')
-                ->cc($request->email)
-                ->send(new SouthMail($emailData));
-        } catch (\Exception $e) {
-            Log::error('Error sending UK lead email: ' . $e->getMessage());
-        }
+        // try {
+        //     Mail::to('info@overseaseducationlane.com')
+        //         ->cc($request->email)
+        //         ->send(new SouthMail($emailData));
+        // } catch (\Exception $e) {
+        //     Log::error('Error sending UK lead email: ' . $e->getMessage());
+        // }
 
         // Redirect to thank you page
         return redirect()->route('thank-you');
