@@ -757,7 +757,7 @@ class LeadsManageCotroller extends Controller
                     ->orWhere('assigned_to', $user_id)
 
                     // 3. Facebook + Google leads (any user)
-                    ->orWhereIn('source', ['facebook-leads', 'Google Ads']);
+                    ->orWhereIn('source', ['facebook-leads', 'UK Landing Page - Google Ads']);
             });
         }
 

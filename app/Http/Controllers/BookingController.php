@@ -266,7 +266,7 @@ public function adminBookings(Request $request)
     $query = Booking::query();
 
     // Non-admin only own bookings
-    if (auth()->check() && auth()->user()->id != 1) {
+    if (auth()->check() && auth()->user()->id != [1]) {
         $query->where('counselor_id', auth()->id());
     }
 

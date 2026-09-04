@@ -164,6 +164,8 @@ class HomeController extends Controller
 
     public function send_mail_uk(Request $request)
     {
+        $country = $request->routeIs('send-mail-italy') ? 'Italy' : 'UK';
+
         // Validate incoming request
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -189,7 +191,7 @@ class HomeController extends Controller
             'email' => $request->email,
             'phone_number' => $request->phone,
             'lead_status' => 1,
-            'source' => 'UK Landing Page - Google Ads',
+            'source' => $country . ' Landing Page - Google Ads',
             'course' => $request->course ?? null,
             'intake' => $request->intake ?? null,
         ];
@@ -206,7 +208,7 @@ class HomeController extends Controller
         // ]);
 
         // Flash success message
-        session()->flash('success', 'Thank you! We have received your enquiry. Our UK counsellors will contact you within 24 hours.');
+        session()->flash('success', 'Thank you! We have received your enquiry. Our ' . $country . ' counsellors will contact you within 24 hours.');
 
         // Try sending confirmation email
         // try {
@@ -221,11 +223,45 @@ class HomeController extends Controller
         return redirect()->route('thank-you');
     }
 
-    public function uk()
+    public function send_mail_italy(Request $request)
     {
-        return view('uk.index');
+        return $this->send_mail_uk($request);
     }
 
+    public function uk()
+    {
+        $universities = University::where('is_approved', 1)
+            ->whereHas('country', function ($query) {
+                $query->whereIn('name', ['United Kingdom', 'UK']);
+            })
+            ->orderBy('university_name')
+            ->get(['id', 'university_name', 'university_location', 'city', 'logo']);
+
+        return view('uk.index', compact('universities'));
+    }
+   public function southKorea()
+    {
+        $universities = University::where('is_approved', 1)
+            ->whereHas('country', function ($query) {
+                $query->whereIn('name', ['South Korea', 'Korea']);
+            })
+            ->orderBy('university_name')
+            ->get(['id', 'university_name', 'university_location', 'city', 'logo']);
+
+        return view('southkoreaa.index', compact('universities'));
+    }
+    public function italy()
+    {
+
+    $universities = University::where('is_approved', 1)
+            ->whereHas('country', function ($query) {
+                $query->whereIn('name', ['Italy', 'Italian']);
+            })
+            ->orderBy('university_name')
+            ->get(['id', 'university_name', 'university_location', 'city', 'logo']);
+
+        return view('italy.index', compact('universities'));
+    }
     public function usa()
 
     {

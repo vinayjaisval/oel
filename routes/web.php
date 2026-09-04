@@ -899,8 +899,7 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
                 [BookingController::class, 'sendReminder'])->name('send.reminder');
     
         });
-
-    Route::get('/study-in-south-Korea/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'index'])->name('study-in-south-Korea');
+    Route::get('/study-in-southKorea/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'index'])->name('study-in-southKorea');
     Route::get('/landing-page/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'index'])->name('landing-page');
    
    
@@ -916,7 +915,12 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
     Route::get('/get-testimonials', [FrontendController::class, 'get_testimonials']);
     Route::post('send-mail-south', [App\Http\Controllers\LandingPage\HomeController::class, 'send_mail_south'])->name('send-mail-south');
     Route::post('send-mail-uk', [App\Http\Controllers\LandingPage\HomeController::class, 'send_mail_uk'])->name('send-mail-uk');
+    Route::post('send-mail-italy', [App\Http\Controllers\LandingPage\HomeController::class, 'send_mail_italy'])->name('send-mail-italy');
     Route::get('/study-in-uk/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'uk'])->name('study-in-uk');
+    Route::get('/study-in-south-korea/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'southKorea'])->name('study-in-south-korea');
+    Route::get('/study-in-italy/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'italy'])->name('study-in-italy');
+
+
     Route::get('/study-in-usa/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'usa'])->name('study-in-usa');
     Route::get('/study-in-canada/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'canada'])->name('study-in-canada');
     Route::get('thank-you', [App\Http\Controllers\LandingPage\HomeController::class, 'thankss'])->name('thank-you');

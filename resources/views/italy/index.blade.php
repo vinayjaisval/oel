@@ -4,12 +4,12 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="description" content="Explore UK universities, courses, scholarships, admission requirements and student visa guidance. Get free personalised counselling from Overseas Education Lane." />
-    <meta name="keywords" content="Study in UK, Study in UK for Indian students, UK universities, UK student visa, UK scholarships, Study abroad UK, UK university admission, Masters in UK, Bachelor's in UK" />
+    <meta name="description" content="Explore Italian universities, courses, scholarships, admission requirements and student visa guidance. Get free personalised counselling from Overseas Education Lane." />
+    <meta name="keywords" content="Study in Italy, Study in Italy for Indian students, Italy universities, Italy student visa, Italy scholarships, Study abroad Italy, Italy university admission, Masters in Italy, Bachelor's in Italy" />
     <meta name="author" content="Overseas Education Lane" />
 
     <!-- SITE TITLE -->
-    <title>Study in UK for Indian Students | Free Counselling | Overseas Education Lane</title>
+    <title>Study in Italy for Indian Students | Free Counselling | Overseas Education Lane</title>
 
     <!-- FAVICON -->
     <link rel="shortcut icon" href="{{ asset('assets/images/logo.png') }}" type="image/x-icon" />
@@ -955,7 +955,7 @@
             border-top: 1px solid var(--uk-border);
             padding: 0.7rem;
             z-index: 999;
-            box-shadow: 0 -2px 10px rgba(121, 59, 59, 0.12);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.12);
         }
 
         .uk-landing-page .uk-mobile-sticky-buttons {
@@ -1285,14 +1285,14 @@
                 <div class="uk-inner">
                     <div class="uk-hero-grid">
                         <div class="uk-hero-content">
-                            <span class="uk-badge">STUDY IN UK &middot; 2026 INTAKE</span>
-                            <h1 class="uk-hero-title">Get Admission in Top UK Universities with <span class="uk-highlight">Scholarships up to &pound;10,000</span></h1>
-                            <p class="uk-hero-desc">Explore top UK universities, courses, scholarships and student visa guidance with personalised support from experienced education counsellors.</p>
+                            <span class="uk-badge">STUDY IN ITALY &middot; 2026 INTAKE</span>
+                            <h1 class="uk-hero-title">Get Admission in Top Italian Universities with <span class="uk-highlight">Scholarships up to &euro;7,000</span></h1>
+                            <p class="uk-hero-desc">Explore top Italian universities, courses, scholarships and student visa guidance with personalised support from experienced education counsellors.</p>
 
                             <div class="uk-chip-row">
                                 <span class="uk-chip"><i class="fas fa-check-circle"></i> Free Profile Evaluation</span>
-                                <span class="uk-chip"><i class="fas fa-check-circle"></i> No IELTS Options Available</span>
-                                <span class="uk-chip"><i class="fas fa-check-circle"></i> 2-Year PSW Visa</span>
+                                <span class="uk-chip"><i class="fas fa-check-circle"></i> English-Taught Courses</span>
+                                <span class="uk-chip"><i class="fas fa-check-circle"></i> Affordable Tuition Fees</span>
                                 <span class="uk-chip"><i class="fas fa-check-circle"></i> Expert Visa Assistance</span>
                             </div>
 
@@ -1315,10 +1315,10 @@
                                     </div>
                                 @endif
 
-                                <h3>Get Free UK Eligibility Assessment</h3>
+                                <h3>Get Free Italy Eligibility Assessment</h3>
                                 <p class="uk-form-sub">Check your profile and get personalised guidance.</p>
 
-                                <form id="uk-lead-form" action="{{ route('send-mail-uk') }}" method="POST" novalidate>
+                                <form id="uk-lead-form" action="{{ route('send-mail-italy') }}" method="POST" novalidate>
                                     @csrf
 
                                     <div class="uk-form-grid">
@@ -1418,7 +1418,7 @@
                                     </div>
 
                                     <p class="uk-form-text-small">
-                                        Your information is safe and will only be used to contact you regarding your UK study options.
+                                        Your information is safe and will only be used to contact you regarding your Italy study options.
                                     </p>
                                 </form>
                             </div>
@@ -1459,8 +1459,8 @@
             <section class="uk-section" id="universities">
                 <div class="uk-inner">
                     <div class="uk-section-header">
-                        <h2>Top UK Universities</h2>
-                        <p>Explore universities that match your academic goals.</p>
+                        <h2>Top Italian Universities</h2>
+                        <p>Explore Italian universities that match your academic goals.</p>
                     </div>
 
                     <div class="uk-carousel-wrap">
@@ -1499,7 +1499,7 @@
                 <div class="uk-inner">
                     <div class="uk-section-header">
                         <h2>Popular Courses for International Students</h2>
-                        <p>Choose from a wide range of programmes at UK universities.</p>
+                        <p>Choose from a wide range of programmes at Italian universities.</p>
                     </div>
 
                     <div class="uk-course-grid">
@@ -1537,12 +1537,12 @@
                 </div>
             </section>
 
-            <!-- WHY STUDY IN UK SECTION -->
+            <!-- WHY STUDY IN ITALY SECTION -->
             <section class="uk-section" id="why-uk">
                 <div class="uk-inner">
                     <div class="uk-section-header">
-                        <h2>Why Study in the UK?</h2>
-                        <p>Discover the benefits of studying at UK universities.</p>
+                        <h2>Why Study in Italy?</h2>
+                        <p>Discover the benefits of studying at Italian universities.</p>
                     </div>
 
                     <div class="uk-why-grid">
@@ -1559,7 +1559,7 @@
                         <div class="uk-card">
                             <div class="uk-card-icon"><i class="fas fa-book"></i></div>
                             <h4>Affordable & Flexible</h4>
-                            <p>Explore a range of universities, courses and study options to suit your budget.</p>
+                            <p>Benefit from competitive tuition fees and affordable living options across Italy.</p>
                         </div>
                         <div class="uk-card">
                             <div class="uk-card-icon"><i class="fas fa-globe"></i></div>
@@ -1584,8 +1584,8 @@
             <section class="uk-section uk-bg-light">
                 <div class="uk-inner">
                     <div class="uk-section-header">
-                        <h2>Your UK Study Journey</h2>
-                        <p>Follow these simple steps to start your UK education.</p>
+                        <h2>Your Italy Study Journey</h2>
+                        <p>Follow these simple steps to start your education in Italy.</p>
                     </div>
 
                     <div class="row">
@@ -1593,7 +1593,7 @@
                             <div class="uk-process-step">
                                 <div class="uk-process-number">01</div>
                                 <h4>Profile Evaluation</h4>
-                                <p>We assess your academic background, goals and eligibility for UK universities.</p>
+                                <p>We assess your academic background, goals and eligibility for Italian universities.</p>
                             </div>
                             <div class="uk-process-step">
                                 <div class="uk-process-number">02</div>
@@ -1613,13 +1613,13 @@
                             <div class="uk-process-step">
                                 <div class="uk-process-number">05</div>
                                 <h4>Visa & Pre-Departure Support</h4>
-                                <p>Get comprehensive guidance for your UK Student Visa and pre-departure orientation.</p>
+                                <p>Get comprehensive guidance for your Italian student visa and pre-departure orientation.</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="text-center mt-4">
-                        <a href="#register-form" class="uk-btn uk-btn-navy uk-process-cta">Start My UK Application</a>
+                        <a href="#register-form" class="uk-btn uk-btn-navy uk-process-cta">Start My Italy Application</a>
                     </div>
                 </div>
             </section>
@@ -1629,8 +1629,8 @@
             <section class="uk-section uk-bg-light">
                 <div class="uk-inner">
                     <div class="uk-section-header">
-                        <h2>Explore UK Scholarship Opportunities</h2>
-                        <p>Various funding options available to help with your UK education.</p>
+                        <h2>Explore Italy Scholarship Opportunities</h2>
+                        <p>Explore scholarships and funding options to support your education in Italy.</p>
                     </div>
 
                     <div class="uk-scholarship-grid">
@@ -1652,7 +1652,7 @@
                         <div class="uk-card">
                             <div class="uk-card-icon"><i class="fas fa-globe"></i></div>
                             <h4>Government Scholarships</h4>
-                            <p>Government-funded programmes offered by UK agencies or home country governments.</p>
+                                <p>Government-funded programmes and regional scholarships available to eligible students.</p>
                         </div>
                         <div class="uk-card">
                             <div class="uk-card-icon"><i class="fas fa-building"></i></div>
@@ -1691,10 +1691,10 @@
                                 <div class="uk-stars">
                                     <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                 </div>
-                                <p class="uk-testimonial-text">"Got admitted to Manchester University for MSc Computer Science with partial scholarship. The counselling team was very supportive throughout the process!"</p>
+                                <p class="uk-testimonial-text">"Got admitted to the University of Bologna for MSc Computer Science with a partial scholarship. The counselling team was very supportive throughout the process!"</p>
                                 <p class="uk-testimonial-author">Priya Sharma</p>
                                 <p class="uk-testimonial-role">MSc Computer Science</p>
-                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> University of Manchester</p>
+                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> University of Bologna</p>
                             </div>
                             <div class="uk-testimonial-card">
                                 <img src="{{ asset('assets/images/testimonial/2.png') }}" alt="Student" class="uk-testimonial-avatar">
@@ -1704,7 +1704,7 @@
                                 <p class="uk-testimonial-text">"Exceptional guidance for my visa application and university selection. The team helped me choose the best fit for my career goals."</p>
                                 <p class="uk-testimonial-author">Sakshi Patel</p>
                                 <p class="uk-testimonial-role">BA Business Administration</p>
-                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> University of Edinburgh</p>
+                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> Sapienza University of Rome</p>
                             </div>
                             <div class="uk-testimonial-card">
                                 <img src="{{ asset('assets/img/user.jpg') }}" alt="Student" class="uk-testimonial-avatar">
@@ -1714,7 +1714,7 @@
                                 <p class="uk-testimonial-text">"From profile evaluation to visa approval, every step was smooth. The team's expertise made my UK journey stress-free!"</p>
                                 <p class="uk-testimonial-author">Anjali Desai</p>
                                 <p class="uk-testimonial-role">LLM Law</p>
-                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> London School of Economics</p>
+                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> Politecnico di Milano</p>
                             </div>
 
                              <div class="uk-testimonial-card">
@@ -1725,7 +1725,7 @@
                                 <p class="uk-testimonial-text">"I am truly grateful to Overseas Education Lane for their exceptional support throughout my study abroad journey. Their team, especially the counselors, provided personalized and detailed guidance"</p>
                                 <p class="uk-testimonial-author">BEMIN JOHN BENNY</p>
                                 <p class="uk-testimonial-role">Btech</p>
-                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> HERIOT WATT UNIVERSITY, UK</p>
+                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> University of Padua, Italy</p>
                             </div>
                         </div>
 
@@ -1743,53 +1743,53 @@
                 <div class="uk-inner">
                     <div class="uk-section-header">
                         <h2>Frequently Asked Questions</h2>
-                        <p>Get answers to common questions about studying in the UK.</p>
+                        <p>Get answers to common questions about studying in Italy.</p>
                     </div>
 
                     <div class="uk-faq-list">
                         <div class="uk-faq-item active">
                             <div class="uk-faq-header">
-                                <h5 class="uk-faq-title">Can Indian students study in the UK?</h5>
+                                <h5 class="uk-faq-title">Can Indian students study in Italy?</h5>
                                 <span class="uk-faq-toggle"><i class="fas fa-chevron-down"></i></span>
                             </div>
                             <div class="uk-faq-content">
-                                Yes, Indian students can absolutely study in the UK. UK universities welcome international students including Indian nationals. You'll need a valid passport, academic qualifications, and proof of financial capability. UK student visa requirements apply for international students.
+                                Yes, Indian students can study in Italy. Italian universities welcome international students, including Indian nationals. You will need a valid passport, academic qualifications and proof of financial capability. An Italian student visa is required for international students.
                             </div>
                         </div>
 
                         <div class="uk-faq-item">
                             <div class="uk-faq-header">
-                                <h5 class="uk-faq-title">What are the requirements to study in the UK?</h5>
+                                <h5 class="uk-faq-title">What are the requirements to study in Italy?</h5>
                                 <span class="uk-faq-toggle"><i class="fas fa-chevron-down"></i></span>
                             </div>
                             <div class="uk-faq-content">
-                                Main requirements include a valid passport, academic qualifications matching the course level, English language proficiency (IELTS/TOEFL), proof of financial capability, letters of recommendation and statement of purpose for postgraduate programmes, and sometimes entrance exams or interviews depending on the course.
+                                Main requirements include a valid passport, academic qualifications matching the course level, language proficiency, proof of financial capability, letters of recommendation and a statement of purpose for postgraduate programmes. Some courses may also require entrance exams or interviews.
                             </div>
                         </div>
 
                         <div class="uk-faq-item">
                             <div class="uk-faq-header">
-                                <h5 class="uk-faq-title">Is IELTS required to study in the UK?</h5>
+                                <h5 class="uk-faq-title">Is IELTS required to study in Italy?</h5>
                                 <span class="uk-faq-toggle"><i class="fas fa-chevron-down"></i></span>
                             </div>
                             <div class="uk-faq-content">
-                                Most UK universities require IELTS or TOEFL scores to prove English proficiency. However, some universities accept alternative qualifications like CAE or equivalents, and some offer pre-sessional English programmes for students who don't meet the requirement initially.
+                                English-taught programmes may require IELTS, TOEFL or another accepted English qualification. Requirements vary by university and course, while Italian-taught programmes may require proof of Italian language proficiency.
                             </div>
                         </div>
 
                         <div class="uk-faq-item">
                             <div class="uk-faq-header">
-                                <h5 class="uk-faq-title">How much does it cost to study in the UK?</h5>
+                                <h5 class="uk-faq-title">How much does it cost to study in Italy?</h5>
                                 <span class="uk-faq-toggle"><i class="fas fa-chevron-down"></i></span>
                             </div>
                             <div class="uk-faq-content">
-                                Costs vary by university and course. Undergraduate tuition fees generally range from £10,000-£35,000 per year, while postgraduate fees range from £12,000-£40,000+ per year. Living expenses range from £12,000-£20,000 per year depending on location. We provide personalised cost estimates based on your choice.
+                                Costs vary by university, course and family income. Tuition fees are often more affordable than in other European destinations, and regional scholarships may cover tuition and provide living support. We provide personalised cost estimates based on your choices.
                             </div>
                         </div>
 
                         <div class="uk-faq-item">
                             <div class="uk-faq-header">
-                                <h5 class="uk-faq-title">Can I get a scholarship to study in the UK?</h5>
+                                <h5 class="uk-faq-title">Can I get a scholarship to study in Italy?</h5>
                                 <span class="uk-faq-toggle"><i class="fas fa-chevron-down"></i></span>
                             </div>
                             <div class="uk-faq-content">
@@ -1799,11 +1799,11 @@
 
                         <div class="uk-faq-item">
                             <div class="uk-faq-header">
-                                <h5 class="uk-faq-title">Which UK universities can I apply to?</h5>
+                                <h5 class="uk-faq-title">Which Italian universities can I apply to?</h5>
                                 <span class="uk-faq-toggle"><i class="fas fa-chevron-down"></i></span>
                             </div>
                             <div class="uk-faq-content">
-                                You can apply to any UK university that accepts international applicants, including Oxford, Cambridge, Imperial College London, LSE, Edinburgh, Manchester, Bristol, Warwick, Durham and many more. We help you identify universities best suited to your academic profile and goals.
+                                You can apply to Italian universities that accept international applicants, including the University of Bologna, Sapienza University of Rome, University of Milan, University of Padua and Politecnico di Milano. We help you identify universities best suited to your academic profile and goals.
                             </div>
                         </div>
 
@@ -1813,17 +1813,17 @@
                                 <span class="uk-faq-toggle"><i class="fas fa-chevron-down"></i></span>
                             </div>
                             <div class="uk-faq-content">
-                                Most UK universities follow academic years starting in September/October, with applications typically open from September to January. Some universities have rolling admissions. It's best to apply 6-12 months before your intended intake to allow time for processing and your visa application.
+                                Italian universities commonly offer September or October intakes, with some programmes opening additional application windows. It is best to apply 6-12 months before your intended intake to allow time for admission, scholarships and visa processing.
                             </div>
                         </div>
 
                         <div class="uk-faq-item">
                             <div class="uk-faq-header">
-                                <h5 class="uk-faq-title">How does the UK student visa process work?</h5>
+                                <h5 class="uk-faq-title">How does the Italy student visa process work?</h5>
                                 <span class="uk-faq-toggle"><i class="fas fa-chevron-down"></i></span>
                             </div>
                             <div class="uk-faq-content">
-                                After receiving a university offer, you'll get a Confirmation of Acceptance for Studies (CAS). With the CAS and required documents, you apply for a Student Visa through UK Visas and Immigration. Processing typically takes about 3 weeks. Our counsellors guide you through each step.
+                                After receiving an admission letter, you prepare the required documents and apply for an Italian long-stay student visa through the relevant consulate or visa centre. Our counsellors guide you through documentation, financial proof and each step of the process.
                             </div>
                         </div>
                     </div>
@@ -1833,8 +1833,8 @@
             <!-- FINAL CTA SECTION -->
             <section class="uk-final-cta">
                 <div class="uk-inner">
-                    <h2>Ready to Start Your UK Study Journey?</h2>
-                    <p>Get personalised guidance from our experienced UK education counsellors and take the first step toward your UK dream.</p>
+                    <h2>Ready to Start Your Italy Study Journey?</h2>
+                    <p>Get personalised guidance from our experienced Italy education counsellors and take the first step toward your Italy study dream.</p>
                     <div class="uk-final-cta-buttons">
                         <a href="#register-form" class="uk-btn uk-btn-primary uk-final-cta-counsel">Get Free Counselling</a>
                         <!-- <a href="#eligibility" class="uk-btn uk-btn-secondary uk-final-cta-eligibility">Check Eligibility</a> -->
@@ -1853,7 +1853,7 @@
                         <div>
                             <h5>Quick Links</h5>
                             <ul>
-                                <li><a href="#why-uk">Why UK</a></li>
+                                <li><a href="#why-uk">Why Italy</a></li>
                                 <li><a href="#universities">Universities</a></li>
                                 <li><a href="#courses">Courses</a></li>
                                 <li><a href="#faq">FAQ</a></li>
@@ -1930,16 +1930,16 @@
 
             // Trigger conversion tracking
             if (typeof gtag !== 'undefined') {
-                gtag('event', 'uk_form_submit', {
+                gtag('event', 'italy_form_submit', {
                     'event_category': 'engagement',
-                    'event_label': 'UK Lead Form Submission'
+                    'event_label': 'Italy Lead Form Submission'
                 });
             }
 
             // Facebook Pixel
             if (typeof fbq !== 'undefined') {
                 fbq('track', 'Lead', {
-                    content_name: 'UK Study Enquiry'
+                    content_name: 'Italy Study Enquiry'
                 });
             }
         });
@@ -2012,7 +2012,7 @@
                 const btnClass = this.className;
                 let eventLabel = 'CTA Click';
 
-                if (btnClass.includes('counselling') || btnClass.includes('counsel')) eventLabel = 'UK Counselling CTA';
+                if (btnClass.includes('counselling') || btnClass.includes('counsel')) eventLabel = 'Italy Counselling CTA';
                 else if (btnClass.includes('eligibility')) eventLabel = 'Eligibility Check CTA';
                 else if (btnClass.includes('whatsapp')) eventLabel = 'WhatsApp Click';
                 else if (btnClass.includes('phone')) eventLabel = 'Phone Click';

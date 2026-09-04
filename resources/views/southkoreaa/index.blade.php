@@ -4,16 +4,16 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="description" content="Explore UK universities, courses, scholarships, admission requirements and student visa guidance. Get free personalised counselling from Overseas Education Lane." />
-    <meta name="keywords" content="Study in UK, Study in UK for Indian students, UK universities, UK student visa, UK scholarships, Study abroad UK, UK university admission, Masters in UK, Bachelor's in UK" />
+    <meta name="description" content="Explore South Korean universities, courses, scholarships, admission requirements and student visa guidance. Get free personalised counselling from Overseas Education Lane." />
+    <meta name="keywords" content="Study in South Korea, Study in South Korea for Indian students, Korean universities, South Korea student visa, GKS scholarship, Study abroad South Korea, Korean university admission" />
     <meta name="author" content="Overseas Education Lane" />
 
     <!-- SITE TITLE -->
-    <title>Study in UK for Indian Students | Free Counselling | Overseas Education Lane</title>
+    <title>Study in South Korea for Indian Students | Free Counselling | Overseas Education Lane</title>
 
     <!-- FAVICON -->
-    <link rel="shortcut icon" href="{{ asset('assets/images/logo.png') }}" type="image/x-icon" />
-    <link rel="icon" href="{{ asset('assets/images/logo.png') }}" type="image/x-icon" />
+    <link rel="shortcut icon" href="{{ asset('southkorea/images/logo.png') }}" type="image/x-icon" />
+    <link rel="icon" href="{{ asset('southkorea/images/logo.png') }}" type="image/x-icon" />
 
     <!-- GOOGLE FONTS -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -1269,7 +1269,7 @@
             <header class="uk-header">
                 <div class="uk-header-inner">
                     <a class="uk-logo" href="/">
-                        <img src="{{ asset('assets/images/logo.png') }}" alt="Overseas Education Lane">
+                        <img src="{{ asset('southkorea/images/logo.png') }}" alt="Overseas Education Lane">
                     </a>
                     <div class="uk-header-right">
                         <a href="tel:+918929922525" class="uk-header-phone">
@@ -1285,15 +1285,15 @@
                 <div class="uk-inner">
                     <div class="uk-hero-grid">
                         <div class="uk-hero-content">
-                            <span class="uk-badge">STUDY IN UK &middot; 2026 INTAKE</span>
-                            <h1 class="uk-hero-title">Get Admission in Top UK Universities with <span class="uk-highlight">Scholarships up to &pound;10,000</span></h1>
-                            <p class="uk-hero-desc">Explore top UK universities, courses, scholarships and student visa guidance with personalised support from experienced education counsellors.</p>
+                            <span class="uk-badge">STUDY IN SOUTH KOREA &middot; 2026 INTAKE</span>
+                            <h1 class="uk-hero-title">Get Admission to Top South Korean Universities with <span class="uk-highlight">Scholarships up to 100%</span></h1>
+                            <p class="uk-hero-desc">Explore top Korean universities, English-taught courses, scholarships and D-2 student visa guidance with personalised support from experienced education counsellors.</p>
 
                             <div class="uk-chip-row">
                                 <span class="uk-chip"><i class="fas fa-check-circle"></i> Free Profile Evaluation</span>
-                                <span class="uk-chip"><i class="fas fa-check-circle"></i> No IELTS Options Available</span>
-                                <span class="uk-chip"><i class="fas fa-check-circle"></i> 2-Year PSW Visa</span>
-                                <span class="uk-chip"><i class="fas fa-check-circle"></i> Expert Visa Assistance</span>
+                                <span class="uk-chip"><i class="fas fa-check-circle"></i> English-Taught Programs</span>
+                                <span class="uk-chip"><i class="fas fa-check-circle"></i> GKS Scholarship Guidance</span>
+                                <span class="uk-chip"><i class="fas fa-check-circle"></i> Expert D-2 Visa Assistance</span>
                             </div>
 
                             <div class="uk-hero-ctas">
@@ -1315,10 +1315,10 @@
                                     </div>
                                 @endif
 
-                                <h3>Get Free UK Eligibility Assessment</h3>
+                                <h3>Get Free South Korea Eligibility Assessment</h3>
                                 <p class="uk-form-sub">Check your profile and get personalised guidance.</p>
 
-                                <form id="uk-lead-form" action="{{ route('send-mail-uk') }}" method="POST" novalidate>
+                                <form id="uk-lead-form" action="{{ route('send-mail-south') }}" method="POST" novalidate>
                                     @csrf
 
                                     <div class="uk-form-grid">
@@ -1351,8 +1351,7 @@
                                                 oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
                                             >
 
-                                            <div class="uk-field-error" id="phone-error"
-                                                style="display: {{ $errors->has('phone') ? 'block' : 'none' }};">
+                                            <div class="uk-field-error {{ $errors->has('phone') ? '' : 'd-none' }}" id="phone-error">
                                                 @if($errors->has('phone'))
                                                     {{ $errors->first('phone') }}
                                                 @else
@@ -1418,7 +1417,7 @@
                                     </div>
 
                                     <p class="uk-form-text-small">
-                                        Your information is safe and will only be used to contact you regarding your UK study options.
+                                        Your information is safe and will only be used to contact you regarding your South Korea study options.
                                     </p>
                                 </form>
                             </div>
@@ -1459,8 +1458,8 @@
             <section class="uk-section" id="universities">
                 <div class="uk-inner">
                     <div class="uk-section-header">
-                        <h2>Top UK Universities</h2>
-                        <p>Explore universities that match your academic goals.</p>
+                        <h2>Top South Korean Universities</h2>
+                        <p>Explore leading Korean universities that match your academic goals.</p>
                     </div>
 
                     <div class="uk-carousel-wrap">
@@ -1469,7 +1468,7 @@
                         </button>
 
                         <div class="uk-carousel-track uk-uni-carousel" id="uni-carousel">
-                            @forelse($universities as $university)
+                             @forelse($universities as $university)
                                 <div class="uk-card uk-uni-card">
                                     <div class="uk-uni-logo">
                                         @if($university->logo)
@@ -1499,7 +1498,7 @@
                 <div class="uk-inner">
                     <div class="uk-section-header">
                         <h2>Popular Courses for International Students</h2>
-                        <p>Choose from a wide range of programmes at UK universities.</p>
+                        <p>Choose from a wide range of programmes at South Korean universities.</p>
                     </div>
 
                     <div class="uk-course-grid">
@@ -1537,39 +1536,39 @@
                 </div>
             </section>
 
-            <!-- WHY STUDY IN UK SECTION -->
-            <section class="uk-section" id="why-uk">
+            <!-- WHY STUDY IN SOUTH KOREA SECTION -->
+            <section class="uk-section" id="why-south-korea">
                 <div class="uk-inner">
                     <div class="uk-section-header">
-                        <h2>Why Study in the UK?</h2>
-                        <p>Discover the benefits of studying at UK universities.</p>
+                        <h2>Why Study in South Korea?</h2>
+                        <p>Discover the benefits of studying at South Korean universities.</p>
                     </div>
 
                     <div class="uk-why-grid">
                         <div class="uk-card">
                             <div class="uk-card-icon"><i class="fas fa-star"></i></div>
                             <h4>Globally Recognised Universities</h4>
-                            <p>Study at internationally recognised institutions known for academic excellence.</p>
+                            <p>Study at globally recognised institutions known for academic excellence and innovation.</p>
                         </div>
                         <div class="uk-card">
                             <div class="uk-card-icon"><i class="fas fa-briefcase"></i></div>
                             <h4>Work & Career Opportunities</h4>
-                            <p>Develop skills and experience for your future career with industry-focused programmes.</p>
+                            <p>Build career-ready skills in one of Asia's most dynamic technology and business hubs.</p>
                         </div>
                         <div class="uk-card">
                             <div class="uk-card-icon"><i class="fas fa-book"></i></div>
                             <h4>Affordable & Flexible</h4>
-                            <p>Explore a range of universities, courses and study options to suit your budget.</p>
+                            <p>Explore quality education with competitive tuition and living costs.</p>
                         </div>
                         <div class="uk-card">
                             <div class="uk-card-icon"><i class="fas fa-globe"></i></div>
                             <h4>Global Exposure</h4>
-                            <p>Experience an international academic environment with students from 190+ countries.</p>
+                            <p>Enjoy a safe, modern campus experience with strong international communities.</p>
                         </div>
                         <div class="uk-card">
                             <div class="uk-card-icon"><i class="fas fa-medal"></i></div>
                             <h4>Scholarship Opportunities</h4>
-                            <p>Get guidance on merit-based and need-based scholarships and funding options.</p>
+                            <p>Get guidance on GKS, university scholarships and awards of up to 100%.</p>
                         </div>
                         <div class="uk-card">
                             <div class="uk-card-icon"><i class="fas fa-headset"></i></div>
@@ -1584,8 +1583,8 @@
             <section class="uk-section uk-bg-light">
                 <div class="uk-inner">
                     <div class="uk-section-header">
-                        <h2>Your UK Study Journey</h2>
-                        <p>Follow these simple steps to start your UK education.</p>
+                        <h2>Your South Korea Study Journey</h2>
+                        <p>Follow these simple steps to start your Korean education journey.</p>
                     </div>
 
                     <div class="row">
@@ -1593,33 +1592,33 @@
                             <div class="uk-process-step">
                                 <div class="uk-process-number">01</div>
                                 <h4>Profile Evaluation</h4>
-                                <p>We assess your academic background, goals and eligibility for UK universities.</p>
+                                <p>We assess your academic background, goals and eligibility for South Korean universities.</p>
                             </div>
                             <div class="uk-process-step">
                                 <div class="uk-process-number">02</div>
                                 <h4>University & Course Selection</h4>
-                                <p>Shortlist suitable universities and courses aligned with your goals and budget.</p>
+                                <p>Shortlist suitable Korean universities and English-taught courses aligned with your goals and budget.</p>
                             </div>
                             <div class="uk-process-step">
                                 <div class="uk-process-number">03</div>
                                 <h4>Application & Documentation</h4>
-                                <p>Get guidance with applications, SOP, LOR and all required documents.</p>
+                                <p>Get guidance with applications, SOP, LOR, translations and all required documents.</p>
                             </div>
                             <div class="uk-process-step">
                                 <div class="uk-process-number">04</div>
                                 <h4>Offer & Financial Guidance</h4>
-                                <p>Understand your offer, fees and scholarships, and plan your finances.</p>
+                                <p>Understand your offer, fees and GKS or university scholarships, and plan your finances.</p>
                             </div>
                             <div class="uk-process-step">
                                 <div class="uk-process-number">05</div>
                                 <h4>Visa & Pre-Departure Support</h4>
-                                <p>Get comprehensive guidance for your UK Student Visa and pre-departure orientation.</p>
+                                <p>Get comprehensive guidance for your D-2 student visa, health checks and pre-departure orientation.</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="text-center mt-4">
-                        <a href="#register-form" class="uk-btn uk-btn-navy uk-process-cta">Start My UK Application</a>
+                        <a href="#register-form" class="uk-btn uk-btn-navy uk-process-cta">Start My South Korea Application</a>
                     </div>
                 </div>
             </section>
@@ -1629,20 +1628,20 @@
             <section class="uk-section uk-bg-light">
                 <div class="uk-inner">
                     <div class="uk-section-header">
-                        <h2>Explore UK Scholarship Opportunities</h2>
-                        <p>Various funding options available to help with your UK education.</p>
+                        <h2>Explore South Korea Scholarship Opportunities</h2>
+                        <p>Find funding options available to help with your Korean education.</p>
                     </div>
 
                     <div class="uk-scholarship-grid">
                         <div class="uk-card">
                             <div class="uk-card-icon"><i class="fas fa-university"></i></div>
                             <h4>University Scholarships</h4>
-                            <p>Merit-based, need-based and subject-specific scholarships across institutions.</p>
+                            <p>Merit-based, need-based and subject-specific scholarships across Korean institutions.</p>
                         </div>
                         <div class="uk-card">
                             <div class="uk-card-icon"><i class="fas fa-medal"></i></div>
                             <h4>Merit-Based Scholarships</h4>
-                            <p>Awarded for academic excellence, often covering partial to full tuition fees.</p>
+                            <p>Awards for academic excellence that can cover partial to full tuition fees.</p>
                         </div>
                         <div class="uk-card">
                             <div class="uk-card-icon"><i class="fas fa-book"></i></div>
@@ -1652,7 +1651,7 @@
                         <div class="uk-card">
                             <div class="uk-card-icon"><i class="fas fa-globe"></i></div>
                             <h4>Government Scholarships</h4>
-                            <p>Government-funded programmes offered by UK agencies or home country governments.</p>
+                            <p>Learn about the Global Korea Scholarship and other government-funded programmes.</p>
                         </div>
                         <div class="uk-card">
                             <div class="uk-card-icon"><i class="fas fa-building"></i></div>
@@ -1667,7 +1666,7 @@
                     </div>
 
                     <div class="text-center mt-4">
-                        <a href="#register-form" class="uk-btn uk-btn-navy uk-scholarship-cta">Check Scholarship Options</a>
+                        <a href="#register-form" class="uk-btn uk-btn-navy uk-scholarship-cta">Check Korean Scholarship Options</a>
                     </div>
                 </div>
             </section>
@@ -1687,34 +1686,34 @@
 
                         <div class="uk-carousel-track uk-testimonial-carousel" id="testi-carousel">
                             <div class="uk-testimonial-card">
-                                <img src="{{ asset('assets/images/testimonial/1.png') }}" alt="Student" class="uk-testimonial-avatar">
+                                <img src="{{ asset('southkorea/images/img/t2.png') }}" alt="Student" class="uk-testimonial-avatar">
                                 <div class="uk-stars">
                                     <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                 </div>
-                                <p class="uk-testimonial-text">"Got admitted to Manchester University for MSc Computer Science with partial scholarship. The counselling team was very supportive throughout the process!"</p>
+                                <p class="uk-testimonial-text">"The team helped me shortlist a Korean university and guided me through my scholarship application. Their support was excellent throughout the process!"</p>
                                 <p class="uk-testimonial-author">Priya Sharma</p>
                                 <p class="uk-testimonial-role">MSc Computer Science</p>
-                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> University of Manchester</p>
+                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> Yonsei University</p>
                             </div>
                             <div class="uk-testimonial-card">
-                                <img src="{{ asset('assets/images/testimonial/2.png') }}" alt="Student" class="uk-testimonial-avatar">
+                                <img src="{{ asset('southkorea/images/img/t4.png') }}" alt="Student" class="uk-testimonial-avatar">
                                 <div class="uk-stars">
                                     <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                 </div>
-                                <p class="uk-testimonial-text">"Exceptional guidance for my visa application and university selection. The team helped me choose the best fit for my career goals."</p>
+                                <p class="uk-testimonial-text">"Exceptional guidance for my Korean university application and D-2 visa. The team helped me choose the best fit for my career goals."</p>
                                 <p class="uk-testimonial-author">Sakshi Patel</p>
                                 <p class="uk-testimonial-role">BA Business Administration</p>
-                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> University of Edinburgh</p>
+                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> Korea University</p>
                             </div>
                             <div class="uk-testimonial-card">
-                                <img src="{{ asset('assets/img/user.jpg') }}" alt="Student" class="uk-testimonial-avatar">
+                                <img src="{{ asset('southkorea/images/img/t3.png') }}" alt="Student" class="uk-testimonial-avatar">
                                 <div class="uk-stars">
                                     <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                 </div>
-                                <p class="uk-testimonial-text">"From profile evaluation to visa approval, every step was smooth. The team's expertise made my UK journey stress-free!"</p>
+                                <p class="uk-testimonial-text">"From profile evaluation to visa approval, every step was smooth. The team's expertise made my South Korea journey stress-free!"</p>
                                 <p class="uk-testimonial-author">Anjali Desai</p>
-                                <p class="uk-testimonial-role">LLM Law</p>
-                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> London School of Economics</p>
+                                <p class="uk-testimonial-role">MA International Studies</p>
+                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> Hanyang University</p>
                             </div>
 
                              <div class="uk-testimonial-card">
@@ -1725,7 +1724,7 @@
                                 <p class="uk-testimonial-text">"I am truly grateful to Overseas Education Lane for their exceptional support throughout my study abroad journey. Their team, especially the counselors, provided personalized and detailed guidance"</p>
                                 <p class="uk-testimonial-author">BEMIN JOHN BENNY</p>
                                 <p class="uk-testimonial-role">Btech</p>
-                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> HERIOT WATT UNIVERSITY, UK</p>
+                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> Sungkyunkwan University, South Korea</p>
                             </div>
                         </div>
 
@@ -1743,87 +1742,87 @@
                 <div class="uk-inner">
                     <div class="uk-section-header">
                         <h2>Frequently Asked Questions</h2>
-                        <p>Get answers to common questions about studying in the UK.</p>
+                        <p>Get answers to common questions about studying in South Korea.</p>
                     </div>
 
                     <div class="uk-faq-list">
                         <div class="uk-faq-item active">
                             <div class="uk-faq-header">
-                                <h5 class="uk-faq-title">Can Indian students study in the UK?</h5>
+                                <h5 class="uk-faq-title">Can Indian students study in South Korea?</h5>
                                 <span class="uk-faq-toggle"><i class="fas fa-chevron-down"></i></span>
                             </div>
                             <div class="uk-faq-content">
-                                Yes, Indian students can absolutely study in the UK. UK universities welcome international students including Indian nationals. You'll need a valid passport, academic qualifications, and proof of financial capability. UK student visa requirements apply for international students.
+                                Yes, Indian students can study in South Korea. Korean universities welcome international students, including Indian nationals. You will need a valid passport, academic qualifications, proof of finances and the appropriate D-2 student visa.
                             </div>
                         </div>
 
                         <div class="uk-faq-item">
                             <div class="uk-faq-header">
-                                <h5 class="uk-faq-title">What are the requirements to study in the UK?</h5>
+                                <h5 class="uk-faq-title">What are the requirements to study in South Korea?</h5>
                                 <span class="uk-faq-toggle"><i class="fas fa-chevron-down"></i></span>
                             </div>
                             <div class="uk-faq-content">
-                                Main requirements include a valid passport, academic qualifications matching the course level, English language proficiency (IELTS/TOEFL), proof of financial capability, letters of recommendation and statement of purpose for postgraduate programmes, and sometimes entrance exams or interviews depending on the course.
+                                Main requirements include a valid passport, academic qualifications matching the course level, proof of finances, language proficiency such as IELTS, TOEFL or TOPIK, letters of recommendation and a statement of purpose for postgraduate programmes. Requirements vary by university and course.
                             </div>
                         </div>
 
                         <div class="uk-faq-item">
                             <div class="uk-faq-header">
-                                <h5 class="uk-faq-title">Is IELTS required to study in the UK?</h5>
+                                <h5 class="uk-faq-title">Is IELTS required to study in South Korea?</h5>
                                 <span class="uk-faq-toggle"><i class="fas fa-chevron-down"></i></span>
                             </div>
                             <div class="uk-faq-content">
-                                Most UK universities require IELTS or TOEFL scores to prove English proficiency. However, some universities accept alternative qualifications like CAE or equivalents, and some offer pre-sessional English programmes for students who don't meet the requirement initially.
+                                English-taught programs commonly require IELTS or TOEFL scores, while Korean-taught programs may require TOPIK. Some universities accept alternative qualifications or offer language pathways, so requirements should be checked for each course.
                             </div>
                         </div>
 
                         <div class="uk-faq-item">
                             <div class="uk-faq-header">
-                                <h5 class="uk-faq-title">How much does it cost to study in the UK?</h5>
+                                <h5 class="uk-faq-title">How much does it cost to study in South Korea?</h5>
                                 <span class="uk-faq-toggle"><i class="fas fa-chevron-down"></i></span>
                             </div>
                             <div class="uk-faq-content">
-                                Costs vary by university and course. Undergraduate tuition fees generally range from £10,000-£35,000 per year, while postgraduate fees range from £12,000-£40,000+ per year. Living expenses range from £12,000-£20,000 per year depending on location. We provide personalised cost estimates based on your choice.
+                                Costs vary by university, course and city. Tuition and living costs are generally competitive compared with many other popular study destinations. We provide a personalised estimate based on your university, course and accommodation preferences.
                             </div>
                         </div>
 
                         <div class="uk-faq-item">
                             <div class="uk-faq-header">
-                                <h5 class="uk-faq-title">Can I get a scholarship to study in the UK?</h5>
+                                <h5 class="uk-faq-title">Can I get a scholarship to study in South Korea?</h5>
                                 <span class="uk-faq-toggle"><i class="fas fa-chevron-down"></i></span>
                             </div>
                             <div class="uk-faq-content">
-                                Yes, there are various scholarship opportunities available for Indian students, including university scholarships, merit-based awards, subject-specific funding, government scholarships, and external organisation grants. Our counsellors help you identify and apply for scholarships matching your profile.
+                                Yes, Indian students can apply for university scholarships, merit-based awards and the Global Korea Scholarship (GKS). Our counsellors help you identify funding options and prepare an application matching your profile.
                             </div>
                         </div>
 
                         <div class="uk-faq-item">
                             <div class="uk-faq-header">
-                                <h5 class="uk-faq-title">Which UK universities can I apply to?</h5>
+                                <h5 class="uk-faq-title">Which South Korean universities can I apply to?</h5>
                                 <span class="uk-faq-toggle"><i class="fas fa-chevron-down"></i></span>
                             </div>
                             <div class="uk-faq-content">
-                                You can apply to any UK university that accepts international applicants, including Oxford, Cambridge, Imperial College London, LSE, Edinburgh, Manchester, Bristol, Warwick, Durham and many more. We help you identify universities best suited to your academic profile and goals.
+                                You can apply to Korean universities that accept international applicants, including Yonsei University, Korea University, Hanyang University, Sungkyunkwan University, Sogang University and many more. We help you identify universities best suited to your academic profile and goals.
                             </div>
                         </div>
 
                         <div class="uk-faq-item">
                             <div class="uk-faq-header">
-                                <h5 class="uk-faq-title">When should I apply?</h5>
+                                <h5 class="uk-faq-title">When should I apply to a Korean university?</h5>
                                 <span class="uk-faq-toggle"><i class="fas fa-chevron-down"></i></span>
                             </div>
                             <div class="uk-faq-content">
-                                Most UK universities follow academic years starting in September/October, with applications typically open from September to January. Some universities have rolling admissions. It's best to apply 6-12 months before your intended intake to allow time for processing and your visa application.
+                                South Korean universities commonly offer spring and autumn intakes. Deadlines vary by institution, so it is best to apply 6-12 months before your intended intake to allow time for admission, scholarship and visa processing.
                             </div>
                         </div>
 
                         <div class="uk-faq-item">
                             <div class="uk-faq-header">
-                                <h5 class="uk-faq-title">How does the UK student visa process work?</h5>
+                                <h5 class="uk-faq-title">How does the South Korea student visa process work?</h5>
                                 <span class="uk-faq-toggle"><i class="fas fa-chevron-down"></i></span>
                             </div>
                             <div class="uk-faq-content">
-                                After receiving a university offer, you'll get a Confirmation of Acceptance for Studies (CAS). With the CAS and required documents, you apply for a Student Visa through UK Visas and Immigration. Processing typically takes about 3 weeks. Our counsellors guide you through each step.
+                                After receiving an admission letter, you prepare the required documents and apply for the appropriate D-2 student visa through the Korean consulate or visa centre. Our counsellors guide you through documentation, finances and pre-departure steps.
                             </div>
                         </div>
                     </div>
@@ -1833,8 +1832,8 @@
             <!-- FINAL CTA SECTION -->
             <section class="uk-final-cta">
                 <div class="uk-inner">
-                    <h2>Ready to Start Your UK Study Journey?</h2>
-                    <p>Get personalised guidance from our experienced UK education counsellors and take the first step toward your UK dream.</p>
+                    <h2>Ready to Start Your South Korea Study Journey?</h2>
+                    <p>Get personalised guidance from our experienced Korea education counsellors and take the first step toward your Korean study dream.</p>
                     <div class="uk-final-cta-buttons">
                         <a href="#register-form" class="uk-btn uk-btn-primary uk-final-cta-counsel">Get Free Counselling</a>
                         <!-- <a href="#eligibility" class="uk-btn uk-btn-secondary uk-final-cta-eligibility">Check Eligibility</a> -->
@@ -1853,7 +1852,7 @@
                         <div>
                             <h5>Quick Links</h5>
                             <ul>
-                                <li><a href="#why-uk">Why UK</a></li>
+                                <li><a href="#why-south-korea">Why South Korea</a></li>
                                 <li><a href="#universities">Universities</a></li>
                                 <li><a href="#courses">Courses</a></li>
                                 <li><a href="#faq">FAQ</a></li>
@@ -1930,16 +1929,16 @@
 
             // Trigger conversion tracking
             if (typeof gtag !== 'undefined') {
-                gtag('event', 'uk_form_submit', {
+                gtag('event', 'south_korea_form_submit', {
                     'event_category': 'engagement',
-                    'event_label': 'UK Lead Form Submission'
+                    'event_label': 'South Korea Lead Form Submission'
                 });
             }
 
             // Facebook Pixel
             if (typeof fbq !== 'undefined') {
                 fbq('track', 'Lead', {
-                    content_name: 'UK Study Enquiry'
+                    content_name: 'South Korea Study Enquiry'
                 });
             }
         });
@@ -2012,7 +2011,7 @@
                 const btnClass = this.className;
                 let eventLabel = 'CTA Click';
 
-                if (btnClass.includes('counselling') || btnClass.includes('counsel')) eventLabel = 'UK Counselling CTA';
+                if (btnClass.includes('counselling') || btnClass.includes('counsel')) eventLabel = 'South Korea Counselling CTA';
                 else if (btnClass.includes('eligibility')) eventLabel = 'Eligibility Check CTA';
                 else if (btnClass.includes('whatsapp')) eventLabel = 'WhatsApp Click';
                 else if (btnClass.includes('phone')) eventLabel = 'Phone Click';
