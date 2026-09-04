@@ -12,8 +12,8 @@
     <title>Study in Italy for Indian Students | Free Counselling | Overseas Education Lane</title>
 
     <!-- FAVICON -->
-    <link rel="shortcut icon" href="{{ asset('assets/images/logo.png') }}" type="image/x-icon" />
-    <link rel="icon" href="{{ asset('assets/images/logo.png') }}" type="image/x-icon" />
+    <link rel="shortcut icon" href="{{ asset('/southkorea/images/logo.png') }}" type="image/x-icon" />
+    <link rel="icon" href="{{asset('/southkorea/images/logo.png') }}" type="image/x-icon" />
 
     <!-- GOOGLE FONTS -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -1269,7 +1269,7 @@
             <header class="uk-header">
                 <div class="uk-header-inner">
                     <a class="uk-logo" href="/">
-                        <img src="{{ asset('assets/images/logo.png') }}" alt="Overseas Education Lane">
+                        <img src="{{ asset('/southkorea/images/logo.png') }}" alt="Overseas Education Lane">
                     </a>
                     <div class="uk-header-right">
                         <a href="tel:+918929922525" class="uk-header-phone">

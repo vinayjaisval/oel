@@ -1269,7 +1269,8 @@
             <header class="uk-header">
                 <div class="uk-header-inner">
                     <a class="uk-logo" href="/">
-                        <img src="{{ asset('southkorea/images/logo.png') }}" alt="Overseas Education Lane">
+                    <img src="{{ asset('/southkorea/images/logo.png') }}" alt="Overseas Education Lane">
+
                     </a>
                     <div class="uk-header-right">
                         <a href="tel:+918929922525" class="uk-header-phone">
