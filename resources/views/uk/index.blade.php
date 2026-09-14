@@ -1732,10 +1732,10 @@ Thanks to Ekta, I reached UK with a smooth process just because of her.</p>
                                 <div class="uk-stars">
                                     <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                 </div>
-                                <p class="uk-testimonial-text">"I am truly grateful to Overseas Education Lane for their exceptional support throughout my study abroad journey. Their team, especially the counselors, provided personalized and detailed guidance"</p>
+                                <p class="uk-testimonial-text">I had a wonderful experience with OEL. Ms. Ekta Pandey was my counsellor and I am highly grateful to her for all that she's done. She has been extremely helpful and supportive as well as patient throughout the process. OEL is lucky to have her, so am I, that I got her as my counsellor. Mr. Amit from VISA department helped me with the VIS Process. Wishing great Laurels to OEL.</p>
                                 <p class="uk-testimonial-author">BEMIN JOHN BENNY</p>
-                                <p class="uk-testimonial-role">Btech</p>
-                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> HERIOT WATT UNIVERSITY, UK</p>
+                                <p class="uk-testimonial-role">Msc- Occupational Psychology with HRM</p>
+                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> Herriot Watt University, UK</p>
                             </div>
                         </div>
 
