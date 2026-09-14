@@ -1619,7 +1619,9 @@
                     </div>
 
                     <div class="text-center mt-4">
-                        <a href="#register-form" class="uk-btn uk-btn-navy uk-process-cta">Start My South Korea Application</a>
+                        <a href="#register-form" class="uk-btn uk-btn-navy uk-process-cta">Here I believe it should be -
+
+Start your South Korea university application</a>
                     </div>
                 </div>
             </section>
@@ -1687,44 +1689,64 @@
 
                         <div class="uk-carousel-track uk-testimonial-carousel" id="testi-carousel">
                             <div class="uk-testimonial-card">
-                                <img src="{{ asset('southkorea/images/img/t2.png') }}" alt="Student" class="uk-testimonial-avatar">
+                                <img src="{{ asset('southkorea/images/img/s1.jpg') }}" alt="Student" class="uk-testimonial-avatar">
                                 <div class="uk-stars">
                                     <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                 </div>
-                                <p class="uk-testimonial-text">"The team helped me shortlist a Korean university and guided me through my scholarship application. Their support was excellent throughout the process!"</p>
-                                <p class="uk-testimonial-author">Priya Sharma</p>
-                                <p class="uk-testimonial-role">MSc Computer Science</p>
+                                <p class="uk-testimonial-text">"I had a great experience with OEL throughout my university application process.
+The team was supportive, responsive, and guided me at every step.
+Special thanks to Ms. Himanshi and Ms. Ekta for their constant support and patience.
+Their guidance made the entire process smooth and stress-free.
+I highly recommend OEL to students planning to study abroad!
+</p>
+                                <p class="uk-testimonial-author">Rushali Prasad</p>
+                                <!-- <p class="uk-testimonial-role">MSc Computer Science</p> -->
                                 <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> Yonsei University</p>
                             </div>
                             <div class="uk-testimonial-card">
-                                <img src="{{ asset('southkorea/images/img/t4.png') }}" alt="Student" class="uk-testimonial-avatar">
+                                <img src="{{ asset('southkorea/images/img/s2.jpg') }}" alt="Student" class="uk-testimonial-avatar">
                                 <div class="uk-stars">
                                     <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                 </div>
-                                <p class="uk-testimonial-text">"Exceptional guidance for my Korean university application and D-2 visa. The team helped me choose the best fit for my career goals."</p>
-                                <p class="uk-testimonial-author">Sakshi Patel</p>
-                                <p class="uk-testimonial-role">BA Business Administration</p>
+                                <p class="uk-testimonial-text">"My journey to South Korea with Overseas Education Lane was smooth and hassle-free.
+They took complete ownership of my admission to Kyunbok University and visa process.
+The team handled every detail with great professionalism and efficiency.
+Thanks to their support, I secured my visa in just 6 working days.
+I highly recommend OEL to anyone looking for genuine, result-driven support!
+</p>
+                                <p class="uk-testimonial-author">Huma Khan</p>
+                                <!-- <p class="uk-testimonial-role">BA Business Administration</p> -->
                                 <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> Korea University</p>
                             </div>
-                            <div class="uk-testimonial-card">
-                                <img src="{{ asset('southkorea/images/img/t3.png') }}" alt="Student" class="uk-testimonial-avatar">
-                                <div class="uk-stars">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                                </div>
-                                <p class="uk-testimonial-text">"From profile evaluation to visa approval, every step was smooth. The team's expertise made my South Korea journey stress-free!"</p>
-                                <p class="uk-testimonial-author">Anjali Desai</p>
-                                <p class="uk-testimonial-role">MA International Studies</p>
-                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> Hanyang University</p>
-                            </div>
+                           
 
                              <div class="uk-testimonial-card">
-                                <img src="{{ asset('imagesapi/1737972987.jpg') }}" alt="Student" class="uk-testimonial-avatar">
+                                <img src="{{ asset('southkorea/images/img/s3.jpg') }}" alt="Student" class="uk-testimonial-avatar">
                                 <div class="uk-stars">
                                     <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                 </div>
-                                <p class="uk-testimonial-text">"I am truly grateful to Overseas Education Lane for their exceptional support throughout my study abroad journey. Their team, especially the counselors, provided personalized and detailed guidance"</p>
-                                <p class="uk-testimonial-author">BEMIN JOHN BENNY</p>
-                                <p class="uk-testimonial-role">Btech</p>
+                                <p class="uk-testimonial-text">I had a great experience with Overseas Education Lane while planning my studies abroad.
+                                    The team was professional, supportive, and guided me through every step.
+                                    They made the admission, documentation, and visa process simple and stress-free.
+                                    I truly appreciate their quick responses and clear guidance throughout.
+                                    Highly recommended for anyone planning to study abroad! 
+                                    </p>
+                                <p class="uk-testimonial-author">Gowtham Reddy Challa</p>
+                                <!-- <p class="uk-testimonial-role">Btech</p> -->
+                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> Sungkyunkwan University, South Korea</p>
+                            </div>
+
+
+                             <div class="uk-testimonial-card">
+                                <img src="{{ asset('southkorea/images/img/s4.png') }}" alt="Student" class="uk-testimonial-avatar">
+                                <div class="uk-stars">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                </div>
+                                <p class="uk-testimonial-text">
+                                    Highly recommend Overseas Education Lane. They are incredibly helpful and genuinely handle pretty much everything. They took care of all the complex paperwork, strict deadlines, and administrative headaches so I didn't have to. Getting my offer letter was completely stress-free thanks to their efficiency
+                                    </p>
+                                <p class="uk-testimonial-author">Nihar Das</p>
+                                <!-- <p class="uk-testimonial-role">Btech</p> -->
                                 <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> Sungkyunkwan University, South Korea</p>
                             </div>
                         </div>
