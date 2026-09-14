@@ -1286,7 +1286,7 @@
                 <div class="uk-inner">
                     <div class="uk-hero-grid">
                         <div class="uk-hero-content">
-                            <span class="uk-badge">STUDY IN UK &middot; 2026 INTAKE</span>
+                            <span class="uk-badge">STUDY IN UK &middot; 2027 INTAKE</span>
                             <h1 class="uk-hero-title">Get Admission in Top UK Universities with <span class="uk-highlight">Scholarships up to &pound;10,000</span></h1>
                             <p class="uk-hero-desc">Explore top UK universities, courses, scholarships and student visa guidance with personalised support from experienced education counsellors.</p>
 
@@ -1688,34 +1688,43 @@
 
                         <div class="uk-carousel-track uk-testimonial-carousel" id="testi-carousel">
                             <div class="uk-testimonial-card">
-                                <img src="{{ asset('assets/images/testimonial/1.png') }}" alt="Student" class="uk-testimonial-avatar">
+                                <img src="{{ asset('assets/images/testimonial/u1.jpeg') }}" alt="Student" class="uk-testimonial-avatar">
                                 <div class="uk-stars">
                                     <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                 </div>
-                                <p class="uk-testimonial-text">"Got admitted to Manchester University for MSc Computer Science with partial scholarship. The counselling team was very supportive throughout the process!"</p>
-                                <p class="uk-testimonial-author">Priya Sharma</p>
-                                <p class="uk-testimonial-role">MSc Computer Science</p>
-                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> University of Manchester</p>
+                                <p class="uk-testimonial-text">"Thank you for everything my counselor at OEL. They have been a guardian of my dreams, and I will always be grateful for everything they have done for me. Thank you for always listening to my worries, answering my endless questions, and supporting me throughout this journey.
+
+I truly appreciate their patience, guidance, and care. They have made this journey much easier for me, and I will always be thankful for that.</p>
+                                <p class="uk-testimonial-author">Shaun G Varghese</p>
+                                <p class="uk-testimonial-role">
+Msc Nursing</p>
+                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> Coventry University, UK</p>
                             </div>
                             <div class="uk-testimonial-card">
-                                <img src="{{ asset('assets/images/testimonial/2.png') }}" alt="Student" class="uk-testimonial-avatar">
+                                <img src="{{ asset('assets/images/testimonial/u2.jpeg') }}" alt="Student" class="uk-testimonial-avatar">
                                 <div class="uk-stars">
                                     <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                 </div>
-                                <p class="uk-testimonial-text">"Exceptional guidance for my visa application and university selection. The team helped me choose the best fit for my career goals."</p>
-                                <p class="uk-testimonial-author">Sakshi Patel</p>
-                                <p class="uk-testimonial-role">BA Business Administration</p>
-                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> University of Edinburgh</p>
+                                <p class="uk-testimonial-text">"Overseas Education Lane is a best consultancy for all your study abroad consultation guidance. They have the best counselors specially Ekta is very professional and humble lady who pick you at the stage of confusion and give you all the clarity related to information you are seeking. Ekta never let me and my parents come under pressure she is available on phone 24 hours to tackle your queries. Truly a big thanks to Ekta mam. May God bless. Just go for it guys they will make the entire process an amazing experience for you. Best team, best platform & overall amazing ride .They are the best study abroad consultant in Noida.
+Thanks to Ekta, I reached UK with a smooth process just because of her.</p>
+                                <p class="uk-testimonial-author">Tabish Khan
+</p>
+                                <p class="uk-testimonial-role">MSc- Public Health
+</p>
+                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i>London Metropolitan University, UK
+</p>
                             </div>
                             <div class="uk-testimonial-card">
-                                <img src="{{ asset('assets/img/user.jpg') }}" alt="Student" class="uk-testimonial-avatar">
+                                <img src="{{ asset('assets/images/testimonial/u3.jpeg') }}" alt="Student" class="uk-testimonial-avatar">
                                 <div class="uk-stars">
                                     <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                 </div>
-                                <p class="uk-testimonial-text">"From profile evaluation to visa approval, every step was smooth. The team's expertise made my UK journey stress-free!"</p>
-                                <p class="uk-testimonial-author">Anjali Desai</p>
-                                <p class="uk-testimonial-role">LLM Law</p>
-                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> London School of Economics</p>
+                                <p class="uk-testimonial-text">""I’ve had an incredibly positive experience with Overseas Education Lane. My counsellor, Ekta, has been a tremendous support. She’s always been readily available when I needed to talk, and her dedication to helping me work through my issues has been truly impressive. It's clear that she genuinely cares about my well-being. I've felt a significant improvement in my mental state thanks to her guidance and support."</p>
+                                <p class="uk-testimonial-author">Krishna Bansal
+</p>
+                                <p class="uk-testimonial-role">BBA</p>
+                                <p class="uk-testimonial-university"><i class="fas fa-graduation-cap"></i> University of Glasgow, UK
+</p>
                             </div>
 
                              <div class="uk-testimonial-card">

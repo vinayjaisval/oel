@@ -1285,7 +1285,7 @@
                 <div class="uk-inner">
                     <div class="uk-hero-grid">
                         <div class="uk-hero-content">
-                            <span class="uk-badge">STUDY IN ITALY &middot; 2026 INTAKE</span>
+                            <span class="uk-badge">STUDY IN ITALY &middot; 2027 INTAKE</span>
                             <h1 class="uk-hero-title">Get Admission in Top Italian Universities with <span class="uk-highlight">Scholarships up to &euro;7,000</span></h1>
                             <p class="uk-hero-desc">Explore top Italian universities, courses, scholarships and student visa guidance with personalised support from experienced education counsellors.</p>
 
