@@ -223,6 +223,9 @@
         <option value="jul">July</option>
         <option value="aug">August</option>
         <option value="sep">September</option>
+        <option value="oct">October</option>
+        <option value="nov">November</option>
+        <option value="dec">December</option>
     </select>
 
     <br>
@@ -259,7 +262,10 @@
             jun: 5,
             jul: 6,
             aug: 7,
-            sep: 8
+            sep: 8,
+            oct: 9,
+            nov: 10,
+            dec: 11
         };
 
         // Enable/Disable Apply button
