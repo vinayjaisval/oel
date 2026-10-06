@@ -706,7 +706,7 @@
                           @php
                         $counselors = [
                             [
-                                'id' => 16,
+                                'id' => 804,
                                 'name' => 'Myra K',
                                 'avatar' => asset('frontend/img/counselor-avatar-1.png'),
                             ],
