@@ -11,6 +11,8 @@ class Booking extends Model
         'name',
         'email',
         'phone',
+        'state',
+        'city',
         'status',
         'country_id',
         'counselor_id',

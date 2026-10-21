@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
@@ -155,6 +156,8 @@ public function store(Request $request)
             'name'          => $request->name,
             'email'         => $request->email,
             'phone'         => $request->phone,
+            'state'         => $request->state,
+
             'city'          => $request->city,
             'country_id'    => $request->destination,
             'counselor_id'  => $request->counselor,
@@ -255,6 +258,167 @@ public function store(Request $request)
         ], 500);
     }
 }
+public function storenew(Request $request)
+{
+    try {
+        // VALIDATION
+        $request->validate([
+            'name'  => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'required|digits_between:10,15',
+            'date'  => 'required|date',
+            'time'  => 'required',
+        ]);
+
+        \Log::info('Booking: validation passed', [
+            'date' => $request->date,
+            'time' => $request->time,
+        ]);
+
+        // FORMAT TIME
+        try {
+            $time = Carbon::createFromFormat('h:i A', $request->time)
+                ->format('H:i:s');
+        } catch (\Exception $e) {
+            \Log::warning('Booking: invalid time format', [
+                'time'  => $request->time,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid time format',
+            ], 422);
+        }
+
+        // CHECK SLOT
+        $alreadyBooked = Booking::where('date', $request->date)
+            ->where('time', $time)
+            ->where('status', '!=', 'cancelled')
+            ->exists();
+
+        if ($alreadyBooked) {
+            \Log::info('Booking: slot already booked', [
+                'date' => $request->date,
+                'time' => $time,
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'This slot is already booked.',
+            ], 409);
+        }
+
+        // GENERATE MEETING LINK
+        $roomName = 'study-abroad-' . time() . '-' . Str::random(5);
+        $meetingLink = 'https://meet.jit.si/' . $roomName;
+
+        // SAVE BOOKING
+        $booking = Booking::create([
+            'name'         => $request->name,
+            'email'        => $request->email,
+            'phone'        => $request->phone,
+            'city'         => $request->city,
+            'country_id'   => $request->destination,
+            'counselor_id' => $request->counselor,
+            'date'         => $request->date,
+            'time'         => $time,
+            'meeting_link' => $meetingLink,
+            'status'       => 'scheduled',
+        ]);
+
+        \Log::info('Booking: saved successfully', [
+            'booking_id' => $booking->id,
+        ]);
+
+        // SEND EMAIL
+        try {
+            \Log::info('Booking mail: sending started', [
+                'booking_id' => $booking->id,
+                'email'      => $booking->email,
+                'mailer'     => config('mail.default'),
+                'from'       => config('mail.from.address'),
+            ]);
+
+            $emailBody =
+                "Dear {$booking->name},\n\n" .
+                "Thank you for booking your counseling session with Overseas Education Lane (OEL).\n\n" .
+                "Your session has been successfully confirmed.\n\n" .
+                "Session Details:\n" .
+                "Date: {$request->date}\n" .
+                "Time: {$request->time}\n\n" .
+                "Meeting Link:\n{$meetingLink}\n\n" .
+                "Regards,\nTeam OEL";
+
+            Mail::raw($emailBody, function ($message) use ($booking) {
+                $message->to($booking->email)
+                    ->subject('Study Abroad Consultation Booking Confirmation');
+            });
+
+            \Log::info('Booking mail: send call completed', [
+                'booking_id' => $booking->id,
+                'email'      => $booking->email,
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('Booking mail: failed', [
+                'booking_id' => $booking->id,
+                'email'      => $booking->email,
+                'error'      => $e->getMessage(),
+                'exception'  => $e,
+            ]);
+        }
+
+        // WHATSAPP URL
+        $phone = preg_replace('/[^0-9]/', '', $request->phone);
+
+        // Add country code for a 10-digit Indian number.
+        if (strlen($phone) === 10) {
+            $phone = '91' . $phone;
+        }
+
+        $message = rawurlencode(
+            "Hello {$booking->name},\n\n" .
+            "Your meeting is confirmed.\n\n" .
+            "Date: {$request->date}\n" .
+            "Time: {$request->time}\n\n" .
+            "Meeting Link:\n{$meetingLink}"
+        );
+
+        $whatsappLink = "https://wa.me/{$phone}?text={$message}";
+
+        // SUCCESS RESPONSE
+        return response()->json([
+            'success'      => true,
+            'message'      => 'Meeting Booked Successfully',
+            'meeting_link' => $meetingLink,
+            'whatsapp_url' => $whatsappLink,
+            'booking_id'   => $booking->id,
+        ]);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        \Log::warning('Booking: validation failed', [
+            'fields' => array_keys($e->errors()),
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Please check the entered details.',
+            'errors'  => $e->errors(),
+        ], 422);
+
+    } catch (\Throwable $e) {
+        \Log::error('Booking: failed', [
+            'error'     => $e->getMessage(),
+            'exception' => $e,
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Something went wrong',
+        ], 500);
+    }
+}
+
 
     /*
     |--------------------------------------------------------------------------
