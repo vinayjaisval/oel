@@ -621,19 +621,19 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="state_trigger">State / UT *</label>
+                            <label for="state_trigger">State  *</label>
                             <div class="custom-counselor-dropdown" id="state-dropdown-wrapper">
                                 <input type="hidden" name="state" id="state_input">
                                 <button type="button" class="form-control custom-counselor-selected"
                                         id="state_trigger" onclick="toggleStateDropdown(event)"
                                         aria-expanded="false" aria-controls="state_options">
-                                    <span class="selected-content" id="state_selected_text">Select State / UT</span>
+                                    <span class="selected-content" id="state_selected_text">Select State </span>
                                     <i class="fa fa-chevron-down" style="font-size:12px;color:#64748b;"></i>
                                 </button>
                                 <div class="custom-counselor-options" id="state_options">
                                     <div class="booking-location-search">
                                         <input type="search" id="state_search" class="form-control"
-                                               placeholder="Search state / UT..." aria-label="Search state / UT"
+                                               placeholder="Search state " aria-label="Search state "
                                                autocomplete="off"
                                                oninput="filterBookingLocations('state', this.value)">
                                     </div>
