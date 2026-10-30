@@ -899,6 +899,12 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
                 [BookingController::class, 'sendReminder'])->name('send.reminder');
     
         });
+    Route::get('/korean-classes', function () {
+        return view('landingpage.landing');
+    })->name('korean.classes');
+    Route::get('/landingpagenew', function () {
+        return view('landingpage.landingpagenew');
+    })->name('landingpagenew');
     Route::get('/study-in-southKorea/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'index'])->name('study-in-southKorea');
     Route::get('/landing-page/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'index'])->name('landing-page');
    
