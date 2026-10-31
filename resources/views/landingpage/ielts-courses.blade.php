@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Korean Language Classes | Overseas Education Lane</title>
   <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Noto+Sans+KR:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap">
   <style>
     :root {
       --primary-dark: #070758;
@@ -92,6 +92,44 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      position: relative;
+      z-index: 2;
+    }
+    .disc {
+      position: absolute;
+      right: 22px;
+      top: 88px;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: #ffd400;
+      color: #0a1230;
+      display: grid;
+      place-content: center;
+      text-align: center;
+      font-weight: 800;
+      line-height: 1.05;
+      box-shadow: 0 16px 40px -10px #0008;
+      animation: spin 14s linear infinite, pulse 2s infinite;
+      z-index: 3;
+    }
+    .disc:hover,
+    .disc:active,
+    .disc.is-hovered,
+    .disc:hover div,
+    .disc:active div,
+    .disc.is-hovered div {
+      -webkit-animation-play-state: paused !important;
+      animation-play-state: paused !important;
+    }
+    .disc b { font: 800 44px 'Bricolage Grotesque', sans-serif; display: block; }
+    .disc span { font-size: 15px; }
+    .disc div { animation: spin 14s linear infinite reverse; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(238, 28, 28, .55); }
+      70% { box-shadow: 0 0 0 18px rgba(238, 28, 28, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(238, 28, 28, 0); }
     }
     nav { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; }
     nav a.logo-link {
@@ -214,6 +252,31 @@
     .plan ul li { margin-bottom: 4px; }
     .plan ul li::before { content: "✓ "; color: #10b981; font-weight: 800; margin-right: 6px; transition: color .25s ease; }
     .plan.active ul li::before { color: var(--accent); }
+    .plan .was {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      margin-top: 8px;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--primary-dark);
+      transition: color .25s ease;
+    }
+    .plan.active .was { color: #ffffff; }
+    .plan .was s { opacity: .75; text-decoration-thickness: 2px; }
+    .plan .was em {
+      font-family: 'DM Sans', sans-serif;
+      font-style: normal;
+      font-size: 12px;
+      background: #ffd400;
+      color: #0a1230;
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
     .plan .price { font-size: 26px; font-weight: 800; margin-bottom: 10px; color: var(--primary-dark); transition: color .25s ease; }
     .plan.active .price { color: #fff; }
     .plan .price small { font-size: 13.5px; font-weight: 500; opacity: 0.75; }
@@ -228,20 +291,114 @@
       transition: transform .25s, border-color .25s;
     }
     .f:hover { transform: translateY(-4px); border-color: var(--primary); }
-    .f .num {
-      display: inline-block;
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-size: 13px;
-      font-weight: 800;
+    .f i {
+      font-style: normal;
+      font: 900 34px 'Noto Sans KR', sans-serif;
       color: var(--primary);
-      background: #e8edfb;
-      padding: 3px 9px;
-      border-radius: 6px;
-      margin-bottom: 10px;
-      letter-spacing: 0.04em;
+      display: block;
+      margin-bottom: 6px;
     }
     .f h3 { font-size: 19px; margin-bottom: 6px; color: var(--primary-dark); }
     .f p { color: var(--mut); font-size: 14.5px; line-height: 1.55; }
+    .try {
+      background: linear-gradient(160deg, #0a0f6b, #16109a);
+      color: #fff;
+      padding: 60px 0;
+    }
+    .try h2 {
+      text-align: center;
+      font-size: clamp(28px, 4vw, 38px);
+      margin-bottom: 8px;
+      color: #ffffff;
+    }
+    .try .sub {
+      color: rgba(255, 255, 255, 0.82);
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .trybox {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 26px;
+      align-items: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .chips {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .chips button {
+      font: 900 22px 'Noto Sans KR', sans-serif;
+      padding: 18px 8px;
+      border-radius: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.28);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      cursor: pointer;
+      transition: transform .25s, background .25s, border-color .25s;
+    }
+    .chips button:hover { transform: translateY(-4px); background: rgba(255, 255, 255, 0.15); }
+    .chips button.on {
+      background: #ffd400;
+      color: #0a1230;
+      border-color: #ffd400;
+      transform: scale(1.05) rotate(-2deg);
+    }
+    .panel {
+      background: #fff;
+      color: #0a1230;
+      border-radius: 28px;
+      padding: 30px 20px;
+      text-align: center;
+      min-height: 270px;
+      box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .panel > * { animation: pop .5s cubic-bezier(.2, .9, .3, 1.3) both; }
+    .kr {
+      font: 900 clamp(38px, 7vw, 56px) / 1.2 'Noto Sans KR', sans-serif;
+      color: #0a1230;
+    }
+    .rm {
+      font: 700 22px 'Bricolage Grotesque', sans-serif;
+      color: var(--primary);
+      margin-top: 6px;
+    }
+    .mn {
+      color: #50587a;
+      margin: 4px 0 18px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .panel .btn {
+      padding: 11px 26px;
+      font-size: 16px;
+      font-weight: 800;
+      width: auto;
+    }
+    @keyframes pop {
+      0% { transform: scale(.6) rotate(-6deg); opacity: 0; }
+      100% { transform: none; opacity: 1; }
+    }
+    .cf {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      pointer-events: none;
+      z-index: 60;
+      animation: cfa .9s ease-out forwards;
+    }
+    @keyframes cfa {
+      to { transform: translate(var(--x), var(--y)) rotate(360deg); opacity: 0; }
+    }
     .rev-head { text-align: center; margin-bottom: 22px; }
     .rev-marquee {
       overflow: hidden;
@@ -256,6 +413,18 @@
       animation: revScroll 45s linear infinite;
       will-change: transform;
       transform: translate3d(0, 0, 0);
+    }
+    .rev-marquee:hover .rev-track,
+    .rev-track:hover,
+    .rev-marquee:has(.rev-card:hover) .rev-track,
+    .rev-track:has(.rev-card:hover),
+    .rev-track.is-hovered,
+    .rev-marquee.is-hovered .rev-track,
+    .rev-track:active,
+    .rev-card:hover,
+    .rev-card:active {
+      -webkit-animation-play-state: paused !important;
+      animation-play-state: paused !important;
     }
     @keyframes revScroll {
       0% { transform: translate3d(0, 0, 0); }
@@ -386,9 +555,26 @@
       html, body { overflow-x: hidden !important; width: 100vw !important; max-width: 100% !important; }
       .wrap { padding: 0 16px !important; }
       section { padding: 36px 0 !important; }
+      nav { padding: 10px 0 !important; }
+      nav .logo-img { height: 32px !important; }
+      nav a.logo-link { padding: 4px 10px !important; }
+      nav .btn { padding: 8px 16px !important; font-size: 13px !important; }
       .hero { min-height: auto !important; }
       .hero > .wrap { justify-content: flex-start !important; }
-      .hero-grid { text-align: center !important; margin: 0 !important; }
+      .disc {
+        position: absolute !important;
+        right: 10px !important;
+        top: 58px !important;
+        margin: 0 !important;
+        width: 60px !important;
+        height: 60px !important;
+        display: grid !important;
+        z-index: 10 !important;
+        touch-action: manipulation;
+      }
+      .disc b { font-size: 17px !important; }
+      .disc span { font-size: 8.5px !important; }
+      .hero-grid { text-align: center !important; margin: 0 !important; padding-top: 6px !important; }
       .hero h1 { font-size: clamp(26px, 7vw, 34px) !important; }
       .hero p.lead { font-size: 14.5px !important; margin: 0 auto 18px !important; }
       .hero-cta { justify-content: center !important; }
@@ -402,8 +588,64 @@
       .box { grid-template-columns: 1fr !important; text-align: center !important; gap: 20px !important; width: 100% !important; max-width: 100% !important; }
       .box > * { width: 100% !important; max-width: 100% !important; min-width: 0 !important; }
       form { text-align: left !important; padding: 16px !important; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; overflow: visible !important; position: relative !important; }
-      .rev-track { gap: 14px !important; animation-duration: 35s !important; }
-      .rev-card { flex: 0 0 280px !important; max-width: 280px !important; padding: 18px !important; }
+      .rev-track { gap: 14px !important; animation-duration: 35s !important; -webkit-user-select: none; user-select: none; }
+      .rev-marquee:hover .rev-track,
+      .rev-track:hover,
+      .rev-marquee:has(.rev-card:hover) .rev-track,
+      .rev-track:has(.rev-card:hover),
+      .rev-track.is-hovered,
+      .rev-marquee.is-hovered .rev-track,
+      .rev-track:active,
+      .rev-card:hover,
+      .rev-card:active {
+        -webkit-animation-play-state: paused !important;
+        animation-play-state: paused !important;
+      }
+      .disc:hover,
+      .disc:active,
+      .disc.is-hovered,
+      .disc:hover div,
+      .disc:active div,
+      .disc.is-hovered div {
+        -webkit-animation-play-state: paused !important;
+        animation-play-state: paused !important;
+      }
+      .rev-card { flex: 0 0 280px !important; max-width: 280px !important; padding: 16px !important; border-radius: 16px !important; }
+      .rev-card q { font-size: 13.5px !important; line-height: 1.5 !important; margin-bottom: 12px !important; }
+      .rev-author { padding-top: 10px !important; gap: 10px !important; }
+      .avatar { width: 36px !important; height: 36px !important; font-size: 14px !important; }
+      .rev-meta b { font-size: 13.5px !important; }
+      .rev-meta small { font-size: 11.5px !important; }
+      .trybox {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 18px !important;
+        width: 100% !important;
+        max-width: 420px !important;
+        margin: 0 auto !important;
+      }
+      .chips {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+        width: 100% !important;
+      }
+      .chips button {
+        font-size: 15px !important;
+        padding: 12px 6px !important;
+        border-radius: 12px !important;
+        width: 100% !important;
+      }
+      .panel {
+        width: 100% !important;
+        min-height: 210px !important;
+        padding: 20px 16px !important;
+        border-radius: 20px !important;
+        text-align: center !important;
+        box-sizing: border-box !important;
+      }
+      .kr { font-size: 36px !important; }
     }
   </style>
 </head>
@@ -418,6 +660,7 @@
         </a>
         <a class="btn" href="#join">Enroll Now</a>
       </nav>
+      <div class="disc" aria-label="Flat 20 percent discount"><div><span>FLAT</span><b>20%</b><span>OFF</span></div></div>
       <div class="hero-grid">
         <div>
           <span class="tag">KOREAN LANGUAGE CLASSES</span>
@@ -466,7 +709,8 @@
             <li>Certificate of completion</li>
             <li>Steady learning and a strong foundation</li>
           </ul>
-          <div class="price">&#8377;4,000 <small>/ Month</small></div>
+          <div class="was"><s>&#8377;5,000</s><em>20% OFF</em></div>
+          <div class="price" style="margin-top:0">&#8377;4,000 <small>/ Month</small></div>
           <a class="btn" href="#join" data-plan="FOUNDATION PLAN (2 Classes Per Week - ₹4,000/Month)">Enroll Now</a>
         </article>
         <!-- Plan 2 -->
@@ -481,7 +725,8 @@
             <li>Certificate of completion</li>
             <li>Balanced learning and greater progress</li>
           </ul>
-          <div class="price">&#8377;5,000 <small>/ Month</small></div>
+          <div class="was"><s>&#8377;6,250</s><em>20% OFF</em></div>
+          <div class="price" style="margin-top:0">&#8377;5,000 <small>/ Month</small></div>
           <a class="btn" href="#join" data-plan="PROGRESS PLAN (3 Classes Per Week - ₹5,000/Month)">Enroll Now</a>
         </article>
         <!-- Plan 3 -->
@@ -497,47 +742,64 @@
             <li>Fast-track learning</li>
             <li>Quick progress through regular practice</li>
           </ul>
-          <div class="price">&#8377;9,000 <small>/ Month</small></div>
+          <div class="was"><s>&#8377;11,250</s><em>20% OFF</em></div>
+          <div class="price" style="margin-top:0">&#8377;9,000 <small>/ Month</small></div>
           <a class="btn" href="#join" data-plan="INTENSIVE PLAN (5 Classes Per Week - ₹9,000/Month)">Enroll Now</a>
         </article>
       </div>
     </div>
   </section>
-  <!-- What You'll Learn Section -->
+  <!-- Everything You Need to Learn Korean Section -->
   <section class="learn-sec" id="learn">
     <div class="wrap">
-      <h2 style="text-align:center;font-size:clamp(28px,4vw,38px);margin-bottom:8px;color:var(--primary-dark);">What You&rsquo;ll Learn</h2>
-      <p style="text-align:center;color:var(--mut);margin-bottom:24px;font-size:16px;font-weight:600;">Build Your Korean Language Skills</p>
+      <h2 style="text-align:center;font-size:clamp(28px,4vw,38px);margin-bottom:8px;color:var(--primary-dark);">Everything you need to learn Korean</h2>
+      <p style="text-align:center;color:var(--mut);margin-bottom:24px;font-size:16px;font-weight:600;">Every plan comes with the same support from first class to certificate.</p>
       <div class="feat">
         <div class="f">
-          <span class="num">MODULE 01</span>
-          <h3>Speaking</h3>
-          <p>Practise everyday conversations and pronunciation.</p>
+          <i>가</i>
+          <h3>Expert Trainers</h3>
+          <p>Learn from trainers who guide you step by step.</p>
         </div>
         <div class="f">
-          <span class="num">MODULE 02</span>
-          <h3>Listening</h3>
-          <p>Improve your understanding of spoken Korean.</p>
+          <i>나</i>
+          <h3>Interactive Classes</h3>
+          <p>Live sessions where you speak, listen and practise together.</p>
         </div>
         <div class="f">
-          <span class="num">MODULE 03</span>
-          <h3>Reading</h3>
-          <p>Learn to read Hangul and understand written Korean.</p>
+          <i>다</i>
+          <h3>Certificate of Completion</h3>
+          <p>Finish your course and take home proof of your progress.</p>
         </div>
         <div class="f">
-          <span class="num">MODULE 04</span>
-          <h3>Writing</h3>
-          <p>Build your ability to write Korean words and sentences.</p>
+          <i>라</i>
+          <h3>Steady, Structured Learning</h3>
+          <p>A clear plan that builds a strong base in Korean.</p>
         </div>
         <div class="f">
-          <span class="num">MODULE 05</span>
-          <h3>Interactive Practice</h3>
-          <p>Reinforce learning through guided activities.</p>
+          <i>마</i>
+          <h3>TOPIK Test Preparation</h3>
+          <p>Get ready for the TOPIK exam as part of every plan.</p>
         </div>
         <div class="f">
-          <span class="num">MODULE 06</span>
-          <h3>Expert Guidance</h3>
-          <p>Receive structured support throughout your learning journey.</p>
+          <i>바</i>
+          <h3>Speaking Practice</h3>
+          <p>Build confidence by speaking Korean in every class.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Tap a word, hear Korean Section -->
+  <section class="try" id="try">
+    <div class="wrap">
+      <h2>Tap a word, hear Korean</h2>
+      <p class="sub">A small taste of what you will learn in class.</p>
+      <div class="trybox">
+        <div class="chips" id="chips"></div>
+        <div class="panel">
+          <div class="kr" id="kr"></div>
+          <div class="rm" id="rm"></div>
+          <div class="mn" id="mn"></div>
+          <button class="btn" id="say" type="button">&#128266; Hear it</button>
         </div>
       </div>
     </div>
@@ -775,7 +1037,6 @@
             <ul class="select-menu" id="customPlanMenu">
               <li data-val="foundation">FOUNDATION PLAN &ndash; 2 Classes/Wk (&#8377;4000/mo)</li>
               <li data-val="progress" class="selected">PROGRESS PLAN &ndash; 3 Classes/Wk (&#8377;5,000/mo)</li>
-            
               <li data-val="intensive">INTENSIVE PLAN &ndash; 5 Classes/Wk (&#8377;9,000/mo)</li>
             </ul>
           </div>
@@ -1343,6 +1604,131 @@
     } else {
       showOnly('buy');
     }
+    // Tap a word, hear Korean
+    (function() {
+      var W = [
+        ['안녕하세요', 'Annyeonghaseyo', 'Hello'],
+        ['감사합니다', 'Gamsahamnida', 'Thank you'],
+        ['화이팅', 'Hwaiting', 'You can do it!'],
+        ['한국어', 'Hangugeo', 'Korean language'],
+        ['친구', 'Chingu', 'Friend'],
+        ['맛있어요', 'Masisseoyo', 'It is delicious']
+      ];
+      var wi = 0;
+      var chs = document.getElementById('chips');
+      var kr = document.getElementById('kr');
+      var rm = document.getElementById('rm');
+      var mn = document.getElementById('mn');
+      var sayBtn = document.getElementById('say');
+      if (!chs || !kr || !rm || !mn) return;
+      chs.innerHTML = W.map(function(w, i) {
+        return '<button type="button" data-i="' + i + '"' + (i ? '' : ' class="on"') + '>' + w[0] + '</button>';
+      }).join('');
+      function speak() {
+        try {
+          if ('speechSynthesis' in window) {
+            var u = new SpeechSynthesisUtterance(W[wi][0]);
+            u.lang = 'ko-KR';
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(u);
+          }
+        } catch (e) {}
+      }
+      function showW(i, ev) {
+        wi = i;
+        var p = document.querySelector('.panel');
+        var w = W[i];
+        kr.textContent = w[0];
+        rm.textContent = w[1];
+        mn.textContent = w[2];
+        if (p) {
+          [].forEach.call(p.children, function(c) {
+            c.style.animation = 'none';
+            void c.offsetWidth;
+            c.style.animation = '';
+          });
+        }
+        [].forEach.call(chs.children, function(b, j) {
+          b.classList.toggle('on', j === i);
+        });
+        if (ev) {
+          var cl = ['#ffd400', '#ee1c1c', '#1387f2', '#fff'];
+          for (var n = 0; n < 18; n++) {
+            var c = document.createElement('i');
+            c.className = 'cf';
+            var a = Math.random() * 6.28;
+            var r = 60 + Math.random() * 90;
+            c.style.cssText = 'left:' + ev.clientX + 'px;top:' + ev.clientY + 'px;background:' + cl[n % 4] + ';--x:' + Math.cos(a) * r + 'px;--y:' + Math.sin(a) * r + 'px';
+            document.body.appendChild(c);
+            setTimeout(function(el) { el.remove(); }, 900, c);
+          }
+          speak();
+        }
+      }
+      showW(0);
+      chs.addEventListener('click', function(e) {
+        if (e.target.dataset && e.target.dataset.i !== undefined) {
+          showW(+e.target.dataset.i, e);
+        }
+      });
+      if (sayBtn) sayBtn.onclick = speak;
+    })();
+    // Pure hover-only tracker for reviews marquee and flat 20% badge
+    (function() {
+      var track = document.querySelector(".rev-track");
+      var marquee = document.querySelector(".rev-marquee");
+      var disc = document.querySelector(".disc");
+      function pauseTrack() {
+        if (track && !track.classList.contains("is-hovered")) track.classList.add("is-hovered");
+      }
+      function resumeTrack() {
+        if (track && track.classList.contains("is-hovered")) track.classList.remove("is-hovered");
+      }
+      function pauseDisc() {
+        if (disc && !disc.classList.contains("is-hovered")) disc.classList.add("is-hovered");
+      }
+      function resumeDisc() {
+        if (disc && disc.classList.contains("is-hovered")) disc.classList.remove("is-hovered");
+      }
+      if (marquee) {
+        marquee.addEventListener("mouseenter", pauseTrack);
+        marquee.addEventListener("pointerenter", pauseTrack);
+        marquee.addEventListener("mouseover", pauseTrack);
+        marquee.addEventListener("mouseleave", resumeTrack);
+        marquee.addEventListener("pointerleave", resumeTrack);
+      }
+      document.querySelectorAll(".rev-card").forEach(function(card) {
+        card.addEventListener("mouseenter", pauseTrack);
+        card.addEventListener("pointerenter", pauseTrack);
+        card.addEventListener("mouseover", pauseTrack);
+        card.addEventListener("mouseleave", resumeTrack);
+        card.addEventListener("pointerleave", resumeTrack);
+      });
+      if (disc) {
+        disc.addEventListener("mouseenter", pauseDisc);
+        disc.addEventListener("pointerenter", pauseDisc);
+        disc.addEventListener("mouseover", pauseDisc);
+        disc.addEventListener("mouseleave", resumeDisc);
+        disc.addEventListener("pointerleave", resumeDisc);
+      }
+      function onPointer(e) {
+        if (e.clientX === undefined || e.clientY === undefined) return;
+        var el = document.elementFromPoint(e.clientX, e.clientY);
+        if (el && el.closest(".rev-card, .rev-marquee, .rev-track")) {
+          pauseTrack();
+        } else {
+          resumeTrack();
+        }
+        if (el && el.closest(".disc")) {
+          pauseDisc();
+        } else {
+          resumeDisc();
+        }
+      }
+      window.addEventListener("mousemove", onPointer, { passive: true });
+      window.addEventListener("pointermove", onPointer, { passive: true });
+      window.addEventListener("pointerover", onPointer, { passive: true });
+    })();
   </script>
   @include('frontend.partials.chatbot')
 </body>
