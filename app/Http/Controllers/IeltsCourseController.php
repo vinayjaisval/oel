@@ -111,6 +111,15 @@ class IeltsCourseController extends Controller
                         'payment_state_uncertain' => true,
                     ], 409)->header('X-Correlation-ID', $correlationId);
                 }
+                if ($status['payment_status'] === 'expired') {
+                    return response()->json([
+                        'message' => 'This enquiry payment has expired. Please submit a new enquiry to continue.',
+                        'payment_status' => 'expired',
+                        'enquiry_reference' => $enquiry->enquiry_reference,
+                        'retry_token' => $validated['submission_key'],
+                        'can_retry' => false,
+                    ])->header('X-Correlation-ID', $correlationId);
+                }
             } catch (Throwable $exception) {
                 Log::warning('IELTS existing order status could not be confirmed.', [
                     'correlation_id' => $correlationId,
@@ -194,6 +203,14 @@ class IeltsCourseController extends Controller
                     'payment_state_uncertain' => true,
                 ], 409)->header('X-Correlation-ID', $correlationId);
             }
+            if ($status['payment_status'] === 'expired') {
+                return response()->json([
+                    'message' => 'This enquiry payment has expired. Please submit a new enquiry to continue.',
+                    'payment_status' => 'expired',
+                    'enquiry_reference' => $enquiry->enquiry_reference,
+                    'can_retry' => false,
+                ])->header('X-Correlation-ID', $correlationId);
+            }
 
             $payload = $this->orderPayload($enquiry->id, $validated['retry_token'], $correlationId);
             return response()->json($payload)->header('X-Correlation-ID', $correlationId);
@@ -247,7 +264,7 @@ class IeltsCourseController extends Controller
             $status['enquiry_reference'] = $enquiry->enquiry_reference;
             $status['retry_token'] = $token;
             $status['enquiry_found'] = true;
-            if ($status['order_ready'] && $status['payment_status'] !== 'paid') {
+            if ($status['order_ready'] && !in_array($status['payment_status'], ['paid', 'expired'], true)) {
                 $status = array_merge($status, $this->checkoutPayload($enquiry->fresh(), $token));
             }
 
@@ -410,12 +427,20 @@ class IeltsCourseController extends Controller
             ];
         }
 
+        $expiryHours = max(1, (int) config('ielts_courses.pending_expiry_hours', 24));
         if (!$enquiry->razorpay_order_id) {
+            $expired = $enquiry->created_at->lte(now()->subHours($expiryHours));
+            if ($expired) {
+                $enquiry->payment_status = 'expired';
+                $enquiry->payment_verified = false;
+                $enquiry->save();
+            }
+
             return [
-                'payment_status' => $enquiry->payment_status,
+                'payment_status' => $expired ? 'expired' : $enquiry->payment_status,
                 'order_ready' => false,
                 'payment_state_uncertain' => false,
-                'can_retry' => true,
+                'can_retry' => !$expired,
             ];
         }
 
@@ -451,6 +476,15 @@ class IeltsCourseController extends Controller
         }
 
         $enquiry = $enquiry->fresh();
+        if (
+            $enquiry->payment_status !== 'paid' &&
+            $enquiry->created_at->lte(now()->subHours($expiryHours))
+        ) {
+            $enquiry->payment_status = 'expired';
+            $enquiry->payment_verified = false;
+            $enquiry->save();
+            $enquiry = $enquiry->fresh();
+        }
         Log::info('IELTS payment status check timing', [
             'correlation_id' => $correlationId,
             'enquiry_reference' => $enquiry->enquiry_reference,
@@ -460,11 +494,12 @@ class IeltsCourseController extends Controller
         ]);
 
         $isPaid = $enquiry->payment_status === 'paid';
+        $isExpired = $enquiry->payment_status === 'expired';
         return [
             'payment_status' => $enquiry->payment_status,
             'order_ready' => true,
-            'payment_state_uncertain' => !$isPaid && $hasUnresolvedPayment,
-            'can_retry' => !$isPaid && !$hasUnresolvedPayment,
+            'payment_state_uncertain' => !$isPaid && !$isExpired && $hasUnresolvedPayment,
+            'can_retry' => !$isPaid && !$isExpired && !$hasUnresolvedPayment,
         ];
     }
 

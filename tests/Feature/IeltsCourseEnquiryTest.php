@@ -142,6 +142,25 @@ class IeltsCourseEnquiryTest extends TestCase
         Mail::assertSent(IeltsCourseMail::class, 4);
     }
 
+    public function test_payment_status_expires_an_abandoned_enquiry_after_gateway_reconciliation(): void
+    {
+        $enquiry = $this->createEnquiry();
+        $enquiry->forceFill(['created_at' => now()->subHours(25)])->save();
+        $razorpay = Mockery::mock(IeltsCourseRazorpay::class);
+        $razorpay->shouldReceive('fetchOrderPayments')->once()->with($enquiry->razorpay_order_id)->andReturn(['items' => []]);
+        $this->instance(IeltsCourseRazorpay::class, $razorpay);
+
+        $this->postJson('/ielts-courses/payment/status', [
+            'submission_key' => $enquiry->submission_key,
+            'enquiry_reference' => $enquiry->enquiry_reference,
+            'retry_token' => $enquiry->submission_key,
+        ])->assertOk()
+            ->assertJsonPath('payment_status', 'expired')
+            ->assertJsonPath('can_retry', false);
+
+        $this->assertSame('expired', $enquiry->fresh()->payment_status);
+    }
+
     private function createEnquiry(): IeltsCourseEnquiry
     {
         $razorpay = Mockery::mock(IeltsCourseRazorpay::class);

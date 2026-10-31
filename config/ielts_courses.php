@@ -23,4 +23,5 @@ return [
     ],
 
     'admin_email' => 'info@overseaseducationlane.com',
+    'pending_expiry_hours' => 24,
 ];

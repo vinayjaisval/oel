@@ -947,8 +947,11 @@
         pendingPaymentId = localStorage.getItem('ieltsPendingPaymentId'),
         paidReference = localStorage.getItem('ieltsPaidReference'),
         paidAt = Number(localStorage.getItem('ieltsPaidAt') || 0),
-        hasSavedSubmission = !!localStorage.getItem('ieltsSubmissionKey'),
+        savedSubmissionKey = localStorage.getItem('ieltsSubmissionKey'),
+        pendingSince = Number(localStorage.getItem('ieltsPendingSince') || 0),
+        hasSavedSubmission = !!(retryToken && enquiryReference) || !!(savedSubmissionKey && (pendingSince || retryToken)),
         processing = false,
+        statusCheckPromise = null,
         statusNeedsCheck = false,
         checkoutScriptPromise = null,
         checkoutScriptStartedAt = performance.now(),
@@ -960,8 +963,10 @@
         return (c === 'x' ? r : (r & 3 | 8)).toString(16);
       });
     }
-    submissionKey.value = localStorage.getItem('ieltsSubmissionKey') || newSubmissionKey();
-    localStorage.setItem('ieltsSubmissionKey', submissionKey.value);
+    submissionKey.value = savedSubmissionKey && (pendingSince || retryToken) ? savedSubmissionKey : newSubmissionKey();
+    if (savedSubmissionKey && !pendingSince && !retryToken && !enquiryReference) {
+      localStorage.removeItem('ieltsSubmissionKey');
+    }
     if (paidReference && (!paidAt || Date.now() - paidAt > 86400000)) {
       paidReference = null;
       localStorage.removeItem('ieltsPaidReference');
@@ -971,6 +976,25 @@
       paymentStatus.textContent = message;
       paymentStatus.style.display = 'block';
       paymentStatus.setAttribute('data-state', state || 'info');
+    }
+    function clearPendingData() {
+      localStorage.removeItem('ieltsRetryToken');
+      localStorage.removeItem('ieltsEnquiryReference');
+      localStorage.removeItem('ieltsSubmissionKey');
+      localStorage.removeItem('ieltsPendingPaymentId');
+      localStorage.removeItem('ieltsPendingSince');
+    }
+    function markExpired() {
+      clearPendingData();
+      retryToken = null;
+      enquiryReference = null;
+      pendingPaymentId = null;
+      submissionKey.value = newSubmissionKey();
+      statusNeedsCheck = false;
+      processing = false;
+      showOnly('buy');
+      setBuyProcessing(false);
+      setStatus('This enquiry payment has expired. Please submit a new enquiry to continue.', 'error');
     }
     function showOnly(button) {
       buyNowButton.style.display = button === 'buy' ? 'inline-block' : 'none';
@@ -989,10 +1013,7 @@
       processing = false;
       showOnly('none');
       buyNowButton.disabled = false;
-      localStorage.removeItem('ieltsRetryToken');
-      localStorage.removeItem('ieltsEnquiryReference');
-      localStorage.removeItem('ieltsSubmissionKey');
-      localStorage.removeItem('ieltsPendingPaymentId');
+      clearPendingData();
       localStorage.setItem('ieltsPaidReference', reference);
       localStorage.setItem('ieltsPaidAt', String(Date.now()));
     }
@@ -1128,11 +1149,13 @@
       });
     }
     function checkPaymentStatus(silent, reason) {
+      if (statusCheckPromise) return statusCheckPromise;
       processing = true;
       showOnly('none');
       setBuyProcessing(true);
-      setStatus('Checking payment status...', 'info');
-      return sendJson('{{ route("ielts-courses.payment.status") }}', {
+      if (silent) paymentStatus.style.display = 'none';
+      else setStatus('Checking payment status...', 'info');
+      var request = sendJson('{{ route("ielts-courses.payment.status") }}', {
         submission_key: submissionKey.value || retryToken,
         enquiry_reference: enquiryReference,
         retry_token: retryToken,
@@ -1144,9 +1167,18 @@
         }
         if (data.enquiry_found === false) {
           statusNeedsCheck = false;
+          clearPendingData();
+          retryToken = null;
+          enquiryReference = null;
+          pendingPaymentId = null;
+          submissionKey.value = newSubmissionKey();
           showOnly('buy');
           setBuyProcessing(false);
           setStatus('No saved payment order was found. You can safely submit the enquiry again.', 'error');
+          return;
+        }
+        if (data.payment_status === 'expired') {
+          markExpired();
           return;
         }
         retryToken = data.retry_token || retryToken;
@@ -1172,28 +1204,47 @@
         }
         recoverableState('Payment status is still being confirmed. Check again before retrying.', true);
       }).catch(function(error) {
-        recoverableState(reason || error.message + ' Do not start another payment until status is confirmed.', true);
-      }).finally(function() {
+        recoverableState('Payment status could not be confirmed. Check again before retrying.', true);
+      });
+      var trackedRequest = request.finally(function() {
         processing = false;
         retryButton.disabled = false;
         if (buyNowButton.style.display !== 'none') setBuyProcessing(false);
+        if (statusCheckPromise === trackedRequest) statusCheckPromise = null;
       });
+      statusCheckPromise = trackedRequest;
+      return trackedRequest;
     }
     function beginPayment(payload) {
       processing = true;
       statusNeedsCheck = false;
+      clearPendingData();
+      localStorage.removeItem('ieltsPaidReference');
+      localStorage.removeItem('ieltsPaidAt');
+      submissionKey.value = newSubmissionKey();
+      retryToken = null;
+      enquiryReference = null;
+      pendingPaymentId = null;
+      paidReference = null;
+      payload.submission_key = submissionKey.value;
+      localStorage.setItem('ieltsSubmissionKey', submissionKey.value);
+      localStorage.setItem('ieltsPendingSince', String(Date.now()));
       showOnly('buy');
       setBuyProcessing(true);
       setStatus('Preparing your payment, please wait...', 'info');
       return sendJson('{{ route("ielts-courses.enquiry.store") }}', payload, 30000).then(function(data) {
+        if (data.payment_status === 'expired') {
+          markExpired();
+          return;
+        }
         if (data.payment_status === 'paid') {
           markPaid(data.enquiry_reference);
           return;
         }
         retryToken = data.retry_token || retryToken;
         enquiryReference = data.enquiry_reference;
-        localStorage.setItem('ieltsRetryToken', retryToken);
-        localStorage.setItem('ieltsEnquiryReference', enquiryReference);
+        if (retryToken) localStorage.setItem('ieltsRetryToken', retryToken);
+        if (enquiryReference) localStorage.setItem('ieltsEnquiryReference', enquiryReference);
         return openCheckout(data);
       }).catch(function(error) {
         if (error.data && error.data.enquiry_reference && error.data.retry_token) {
@@ -1222,6 +1273,10 @@
         enquiry_reference: enquiryReference,
         retry_token: retryToken
       }, 30000).then(function(data) {
+        if (data.payment_status === 'expired') {
+          markExpired();
+          return;
+        }
         if (data.payment_status === 'paid') {
           markPaid(data.enquiry_reference);
           return;
@@ -1283,7 +1338,7 @@
       markPaid(paidReference);
     } else if (hasSavedSubmission || (retryToken && enquiryReference)) {
       statusNeedsCheck = true;
-      showOnly('check');
+      showOnly('none');
       checkPaymentStatus(true, 'Checking your saved enquiry payment...');
     } else {
       showOnly('buy');
