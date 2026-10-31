@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\State;
 use App\Models\Slider;
 use App\Models\EnquiryMail;
+use App\Models\IeltsCourseEnquiry;
 use App\Models\Image;
 use App\Models\Contactus;
 use App\Models\Ads;
@@ -345,6 +346,19 @@ class DashboardController extends Controller
         ]);
     }
 
+
+      public function ieltsCourse()
+    {
+                $courseEnquiries = IeltsCourseEnquiry::orderBy('created_at', 'desc')->paginate(10);
+                return view('landingpage.admin.ielts-course.index', compact('courseEnquiries'));
+        }
+
+        public function deleteIeltsCourseEnquiry($id)
+        {
+                IeltsCourseEnquiry::findOrFail($id)->delete();
+                return redirect()->route('ielts-course')->with('success', 'IELTS course enquiry deleted successfully.');
+    }
+
     /**
      * Display the speefied resource.
      */
@@ -353,6 +367,8 @@ class DashboardController extends Controller
         $emailData=EnquiryMail::orderBy('created_at', 'desc')->paginate(10);
         return view('landingpage.admin.sendEmail.index',compact('emailData'));
     }
+
+    
 
     public function emailDelete($id)
     {

@@ -42,7 +42,9 @@
                 "about_country.view",
                 "slider.view",
                 "enquiry_email.view",
-                "getcountry_campaign.view"
+                "getcountry_campaign.view",
+                "ielts_course.view",
+                "contact_us.view"
             ],
             "submenu": [
                 {
@@ -69,11 +71,18 @@
                     "slug": "landing-page-emailData",
                     "permission": "enquiry_email.view"
                 },
+
+                {
+                    "url": "/landing-page/ielts-course",
+                    "name": "IELTS Course",
+                    "slug": "landing-page-ielts-course",
+                    "permission": "ielts_course.view"
+                },
                 {
                     "url": "/landing-page/contact-us",
                     "name": "Contact Us & User Query",
                     "slug": "landing-page-contact-us",
-                    "permission": "enquiry_email.view"
+                    "permission": "contact_us.view"
                 },
                 {
                     "url": "/landing-page/country-campaign",

@@ -260,24 +260,12 @@ return [
             'specializations.update',
             'specializations.delete',
         ],
-        'source' => [
-            'source.create',
-            'source.view',
-            'source.update',
-            'source.delete',
-        ],
         'interest' => [
             'interest.create',
             'interest.view',
             'interest.update',
             'interest.delete',
-        ],
-        'country' => [
-            'country.create',
-            'country.view',
-            'country.update',
-            'country.delete',
-        ],
+        ],      
         'state' => [
             'state.create',
             'state.view',
@@ -331,13 +319,7 @@ return [
             'scholorship.view',
             'scholorship.update',
             'scholorship.delete',
-        ],
-        'specializations' => [
-            'specializations.create',
-            'specializations.view',
-            'specializations.update',
-            'specializations.delete',
-        ],
+        ],       
         'source' => [
             'source.create',
             'source.view',
@@ -355,13 +337,7 @@ return [
             'country.view',
             'country.update',
             'country.delete',
-        ],
-        'country' => [
-            'country.create',
-            'country.view',
-            'country.update',
-            'country.delete',
-        ],
+        ],       
         'province' => [
             'province.create',
             'province.view',
@@ -373,12 +349,6 @@ return [
             'visa_type.view',
             'visa_type.update',
             'visa_type.delete',
-        ],
-        'faq' => [
-            'faq.create',
-            'faq.view',
-            'faq.update',
-            'faq.delete',
         ],
         'education_lane' => [
             'education_lane.create',
@@ -542,6 +512,13 @@ return [
         ],
         'enquiry_email' => [
             'enquiry_email.view',
+        ],
+        'contact_us' => [
+            'contact_us.view',
+        ],
+        
+         'ielts_course' => [
+            'ielts_course.view',
         ],
        'master_service'=> [
         'master_service.create',

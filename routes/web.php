@@ -864,6 +864,10 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
         Route::get("delete/slider/{id}", [\App\Http\Controllers\LandingPage\DashboardController::class, 'deleteSlider'])->name('delete.slider');
         Route::post("update-slider-status", [\App\Http\Controllers\LandingPage\DashboardController::class, 'updateSliderStatus'])->name('statusUpdate');
         // indexpage Data'
+
+        Route::get("ielts-course", [\App\Http\Controllers\LandingPage\DashboardController::class, 'ieltsCourse'])->name('ielts-course');
+        Route::get("ielts-course-delete/{id}", [\App\Http\Controllers\LandingPage\DashboardController::class, 'deleteIeltsCourseEnquiry'])->name('ielts-course.delete');
+
         Route::get("emailData", [\App\Http\Controllers\LandingPage\DashboardController::class, 'emailData'])->name('emailData');
         Route::get("email-delete/{id}", [\App\Http\Controllers\LandingPage\DashboardController::class, 'emailDelete'])->name('emailDelete');
         Route::get("contact-us", [\App\Http\Controllers\LandingPage\DashboardController::class, 'contact_us'])->name('contact-us');
@@ -902,9 +906,16 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
     Route::get('/korean-classes', function () {
         return view('landingpage.landing');
     })->name('korean.classes');
-    Route::get('/landingpagenew', function () {
-        return view('landingpage.landingpagenew');
-    })->name('landingpagenew');
+
+    Route::get('/ielts-courses', function () {
+        return view('landingpage.ielts-courses');
+    })->name('ielts-courses');
+
+    Route::post('/ielts-courses/enquiry', [App\Http\Controllers\IeltsCourseController::class, 'store'])->name('ielts-courses.enquiry.store');
+    Route::post('/ielts-courses/payment/retry', [App\Http\Controllers\IeltsCourseController::class, 'retry'])->name('ielts-courses.payment.retry');
+    Route::post('/ielts-courses/payment/status', [App\Http\Controllers\IeltsCourseController::class, 'status'])->name('ielts-courses.payment.status');
+    Route::post('/ielts-courses/payment/verify', [App\Http\Controllers\IeltsCourseController::class, 'verify'])->name('ielts-courses.payment.verify');
+
     Route::get('/study-in-southKorea/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'index'])->name('study-in-southKorea');
     Route::get('/landing-page/{id?}', [App\Http\Controllers\LandingPage\HomeController::class, 'index'])->name('landing-page');
    
@@ -934,10 +945,10 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
     // SEO-friendly university/program URLs: study-in-{country}/{university}[/{program}]
     // The country segment excludes the reserved landing-page slugs above so those routes keep winning.
     Route::get('study-in-{country}/{university}', [UniversityController::class, 'studyInUniversity'])
-        ->where('country', '(?!uk$|usa$|canada$|south-korea$)[a-z0-9-]+')
+        ->where('country', '(?!uk$|usa$|canada$)[a-z0-9-]+')
         ->name('study-in.university');
     Route::get('study-in-{country}/{university}/{program}', [FrontendController::class, 'studyInProgram'])
-        ->where('country', '(?!uk$|usa$|canada$|south-korea$)[a-z0-9-]+')
+        ->where('country', '(?!uk$|usa$|canada$)[a-z0-9-]+')
         ->name('study-in.program');
     Route::get('/search-data', [FrontendController::class, '/search'])->name('/search-data');
 

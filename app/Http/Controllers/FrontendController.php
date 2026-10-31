@@ -989,6 +989,7 @@ class FrontendController extends Controller
                     }
                 })
                 ->latest()
+                ->orderByDesc('id')
                 ->paginate(12);
 
             return response()->json(['data' => $programs]);

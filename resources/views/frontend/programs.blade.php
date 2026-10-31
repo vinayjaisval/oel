@@ -139,7 +139,7 @@ $(document).ready(function () {
                         <ul>
                             <li>Level: ${item.program_level?.name || 'N/A'}</li>
                             <li>Duration: ${item.length} month</li>
-                            <li>Application Fees: ${item.application_fee}</li>
+                            <li>Application Fees: ₹ ${item.application_fee}</li>
                             <li>1st Year Tuition Fees: ${item.currency} ${item.tution_fee}</li>
                             <li>Exams Required: ${item.university_name?.testrequired || 'N/A'}</li>
                         </ul>
@@ -159,46 +159,66 @@ $(document).ready(function () {
         `).join('');
     }
 
-   function loadData(page) {
-    $.ajax({
+    let page = 1;
+    let loading = false;
+    let hasMore = true;
+    let activeRequest = null;
+    let requestVersion = 0;
+
+    function loadData(requestedPage) {
+        if (loading || !hasMore) {
+            return;
+        }
+
+        loading = true;
+        const currentRequestVersion = ++requestVersion;
+        $('.ajax-load').show();
+
+        activeRequest = $.ajax({
         url: "{{ route('programs') }}",
         type: "GET",
-        data: $('#filter_form').serialize() + '&page=' + page,
-        beforeSend: function () {
-            $('.ajax-load').show();
-        },
-        success: function (response) {
-            $('.ajax-load').hide();
-
-            if (response.data.data.length === 0) {
-                $('.no-data').show();
+        data: $('#filter_form').serialize() + '&page=' + requestedPage
+        })
+        .done(function (response) {
+            if (currentRequestVersion !== requestVersion) {
                 return;
             }
 
-            $('#program-data').append(renderPrograms(response.data.data));
-        },
-        error: function () {
-            $('.ajax-load').hide();
-        }
-    });
-}
+            const pagination = response.data;
+            if (pagination.data.length === 0) {
+                if (requestedPage === 1) {
+                    $('.no-data').show();
+                }
+                hasMore = false;
+                return;
+            }
+
+            $('#program-data').append(renderPrograms(pagination.data));
+            page = pagination.current_page + 1;
+            hasMore = pagination.current_page < pagination.last_page;
+        })
+        .always(function () {
+            if (currentRequestVersion === requestVersion) {
+                $('.ajax-load').hide();
+                loading = false;
+                activeRequest = null;
+            }
+        });
+    }
 
     // ==========================================
     // Initial Load
     // ==========================================
     
-    loadData(1);
+    loadData(page);
 
     // ==========================================
     // Infinite Scroll
     // ==========================================
     
-    let page = 2, loading = false;
     $(window).scroll(function () {
-        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 1000 && !loading) {
-            loading = true;
-            loadData(page++);
-            setTimeout(() => loading = false, 500);
+        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 1000 && !loading && hasMore) {
+            loadData(page);
         }
     });
 
@@ -272,13 +292,19 @@ $(document).ready(function () {
     $('#filter_form').on('submit', function (e) {
         e.preventDefault();
         
-        // Reset page number for new search
+        if (activeRequest) {
+            requestVersion++;
+            activeRequest.abort();
+        }
+
         page = 1;
+        loading = false;
+        hasMore = true;
+        activeRequest = null;
         $('#program-data').html('');
         $('.no-data').hide();
         
-        // Load data with new filters
-        loadData(1);
+        loadData(page);
     });
 
     // ==========================================

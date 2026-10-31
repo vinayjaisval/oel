@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Korean Language Classes | Overseas Education Lane</title>
+  <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Sans:wght@400;500;600;700&display=swap">
   <style>
     :root {
@@ -54,6 +55,22 @@
       transform: translateY(-2px);
       box-shadow: 0 12px 28px -4px rgba(245, 158, 11, 0.6);
     }
+    .btn:disabled { cursor: wait; opacity: .8; transform: none; }
+    .payment-spinner {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin-right: 8px;
+      border: 2px solid currentColor;
+      border-right-color: transparent;
+      border-radius: 50%;
+      vertical-align: -2px;
+      animation: payment-spin .7s linear infinite;
+    }
+    @keyframes payment-spin { to { transform: rotate(360deg); } }
+    #paymentStatus[data-state="success"] { color: #087443; }
+    #paymentStatus[data-state="error"] { color: #a12c20; }
+    #paymentStatus[data-state="info"] { color: var(--primary); }
     .hero {
       background-color: var(--primary-dark);
       background: radial-gradient(circle at 85% 15%, var(--primary-light), transparent 50%),
@@ -749,21 +766,26 @@
         </label>
         <div class="field-wrap">
           <span>Class Plan</span>
-          <input type="hidden" id="planSelect" name="plan" value="PROGRESS PLAN (3 Classes Per Week - ₹5,000/Month)">
+          <input type="hidden" id="planSelect" name="plan" value="progress">
           <div class="custom-select" id="customPlanDropdown">
             <button type="button" class="select-btn" id="customPlanBtn">
               <span id="customPlanText">PROGRESS PLAN &ndash; 3 Classes/Wk (&#8377;5,000/mo)</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </button>
             <ul class="select-menu" id="customPlanMenu">
-              <li data-val="PROGRESS PLAN (3 Classes Per Week - ₹5,000/Month)" class="selected">PROGRESS PLAN &ndash; 3 Classes/Wk (&#8377;5,000/mo)</li>
-              <li data-val="FOUNDATION PLAN (2 Classes Per Week - ₹4,000/Month)">FOUNDATION PLAN &ndash; 2 Classes/Wk (&#8377;4,000/mo)</li>
-              <li data-val="INTENSIVE PLAN (5 Classes Per Week - ₹9,000/Month)">INTENSIVE PLAN &ndash; 5 Classes/Wk (&#8377;9,000/mo)</li>
+              <li data-val="foundation">FOUNDATION PLAN &ndash; 2 Classes/Wk (&#8377;4000/mo)</li>
+              <li data-val="progress" class="selected">PROGRESS PLAN &ndash; 3 Classes/Wk (&#8377;5,000/mo)</li>
+            
+              <li data-val="intensive">INTENSIVE PLAN &ndash; 5 Classes/Wk (&#8377;9,000/mo)</li>
             </ul>
           </div>
           <small class="field-err" id="errPlan"></small>
         </div>
-        <button class="btn" type="submit">Buy now</button>
+        @csrf
+        <input type="hidden" id="submissionKey" name="submission_key" value="">
+        <button class="btn" id="buyNowButton" type="submit">Buy Now</button>
+        <p id="paymentStatus" role="status" aria-live="polite" style="display:none;margin:10px 0 0;"></p>
+        <button class="btn" id="retryPaymentButton" type="button" style="display:none;margin-top:8px;">Retry payment</button>
       </form>
     </div>
     <footer>
@@ -844,7 +866,7 @@
         var p = b.getAttribute('data-plan');
         if (cpMenu && p) {
           cpMenu.querySelectorAll('li').forEach(function(li) {
-            if (li.getAttribute('data-val').indexOf(p.split(' ')[0]) !== -1) {
+            if (li.getAttribute('data-val') === p.split(' ')[0].toLowerCase()) {
               setPlanVal(li.getAttribute('data-val'), li.textContent);
             }
           });
@@ -916,9 +938,331 @@
     inputPhone.addEventListener('blur', function() { if (inputPhone.value.trim()) validatePhone(); });
     inputCity.addEventListener('input', function() { if (inputCity.classList.contains('is-invalid')) validateCity(); });
     inputCity.addEventListener('blur', function() { if (inputCity.value.trim()) validateCity(); });
+    var buyNowButton = document.getElementById('buyNowButton'),
+        retryButton = document.getElementById('retryPaymentButton'),
+        paymentStatus = document.getElementById('paymentStatus'),
+        submissionKey = document.getElementById('submissionKey'),
+        retryToken = localStorage.getItem('ieltsRetryToken'),
+        enquiryReference = localStorage.getItem('ieltsEnquiryReference'),
+        pendingPaymentId = localStorage.getItem('ieltsPendingPaymentId'),
+        paidReference = localStorage.getItem('ieltsPaidReference'),
+        paidAt = Number(localStorage.getItem('ieltsPaidAt') || 0),
+        hasSavedSubmission = !!localStorage.getItem('ieltsSubmissionKey'),
+        processing = false,
+        statusNeedsCheck = false,
+        checkoutScriptPromise = null,
+        checkoutScriptStartedAt = performance.now(),
+        buyPointerDownAt = 0;
+    function newSubmissionKey() {
+      if (window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID();
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0;
+        return (c === 'x' ? r : (r & 3 | 8)).toString(16);
+      });
+    }
+    submissionKey.value = localStorage.getItem('ieltsSubmissionKey') || newSubmissionKey();
+    localStorage.setItem('ieltsSubmissionKey', submissionKey.value);
+    if (paidReference && (!paidAt || Date.now() - paidAt > 86400000)) {
+      paidReference = null;
+      localStorage.removeItem('ieltsPaidReference');
+      localStorage.removeItem('ieltsPaidAt');
+    }
+    function setStatus(message, state) {
+      paymentStatus.textContent = message;
+      paymentStatus.style.display = 'block';
+      paymentStatus.setAttribute('data-state', state || 'info');
+    }
+    function showOnly(button) {
+      buyNowButton.style.display = button === 'buy' ? 'inline-block' : 'none';
+      retryButton.style.display = button === 'retry' || button === 'check' ? 'inline-block' : 'none';
+      retryButton.textContent = button === 'check' ? 'Check payment status' : 'Retry Payment';
+    }
+    function setBuyProcessing(active) {
+      buyNowButton.disabled = active;
+      buyNowButton.setAttribute('aria-busy', active ? 'true' : 'false');
+      buyNowButton.innerHTML = active
+        ? '<span class="payment-spinner" aria-hidden="true"></span>Processing...'
+        : 'Buy Now';
+    }
+    function markPaid(reference) {
+      setStatus('Payment Successful. Your reference is ' + reference + '.', 'success');
+      processing = false;
+      showOnly('none');
+      buyNowButton.disabled = false;
+      localStorage.removeItem('ieltsRetryToken');
+      localStorage.removeItem('ieltsEnquiryReference');
+      localStorage.removeItem('ieltsSubmissionKey');
+      localStorage.removeItem('ieltsPendingPaymentId');
+      localStorage.setItem('ieltsPaidReference', reference);
+      localStorage.setItem('ieltsPaidAt', String(Date.now()));
+    }
+    function loadRazorpay() {
+      if (window.Razorpay) return Promise.resolve();
+      if (!checkoutScriptPromise) {
+        checkoutScriptPromise = new Promise(function(resolve, reject) {
+          var script = document.createElement('script');
+          script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+          script.async = true;
+          script.onload = function() {
+            console.info('[IELTS payment timing]', {
+              correlation_id: submissionKey.value,
+              stage: 'checkout_sdk_load_ms',
+              duration_ms: Math.round((performance.now() - checkoutScriptStartedAt) * 100) / 100
+            });
+            resolve();
+          };
+          script.onerror = function() { reject(new Error('Razorpay Checkout could not be loaded.')); };
+          document.head.appendChild(script);
+        }).catch(function(error) {
+          checkoutScriptPromise = null;
+          throw error;
+        });
+      }
+      return checkoutScriptPromise;
+    }
+    loadRazorpay().catch(function() {});
+    function sendJson(url, payload, timeoutMs) {
+      var controller = new AbortController();
+      var startedAt = performance.now();
+      var correlationId = submissionKey.value || (payload && payload.submission_key) || retryToken || newSubmissionKey();
+      var timeoutHandle = window.setTimeout(function() { controller.abort(); }, timeoutMs || 30000);
+      return fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': enrolForm.querySelector('input[name="_token"]').value,
+          'X-Correlation-ID': correlationId
+        },
+        signal: controller.signal,
+        body: JSON.stringify(payload)
+      }).then(function(response) {
+        return response.json().catch(function() { return {}; }).then(function(data) {
+          var elapsed = Math.round((performance.now() - startedAt) * 100) / 100;
+          console.info('[IELTS payment timing]', {
+            correlation_id: response.headers.get('X-Correlation-ID') || correlationId,
+            stage: 'http_request',
+            duration_ms: elapsed,
+            status: response.status
+          });
+          if (!response.ok) {
+            var error = new Error(data.message || 'The request could not be completed.');
+            error.data = data;
+            error.status = response.status;
+            error.paymentStateUncertain = !!data.payment_state_uncertain;
+            throw error;
+          }
+          return data;
+        });
+      }).catch(function(error) {
+        if (error.name === 'AbortError') {
+          var timeoutError = new Error('The request is taking longer than expected. Checking payment status before retrying.');
+          timeoutError.timedOut = true;
+          throw timeoutError;
+        }
+        throw error;
+      }).finally(function() {
+        window.clearTimeout(timeoutHandle);
+      });
+    }
+    function recoverableState(message, checkFirst) {
+      processing = false;
+      setBuyProcessing(false);
+      statusNeedsCheck = !!checkFirst;
+      showOnly(checkFirst ? 'check' : 'retry');
+      setStatus(message, checkFirst ? 'info' : 'error');
+    }
+    function openCheckout(data) {
+      return loadRazorpay().then(function() {
+        showOnly('none');
+        setStatus('Opening secure payment checkout...', 'info');
+        var callbackStarted = false;
+        var checkoutStartedAt = performance.now();
+        var checkout = new Razorpay({
+          key: data.key_id,
+          amount: data.amount,
+          currency: data.currency,
+          name: 'Overseas Education Lane',
+          description: data.plan_name,
+          order_id: data.order_id,
+          prefill: { name: data.name, email: data.email, contact: data.phone },
+          notes: { enquiry_reference: data.enquiry_reference },
+          handler: function(response) {
+            callbackStarted = true;
+            pendingPaymentId = response.razorpay_payment_id;
+            localStorage.setItem('ieltsPendingPaymentId', pendingPaymentId);
+            processing = true;
+            showOnly('none');
+            setStatus('Verifying Payment...', 'info');
+            sendJson('{{ route("ielts-courses.payment.verify") }}', response, 30000).then(function(result) {
+              markPaid(result.enquiry_reference);
+            }).catch(function(error) {
+              checkPaymentStatus(true, error.message);
+            });
+          },
+          modal: {
+            ondismiss: function() {
+              if (!callbackStarted) {
+                checkPaymentStatus(true, 'Checkout was closed. Checking payment status before allowing another attempt.');
+              }
+            }
+          }
+        });
+        checkout.on('payment.failed', function(response) {
+          callbackStarted = true;
+          pendingPaymentId = response.error && response.error.metadata
+            ? response.error.metadata.payment_id
+            : null;
+          if (pendingPaymentId) localStorage.setItem('ieltsPendingPaymentId', pendingPaymentId);
+          checkPaymentStatus(true, 'Payment was not confirmed. Checking the order before offering another attempt.');
+        });
+        checkout.open();
+        console.info('[IELTS payment timing]', {
+          correlation_id: submissionKey.value,
+          stage: 'checkout_open_called',
+          duration_ms: Math.round((performance.now() - checkoutStartedAt) * 100) / 100
+        });
+        processing = false;
+      }).catch(function(error) {
+        recoverableState(error.message + ' Your enquiry is saved.', true);
+      });
+    }
+    function checkPaymentStatus(silent, reason) {
+      processing = true;
+      showOnly('none');
+      setBuyProcessing(true);
+      setStatus('Checking payment status...', 'info');
+      return sendJson('{{ route("ielts-courses.payment.status") }}', {
+        submission_key: submissionKey.value || retryToken,
+        enquiry_reference: enquiryReference,
+        retry_token: retryToken,
+        razorpay_payment_id: pendingPaymentId
+      }, 20000).then(function(data) {
+        if (data.payment_status === 'paid') {
+          markPaid(data.enquiry_reference || enquiryReference);
+          return;
+        }
+        if (data.enquiry_found === false) {
+          statusNeedsCheck = false;
+          showOnly('buy');
+          setBuyProcessing(false);
+          setStatus('No saved payment order was found. You can safely submit the enquiry again.', 'error');
+          return;
+        }
+        retryToken = data.retry_token || retryToken;
+        enquiryReference = data.enquiry_reference || enquiryReference;
+        if (retryToken) localStorage.setItem('ieltsRetryToken', retryToken);
+        if (enquiryReference) localStorage.setItem('ieltsEnquiryReference', enquiryReference);
+        if (data.payment_state_uncertain) {
+          recoverableState('Payment status is still being confirmed. Check again before retrying.', true);
+          return;
+        }
+        statusNeedsCheck = false;
+        if (data.can_retry) {
+          if (data.payment_status === 'failed') {
+            pendingPaymentId = null;
+            localStorage.removeItem('ieltsPendingPaymentId');
+          }
+          showOnly(enquiryReference ? 'retry' : 'buy');
+          setBuyProcessing(false);
+          setStatus(data.payment_status === 'failed'
+            ? 'Payment failed. You can retry using the saved enquiry.'
+            : 'No successful payment was found. You can retry using the saved enquiry.', 'error');
+          return;
+        }
+        recoverableState('Payment status is still being confirmed. Check again before retrying.', true);
+      }).catch(function(error) {
+        recoverableState(reason || error.message + ' Do not start another payment until status is confirmed.', true);
+      }).finally(function() {
+        processing = false;
+        retryButton.disabled = false;
+        if (buyNowButton.style.display !== 'none') setBuyProcessing(false);
+      });
+    }
+    function beginPayment(payload) {
+      processing = true;
+      statusNeedsCheck = false;
+      showOnly('buy');
+      setBuyProcessing(true);
+      setStatus('Preparing your payment, please wait...', 'info');
+      return sendJson('{{ route("ielts-courses.enquiry.store") }}', payload, 30000).then(function(data) {
+        if (data.payment_status === 'paid') {
+          markPaid(data.enquiry_reference);
+          return;
+        }
+        retryToken = data.retry_token || retryToken;
+        enquiryReference = data.enquiry_reference;
+        localStorage.setItem('ieltsRetryToken', retryToken);
+        localStorage.setItem('ieltsEnquiryReference', enquiryReference);
+        return openCheckout(data);
+      }).catch(function(error) {
+        if (error.data && error.data.enquiry_reference && error.data.retry_token) {
+          enquiryReference = error.data.enquiry_reference;
+          retryToken = error.data.retry_token;
+          localStorage.setItem('ieltsRetryToken', retryToken);
+          localStorage.setItem('ieltsEnquiryReference', enquiryReference);
+        }
+        processing = false;
+        setBuyProcessing(false);
+        if (error.status === 422) {
+          showOnly('buy');
+          setStatus(error.message, 'error');
+          return;
+        }
+        recoverableState(error.message, true);
+        checkPaymentStatus(true, error.message);
+      });
+    }
+    function retryPayment() {
+      processing = true;
+      showOnly('none');
+      retryButton.disabled = true;
+      setStatus('Preparing your payment, please wait...', 'info');
+      return sendJson('{{ route("ielts-courses.payment.retry") }}', {
+        enquiry_reference: enquiryReference,
+        retry_token: retryToken
+      }, 30000).then(function(data) {
+        if (data.payment_status === 'paid') {
+          markPaid(data.enquiry_reference);
+          return;
+        }
+        return openCheckout(data);
+      }).catch(function(error) {
+        recoverableState(error.message, true);
+        checkPaymentStatus(true, error.message);
+      }).finally(function() {
+        retryButton.disabled = false;
+      });
+    }
+    retryButton.addEventListener('click', function() {
+      if (processing) return;
+      if (statusNeedsCheck) {
+        checkPaymentStatus(false);
+      } else if (retryToken && enquiryReference) {
+        retryPayment();
+      }
+    });
+    buyNowButton.addEventListener('pointerdown', function() {
+      buyPointerDownAt = performance.now();
+    });
     enrolForm.addEventListener('submit', function(e) {
       e.preventDefault();
+      if (processing) return;
+      var handlerStartedAt = performance.now();
+      console.info('[IELTS payment timing]', {
+        correlation_id: submissionKey.value,
+        stage: 'click_to_submit_handler_ms',
+        duration_ms: buyPointerDownAt
+          ? Math.round((handlerStartedAt - buyPointerDownAt) * 100) / 100
+          : 0
+      });
+      var validationStartedAt = performance.now();
       var okN = validateName(), okE = validateEmail(), okP = validatePhone(), okC = validateCity(), okPl = validatePlan();
+      console.info('[IELTS payment timing]', {
+        correlation_id: submissionKey.value,
+        stage: 'frontend_validation_ms',
+        duration_ms: Math.round((performance.now() - validationStartedAt) * 100) / 100
+      });
       if (!okN || !okE || !okP || !okC || !okPl) {
         if (!okN) inputName.focus();
         else if (!okE) inputEmail.focus();
@@ -926,11 +1270,24 @@
         else if (!okC) inputCity.focus();
         return;
       }
-      var name = inputName.value.trim();
-      alert('Thank you, ' + name + '! Your enrollment has been received. Our team will contact you shortly with the next steps.');
-      enrolForm.reset();
-      setPlanVal('PROGRESS PLAN (3 Classes Per Week - ₹5,000/Month)', 'PROGRESS PLAN \u2013 3 Classes/Wk (\u20B95,000/mo)');
+      beginPayment({
+        name: inputName.value.trim(),
+        email: inputEmail.value.trim(),
+        phone: inputPhone.value.trim(),
+        city: inputCity.value.trim(),
+        plan: inputPlan.value,
+        submission_key: submissionKey.value
+      });
     });
+    if (paidReference) {
+      markPaid(paidReference);
+    } else if (hasSavedSubmission || (retryToken && enquiryReference)) {
+      statusNeedsCheck = true;
+      showOnly('check');
+      checkPaymentStatus(true, 'Checking your saved enquiry payment...');
+    } else {
+      showOnly('buy');
+    }
   </script>
   @include('frontend.partials.chatbot')
 </body>
