@@ -919,11 +919,12 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
     
         });
     Route::get('/korean-classes', function () {
-        return view('landingpage.landing');
+        return view('landingpage.korean-classes');
     })->name('korean.classes');
 
     Route::get('/ielts-courses', function () {
-        return view('landingpage.ielts-courses');
+       
+         return view('landingpage.landing');
     })->name('ielts-courses');
 
     Route::post('/ielts-courses/enquiry', [App\Http\Controllers\IeltsCourseController::class, 'store'])->name('ielts-courses.enquiry.store');

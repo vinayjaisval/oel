@@ -43,7 +43,7 @@
                 "slider.view",
                 "enquiry_email.view",
                 "getcountry_campaign.view",
-                "ielts_course.view",
+                "korean_classes.view",
                 "contact_us.view"
             ],
             "submenu": [
@@ -74,9 +74,9 @@
 
                 {
                     "url": "/landing-page/ielts-course",
-                    "name": "IELTS Course",
-                    "slug": "landing-page-ielts-course",
-                    "permission": "ielts_course.view"
+                    "name": "Korean Classes",
+                    "slug": "landing-page-korean-classes",
+                    "permission": "korean_classes.view"
                 },
                 {
                     "url": "/landing-page/contact-us",

@@ -10,7 +10,7 @@
                             <a href=""> Home</a>
                         </li>
                         <li class="breadcrumb-item text-muted">
-                            IELTS Course Enquiries
+                            Korean Classes Enquiries
                         </li>
                     </ol>
                 </div>

@@ -222,8 +222,8 @@
                             <li><a href="{{url('/financialcounselling')}}">Education Loan</a></li>
                             <li><a href="{{url('/foreignexchange')}}">Forex Services</a></li>
                             <!-- <li><a href="{{url('/admissionguidance')}}">Scholarships</a></li> -->
-                            <li><a href="{{ route('ielts-courses') }}">IELTS Courses</a></li>
-                            <li><a href="{{ route('korean.classes') }}">Korean Language</a></li>
+                            <li><a href="{{ route('korean.classes') }}">Korean Classes</a></li>
+                            <!-- <li><a href="{{ route('korean.classes') }}">Korean Language</a></li> -->
                         </ul>
                     </div>
                 </div>

@@ -517,8 +517,8 @@ return [
             'contact_us.view',
         ],
         
-         'ielts_course' => [
-            'ielts_course.view',
+         'korean_classes' => [
+            'korean_classes.view',
         ],
        'master_service'=> [
         'master_service.create',
