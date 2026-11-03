@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Token extends Model
 {
-    use ResolvesInheritedScopes;
-
     /**
      * The database table used by the model.
      *
@@ -58,16 +56,6 @@ class Token extends Model
     }
 
     /**
-     * Get the refresh token associated with the token.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function refreshToken()
-    {
-        return $this->hasOne(Passport::refreshTokenModel(), 'access_token_id');
-    }
-
-    /**
      * Get the user that the token belongs to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -107,6 +95,27 @@ class Token extends Model
     }
 
     /**
+     * Resolve all possible scopes.
+     *
+     * @param  string  $scope
+     * @return array
+     */
+    protected function resolveInheritedScopes($scope)
+    {
+        $parts = explode(':', $scope);
+
+        $partsCount = count($parts);
+
+        $scopes = [];
+
+        for ($i = 1; $i <= $partsCount; $i++) {
+            $scopes[] = implode(':', array_slice($parts, 0, $i));
+        }
+
+        return $scopes;
+    }
+
+    /**
      * Determine if the token is missing a given scope.
      *
      * @param  string  $scope
@@ -135,15 +144,5 @@ class Token extends Model
     public function transient()
     {
         return false;
-    }
-
-    /**
-     * Get the current connection name for the model.
-     *
-     * @return string|null
-     */
-    public function getConnectionName()
-    {
-        return $this->connection ?? config('passport.connection');
     }
 }

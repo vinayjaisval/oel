@@ -143,6 +143,11 @@
     $state = App\Models\Province::where('id', $university->state ?? null)->get();
     $university_type = App\Models\SchoolType::where('id', $university->type_of_university ?? null)->get();
 @endphp
+@php
+    $shortlistUser = Auth::user();
+    $canManageProgramShortlists = $shortlistUser && $shortlistUser->hasAnyRole(['agent', 'sub_agent']);
+    $shortlistBusinessRole = $shortlistUser && $shortlistUser->hasRole('agent') ? 'Agent' : 'Sub-Agent';
+@endphp
 @if(Auth::check())
     @php
     $user=Auth::user();
@@ -222,6 +227,45 @@
                 <span class="university_count"></span> universities found</h2>
          </div>
       </div>
+        @if($canManageProgramShortlists)
+        <div class="container mb-3" id="program-shortlist-tools">
+            <div class="border rounded p-3 bg-light">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <div>
+                        <strong>Program Shortlisting</strong>
+                        <span class="text-muted ms-2">{{ $shortlistBusinessRole }}</span>
+                        <span class="ms-3">Selected: <strong id="shortlist-selected-count">0</strong></span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-outline-primary btn-sm" id="shortlist-select-page">Select current page</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="shortlist-clear-selection">Clear selection</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="shortlist-save-open" data-bs-toggle="modal" data-bs-target="#saveProgramShortlist" disabled>Save New Shortlist</button>
+                        <a class="btn btn-outline-dark btn-sm" href="{{ route('program-shortlists.index') }}">My Shortlists</a>
+                    </div>
+                </div>
+                <div class="small mt-2" id="shortlist-feedback" role="status" aria-live="polite"></div>
+            </div>
+        </div>
+        <div class="modal fade" id="saveProgramShortlist" tabindex="-1" aria-labelledby="saveProgramShortlistLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <form class="modal-content" id="save-program-shortlist-form">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="saveProgramShortlistLabel">Save New Shortlist</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label for="program-shortlist-name" class="form-label">Shortlist name</label>
+                        <input id="program-shortlist-name" name="name" class="form-control" maxlength="120" required>
+                        <div class="invalid-feedback" id="program-shortlist-name-error"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="program-shortlist-submit">Save Shortlist</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @endif
       <div class="main-tag-line mb-4">
          <div class="container">
             <div class="row">
@@ -583,6 +627,18 @@
                                           <h1>Courses</h1>
                                        </div>
                                     </div>
+                                                <div class="row g-2 mb-3 px-2 program-directory-controls">
+                                                    <div class="col-md-8">
+                                                        <input type="search" class="form-control" id="program-directory-search" placeholder="Search loaded programs or universities" aria-label="Search programs">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <select class="form-select" id="program-directory-sort" aria-label="Sort programs">
+                                                            <option value="name">Sort by program name</option>
+                                                            <option value="university">Sort by university</option>
+                                                            <option value="tuition">Sort by tuition fee</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                     <div class="course_data justify-content-between gap-2 align-items">
                                    </div>
 
@@ -640,6 +696,35 @@
     let pages = 2;
     let bool = false;
     let lastPage;
+    const shortlistEnabled = @json($canManageProgramShortlists);
+    const selectedProgramIds = new Set();
+    let currentPageProgramIds = [];
+
+    function syncShortlistControls() {
+        if (!shortlistEnabled) return;
+        $('#shortlist-selected-count').text(selectedProgramIds.size);
+        $('#shortlist-save-open').prop('disabled', selectedProgramIds.size === 0);
+        const allSelected = currentPageProgramIds.length > 0 && currentPageProgramIds.every(id => selectedProgramIds.has(String(id)));
+        $('#shortlist-select-page').text(allSelected ? 'Deselect current page' : 'Select current page');
+    }
+
+    function applyProgramDirectoryControls() {
+        const query = ($('#program-directory-search').val() || '').toString().trim().toLowerCase();
+        const sortBy = $('#program-directory-sort').val() || 'name';
+        const container = $('.course_data');
+        const cards = Array.from(container.children('.program-listing-row'));
+        cards.sort((left, right) => {
+            if (sortBy === 'tuition') {
+                return Number(left.dataset.tuition || 0) - Number(right.dataset.tuition || 0);
+            }
+            const field = sortBy === 'university' ? 'university' : 'name';
+            return (left.dataset[field] || '').localeCompare(right.dataset[field] || '');
+        });
+        cards.forEach(card => {
+            card.style.display = card.textContent.toLowerCase().includes(query) ? '' : 'none';
+            container.append(card);
+        });
+    }
 
     // ---------- CSRF HEADER SETUP ----------
     function csrf() {
@@ -650,7 +735,25 @@
 
     // ---------- URL PARAM HANDLER ----------
     function getParams() {
-        return new URLSearchParams(window.location.search).toString();
+        const params = new URLSearchParams(window.location.search);
+        params.delete('page');
+        return params.toString();
+    }
+
+    function reloadProgramDirectoryParameter(name, value) {
+        const params = new URLSearchParams(window.location.search);
+        params.delete('page');
+        if (value) params.set(name, value);
+        else params.delete(name);
+        const query = params.toString();
+        window.history.replaceState(null, '', window.location.pathname + (query ? '?' + query : ''));
+        pages = 2;
+        bool = false;
+        lastPage = 1;
+        currentPageProgramIds = [];
+        $('#university').empty();
+        $('.course_data').empty();
+        loadData(1);
     }
 
     // ---------- LAZY LOAD (ON SCROLL) ----------
@@ -747,9 +850,14 @@
     }
 
     function renderCourse(item) {
+        const checked = shortlistEnabled && selectedProgramIds.has(String(item.id)) ? 'checked' : '';
+        const selectionControl = shortlistEnabled
+            ? `<label class="form-check mb-2"><input class="form-check-input shortlist-program-checkbox" type="checkbox" value="${item.id}" ${checked}><span class="form-check-label">Add to Shortlist</span></label>`
+            : '';
         return `
-        <div class="col-lg-12 col-md-4 col-sm-6 mt-30">
+        <div class="col-lg-12 col-md-4 col-sm-6 mt-30 program-listing-row" data-name="${String(item.name || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').toLowerCase()}" data-university="${String(item.university_name?.university_name || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').toLowerCase()}" data-tuition="${Number(item.tution_fee) || 0}">
             <div class="courses-item course-logo card border-lg shadow-sm rounded-3">
+                ${selectionControl}
                 <div class="course_card_logo_sec d-flex gap-5">
                     <div class="img-part" style="margin: 2px 5px;">
                         <a href="${buildProgramUrl(item)}">
@@ -774,7 +882,7 @@
                     </div>
                 </div>
             </div>
-        </div><hr class="mt-10">
+        </div>
         `;
     }
 
@@ -791,6 +899,9 @@
 
                 $('#university').append(res.data.data.map(renderUniversity).join(''));
                 $('.course_data').append(res.course_data.data.map(renderCourse).join(''));
+                currentPageProgramIds = res.course_data.data.map(program => String(program.id));
+                syncShortlistControls();
+                applyProgramDirectoryControls();
 
                 $('.course_count').text(res.course_data.total);
                 $('.university_count').text(res.data.total);
@@ -807,11 +918,73 @@
                     $('.ajax-load').hide();
                     $('#university').append(res.data.data.map(renderUniversity).join(''));
                     $('.course_data').append(res.course_data.data.map(renderCourse).join(''));
+                    currentPageProgramIds = currentPageProgramIds.concat(res.course_data.data.map(program => String(program.id)));
+                    syncShortlistControls();
+                    applyProgramDirectoryControls();
                     resolve();
                 }
             });
         });
     }
+
+    let programSearchTimer;
+    $('#program-directory-search').on('input', function () {
+        window.clearTimeout(programSearchTimer);
+        const searchTerm = this.value.trim();
+        programSearchTimer = window.setTimeout(function () {
+            reloadProgramDirectoryParameter('program_search', searchTerm);
+        }, 300);
+    });
+    $('#program-directory-sort').on('change', function () {
+        reloadProgramDirectoryParameter('program_sort', this.value);
+    });
+    $(document).on('change', '.shortlist-program-checkbox', function () {
+        const programId = String(this.value);
+        if (this.checked) selectedProgramIds.add(programId);
+        else selectedProgramIds.delete(programId);
+        syncShortlistControls();
+    });
+    $('#shortlist-select-page').on('click', function () {
+        const select = !currentPageProgramIds.every(id => selectedProgramIds.has(String(id)));
+        currentPageProgramIds.forEach(id => {
+            const key = String(id);
+            if (select) selectedProgramIds.add(key);
+            else selectedProgramIds.delete(key);
+            $(`.shortlist-program-checkbox[value="${key}"]`).prop('checked', select);
+        });
+        syncShortlistControls();
+    });
+    $('#shortlist-clear-selection').on('click', function () {
+        selectedProgramIds.clear();
+        $('.shortlist-program-checkbox').prop('checked', false);
+        syncShortlistControls();
+    });
+    $('#save-program-shortlist-form').on('submit', function (event) {
+        event.preventDefault();
+        const submitButton = $('#program-shortlist-submit');
+        const name = $('#program-shortlist-name').val().toString().trim();
+        submitButton.prop('disabled', true).text('Saving...');
+        $('#program-shortlist-name').removeClass('is-invalid');
+        fetch('{{ route('program-shortlists.store') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ name: name, program_ids: Array.from(selectedProgramIds) })
+        }).then(response => response.json().then(data => ({ response, data }))).then(({ response, data }) => {
+            if (!response.ok) {
+                const message = data.errors?.name?.[0] || data.errors?.program_ids?.[0] || data.message || 'The shortlist could not be saved.';
+                $('#shortlist-feedback').text(message).addClass('text-danger');
+                if (data.errors?.name) $('#program-shortlist-name').addClass('is-invalid');
+                throw new Error(message);
+            }
+            window.location.href = data.url;
+        }).catch(() => {
+            submitButton.prop('disabled', false).text('Save Shortlist');
+        });
+    });
 
     // ---------- FILTER FUNCTIONS ----------
     window.fetchProgramSubLevel = function () {

@@ -227,7 +227,7 @@ class FrontendController extends Controller
         if ($request->ajax()) {
 
 
-            if ($request->has('country') || $request->has('intake') || $request->has('other_exam') || $request->has('program_level') ||  $request->has('program_sub_level') ||  $request->has('education_level') ||  $request->has('program_discipline') ||  $request->has('program_sub_discipline') ||  $request->has('eng_proficiency_level') ||  $request->has('eng_pro_input') ||  $request->has('other_exam')) {
+            if ($request->has('country') || $request->has('intake') || $request->has('other_exam') || $request->has('program_level') ||  $request->has('program_sub_level') ||  $request->has('education_level') ||  $request->has('program_discipline') ||  $request->has('program_sub_discipline') ||  $request->has('eng_proficiency_level') ||  $request->has('eng_pro_input') ||  $request->has('program_search') || $request->has('program_sort')) {
 
                 $course = Program::with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)
                     ->when($request->has('program_level'), function ($query) use ($request) {
@@ -262,6 +262,23 @@ class FrontendController extends Controller
                     ->when($request->has('other_exam'), function ($query) use ($request) {
                         return $query->whereIn('other_exam', explode(',', $request->other_exam));
                     })
+                    ->when($request->filled('program_search'), function ($query) use ($request) {
+                        $search = '%' . trim($request->program_search) . '%';
+                        return $query->where(function ($searchQuery) use ($search) {
+                            $searchQuery->where('name', 'like', $search)
+                                ->orWhereIn('school_id', University::query()->select('id')->where('university_name', 'like', $search));
+                        });
+                    })
+                    ->when($request->input('program_sort') === 'tuition', function ($query) {
+                        return $query->orderBy('tution_fee');
+                    })
+                    ->when($request->input('program_sort') === 'university', function ($query) {
+                        return $query->orderBy(University::select('university_name')
+                            ->whereColumn('universities.id', 'program.school_id'));
+                    })
+                    ->when($request->input('program_sort', 'name') === 'name', function ($query) {
+                        return $query->orderBy('name');
+                    })
                     ->paginate(12);
 
 
@@ -286,6 +303,13 @@ class FrontendController extends Controller
                         })
                         ->when($request->program_sub_discipline, function ($query) use ($request) {
                             $query->whereIn('program_subdiscipline', explode(',', $request->program_sub_discipline));
+                        })
+                        ->when($request->filled('program_search'), function ($query) use ($request) {
+                            $search = '%' . trim($request->program_search) . '%';
+                            $query->where(function ($searchQuery) use ($search) {
+                                $searchQuery->where('name', 'like', $search)
+                                    ->orWhereIn('school_id', University::query()->select('id')->where('university_name', 'like', $search));
+                            });
                         });
                 };
 

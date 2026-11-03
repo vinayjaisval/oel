@@ -117,6 +117,21 @@ Route::post('/query_submit', [FrontendController::class, 'user_query'])->name('q
 // Updated: Support both GET and POST for apply-program
 Route::match(['get', 'post'], '/apply-program', [FrontendController::class, 'course_university'])->name('check-eligible');
 
+Route::middleware(['auth', 'role:agent|sub_agent'])
+    ->prefix('program-shortlists')
+    ->name('program-shortlists.')
+    ->group(function () {
+        Route::get('/', [\App\Http\Controllers\ProgramShortlistController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\ProgramShortlistController::class, 'store'])->name('store');
+        Route::get('/program-search', [\App\Http\Controllers\ProgramShortlistController::class, 'searchPrograms'])->name('programs.search');
+        Route::get('/{shortlistId}', [\App\Http\Controllers\ProgramShortlistController::class, 'show'])->whereNumber('shortlistId')->name('show');
+        Route::patch('/{shortlistId}', [\App\Http\Controllers\ProgramShortlistController::class, 'rename'])->whereNumber('shortlistId')->name('rename');
+        Route::post('/{shortlistId}/programs', [\App\Http\Controllers\ProgramShortlistController::class, 'addPrograms'])->whereNumber('shortlistId')->name('programs.add');
+        Route::delete('/{shortlistId}/programs/{programId}', [\App\Http\Controllers\ProgramShortlistController::class, 'removeProgram'])->whereNumber(['shortlistId', 'programId'])->name('programs.remove');
+        Route::delete('/{shortlistId}', [\App\Http\Controllers\ProgramShortlistController::class, 'destroy'])->whereNumber('shortlistId')->name('destroy');
+        Route::get('/{shortlistId}/export/{format}', [\App\Http\Controllers\ProgramShortlistController::class, 'export'])->whereNumber('shortlistId')->whereIn('format', ['pdf', 'xlsx'])->name('export');
+    });
+
 Route::post('/get-country-flags', [FrontendController::class, 'get_country'])->name('get-country-flags');
 Route::post('/get-item-details', [FrontendController::class, 'get_country'])->name('get-item-details');
 Route::post('get-program-sublevel', [ProgramController::class, 'get_program_sublevel'])->name('get-program-sublevel');

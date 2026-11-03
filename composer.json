@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.0",
+        "barryvdh/laravel-dompdf": "2.0",
         "buzz/laravel-google-captcha": "^2.3",
         "everapi/freecurrencyapi-php": "dev-master",
         "guzzlehttp/guzzle": "^7.8",

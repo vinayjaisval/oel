@@ -12,6 +12,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use App\Models\CashDonation;
 use OwenIt\Auditing\Auditable as OwenItAuditable;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable implements Auditable
 {
@@ -55,4 +56,8 @@ class User extends Authenticatable implements Auditable
 
 
 
+    public function programShortlists(): HasMany
+    {
+        return $this->hasMany(ProgramShortlist::class);
+    }
 }
