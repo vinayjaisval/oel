@@ -22,16 +22,14 @@ Header add Content-Security-Policy "upgrade-insecure-requests"
 
     # --- Serve files from public/ when they're not present at the project root ---
     # Lets asset()/url() calls stay docroot-agnostic (e.g. asset('imagesapi/x.jpg') instead of
-    # asset('public/imagesapi/x.jpg')). Uses DOCUMENT_ROOT, which equals the project root when
-    # this is deployed as a vhost root (production). Becomes a no-op once the docroot is ever
-    # switched to public/ directly.
-    # NOTE: on a local setup where this project is served as a *subfolder* of a shared docroot
-    # (e.g. WAMP's default http://localhost/overseas/ rather than a dedicated vhost), DOCUMENT_ROOT
-    # does not equal this project's root, so this specific rule won't resolve correctly there -
-    # see DEPLOY_NOTES.md.
+    # asset('public/imagesapi/x.jpg')). public/$1 is a relative path, so mod_rewrite resolves it
+    # against the directory containing this .htaccess (the project root) rather than
+    # %{DOCUMENT_ROOT} - works whether that directory IS the vhost docroot (production) or a
+    # subfolder of a shared docroot (e.g. local WAMP's http://localhost/overseas/). Becomes a
+    # no-op once the docroot is ever switched to public/ directly.
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f
+    RewriteCond public/$1 -f
     RewriteRule ^(.+)$ public/$1 [L]
 
     # Block direct access to internal/dependency directories (after the public/ fallback above
