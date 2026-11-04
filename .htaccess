@@ -5,6 +5,39 @@ Options -MultiViews -Indexes
 Header add Content-Security-Policy "upgrade-insecure-requests"
     RewriteEngine On
 
+    # --- perf-hardening: block direct access to sensitive files ---
+    # (defense in depth while the live docroot is still the project root, not public/)
+    <FilesMatch "(^\.env.*|^\.git.*|^composer\.(json|lock)$|^package(-lock)?\.json$|^artisan$|^phpunit\.xml$|\.(log|sql)$)">
+        <IfModule mod_authz_core.c>
+            Require all denied
+        </IfModule>
+        <IfModule !mod_authz_core.c>
+            Order allow,deny
+            Deny from all
+        </IfModule>
+    </FilesMatch>
+
+    # The .git directory tree (FilesMatch above only matches filenames, not its contents)
+    RewriteRule ^\.git(/.*)?$ - [F,L]
+
+    # --- Serve files from public/ when they're not present at the project root ---
+    # Lets asset()/url() calls stay docroot-agnostic (e.g. asset('imagesapi/x.jpg') instead of
+    # asset('public/imagesapi/x.jpg')). Uses DOCUMENT_ROOT, which equals the project root when
+    # this is deployed as a vhost root (production). Becomes a no-op once the docroot is ever
+    # switched to public/ directly.
+    # NOTE: on a local setup where this project is served as a *subfolder* of a shared docroot
+    # (e.g. WAMP's default http://localhost/overseas/ rather than a dedicated vhost), DOCUMENT_ROOT
+    # does not equal this project's root, so this specific rule won't resolve correctly there -
+    # see DEPLOY_NOTES.md.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f
+    RewriteRule ^(.+)$ public/$1 [L]
+
+    # Block direct access to internal/dependency directories (after the public/ fallback above
+    # has had a chance to serve anything legitimately published under public/).
+    RewriteRule ^(storage|vendor|bootstrap/cache|node_modules)(/|$) - [F,L]
+
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)/$ /$1 [L,R=301]
