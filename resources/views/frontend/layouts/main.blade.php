@@ -545,7 +545,9 @@
             });
 
         });
+        
     </script>
+
     @include('frontend.partials.chatbot')
 </body>
 </html>

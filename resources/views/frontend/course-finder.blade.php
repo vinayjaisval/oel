@@ -234,7 +234,7 @@
                     <div>
                         <strong>Program Shortlisting</strong>
                         <span class="text-muted ms-2">{{ $shortlistBusinessRole }}</span>
-                        <span class="ms-3">Selected: <strong id="shortlist-selected-count">0</strong></span>
+                        <span class="ms-3">Selected: <strong id="shortlist-selected-count">0 / 5</strong></span>
                     </div>
                     <div class="d-flex flex-wrap gap-2">
                         <button type="button" class="btn btn-outline-primary btn-sm" id="shortlist-select-page">Select current page</button>
@@ -702,7 +702,7 @@
 
     function syncShortlistControls() {
         if (!shortlistEnabled) return;
-        $('#shortlist-selected-count').text(selectedProgramIds.size);
+        $('#shortlist-selected-count').text(selectedProgramIds.size + ' / 5');
         $('#shortlist-save-open').prop('disabled', selectedProgramIds.size === 0);
         const allSelected = currentPageProgramIds.length > 0 && currentPageProgramIds.every(id => selectedProgramIds.has(String(id)));
         $('#shortlist-select-page').text(allSelected ? 'Deselect current page' : 'Select current page');
@@ -940,6 +940,11 @@
     });
     $(document).on('change', '.shortlist-program-checkbox', function () {
         const programId = String(this.value);
+        if (this.checked && selectedProgramIds.size >= 5) {
+            this.checked = false;
+            $('#shortlist-feedback').text('A shortlist can contain a maximum of 5 programs.').addClass('text-danger');
+            return;
+        }
         if (this.checked) selectedProgramIds.add(programId);
         else selectedProgramIds.delete(programId);
         syncShortlistControls();
@@ -948,10 +953,16 @@
         const select = !currentPageProgramIds.every(id => selectedProgramIds.has(String(id)));
         currentPageProgramIds.forEach(id => {
             const key = String(id);
-            if (select) selectedProgramIds.add(key);
-            else selectedProgramIds.delete(key);
-            $(`.shortlist-program-checkbox[value="${key}"]`).prop('checked', select);
+            if (select) {
+                if (!selectedProgramIds.has(key) && selectedProgramIds.size < 5) selectedProgramIds.add(key);
+            } else {
+                selectedProgramIds.delete(key);
+            }
+            $(`.shortlist-program-checkbox[value="${key}"]`).prop('checked', selectedProgramIds.has(key));
         });
+        if (select && selectedProgramIds.size === 5) {
+            $('#shortlist-feedback').text('A shortlist can contain a maximum of 5 programs.').addClass('text-danger');
+        }
         syncShortlistControls();
     });
     $('#shortlist-clear-selection').on('click', function () {

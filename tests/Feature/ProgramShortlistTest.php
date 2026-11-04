@@ -158,6 +158,31 @@ class ProgramShortlistTest extends TestCase
         $this->assertDatabaseMissing('program_shortlists', ['id' => $shortlistId]);
     }
 
+    public function test_shortlists_are_limited_to_five_programs(): void
+    {
+        $agent = $this->makeUser('limit-agent@example.test', 'agent');
+        $programs = collect(range(1, 6))->map(fn () => $this->makeProgram());
+        $this->actingAs($agent);
+
+        $this->postJson(route('program-shortlists.store'), [
+            'name' => 'Too many programs',
+            'program_ids' => $programs->pluck('id')->all(),
+        ])->assertUnprocessable()
+            ->assertJsonValidationErrors('program_ids');
+
+        $shortlistId = $this->postJson(route('program-shortlists.store'), [
+            'name' => 'Five programs',
+            'program_ids' => $programs->take(5)->pluck('id')->all(),
+        ])->assertCreated()->json('shortlist_id');
+
+        $this->postJson(route('program-shortlists.programs.add', $shortlistId), [
+            'program_ids' => [$programs->last()->id],
+        ])->assertUnprocessable()
+            ->assertJsonValidationErrors('program_ids');
+
+        $this->assertSame(5, DB::table('program_shortlist_program')->where('shortlist_id', $shortlistId)->count());
+    }
+
     public function test_program_search_matches_program_and_university_but_excludes_unapproved_programs(): void
     {
         $agent = $this->makeUser('search-agent@example.test', 'agent');

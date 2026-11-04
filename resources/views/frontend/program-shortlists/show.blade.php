@@ -10,7 +10,7 @@
         <div>
             <p class="text-muted mb-1">{{ auth()->user()->hasRole('agent') ? 'Agent' : 'Sub-Agent' }}</p>
             <h1 class="h2" id="shortlist-title">{{ $shortlist->name }}</h1>
-            <p class="text-muted mb-0">{{ $shortlist->programs->count() }} available programs · Updated {{ $shortlist->updated_at->format('M j, Y') }}</p>
+            <p class="text-muted mb-0">{{ $shortlist->programs->count() }} / 5 available programs · Updated {{ $shortlist->updated_at->format('M j, Y') }}</p>
         </div>
         <div class="d-flex flex-wrap gap-2">
             <button type="button" class="btn btn-outline-secondary" id="shortlist-rename">Rename</button>
@@ -127,7 +127,12 @@
     let searchTimer;
 
     function updateAddButton() {
-        addButton.disabled = selectedToAdd.size === 0;
+        const remainingSlots = Math.max(0, 5 - alreadySaved.size);
+        document.querySelectorAll('.shortlist-add-checkbox').forEach(function (checkbox) {
+            checkbox.disabled = alreadySaved.has(String(checkbox.value)) ||
+                (!selectedToAdd.has(String(checkbox.value)) && selectedToAdd.size >= remainingSlots);
+        });
+        addButton.disabled = selectedToAdd.size === 0 || remainingSlots === 0;
         addButton.textContent = selectedToAdd.size ? 'Add selected programs (' + selectedToAdd.size + ')' : 'Add selected programs';
     }
 
@@ -145,7 +150,7 @@
             checkbox.type = 'checkbox';
             checkbox.className = 'form-check-input mt-1 shortlist-add-checkbox';
             checkbox.value = program.id;
-            checkbox.disabled = alreadySaved.has(String(program.id));
+            checkbox.disabled = alreadySaved.has(String(program.id)) || alreadySaved.size + selectedToAdd.size >= 5;
             checkbox.checked = selectedToAdd.has(String(program.id));
             checkbox.addEventListener('change', function () {
                 if (checkbox.checked) selectedToAdd.add(String(program.id));
@@ -219,6 +224,7 @@
                 const row = button.closest('tr');
                 row.remove();
                 alreadySaved.delete(String(button.dataset.programId));
+                updateAddButton();
                 feedback.className = 'small mb-3 text-success';
                 feedback.textContent = 'Program removed from shortlist.';
                 if (!document.querySelector('[data-program-row]')) window.location.reload();

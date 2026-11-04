@@ -41,7 +41,7 @@ class ProgramShortlistController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'min:2', 'max:120'],
-            'program_ids' => ['required', 'array', 'min:1', 'max:250'],
+            'program_ids' => ['required', 'array', 'min:1', 'max:5'],
             'program_ids.*' => ['required', 'integer', 'distinct', 'exists:program,id'],
         ]);
         $programIds = $this->approvedProgramIds($validated['program_ids']);
@@ -115,11 +115,25 @@ class ProgramShortlistController extends Controller
         $shortlist = $this->ownedShortlist($request, $shortlistId);
         $programIds = $this->approvedProgramIds($validated['program_ids']);
         $this->rejectUnavailablePrograms($validated['program_ids'], $programIds);
-        $shortlist->programs()->syncWithoutDetaching($programIds);
+        $programCount = DB::transaction(function () use ($shortlist, $programIds) {
+            $shortlist = ProgramShortlist::query()->lockForUpdate()->findOrFail($shortlist->id);
+            $savedProgramIds = $shortlist->programs()->pluck('program.id')->all();
+            $newProgramIds = array_values(array_diff($programIds, $savedProgramIds));
+
+            if (count($savedProgramIds) + count($newProgramIds) > 5) {
+                throw ValidationException::withMessages([
+                    'program_ids' => ['A shortlist can contain a maximum of 5 programs.'],
+                ]);
+            }
+
+            $shortlist->programs()->syncWithoutDetaching($newProgramIds);
+
+            return $shortlist->programs()->count();
+        });
 
         return response()->json([
             'message' => 'Programs added to shortlist.',
-            'program_count' => $shortlist->programs()->count(),
+            'program_count' => $programCount,
         ]);
     }
 
