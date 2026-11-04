@@ -47,7 +47,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta name="google-site-verification" content="Oe5_d5HHQe8RRzzpFWOXFaG4Z2zARTYHtgRyID8X1_c" />
     <link rel="stylesheet" href="{{asset('frontend/css/style.css')}}">
-    <link id="favicon" rel="shortcut icon" type="image/png" href="https://www.overseaseducationlane.com/public/frontend/img/oel (1) 1.png" />
+    <link id="favicon" rel="shortcut icon" type="image/png" href="{{ asset('frontend/img/oel (1) 1.png') }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css" integrity="sha512-/VYneElp5u4puMaIp/4ibGxlTd2MV3kuUIroR3NSQjS2h9XKQNebRQiyyoQKeiGE9mRdjSCIZf9pb7AVJ8DhCg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -67,7 +67,7 @@
             "name": "Overseas Education Lane",
             "alternateName": "OEL",
             "url": "https://www.overseaseducationlane.com/",
-            "logo": "https://www.overseaseducationlane.com/public/frontend/img/oel%20(1)%201.png",
+            "logo": "{{ asset('frontend/img/oel (1) 1.png') }}",
             "sameAs": [
                 "https://www.facebook.com/overseaseducationlane.oel/",
                 "https://x.com/LaneEducation",
@@ -334,7 +334,7 @@
                 <div class="modal-content">
                     <div class="row">
                         <div class="col-md-6 p-0">
-                            <img src="https://overseaseducationlane.com/public/frontend/images/login.jpg"
+                            <img src="{{ asset('frontend/images/login.jpg') }}"
                                 style="height: 100%;width: 100%;object-fit: cover;">
                         </div>
                         <div class="col-md-6"

@@ -132,7 +132,7 @@ class ContactUsController extends Controller
                 return [
                     'id' => $ads->id,
                     'title' => $ads->title,
-                    'image' => url("public/".$ads->image),
+                    'image' => url($ads->image),
                     'meta_tags' => $ads->meta_tags,
                     'meta_description' => $ads->meta_description,
                 ];

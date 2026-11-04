@@ -103,7 +103,7 @@
     <div class="container py-4">
         <div class="email-container">
             <div class="email-header shadow-sm">
-                <img src="https://www.overseaseducationlane.com/public/frontend/img/oel%20(1)%201.png" alt="OEL Logo">
+                <img src="{{ asset('frontend/img/oel (1) 1.png') }}" alt="OEL Logo">
                 <!-- <h4>Overseas Education Lane</h4> -->
             </div>
 

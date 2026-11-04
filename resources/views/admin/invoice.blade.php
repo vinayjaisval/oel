@@ -71,7 +71,7 @@
     <div class="container invoice-container">
         <div class="row invoice-header align-items-center">
             <div class="col-md-6">
-                <img src="https://www.overseaseducationlane.com/public/frontend/img/oel%20(1)%201.png"
+                <img src="{{ asset('frontend/img/oel (1) 1.png') }}"
                     alt="Overseas Education Lane Logo" class="company-logo">
             </div>
             <div class="col-md-6 text-end">

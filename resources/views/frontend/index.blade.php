@@ -1140,7 +1140,7 @@
                     university: item.university,
                     review_link: item.review_link,
 
-                    src: 'https://www.overseaseducationlane.com/public/imagesapi/' + item.profile_picture
+                    src: '{{ asset('imagesapi') }}/' + item.profile_picture
                 };
             });
 

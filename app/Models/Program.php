@@ -37,7 +37,7 @@ class Program extends Model
     }
 
     public function university_name(){
-        return $this->hasOne(University::class,'id', 'school_id')->select('id','university_name','logo','country_id','testrequired','banner')->addSelect(DB::raw("CONCAT('".url("")."/public/', logo) as logo_path"));
+        return $this->hasOne(University::class,'id', 'school_id')->select('id','university_name','logo','country_id','testrequired','banner')->addSelect(DB::raw("CONCAT('".url("")."/', logo) as logo_path"));
     }
 
     public function programLevel()
