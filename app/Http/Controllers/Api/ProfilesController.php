@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Student;
@@ -60,6 +61,7 @@ class ProfilesController extends Controller
             }
         }
 
+        Cache::forget("apply_program_personalization_{$student->user_id}");
         DB::table('student')->where('user_id', $student->user_id)->update($student_data);
         DB::table('users')->where('id', $student->user_id)->update([
             'name' => $request->first_name,

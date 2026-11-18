@@ -20,6 +20,11 @@ class University extends Model
     
     protected $guarded =[];
 
+    public function getLogoPathAttribute()
+    {
+        return $this->logo ? asset($this->logo) : null;
+    }
+
     public function country()
     {
         return $this->belongsTo(Country::class, 'country_id');

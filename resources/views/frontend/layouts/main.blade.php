@@ -444,8 +444,6 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11.0.5/swiper-bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11.0.5/swiper-bundle.min.js"></script>
-
     @yield('javascript_section')
 
     <script>
@@ -548,6 +546,8 @@
         
     </script>
 
+    @unless(request()->routeIs(['programs', 'check-eligible', 'course-finder', 'study-in.program']))
     @include('frontend.partials.chatbot')
+    @endunless
 </body>
 </html>

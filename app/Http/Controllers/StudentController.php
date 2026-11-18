@@ -26,6 +26,7 @@ use App\Models\{
 };
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PaymentLinkEmail;
@@ -342,6 +343,7 @@ class StudentController extends Controller
         if (empty($student_id)) {
             abort(404);
         }
+        Cache::forget("apply_program_personalization_{$student_id}");
         $student = Student::where('user_id', $student_id)->first();
         if ($request->tab1) {
             $validator = Validator::make($request->all(), [
@@ -543,6 +545,7 @@ class StudentController extends Controller
     public function update_attendended_school(Request $request)
     {
         $user_id = Auth::user()->id;
+        Cache::forget("apply_program_personalization_{$user_id}");
         $student = DB::table('student')->select('id')->where('user_id', $user_id)->first();
         $student_id = $student->id;
         $school_attended = DB::table('school_attended')

@@ -209,14 +209,16 @@ class FrontendController extends Controller
         }, explode(',', $value))));
     }
 
+    private const COURSE_CARD_COLUMNS = [
+        'id', 'name', 'school_id', 'program_level_id', 'application_fee', 'length', 'tution_fee',
+    ];
+
     public function course_university(Request $request)
     {
 
 
-        $course = Program::where('is_approved', 1)->paginate(1);
         $country = Country::select('name', 'id')->where('is_active', 1)->get();
         $program_level = ProgramLevel::select('name', 'id')->get();
-        $sub_program_level = ProgramSubLevel::select('name', 'id', 'program_id')->get();
         $program_discipline = ProgramDiscipline::select('name', 'id')->get();
         $eng_proficiency_level = EngProficiencyLevel::select('name', 'id')->get();
 
@@ -229,7 +231,7 @@ class FrontendController extends Controller
 
             if ($request->has('country') || $request->has('intake') || $request->has('other_exam') || $request->has('program_level') ||  $request->has('program_sub_level') ||  $request->has('education_level') ||  $request->has('program_discipline') ||  $request->has('program_sub_discipline') ||  $request->has('eng_proficiency_level') ||  $request->has('eng_pro_input') ||  $request->has('program_search') || $request->has('program_sort')) {
 
-                $course = Program::with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)
+                $course = Program::select(self::COURSE_CARD_COLUMNS)->with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)
                     ->when($request->has('program_level'), function ($query) use ($request) {
                         return $query->whereIn('program_level_id', explode(',', $request->program_level));
                     })
@@ -319,9 +321,6 @@ class FrontendController extends Controller
                     ->with([
                         'country',
                         'university_type',
-                        'program.programLevel',
-                        'program.programSubLevel',
-                        'program.educationLevelprogram'
                     ])
                     ->where('universities.is_approved', 1) // Only approved universities
                     ->selectSub(function ($query) use ($applyProgramFilters) {
@@ -367,8 +366,8 @@ class FrontendController extends Controller
 
                 $user = Auth::user();
 
-                if (!empty($user)) {
-                    if ($user->hasRole('student')) {
+                if (!empty($user) && $user->hasRole('student')) {
+                    $personalization = Cache::remember("apply_program_personalization_{$user->id}", 600, function () use ($user) {
                         $student_data = DB::table('student')->where('user_id', $user->id)->first();
 
                         $program_id = DB::table('education_history')->select('education_level_id')
@@ -377,11 +376,10 @@ class FrontendController extends Controller
 
                         $program_level_name = ProgramLevel::where('id', $program_id)->pluck('name')->first();
                         $documents_id = Documents::where('name', 'like', '%' . $program_level_name . '%')->pluck('id')->first();
-                        $last_school_attended = SchoolAttended::where('student_id', $student_data->id)->where('documents', $documents_id)
+                        $last_school_attended = SchoolAttended::where('student_id', $student_data->id ?? null)->where('documents', $documents_id)
                             ->select('grading_scheme_id', 'max_score', 'grading_average')
                             ->first();
 
-                        //$grading_scheme_id = explode('-', $last_school_attended->grading_scheme_id );
                         $grading_scheme_id = [];
 
                         if ($last_school_attended && isset($last_school_attended->grading_scheme_id)) {
@@ -396,24 +394,6 @@ class FrontendController extends Controller
                             $grading_scheme_id = GradingScheme::where('name', 'like', '%Out of ' . $grading_scheme_value . '%')->pluck('id')->toArray();
                         }
 
-                        $Additional_qualification = AdditionalQualification::where('student_id', $student_data->id)
-                            ->whereIn('type', ['GRE', 'GMAT'])
-                            ->select('type', 'total_score')
-                            ->get();
-                        $test_score = TestScore::where('student_id', $student_data->id)
-                            ->select('type', 'total_score')
-                            ->get();
-                        $test_score_additional_qualification = [];
-                        foreach ($test_score as $key => $value) {
-                            $test_score_additional_qualification[$value->type] = $value->total_score;
-                        }
-                        foreach ($Additional_qualification as $key => $value) {
-                            $test_score_additional_qualification[$value->type] = $value->total_score;
-                        }
-                        $test_scores = collect($test_score_additional_qualification)
-                            ->filter(function ($score) {
-                                return !is_null($score);
-                            });
                         $program_id = array_map(function ($item) {
                             if ($item == 1) {
                                 return 2;
@@ -426,138 +406,109 @@ class FrontendController extends Controller
                             }
                         }, $program_id);
 
-                        if (!empty($program_ids) || !empty($program_id) || !empty($student_data)) {
-                            $course = Program::with([
-                                'university_name',
-                                'programLevel',
-                                'university_name.country_name',
-                                'university_name.university_type_name'
-                            ])
-                                ->when(!empty($program_id), function ($query) use ($program_id) {
-                                    return $query->whereIn('program_level_id', $program_id);
-                                })
-                                ->when(!empty($grading_scheme_id), function ($query) use ($grading_scheme_id) {
-                                    return $query->whereIn('grading_scheme_id', $grading_scheme_id);
-                                })
-                                ->when(!empty($last_school_attended->grading_average), function ($query) use ($last_school_attended) {
-                                    return $query->where('grading_number', '<=', $last_school_attended->grading_average);
-                                })
+                        return [
+                            'student_data' => $student_data,
+                            'program_id' => $program_id,
+                            'grading_scheme_id' => $grading_scheme_id,
+                            'last_school_attended' => $last_school_attended,
+                        ];
+                    });
 
-                                ->when(!empty($student_data->work_experience), function ($query) use ($student_data) {
-                                    $query->where('work_experience', $student_data->work_experience);
-                                })
-                                ->where('is_approved', 1)
-                                ->paginate(12);
+                    $student_data = $personalization['student_data'];
+                    $program_id = $personalization['program_id'];
+                    $grading_scheme_id = $personalization['grading_scheme_id'];
+                    $last_school_attended = $personalization['last_school_attended'];
 
-
-                            $applyFilter = function ($query) use ($program_id, $grading_scheme_id, $last_school_attended, $test_scores, $student_data) {
-                                $query->when(!empty($program_id), function ($query) use ($program_id) {
-                                    $query->whereIn('program_level_id', $program_id);
-                                });
-                                $query->when(!empty($grading_scheme_id), function ($query) use ($grading_scheme_id) {
-                                    $query->whereIn('grading_scheme_id', $grading_scheme_id);
-                                });
-                                $query->when(!empty($last_school_attended->grading_average), function ($query) use ($last_school_attended) {
-                                    $query->where('grading_number', '<=', $last_school_attended->grading_average);
-                                });
-
-                                $query->when(!empty($student_data->work_experience), function ($query) use ($student_data) {
-                                    $query->where('work_experience', $student_data->work_experience);
-                                });
-                            };
-
-                            $universities = University::select('universities.*')
-                                ->with([
-                                    'country',
-                                    'university_type',
-                                    'program' => function ($query) use ($applyFilter) {
-                                        $applyFilter($query);
-                                    }
-                                ])
-                                ->withCount([
-                                    'program' => function ($query) use ($applyFilter) {
-                                        $applyFilter($query);
-                                    }
-                                ])
-                                ->addSelect([
-                                    'program_ids' => function ($query) use ($applyFilter) {
-                                        $query->from('program')
-                                            ->selectRaw('GROUP_CONCAT(id)')
-                                            ->whereColumn('school_id', 'universities.id')
-                                            ->where(function ($query) use ($applyFilter) {
-                                                $applyFilter($query);
-                                            });
-                                    }
-                                ])
-                                ->whereHas('program', function ($query) use ($applyFilter) {
-                                    $applyFilter($query);
-                                })
-                                ->paginate(12);
-                        } else {
-                            $course = Program::with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)->paginate(12);
-                            $universities = University::withCount('program')->with('country', 'province', 'university_type', 'program.programLevel', 'program.programSubLevel', 'program.educationLevelprogram')
-                                ->where('country_id', $student_data->country_id ?? null)
-                                ->paginate(12);
-                        }
-                    } else {
-
-                        $course = Program::with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)->paginate(12);
-                        // $universities = University::withCount('program')->with('country', 'university_type', 'program.programLevel', 'program.programSubLevel', 'program.educationLevelprogram')->paginate(12);
-
-                        $universities = University::withCount([
-                            'program as program_count' => function ($q) {
-                                $q->where('is_approved', 1); // Only approved programs counted
-                            }
+                    if (!empty($program_ids) || !empty($program_id) || !empty($student_data)) {
+                        $course = Program::select(self::COURSE_CARD_COLUMNS)->with([
+                            'university_name',
+                            'programLevel',
+                            'university_name.country_name',
+                            'university_name.university_type_name'
                         ])
+                            ->when(!empty($program_id), function ($query) use ($program_id) {
+                                return $query->whereIn('program_level_id', $program_id);
+                            })
+                            ->when(!empty($grading_scheme_id), function ($query) use ($grading_scheme_id) {
+                                return $query->whereIn('grading_scheme_id', $grading_scheme_id);
+                            })
+                            ->when(!empty($last_school_attended->grading_average), function ($query) use ($last_school_attended) {
+                                return $query->where('grading_number', '<=', $last_school_attended->grading_average);
+                            })
+
+                            ->when(!empty($student_data->work_experience), function ($query) use ($student_data) {
+                                $query->where('work_experience', $student_data->work_experience);
+                            })
+                            ->where('is_approved', 1)
+                            ->paginate(12);
+
+
+                        $applyFilter = function ($query) use ($program_id, $grading_scheme_id, $last_school_attended, $student_data) {
+                            $query->when(!empty($program_id), function ($query) use ($program_id) {
+                                $query->whereIn('program_level_id', $program_id);
+                            });
+                            $query->when(!empty($grading_scheme_id), function ($query) use ($grading_scheme_id) {
+                                $query->whereIn('grading_scheme_id', $grading_scheme_id);
+                            });
+                            $query->when(!empty($last_school_attended->grading_average), function ($query) use ($last_school_attended) {
+                                $query->where('grading_number', '<=', $last_school_attended->grading_average);
+                            });
+
+                            $query->when(!empty($student_data->work_experience), function ($query) use ($student_data) {
+                                $query->where('work_experience', $student_data->work_experience);
+                            });
+                        };
+
+                        $universities = University::select('universities.*')
                             ->with([
                                 'country',
                                 'university_type',
-                                'program' => function ($q) {
-                                    $q->where('is_approved', 1); // Load only approved programs
-                                },
-                                'program.programLevel',
-                                'program.programSubLevel',
-                                'program.educationLevelprogram'
+                            ])
+                            ->withCount([
+                                'program' => function ($query) use ($applyFilter) {
+                                    $applyFilter($query);
+                                }
                             ])
                             ->addSelect([
-                                'program_ids' => function ($query) {
+                                'program_ids' => function ($query) use ($applyFilter) {
                                     $query->from('program')
                                         ->selectRaw('GROUP_CONCAT(id)')
                                         ->whereColumn('school_id', 'universities.id')
-                                        ->where('is_approved', 1); // Only approved programs in IDs
+                                        ->where(function ($query) use ($applyFilter) {
+                                            $applyFilter($query);
+                                        });
                                 }
                             ])
+                            ->whereHas('program', function ($query) use ($applyFilter) {
+                                $applyFilter($query);
+                            })
+                            ->paginate(12);
+                    } else {
+                        $course = Program::select(self::COURSE_CARD_COLUMNS)->with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)->paginate(12);
+                        $universities = University::withCount('program')->with('country', 'province', 'university_type')
+                            ->where('country_id', $student_data->country_id ?? null)
                             ->paginate(12);
                     }
                 } else {
-                    $course = Program::with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)->paginate(12);
+                    $course = Program::select(self::COURSE_CARD_COLUMNS)->with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)->paginate(12);
                     $universities = University::withCount([
                         'program as program_count' => function ($q) {
-                            $q->where('is_approved', 1); // ✅ Only approved programs counted
+                            $q->where('is_approved', 1); // Only approved programs counted
                         }
                     ])
                         ->with([
                             'country',
                             'university_type',
-                            'program' => function ($q) {
-                                $q->where('is_approved', 1); // ✅ Only approved programs loaded
-                            },
-                            'program.programLevel',
-                            'program.programSubLevel',
-                            'program.educationLevelprogram'
                         ])
                         ->addSelect([
                             'program_ids' => function ($query) {
                                 $query->from('program')
                                     ->selectRaw('GROUP_CONCAT(id)')
                                     ->whereColumn('school_id', 'universities.id')
-                                    ->where('is_approved', 1); // ✅ Only approved programs in program_ids
+                                    ->where('is_approved', 1); // Only approved programs in IDs
                             }
                         ])
                         ->paginate(12);
-
-
-                    return response()->json(['data' => $universities, 'course_data' => $course]);
                 }
 
                 return response()->json(['data' => $universities, 'course_data' => $course]);
