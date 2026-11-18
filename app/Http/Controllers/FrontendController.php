@@ -1089,14 +1089,18 @@ class FrontendController extends Controller
                 })
 
                 ->latest()
-                ->paginate(12);
+                ->paginate(20);
 
             return response()->json([
                 'data' => $programs
             ]);
         }
 
-        return view('frontend.programs');
+        $countries = \Illuminate\Support\Facades\Cache::remember('programs_page_countries', 3600, function () {
+            return \App\Models\Country::where('is_active', 1)->select('id', 'name')->orderBy('name')->get();
+        });
+
+        return view('frontend.programs', compact('countries'));
     }
 
     // AJAX search for universities

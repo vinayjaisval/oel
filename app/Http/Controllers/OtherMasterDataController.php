@@ -21,6 +21,7 @@ use App\Models\{
 };
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 use Validator;
 use DB;
 
@@ -302,6 +303,7 @@ class OtherMasterDataController extends Controller
          $input = $request->except('_token');
          $input['slug'] = Str::slug($request->name);
          Country::create($input);
+         Cache::forget('programs_page_countries');
          return redirect()->route('country')
              ->with('success', 'country created successfully.');
      }
@@ -316,6 +318,7 @@ class OtherMasterDataController extends Controller
          $input['slug'] = Str::slug($request->name);
          $country = Country::find($id);
          $country->update($input);
+         Cache::forget('programs_page_countries');
          return redirect()->route('country')
              ->with('success', 'Country updated successfully');
      }
@@ -324,6 +327,7 @@ class OtherMasterDataController extends Controller
          $country = Country::find($request->id);
          if ($country) {
              $country->delete();
+             Cache::forget('programs_page_countries');
              return redirect()->route('country')
                  ->with('success', 'country deleted successfully');
          } else {
@@ -336,6 +340,7 @@ class OtherMasterDataController extends Controller
      {
     //   dd($request->all());
         DB::table('country')->where('id',$request->id)->update(['is_active' => $request->status]);
+        Cache::forget('programs_page_countries');
         return response()->json(['message' => 'Status updated successfully']);
      }
 
