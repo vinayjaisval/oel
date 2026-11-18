@@ -28,6 +28,7 @@ use App\Models\{
 };
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use App\Models\PaymentsLink;
 use Illuminate\Support\Facades\DB;
 use Carbon\carbon;
@@ -270,6 +271,7 @@ class ProgramController extends Controller
         ]);
        
         $programSave = Program::find($id);
+        Cache::forget("program_details_{$id}");
         $programSave->update([
             // 'user_id' => Auth::user()->id,
             'school_id' => $request->school_id,
@@ -343,6 +345,7 @@ class ProgramController extends Controller
                     'updated_at' => date('Y-m-d H:i:s')
                 ]
             );
+        Cache::forget("program_details_{$request->program_id}");
         return response()->json(['status' => true, 'success' => 'Data Inserted Successfully', 'program_id' => $request->program_id]);
     }
 
@@ -370,6 +373,7 @@ class ProgramController extends Controller
         $program_id = $score->program_id;
         if ($score) {
             $deleteScore = DB::table('program_english_required')->where('id', $request->score_id)->delete();
+            Cache::forget("program_details_{$program_id}");
             return response()->json(['status' => true, 'success' => 'Data Deleted Successfully', 'program_id' => $program_id]);
         } else {
             return response()->json(['status' => false, 'success' => 'Data Not Exist', 'program_id', $score->program_id]);
@@ -378,6 +382,7 @@ class ProgramController extends Controller
 
     public function update_program_commission(Request $request)
     {
+        Cache::forget("program_details_{$request->program_commission_id}");
         DB::table('program')
             ->Where('id', $request->program_commission_id)
             ->update([

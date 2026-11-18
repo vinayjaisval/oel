@@ -10,7 +10,7 @@ use App\Models\VerificationOtp;
 use App\Mail\SendOtp;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\{Auth, DB, Mail, RateLimiter, Log};
+use Illuminate\Support\Facades\{Auth, Cache, DB, Mail, RateLimiter, Log};
 use Illuminate\Support\Str;
 use Validator;
 use App\Models\SubServiceLanding;
@@ -676,23 +676,34 @@ class FrontendController extends Controller
             abort(404);
         }
 
-        $program_data = Program::with('university_name', 'educationLevelprogram', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')
-            ->where('id', $programId)
-            ->where('is_approved', 1)
-            ->first();
+        $cacheKey = "program_details_{$programId}";
+        $cached = Cache::get($cacheKey);
 
-        if (!$program_data) {
-            abort(404);
+        if (!$cached) {
+            $program_data = Program::with('university_name', 'educationLevelprogram', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')
+                ->where('id', $programId)
+                ->where('is_approved', 1)
+                ->first();
+
+            if (!$program_data) {
+                abort(404);
+            }
+
+            $exam_text = DB::table('program_english_required')
+                ->join('eng_proficiency_levels', 'program_english_required.type', '=', 'eng_proficiency_levels.id')
+                ->where('program_id', $program_data->id)->get();
+
+            $cached = ['program_data' => $program_data, 'exam_text' => $exam_text];
+            Cache::put($cacheKey, $cached, 3600);
         }
+
+        $program_data = $cached['program_data'];
+        $exam_text = $cached['exam_text'];
 
         $canonical = $this->buildStudyInProgramSlugs($program_data);
         if ($country !== $canonical['country'] || $university !== $canonical['university'] || $program !== $canonical['program']) {
             return redirect()->route('study-in.program', $canonical, 301);
         }
-
-        $exam_text = DB::table('program_english_required')
-            ->join('eng_proficiency_levels', 'program_english_required.type', '=', 'eng_proficiency_levels.id')
-            ->where('program_id', $program_data->id ?? 0)->get();
 
         return view('frontend.program-details', compact('program_data', 'exam_text'));
     }
