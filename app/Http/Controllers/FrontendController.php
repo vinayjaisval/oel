@@ -527,14 +527,43 @@ class FrontendController extends Controller
 
 
 
+    private const PROGRAM_LIST_CARD_COLUMNS = [
+        'id', 'name', 'school_id', 'program_level_id', 'length', 'tution_fee', 'application_fee', 'currency',
+    ];
+    private const PROGRAM_LIST_SESSION_KEY = 'view_program_data_ids';
+    private const PROGRAM_LIST_PAGE_SIZE = 20;
+
     public function view_program_data(Request $request, $id = null)
     {
+        if ($request->ajax()) {
+            $ids = session(self::PROGRAM_LIST_SESSION_KEY, []);
+            $page = max(1, (int) $request->input('page', 1));
+            $slice = array_slice($ids, ($page - 1) * self::PROGRAM_LIST_PAGE_SIZE, self::PROGRAM_LIST_PAGE_SIZE);
+
+            if (empty($slice)) {
+                return response()->json(['data' => [], 'has_more' => false]);
+            }
+
+            $programs = Program::select(self::PROGRAM_LIST_CARD_COLUMNS)
+                ->with('university_name', 'programLevel', 'university_name.country_name')
+                ->whereIn('id', $slice)
+                ->get()
+                ->sortBy(fn ($p) => array_search($p->id, $slice))
+                ->values();
+
+            return response()->json([
+                'data' => $programs,
+                'has_more' => count($ids) > $page * self::PROGRAM_LIST_PAGE_SIZE,
+            ]);
+        }
+
         $programIds = $request->input('selected_program_id');
 
 
         $programIdsArray = explode(',', $programIds);
 
-        $program_data = Program::with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')
+        $program_data = Program::select(self::PROGRAM_LIST_CARD_COLUMNS)
+            ->with('university_name', 'programLevel', 'university_name.country_name')
             ->where('is_approved', 1)
             ->when(!empty($id), function ($query) use ($id) {
                 return $query->where('school_id', $id);
@@ -579,7 +608,18 @@ class FrontendController extends Controller
 
             // abort(404);
         }
-        return view('frontend.program-data', compact('program_data'));
+
+        $allIds = $program_data->pluck('id')->values()->all();
+        session([self::PROGRAM_LIST_SESSION_KEY => $allIds]);
+
+        $isSingleUniversity = $program_data->pluck('school_id')->unique()->count() === 1;
+        $headerUniversity = $isSingleUniversity ? $program_data->first()->university_name : null;
+
+        $totalPrograms = count($allIds);
+        $hasMore = $totalPrograms > self::PROGRAM_LIST_PAGE_SIZE;
+        $program_data = $program_data->take(self::PROGRAM_LIST_PAGE_SIZE);
+
+        return view('frontend.program-data', compact('program_data', 'totalPrograms', 'hasMore', 'headerUniversity'));
     }
 
 

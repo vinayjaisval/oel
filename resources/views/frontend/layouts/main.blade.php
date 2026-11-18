@@ -546,7 +546,7 @@
         
     </script>
 
-    @unless(request()->routeIs(['programs', 'check-eligible', 'course-finder', 'study-in.program']))
+    @unless(request()->routeIs(['programs', 'check-eligible', 'course-finder', 'study-in.program', 'view-program-data']))
     @include('frontend.partials.chatbot')
     @endunless
 </body>
