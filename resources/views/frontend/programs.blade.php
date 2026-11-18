@@ -99,7 +99,7 @@
         align-items: baseline;
         flex-wrap: wrap;
         gap: 8px;
-        margin: 28px 0 6px;
+        margin: 28px 0 20px;
     }
 
     .pp-count {
@@ -110,7 +110,6 @@
     .pp-fees-note {
         color: #6b7280;
         font-size: 13px;
-        margin-bottom: 20px;
     }
 
     .pp-grid {
@@ -342,7 +341,7 @@
     <section class="pp-band">
         <div class="container text-center">
             <h1>Find your program</h1>
-            <p>Search 31,000+ programs across our partner universities worldwide.</p>
+            <p>Choose a country, university or program and search.</p>
         </div>
     </section>
 
@@ -390,8 +389,8 @@
     <section class="container">
         <div class="pp-results-head">
             <span class="pp-count" id="pp-count" aria-live="polite">Loading programs&hellip;</span>
+            <span class="pp-fees-note">Fees may vary according to university structure and policy.</span>
         </div>
-        <p class="pp-fees-note">Fees may vary according to university structure and policy.</p>
 
         <div id="program-data" class="pp-grid"></div>
         <p class="pp-empty" id="pp-empty" style="display:none">No programs found for these filters.</p>
@@ -442,6 +441,11 @@ $(document).ready(function () {
         return `<span class="pp-tag">${text}</span>`;
     }
 
+    function sentenceCase(text) {
+        const lower = String(text ?? '').toLowerCase();
+        return lower.charAt(0).toUpperCase() + lower.slice(1);
+    }
+
     function logoBox(item) {
         const uni = item.university_name || {};
         const name = uni.university_name || '';
@@ -480,7 +484,7 @@ $(document).ready(function () {
                 </div>
                 <div class="pp-tags">
                     ${tag([country, item.programType].filter(Boolean).join(' · '))}
-                    ${uni.testrequired ? tag('Exams: ' + uni.testrequired) : ''}
+                    ${uni.testrequired ? tag('Exams: ' + sentenceCase(uni.testrequired)) : ''}
                 </div>
                 <a href="${programUrl}" class="pp-view-btn">View details</a>
             </div>`;
@@ -555,7 +559,7 @@ $(document).ready(function () {
             lastPagination = pagination;
             currentPage = pagination.current_page;
 
-            $('#pp-count').text(`${pagination.total} program${pagination.total === 1 ? '' : 's'} found`);
+            $('#pp-count').text(`${pagination.total.toLocaleString('en-US')} program${pagination.total === 1 ? '' : 's'} found`);
 
             if (pagination.data.length === 0) {
                 $('#program-data').html('');
