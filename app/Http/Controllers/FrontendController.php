@@ -210,7 +210,7 @@ class FrontendController extends Controller
     }
 
     private const COURSE_CARD_COLUMNS = [
-        'id', 'name', 'school_id', 'program_level_id', 'application_fee', 'length', 'tution_fee',
+        'id', 'name', 'school_id', 'program_level_id', 'application_fee', 'length', 'tution_fee', 'currency',
     ];
 
     public function course_university(Request $request)
@@ -281,7 +281,7 @@ class FrontendController extends Controller
                     ->when($request->input('program_sort', 'name') === 'name', function ($query) {
                         return $query->orderBy('name');
                     })
-                    ->paginate(12);
+                    ->paginate(12, ['*'], 'course_page');
 
 
                 $applyProgramFilters = function ($query) use ($request) {
@@ -355,9 +355,7 @@ class FrontendController extends Controller
                                 $applyProgramFilters($query);
                             });
                     })
-                    ->paginate(50);
-
-
+                    ->paginate(50, ['*'], 'uni_page');
 
 
 
@@ -440,7 +438,7 @@ class FrontendController extends Controller
                                 $query->where('work_experience', $student_data->work_experience);
                             })
                             ->where('is_approved', 1)
-                            ->paginate(12);
+                            ->paginate(12, ['*'], 'course_page');
 
 
                         $applyFilter = function ($query) use ($program_id, $grading_scheme_id, $last_school_attended, $student_data) {
@@ -482,15 +480,15 @@ class FrontendController extends Controller
                             ->whereHas('program', function ($query) use ($applyFilter) {
                                 $applyFilter($query);
                             })
-                            ->paginate(12);
+                            ->paginate(12, ['*'], 'uni_page');
                     } else {
-                        $course = Program::select(self::COURSE_CARD_COLUMNS)->with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)->paginate(12);
+                        $course = Program::select(self::COURSE_CARD_COLUMNS)->with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)->paginate(12, ['*'], 'course_page');
                         $universities = University::withCount('program')->with('country', 'province', 'university_type')
                             ->where('country_id', $student_data->country_id ?? null)
-                            ->paginate(12);
+                            ->paginate(12, ['*'], 'uni_page');
                     }
                 } else {
-                    $course = Program::select(self::COURSE_CARD_COLUMNS)->with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)->paginate(12);
+                    $course = Program::select(self::COURSE_CARD_COLUMNS)->with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)->paginate(12, ['*'], 'course_page');
                     $universities = University::withCount([
                         'program as program_count' => function ($q) {
                             $q->where('is_approved', 1); // Only approved programs counted
@@ -508,13 +506,20 @@ class FrontendController extends Controller
                                     ->where('is_approved', 1); // Only approved programs in IDs
                             }
                         ])
-                        ->paginate(12);
+                        ->paginate(12, ['*'], 'uni_page');
                 }
 
                 return response()->json(['data' => $universities, 'course_data' => $course]);
             }
         }
-        return view('frontend.course-finder', compact('country', 'exam', 'program_level', 'program_discipline', 'eng_proficiency_level'));
+        $totalCourses = Cache::remember('apply_program_total_courses', 3600, function () {
+            return Program::where('is_approved', 1)->count();
+        });
+        $totalUniversities = Cache::remember('apply_program_total_universities', 3600, function () {
+            return University::where('is_approved', 1)->count();
+        });
+
+        return view('frontend.course-finder', compact('country', 'exam', 'program_level', 'program_discipline', 'eng_proficiency_level', 'totalCourses', 'totalUniversities'));
     }
 
 
