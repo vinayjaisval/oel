@@ -881,6 +881,8 @@ class UniversityController extends Controller
     return redirect()->route('study-in.university', $this->buildStudyInUniversitySlugs($about_university), 301);
 }
 
+    private const UNIVERSITY_PROGRAM_PAGE_SIZE = 20;
+
     public function studyInUniversity(Request $request, $country, $university)
     {
         $universityId = null;
@@ -892,13 +894,13 @@ class UniversityController extends Controller
             abort(404);
         }
 
-        $about_university = University::with([
-            'program',
-            'program.programLevel',
-            'country:id,name',
-            'province:id,name',
-            'university_type:id,name'
-        ])->where('id', $universityId)->first();
+        $about_university = Cache::remember("university_details_{$universityId}", 600, function () use ($universityId) {
+            return University::with([
+                'country:id,name',
+                'province:id,name',
+                'university_type:id,name'
+            ])->where('id', $universityId)->first();
+        });
 
         if (!$about_university) {
             abort(404);
@@ -909,21 +911,41 @@ class UniversityController extends Controller
             return redirect()->route('study-in.university', $canonical, 301);
         }
 
-        $program = Program::with(
+        $totalPrograms = Cache::remember("university_{$about_university->id}_total_programs", 3600, function () use ($about_university) {
+            return Program::where('school_id', $about_university->id)->where('is_approved', 1)->count();
+        });
+
+        $programQuery = Program::with(
             'university_name:id,logo,website,university_name,country_id',
             'programSubLevel:program_id,name,id',
             'educationLevelprogram:name,id,program_level_id,program_sublevel_id',
             'educationLevel',
-            'currency_data:id,currency'
+            'currency_data:id,currency',
+            'programLevel:id,name'
         )
         ->where('school_id', $about_university->id)
         ->where('is_approved', 1)   // ✅ ONLY APPROVED PROGRAMS
         ->when($request->program_name, function ($query) use ($request) {
             $query->where('name', 'like', '%'.$request->program_name.'%');
         })
-        ->get();
+        ->orderBy('id');
 
-        return view('frontend.university-details', compact('about_university','program'));
+        if ($request->ajax()) {
+            $page = max(1, (int) $request->input('page', 1));
+            $programs = (clone $programQuery)->skip(($page - 1) * self::UNIVERSITY_PROGRAM_PAGE_SIZE)->take(self::UNIVERSITY_PROGRAM_PAGE_SIZE)->get();
+            $filteredTotal = (clone $programQuery)->count();
+
+            return response()->json([
+                'data' => $programs->values(),
+                'has_more' => $filteredTotal > $page * self::UNIVERSITY_PROGRAM_PAGE_SIZE,
+            ]);
+        }
+
+        $filteredTotal = (clone $programQuery)->count();
+        $program = $programQuery->take(self::UNIVERSITY_PROGRAM_PAGE_SIZE)->get();
+        $hasMorePrograms = $filteredTotal > self::UNIVERSITY_PROGRAM_PAGE_SIZE;
+
+        return view('frontend.university-details', compact('about_university', 'program', 'totalPrograms', 'filteredTotal', 'hasMorePrograms'));
     }
 
     private function buildUniversityDetailSlug($university)
