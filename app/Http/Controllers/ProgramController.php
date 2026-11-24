@@ -41,14 +41,16 @@ class ProgramController extends Controller
     $approve_status = ($request->approve_status == "-Select Approval-") ? null : $request->approve_status;
     $user_id        = ($request->user_id == "-Select User-") ? null : $request->user_id;
 
-    $program = Program::with([
-        'study_type',
-        'educationLevel',
-        'programLevel',
-        'currency_data',
-        'ProgramCategory',
-        'school'
-    ])
+    $program = Program::query()
+        ->select([
+            'id', 'name', 'school_id', 'program_level_id', 'length', 'intake', 'year',
+            'is_approved', 'scholarship_available', 'scholarship_amount', 'scholarship_currency',
+            'user_id', 'updated_at', 'created_at',
+        ])
+        ->with([
+            'programLevel:id,name',
+            'school:id,university_name',
+        ])
 
         // University name search
         ->when($request->univerisity_name, function ($query, $universityName) {
@@ -88,21 +90,57 @@ class ProgramController extends Controller
                 $query->where('is_approved', 1);
             } elseif ($status === 'unapprove') {
                 $query->where('is_approved', 0);
+            } elseif ($status === 'unapprove_including_null') {
+                $query->where(function ($q) { $q->whereNull('is_approved')->orWhere('is_approved', 0); });
             }
         })
 
         ->latest();
 
-    $program = $program->paginate(12)->appends($request->all());
+    $program = $program->paginate(20)->appends($request->all());
 
     $eng_proficiency_level = EngProficiencyLevel::all();
 
     $users = User::whereIn('admin_type', ['Sub Data-Operator', 'Data oprator', 'Digital Marketing'])
         ->where('is_approve', 1)
-        ->get();
+        ->get(['id', 'name']);
 
-    return view('admin.program.manage-program', compact('program', 'users', 'eng_proficiency_level'));
+    $stats = Cache::remember('manage_program_stats', 300, function () {
+        return [
+            'total' => Program::count(),
+            'approved' => Program::where('is_approved', 1)->count(),
+            'pending' => Program::where('is_approved', 0)->count(),
+            'with_scholarship' => Program::where('scholarship_available', 1)->count(),
+        ];
+    });
+
+    return view('admin.program.manage-program', compact('program', 'users', 'eng_proficiency_level', 'stats'));
 }
+
+    public static function forgetProgramStatsCache()
+    {
+        Cache::forget('manage_program_stats');
+    }
+
+    public function searchUniversities(Request $request)
+    {
+        $search = trim((string) $request->get('q'));
+
+        $universities = University::query()
+            ->where('is_approved', 1)
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where('university_name', 'LIKE', "%{$search}%");
+            })
+            ->orderBy('university_name')
+            ->limit(20)
+            ->get(['id', 'university_name']);
+
+        return response()->json([
+            'results' => $universities->map(function ($u) {
+                return ['id' => $u->id, 'text' => $u->university_name];
+            }),
+        ]);
+    }
     
     
 
@@ -128,22 +166,32 @@ class ProgramController extends Controller
 
     public function add_program(Request $request)
     {
-        $user = Auth::user();
-        // if ($user->hasRole('Administrator')) {
-        $universities = University::where('is_approved', 1)
-        ->orderBy('university_name')
-        ->get(['id', 'university_name']);
-        // } else {
-        //     $universities = University::where('user_id', $user->id)->get();
-        // }
-        // $program_category=DB::table('tbl_program_category')->get();
-        $program_discipline = ProgramDiscipline::select('name', 'id')->where('status', '1')->get();
-        $all_subject = Subject::where('status', '1')->get();
-        $filed_of_study = Fieldsofstudytype::where('status', '1')->get();
-        $grading_scheme = GradingScheme::select('name', 'id')->get();
-        $program_level = ProgramLevel::get();
-        $currency = Currency::get();
-        return view('admin.program.create-program', compact('universities', 'program_discipline', 'grading_scheme', 'all_subject', 'filed_of_study', 'program_level', 'currency'));
+        [$program_discipline, $program_level, $currency] = $this->masterLists();
+
+        // Only needed so the university field can show the previously
+        // selected value after a validation error (search is AJAX now).
+        $selected_university = old('school_id')
+            ? University::where('id', old('school_id'))->first(['id', 'university_name'])
+            : null;
+
+        return view('admin.program.create-program', compact('program_discipline', 'program_level', 'currency', 'selected_university'));
+    }
+
+    protected function masterLists()
+    {
+        $program_discipline = Cache::remember('master_program_discipline', 600, function () {
+            return ProgramDiscipline::select('name', 'id')->where('status', '1')->get();
+        });
+
+        $program_level = Cache::remember('master_program_level', 600, function () {
+            return ProgramLevel::get();
+        });
+
+        $currency = Cache::remember('master_currency', 600, function () {
+            return Currency::get();
+        });
+
+        return [$program_discipline, $program_level, $currency];
     }
 
 
@@ -165,6 +213,9 @@ class ProgramController extends Controller
             'year' => 'required|max:200',
             'program_discipline' => 'required',
             'work_experience' => 'required|max:200',
+            'scholarship_available' => 'nullable|in:0,1',
+            'scholarship_amount' => 'required_if:scholarship_available,1|nullable|numeric|min:0',
+            'scholarship_currency' => 'required_if:scholarship_available,1|nullable|max:10',
         ]);
         // $sub_type = gettype($request->subject_id_input);
         // if($sub_type == "string"){
@@ -210,7 +261,12 @@ class ProgramController extends Controller
                 'cost_of_living_fee' => '00.00',
                 'cost_of_living' => '00.00',
                 'is_approved' => '1',
+                'scholarship_available' => $request->scholarship_available == 1 ? 1 : 0,
+                'scholarship_name' => $request->scholarship_available == 1 ? ($request->scholarship_name ?? null) : null,
+                'scholarship_amount' => $request->scholarship_available == 1 ? $request->scholarship_amount : null,
+                'scholarship_currency' => $request->scholarship_available == 1 ? $request->scholarship_currency : null,
             ]);
+        self::forgetProgramStatsCache();
         return redirect()->route('manage-program')->with('success', 'Program Added Successfully');
     }
 
@@ -218,28 +274,18 @@ class ProgramController extends Controller
     {
         $program = Program::with('currency_data')->find($id);
 
-        
-        $user = Auth::user();
-      
-        $universities = University::where('is_approved', 1)
-        ->orderBy('university_name')
-        ->get(['id', 'university_name']);
-       
+        $selected_university = University::where('id', $program->school_id)->first(['id', 'university_name']);
+
         $program_discipline = ProgramDiscipline::select('name', 'id')->where('status', '1')->get();
         $program_subdiscipline = ProgramSubdiscipline::select('name', 'id')->where('id', $program->program_subdiscipline)->where('status', '1')->get();
-  
-        $country_id = University::where('id', $program->school_id)->value('country_id');
+
         $grading_scheme = GradingScheme::select('name', 'id')->where('id', $program->grading_scheme_id)->get();
-   
-        $program_category = DB::table('tbl_program_category')->get();
-        $all_subject = Subject::where('status', '1')->get();
-        $filed_of_study = Fieldsofstudytype::where('status', '1')->get();
-        $program_level = ProgramLevel::get();
+
+        [, $program_level, $currency] = $this->masterLists();
         $program_sublevel = ProgramSubLevel::where('id', $program->program_sub_level)->get();
         $education_level = EducationLevel::where('id', $program->education_level_id)->get();
         $other_exam = Exam::where('id', $program->other_exam)->get();
-        $currency = Currency::get();
-        return view('admin.program.edit-program', compact('grading_scheme', 'other_exam', 'program_sublevel', 'program_level', 'program_discipline', 'program_subdiscipline', 'universities', 'program_category', 'all_subject', 'filed_of_study', 'education_level', 'currency', 'program'));
+        return view('admin.program.edit-program', compact('grading_scheme', 'other_exam', 'program_sublevel', 'program_level', 'program_discipline', 'program_subdiscipline', 'selected_university', 'education_level', 'currency', 'program'));
     }
 
     public function view_program($id)
@@ -268,8 +314,11 @@ class ProgramController extends Controller
             'year' => 'required|max:200',
             'program_discipline' => 'required|max:200',
             'work_experience' => 'required|max:200',
+            'scholarship_available' => 'nullable|in:0,1',
+            'scholarship_amount' => 'required_if:scholarship_available,1|nullable|numeric|min:0',
+            'scholarship_currency' => 'required_if:scholarship_available,1|nullable|max:10',
         ]);
-       
+
         $programSave = Program::find($id);
         Cache::forget("program_details_{$id}");
         $programSave->update([
@@ -305,7 +354,12 @@ class ProgramController extends Controller
             'cost_of_living_fee' => '00.00',
             'cost_of_living' => '00.00',
             // 'is_approved' => 0,
+            'scholarship_available' => $request->scholarship_available == 1 ? 1 : 0,
+            'scholarship_name' => $request->scholarship_available == 1 ? ($request->scholarship_name ?? null) : null,
+            'scholarship_amount' => $request->scholarship_available == 1 ? $request->scholarship_amount : null,
+            'scholarship_currency' => $request->scholarship_available == 1 ? $request->scholarship_currency : null,
         ]);
+        self::forgetProgramStatsCache();
         return redirect()->route('manage-program')->with('success', 'Program Updated Successfully');
     }
 
@@ -1275,261 +1329,44 @@ public function program_discipline(Request $request)
 
 public function total_applied_program(Request $request)
 {
-    $authuser = Auth::user();
-
-    $user_type = $authuser->admin_type;
-
-    /*
-    |--------------------------------------------------------------------------
-    | TOTAL STUDENT IDS
-    |--------------------------------------------------------------------------
-    */
-
-    if ($user_type == 'Administrator') {
-
-        $total_student_id = Student::pluck('user_id');
-
-    } else {
-
-        if ($authuser->hasRole('agent')) {
-
-            $usersId = User::where('added_by', $authuser->id)
-                ->whereNotIn('admin_type', ['student'])
-                ->pluck('id')
-                ->toArray();
-
-            $usersId[] = $authuser->id;
-
-        } else {
-
-            $usersId = [$authuser->id];
-        }
-
-        $total_student_id = Student::whereIn('added_by', $usersId)
-            ->pluck('user_id');
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | THREE SIXTY DATA
-    |--------------------------------------------------------------------------
-    */
-
-    $table_three_sixtee = DB::table('tbl_three_sixtee')
-        ->whereIn('user_id', $total_student_id)
-        ->select('application', 'visa_application')
-        ->get();
-
-    $applied_application = [];
-    $visa_application = null;
-
-    /*
-    |--------------------------------------------------------------------------
-    | STUDENT LOGIN
-    |--------------------------------------------------------------------------
-    */
-
-    if ($user_type == 'student') {
-
-        $student = Student::where('user_id', $authuser->id)->first();
-
-        if (!$student) {
+    $user = Auth::user();
+    if ($user->admin_type === 'student') {
+        $studentIds = Student::where('user_id', $user->id)->pluck('user_id');
+        if ($studentIds->isEmpty()) {
             abort(404);
         }
-
-        $program_applied = PaymentsLink::where('user_id', $student->user_id)
-            ->where(function ($q) {
-
-                $q->where('payment_type_remarks', 'applied_program')
-                  ->orWhere('payment_type_remarks', 'applied_program_pay_later');
-
-            })
-            ->select('program_id')
-            ->distinct()
-            ->count();
-
-        return view(
-            'admin.applied-program',
-            compact(
-                'program_applied',
-                'table_three_sixtee',
-                'applied_application',
-                'visa_application'
-            )
-        );
+    } elseif ($user->admin_type === 'Administrator') {
+        $studentIds = Student::pluck('user_id');
+    } else {
+        $ownerIds = [$user->id];
+        if ($user->hasRole('agent')) {
+            $ownerIds = User::where('added_by', $user->id)->whereNotIn('admin_type', ['student'])->pluck('id')->all();
+            $ownerIds[] = $user->id;
+        }
+        $studentIds = Student::whereIn('added_by', $ownerIds)->pluck('user_id');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | MAIN QUERY
-    |--------------------------------------------------------------------------
-    */
-
-    $query = PaymentsLink::query()
-
-        ->join('users', 'users.id', '=', 'payments_link.user_id')
-
-        ->leftJoin('payments', function ($join) {
-
-            $join->on(
-                'payments.fallowp_unique_id',
-                '=',
-                'payments_link.fallowp_unique_id'
-            );
-        })
-
-        /*
-        |--------------------------------------------------------------------------
-        | FIX DUPLICATE SBA
-        |--------------------------------------------------------------------------
-        */
-
-        ->join(DB::raw('
-            (
-                SELECT MAX(id) as id, email
-                FROM student_by_agent
-                GROUP BY email
-            ) as latest_sba
-        '), function ($join) {
-
-            $join->on(
-                'latest_sba.email',
-                '=',
-                'payments_link.email'
-            );
-        })
-
-        ->join(
-            'student_by_agent',
-            'student_by_agent.id',
-            '=',
-            'latest_sba.id'
-        )
-
-        ->whereIn('payments_link.user_id', $total_student_id)
-
-        ->where(function ($q) {
-
-            $q->where('payments_link.payment_type_remarks', 'applied_program')
-              ->orWhere('payments_link.payment_type_remarks', 'applied_program_pay_later');
-
-        });
-
-    /*
-    |--------------------------------------------------------------------------
-    | FILTERS
-    |--------------------------------------------------------------------------
-    */
-
-    if ($request->first_name) {
-
-        $query->where(
-            'users.name',
-            'LIKE',
-            '%' . $request->first_name . '%'
-        );
+    $query = \App\Support\AppliedProgramQuery::forStudents($studentIds);
+    if ($request->filled('first_name')) {
+        $query->where('users.name', 'LIKE', '%' . $request->first_name . '%');
     }
-
-    if ($request->email) {
-
-        $query->where(
-            'users.email',
-            'LIKE',
-            '%' . $request->email . '%'
-        );
+    if ($request->filled('email')) {
+        $query->where('users.email', 'LIKE', '%' . $request->email . '%');
     }
+    $program_applied = $query->orderByDesc('id')->paginate(10)->withQueryString();
 
-    /*
-    |--------------------------------------------------------------------------
-    | SELECT
-    |--------------------------------------------------------------------------
-    */
+    // Load the supporting information once for the visible page.
+    $rows = $program_applied->getCollection();
+    $creatorIds = $rows->flatMap(fn ($row) => [$row->assigned_to, $row->added_by_agent_id])->filter()->unique();
+    $creatorEmails = User::whereIn('id', $creatorIds)->pluck('email', 'id');
+    $userIds = $rows->pluck('user_id')->filter()->unique();
+    $programIds = $rows->pluck('program_id')->filter()->unique();
+    $courseStatuses = DB::table('tbl_three_sixtee_course_status')->whereIn('user_id', $userIds)->whereIn('course_id', $programIds)
+        ->get(['user_id', 'course_id', 'course_remarks'])->groupBy(fn ($row) => $row->user_id . ':' . $row->course_id);
+    $visaStatuses = DB::table('tbl_three_sixtee')->whereIn('user_id', $userIds)->whereIn('cource_details', $programIds)
+        ->get(['user_id', 'cource_details', 'visa_application'])->groupBy(fn ($row) => $row->user_id . ':' . $row->cource_details);
 
-    $query->select(
-
-        'payments_link.program_id',
-        'payments_link.user_id',
-
-        DB::raw('MAX(payments_link.id) as id'),
-
-        DB::raw('MAX(users.name) as name'),
-
-        DB::raw('MAX(users.email) as user_email'),
-
-        DB::raw('MAX(payments_link.email) as email'),
-
-        DB::raw('MAX(payments_link.payment_type) as payment_type'),
-
-        DB::raw('MAX(payments_link.payment_type_remarks) as payment_type_remarks'),
-
-        DB::raw('MAX(payments_link.payment_date) as payment_date'),
-
-        DB::raw('MAX(payments_link.app_id) as app_id'),
-
-        DB::raw('MAX(payments_link.status) as status'),
-
-        DB::raw('MAX(payments_link.fallowp_unique_id) as fallowp_unique_id'),
-
-        DB::raw('MAX(payments_link.created_at) as created_at'),
-
-        DB::raw('MAX(student_by_agent.assigned_to) as assigned_to'),
-
-        DB::raw('MAX(student_by_agent.added_by_agent_id) as added_by_agent_id'),
-
-        DB::raw('MAX(payments.id) as payment_id'),
-
-        DB::raw('MAX(payments.amount) as payment_amount'),
-
-        DB::raw('MAX(payments.payment_status) as payment_status')
-    )
-
-    /*
-    |--------------------------------------------------------------------------
-    | IMPORTANT
-    |--------------------------------------------------------------------------
-    | SAME GROUPING FOR LIST & COUNT
-    |--------------------------------------------------------------------------
-    */
-
-    ->groupBy(
-        'payments_link.program_id',
-        'payments_link.user_id'
-    )
-
-    ->orderByDesc('id');
-
-    /*
-    |--------------------------------------------------------------------------
-    | SAME COUNT AS LIST
-    |--------------------------------------------------------------------------
-    */
-
-    $total_program_applied = (clone $query)->get()->count();
-
-    /*
-    |--------------------------------------------------------------------------
-    | PAGINATION
-    |--------------------------------------------------------------------------
-    */
-
-    $program_applied = $query->paginate(10);
-
-    /*
-    |--------------------------------------------------------------------------
-    | RETURN
-    |--------------------------------------------------------------------------
-    */
-
-    return view(
-        'admin.applied-program',
-        compact(
-            'program_applied',
-            'table_three_sixtee',
-            'applied_application',
-            'visa_application',
-            'total_program_applied'
-        )
-    );
+    return view('admin.applied-program', compact('program_applied', 'creatorEmails', 'courseStatuses', 'visaStatuses'));
 }
 
     public function edit_score_program($id)
@@ -1672,6 +1509,7 @@ public function total_applied_program(Request $request)
 
         $item->is_approved = $request->status;
         $item->save();
+        self::forgetProgramStatsCache();
 
         return response()->json([
             'message' => $request->status ? 'Approved Successfully' : 'Unapproved Successfully'

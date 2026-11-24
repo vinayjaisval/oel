@@ -54,7 +54,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha512-1cK78a1o+ht2JcaW6g8OXYwqpev9+6GqOkz9xmBN9iUUhIndKtxwILGWYOSibOKjLsEdjyjZvYDq/cZwNeak0w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{asset('frontend/css/costoms.css')}}">
     <!-- Swiper CSS -->
+    @unless(request()->routeIs('index'))
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    @endunless
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-T9PKC9W1V2"></script>
 
@@ -149,8 +151,11 @@
                             <img src="{{ asset('frontend/img/new-list.png') }}">
                         </div>
                     </ul>
-                    <div class="nav_menu_btn" id="menu_btn">
-                        <span><i class="ri-menu-line" onclick="toggleMenu()"></i></span>
+                    @if(request()->routeIs('index'))
+                    <button type="button" class="home-quick-book" onclick="openWizard()">Book Online Counselling</button>
+                    @endif
+                    <div class="nav_menu_btn" id="menu_btn" @if(request()->routeIs('index')) role="button" tabindex="0" aria-label="Menu" aria-controls="nav_links" aria-expanded="false" @endif>
+                        <span><i class="ri-menu-line" @unless(request()->routeIs('index')) onclick="toggleMenu()" @endunless></i></span>
                     </div>
                 </nav>
             </div>
@@ -441,7 +446,9 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 
+    @unless(request()->routeIs('index'))
     <script src="https://cdn.jsdelivr.net/npm/swiper@11.0.5/swiper-bundle.min.js"></script>
+    @endunless
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
     @yield('javascript_section')
@@ -546,7 +553,7 @@
         
     </script>
 
-    @unless(request()->routeIs(['programs', 'check-eligible', 'course-finder', 'study-in.program', 'study-in.university', 'view-program-data']))
+    @unless(request()->routeIs(['programs', 'check-eligible', 'course-finder', 'study-in.program', 'study-in.university', 'view-program-data', 'check-eligibility']))
     @include('frontend.partials.chatbot')
     @endunless
 </body>

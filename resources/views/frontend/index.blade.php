@@ -1,6 +1,9 @@
 @extends('frontend.layouts.main')
 @section('title', 'Home')
 @section('content')
+<link rel="preload" as="image" href="{{ asset('assets/home-media/airplane.webp') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/home-redesign.css') }}">
+<div class="home-redesign">
 <style>
     .slidercontrols {
         display: flex;
@@ -114,22 +117,18 @@
             <div class="container">
                 <div class="row d-flex justify-content-center align-items-center b-flv">
                     <div class="col-lg-5">
-                        <div class="sec_air_Plane d-none d-lg-block">
-                            <h1 class=" fw-bold">Dreaming of Studying <br>
-                                Abroad? <span class="text-black">We're Here to</span> <br>
-                                Guide You!</h1>
-                            <div class="btns mt-5">
-                                <a href="{{url('contact-us')}}">
-                                    <button class="text-white p-2 border-0 px-4 border rounded">Enquiry now</button>
-                                </a>
-                            </div>
+                        <div class="sec_air_Plane home-hero-copy">
+                            <p class="home-kicker">Free counselling &middot; 750+ partner universities</p>
+                            <h1>Dreaming of studying abroad? <span>We're here to guide you!</span></h1>
+                            <p class="home-hero-subtitle">Courses, admissions, visa and loans &mdash; one free counsellor for every step.</p>
+                            <div class="home-hero-actions"><a class="home-primary" href="{{url('contact-us')}}">Enquiry now</a><a class="home-secondary" href="{{route('programs')}}">Find a course</a></div>
+                            <div class="home-stats"><span><b>97.9%</b> Visa success</span><span><b>750+</b> Universities</span><span><b>1,10,000+</b> Courses</span></div>
                         </div>
-
                     </div>
                     <div class="col-lg-7">
                         <div class="main_air">
                             <div class="airplane-gif">
-                                <img src="{{asset('frontend/gif/airplane.gif')}}" width="w-100" height="auto">
+                                <video class="home-animation" autoplay muted loop playsinline preload="metadata" poster="{{ asset('assets/home-media/airplane.webp') }}" aria-label="Animated airplane"><source src="{{ asset('assets/home-media/airplane.webm') }}" type="video/webm"></video>
                             </div>
                         </div>
                     </div>
@@ -141,17 +140,17 @@
 <section>
     <div class="all_media_icon">
         <div class="icon_social ">
-            <a href="https://www.facebook.com/overseasedu.lane/"><img src="{{asset('/frontend/img/facebook.png')}}"></a>
-            <a href="https://in.linkedin.com/in/overseaseducationlane?trk=public_profile_samename-profile"> <img src="{{asset('/frontend/img/linkdin.png')}}"></a>
-            <a href="https://www.youtube.com/@OverseasEducationLane1"><img src="{{asset('/frontend/img/youtube.png')}}"></a>
-            <a href="https://www.instagram.com/overseaseducation_lane/"><img src="{{asset('/frontend/img/instagram.png')}}"></a>
-            <a href="https://twitter.com/LaneEducation"> <img src="{{asset('/frontend/img/twitter.png')}}"></a>
+            <a href="https://www.facebook.com/overseasedu.lane/"><img loading="lazy" src="{{asset('/frontend/img/facebook.png')}}"></a>
+            <a href="https://in.linkedin.com/in/overseaseducationlane?trk=public_profile_samename-profile"> <img loading="lazy" src="{{asset('/frontend/img/linkdin.png')}}"></a>
+            <a href="https://www.youtube.com/@OverseasEducationLane1"><img loading="lazy" src="{{asset('/frontend/img/youtube.png')}}"></a>
+            <a href="https://www.instagram.com/overseaseducation_lane/"><img loading="lazy" src="{{asset('/frontend/img/instagram.png')}}"></a>
+            <a href="https://twitter.com/LaneEducation"> <img loading="lazy" src="{{asset('/frontend/img/twitter.png')}}"></a>
         </div>
     </div>
 </section>
 <section>
     <div class="marquee_section ">
-        <img src="{{asset('frontend/img/transparent.gif')}}">
+        <video class="home-animation home-lazy-video" muted loop playsinline preload="none" poster="{{ asset('assets/home-media/skyline.webp') }}" data-src="{{ asset('assets/home-media/skyline.webm') }}" aria-label="Animated city skyline"></video>
     </div>
 </section>
 <section>
@@ -162,7 +161,7 @@
     </div>
 </section>
 <section>
-    <div class="container d-block d-xl-none d-lg-none">
+    <div class="container d-block d-xl-none d-lg-none home-duplicate-hero">
         <div class="row">
             <div class="col-lg-12">
                 <div class="sec_air_Plane text-center mt-5 mb-5">
@@ -198,7 +197,7 @@
                             <div class="buddy_icon rounded">
                                 <div class="buddy_title"></div>
                                 <div class="buddy_img text-center">
-                                    <img src="{{ asset('/imagesapi') }}/{{$item->image}}">
+                                    <img loading="lazy" src="{{ asset('/imagesapi') }}/{{$item->image}}">
                                     <div class="confusion mt-4">
                                         <h4 class="text-center fw-bold imgg">{{ $item->name }}</h4>
                                         @php
@@ -225,7 +224,7 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="s_img mt-4">
-                        <img src="{{asset('frontend/img/tree.png')}}" usemap="#image-map" style="height: auto; width: 100%; max-width: 575px;" id="tree-responsive-image">
+                        <img loading="lazy" src="{{asset('assets/home-media/tree.webp')}}" width="465" height="463" usemap="#image-map" style="height: auto; width: 100%; max-width: 575px;" id="tree-responsive-image">
                         <map name="image-map">
                             <area target="_blank" alt="Meet OEL Counselors" title="Meet OEL Counselors" href="{{url('/meetoel')}}" coords="280,418,261,411,245,405,226,406,205,417,189,425,164,433,142,436,123,424,120,401,131,386,144,371,157,363,176,354,204,353,234,358,256,373,268,389,276,401" shape="poly">
 
@@ -292,7 +291,7 @@
                 <!-- Founded In Section -->
                 <div class="col-12 col-md-4 mb-4">
                     <div class="founded_p">
-                        <img src="{{asset('frontend/img/Clip path group.png')}}" alt="Founded in 2013 Overseas Education Lane" class="img-fluid">
+                        <img loading="lazy" src="{{asset('frontend/img/Clip path group.png')}}" alt="Founded in 2013 Overseas Education Lane" class="img-fluid">
                         <div class="yr_txt mt-3">
                             <h3 class="fw-bold">2013</h3>
                             <p class="fw-semibold text-black fd_s">Founded In</p>
@@ -303,7 +302,7 @@
                 <!-- Successful Students Section -->
                 <div class="col-12 col-md-4 mb-4">
                     <div class="founded_ps">
-                        <img src="{{asset('frontend/img/man-user-color-icon 1.png')}}" alt="man" class="img-fluid">
+                        <img loading="lazy" src="{{asset('frontend/img/man-user-color-icon 1.png')}}" alt="man" class="img-fluid">
                         <div class="yr_txt mt-3">
                             <div class="star">
                                 <i class="fa-solid fa-star"></i>
@@ -329,7 +328,7 @@
                 <!-- Success Rate Section -->
                 <div class="col-12 col-md-4 mb-4">
                     <div class="founded_p">
-                        <img src="{{asset('frontend/img/SVG.png')}}" alt="99 Percent Student Success Rate" class="img-fluid">
+                        <img loading="lazy" src="{{asset('frontend/img/SVG.png')}}" alt="99 Percent Student Success Rate" class="img-fluid">
                         <div class="yr_txt">
                             <div class="counter_wrapper">
                               
@@ -360,19 +359,19 @@
             </div>
             <div class="all_overses_edu  d-flex justify-content-center mt-md-4 gap-3">
                 <div class="all_img_education_int  px-md-3 " data-aos="fade-up" data-aos-duration="3000" class="aos-init aos-animate">
-                    <img src="{{asset('frontend/img/b5.png')}}" alt="Transparent">
+                    <img loading="lazy" src="{{asset('assets/home-media/value-transparency.webp')}}" alt="Transparent">
                 </div>
                 <div class="all_img_education_int  px-md-3 mt" data-aos="fade-up" data-aos-duration="3000" class="aos-init aos-animate">
-                    <img src="{{asset('frontend/img/b1.png')}}" alt="Mutual Respect">
+                    <img loading="lazy" src="{{asset('assets/home-media/value-respect.webp')}}" alt="Mutual Respect">
                 </div>
                 <div class="all_img_education_int  px-md-3  mt mtcp" data-aos="fade-up" data-aos-duration="3000" class="aos-init aos-animate">
-                    <img src="{{asset('frontend/img/b4.png')}}" alt="Quality">
+                    <img loading="lazy" src="{{asset('assets/home-media/value-quality.webp')}}" alt="Quality">
                 </div>
                 <div class="all_img_education_int  px-md-3 mt" data-aos="fade-up" data-aos-duration="3000" class="aos-init aos-animate">
-                    <img src="{{asset('frontend/img/b3.png')}}" alt="Excellence">
+                    <img loading="lazy" src="{{asset('assets/home-media/value-excellence.webp')}}" alt="Excellence">
                 </div>
                 <div class="all_img_education_int  px-md-3 mt bg_rotate" data-aos="fade-up" data-aos-duration="3000" class="aos-init aos-animate">
-                    <img src="{{asset('frontend/img/b2.png')}}" alt="Customer Orientation">
+                    <img loading="lazy" src="{{asset('assets/home-media/value-customer.webp')}}" alt="Customer Orientation">
                 </div>
             </div>
         </div>
@@ -447,7 +446,7 @@
                 </div>
                 <div class="col-lg-5">
                     <div class="transform_img">
-                        <img src="{{asset('frontend/img/education.png')}}">
+                        <img loading="lazy" src="{{asset('assets/home-media/education.webp')}}" srcset="{{ asset('assets/home-media/education-480.webp') }} 480w, {{ asset('assets/home-media/education.webp') }} 809w" sizes="(max-width: 767px) 100vw, 50vw" width="809" height="501">
                     </div>
                 </div>
             </div>
@@ -460,7 +459,7 @@
             <div class="row dl-title">
                 <div class="col-lg-5">
                     <div class="transform_img">
-                        <img src="{{asset('frontend/img/Comp 1.gif')}}">
+                        <video class="home-animation home-lazy-video" muted loop playsinline preload="none" poster="{{ asset('assets/home-media/migration.webp') }}" data-src="{{ asset('assets/home-media/migration.webm') }}" aria-label="Migration illustration"></video>
                     </div>
                 </div>
 
@@ -569,10 +568,10 @@
                             @endphp
 
                             @if ($videoId)
-                                <figure class="card" data-vid="{{ trim($videoId) }}">
+                                <figure class="card" data-vid="{{ trim($videoId) }}" tabindex="0" role="button" aria-label="Play student testimonial">
     <img class="thumb"
          src="https://img.youtube.com/vi/{{ trim($videoId) }}/hqdefault.jpg"
-         alt="Video Thumbnail">
+         alt="Video Thumbnail" loading="lazy" width="250" height="180"><span class="home-video-play" aria-hidden="true">&#9654;</span>
    
    </figure>
                             @endif
@@ -591,31 +590,31 @@
         <div class="logo-slider d-block d-sm-none">
             <div class="logos-slidef slider-max d-none">
                 <div class="slided">
-                    <img src="{{asset('frontend/img/Component 8.png')}}" alt="Image 1">
+                    <img loading="lazy" src="{{asset('assets/home-media/offer.webp')}}" alt="Image 1">
 
                 </div>
                 <div class="slided">
-                    <img src="{{asset('frontend/img/Component 8.png')}}" alt="Image 2">
+                    <img loading="lazy" src="{{asset('assets/home-media/offer.webp')}}" alt="Image 2">
 
                 </div>
                 <div class="slided">
-                    <img src="{{asset('frontend/img/Component 8.png')}}" alt="Image 1">
+                    <img loading="lazy" src="{{asset('assets/home-media/offer.webp')}}" alt="Image 1">
 
                 </div>
                 <div class="slided">
-                    <img src="{{asset('frontend/img/Component 8.png')}}" alt="Image 2">
+                    <img loading="lazy" src="{{asset('assets/home-media/offer.webp')}}" alt="Image 2">
 
                 </div>
                 <div class="slided">
-                    <img src="{{asset('frontend/img/Component 8.png')}}" alt="Image 1">
+                    <img loading="lazy" src="{{asset('assets/home-media/offer.webp')}}" alt="Image 1">
 
                 </div>
                 <div class="slided">
-                    <img src="{{asset('frontend/img/Component 8.png')}}" alt="Image 2">
+                    <img loading="lazy" src="{{asset('assets/home-media/offer.webp')}}" alt="Image 2">
 
                 </div>
                 <div class="slided">
-                    <img src="{{asset('frontend/img/Component 8.png')}}" alt="Image 1">
+                    <img loading="lazy" src="{{asset('assets/home-media/offer.webp')}}" alt="Image 1">
 
                 </div>
             </div>
@@ -638,14 +637,14 @@
             <div class="logos-slide">
                 @foreach ($ads as $item)
                 <div class="slide logos img">
-                    <img src="{{ asset($item->image) }}" style="width:280px;height:280px" alt="{{$item->title}}" class="img-name">
+                    <img loading="lazy" src="{{ asset($item->image) }}" style="width:280px;height:280px" alt="{{$item->title}}" class="img-name">
                 </div>
                 @endforeach
 
                
                 @foreach ($ads as $item)
                 <div class="slide logos img">
-                    <img src="{{ asset($item->image) }}" style="width:280px;height:280px" alt="{{$item->title}}" class="img-name">
+                    <img loading="lazy" src="{{ asset($item->image) }}" style="width:280px;height:280px" alt="{{$item->title}}" class="img-name">
                 </div>
                 @endforeach
             </div>
@@ -660,7 +659,7 @@
                     @foreach ($programs as $item)
                     <div class="slide slide-t mx-2">
                         <div class="rm-int">
-                            <img src="{{asset($item->university_name->banner ?? null)}}" alt="{{$item->alt_tag ?? 'Overseas'}}" class="img-name" width="100%">
+                            <img loading="lazy" src="{{asset($item->university_name->banner ?? null)}}" alt="{{$item->alt_tag ?? 'Overseas'}}" class="img-name" width="100%">
                         </div>
                         <div class="course_name mt-4">
                             <span class="fw-light">{{$item->university_name->country_name->name ?? null}}</span>
@@ -669,7 +668,7 @@
                             <ul>
                                 <li>
                                    <a href="{{ route('course-details', [str_replace(' ', '-', $item->name) . '-' . $item->id]) }}">
-                                        <img src="{{asset('frontend/img/Vector.png')}}">
+                                        <img loading="lazy" src="{{asset('frontend/img/Vector.png')}}">
                                         <span>{{substr($item->university_name->university_name ?? null, 0,25)}}</span>{{$item->university_name->country_name->name ?? null}}</a>
                                 </li>
                             </ul>
@@ -694,10 +693,10 @@
                         <div class="col-lg-4 d-flex align-items-center justify-content-center mt-md-5">
                             <div class="row">
                                 <div class="google_img">
-                                    <img src="{{asset('frontend/img/Google-Review-Logo 1.png')}}" alt="google_img">
+                                    <img loading="lazy" src="{{asset('frontend/img/Google-Review-Logo 1.png')}}" alt="google_img">
                                     <div class="sign_img">
                                         <span>Win up to ₹ 3,00,000* to study in the UK, Canada &amp; US.</span>
-                                        <img src="{{asset('frontend/img/Group (1).png')}}" alt="sign">
+                                        <img loading="lazy" src="{{asset('frontend/img/Group (1).png')}}" alt="sign">
                                     </div>
                                 </div>
                                 <div class="all_btns">
@@ -782,7 +781,7 @@
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="lady_img d-none d-sm-block">
-                                        <img src="{{asset('/frontend/img/ub.png')}}" alt="Overseas">
+                                        <img loading="lazy" src="{{asset('/assets/home-media/character.webp')}}" srcset="{{ asset('assets/home-media/character-480.webp') }} 480w, {{ asset('assets/home-media/character.webp') }} 1080w" sizes="(max-width: 767px) 100vw, 50vw" width="1080" height="1080" alt="Overseas">
                                     </div>
                                 </div>
                                 <div class="col-lg-4 ">
@@ -814,7 +813,7 @@
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="lady_img d-block d-sm-none">
-                                        <img src="{{asset('frontend/img/ub.png')}}" alt="Programs Category">
+                                        <img loading="lazy" src="{{asset('assets/home-media/character.webp')}}" srcset="{{ asset('assets/home-media/character-480.webp') }} 480w, {{ asset('assets/home-media/character.webp') }} 1080w" sizes="(max-width: 767px) 100vw, 50vw" width="1080" height="1080" alt="Programs Category">
                                     </div>
                                 </div>
                                 <div class="col-lg-4 ">
@@ -897,7 +896,7 @@
                                         <div class="logos">
 
                                             @foreach($universitiesrtl as $value )
-                                            <img src="{{asset($value->logo)}}" alt="Partner University Logo">
+                                            <img loading="lazy" src="{{asset($value->logo)}}" alt="Partner University Logo">
                                             @endforeach
                                         </div>
                                         <br>
@@ -918,7 +917,7 @@
                                 <div class="world_fm pb-5 ">
                                     <div class="scale_map ">
                                         <div class="sc_map  ">
-                                            <img src="{{asset('/frontend/img/shape-2-5 12.png')}}" alt="shape">
+                                            <img loading="lazy" src="{{asset('/frontend/img/shape-2-5 12.png')}}" alt="shape">
                                         </div>
                                         <div class="d-flex fg">
                                             <div class="world_famous mt-5">
@@ -930,7 +929,7 @@
                                                 </div>
                                             </div>
                                             <div class="rigt_img ">
-                                                <img src="{{asset('/frontend/img/cam1.png')}}" alt="Partner University Logo">
+                                                <img loading="lazy" src="{{asset('/assets/home-media/world.webp')}}" srcset="{{ asset('assets/home-media/world-480.webp') }} 480w, {{ asset('assets/home-media/world.webp') }} 935w" sizes="(max-width: 767px) 100vw, 50vw" width="935" height="745" alt="Partner University Logo">
 
                                             </div>
 
@@ -965,7 +964,7 @@
                             </div>
                         </div>
                         <div class="rigt_img ">
-                            <img src="{{asset('frontend/img/cam1.png')}}" alt="image">
+                            <img loading="lazy" src="{{asset('assets/home-media/world.webp')}}" srcset="{{ asset('assets/home-media/world-480.webp') }} 480w, {{ asset('assets/home-media/world.webp') }} 935w" sizes="(max-width: 767px) 100vw, 50vw" width="935" height="745" alt="image">
                            
                         </div>
 
@@ -977,7 +976,7 @@
         </div>
     </div>
 </section>
-@include('frontend.contact_form')
+<div class="home-contact">@include('frontend.contact_form')</div>
 
 <script>
     let counter = document.querySelectorAll(".counter")
@@ -1218,118 +1217,46 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 <script>
-   (function initStrip(sectionId) {
-    const root = document.getElementById(sectionId);
-
-    let currentPlayer = null;
-    let currentCard = null;
-
-    function loadYTScript(cb) {
-        if (window.YT && window.YT.Player) return cb();
-
-        const tag = document.createElement("script");
-        tag.src = "https://www.youtube.com/iframe_api";
-        document.head.appendChild(tag);
-
-        window.onYouTubeIframeAPIReady = () => cb();
+(function () {
+    const menu = document.getElementById('menu_btn');
+    if (menu) {
+        menu.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); menu.click(); } });
+        menu.addEventListener('click', () => requestAnimationFrame(() => menu.setAttribute('aria-expanded', document.getElementById('nav_links').classList.contains('open'))));
     }
-
-    function playVideo(card, callback) {
-        const vid = card.dataset.vid;
-
-        const container = document.createElement("div");
-        container.className = "embed";
-        container.style.width = "100%";
-        container.style.height = "100%";
-
-        card.innerHTML = "";
-        card.appendChild(container);
-
-        loadYTScript(() => {
-            const player = new YT.Player(container, {
-                width: "100%",
-                height: "100%",
-                videoId: vid,
-                playerVars: {
-                    autoplay: 1,
-                    controls: 1,
-                    rel: 0,
-                    modestbranding: 1
-                },
-                events: {
-                    onReady: (e) => {
-                        e.target.playVideo();
-                        callback(e.target); // ✅ correct player return
-                    },
-                    onStateChange: (e) => {
-                        if (e.data === YT.PlayerState.PLAYING) {
-                            root.classList.add("playing");
-                            card.classList.add("playing");
-                        }
-
-                        if (
-                            e.data === YT.PlayerState.ENDED ||
-                            e.data === YT.PlayerState.PAUSED
-                        ) {
-                            root.classList.remove("playing");
-                            card.classList.remove("playing");
-                        }
-                    }
-                }
-            });
-        });
+})();
+(function () {
+    const videos = document.querySelectorAll('.home-lazy-video');
+    const start = video => { if (!video.src) video.src = video.dataset.src; video.play().catch(() => {}); };
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { start(entry.target); observer.unobserve(entry.target); } }), {rootMargin: '300px'});
+        videos.forEach(video => observer.observe(video));
+    } else videos.forEach(start);
+})();
+</script>
+<script>
+(function () {
+    const root = document.getElementById('yt-strip-1');
+    if (!root) return;
+    function play(card) {
+        if (!card || card.querySelector('iframe')) return;
+        const id = card.dataset.vid;
+        if (!/^[a-zA-Z0-9_-]{11}$/.test(id)) return;
+        const iframe = document.createElement('iframe');
+        iframe.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0';
+        iframe.title = 'Student testimonial';
+        iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+        iframe.allowFullscreen = true;
+        iframe.className = 'home-video-frame';
+        card.replaceChildren(iframe);
+        card.removeAttribute('role');
+        card.removeAttribute('tabindex');
     }
-
-    function restoreCard(card) {
-        const vid = card.dataset.vid;
-
-        card.innerHTML = `
-            <img class="thumb" src="https://img.youtube.com/vi/${vid}/hqdefault.jpg">
-            <figcaption>Feedback Student</figcaption>
-        `;
-        card.classList.remove("playing");
-    }
-
-    root.addEventListener("click", (e) => {
-        const img = e.target.closest(".thumb");
-        if (!img) return;
-
-        const card = img.closest(".card");
-
-        // ✅ SAFE STOP
-        if (currentPlayer && typeof currentPlayer.stopVideo === "function") {
-            currentPlayer.stopVideo();
-        }
-
-        if (currentCard && currentCard !== card) {
-            restoreCard(currentCard);
-        }
-
-        playVideo(card, (player) => {
-            currentPlayer = player; // ✅ correct assign
-            currentCard = card;
-        });
+    root.addEventListener('click', event => play(event.target.closest('.card')));
+    root.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); play(event.target.closest('.card')); }
     });
-
-    document.addEventListener("click", (e) => {
-        if (!root.contains(e.target)) {
-
-            if (currentPlayer && typeof currentPlayer.stopVideo === "function") {
-                currentPlayer.stopVideo();
-            }
-
-            if (currentCard) {
-                restoreCard(currentCard);
-            }
-
-            currentPlayer = null;
-            currentCard = null;
-
-            root.classList.remove("playing");
-        }
-    });
-
-     })("yt-strip-1");
+})();
 </script>
 
+</div>
 @endsection

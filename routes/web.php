@@ -26,65 +26,34 @@
         // URL::forceScheme('https');
 
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\StaticPageController;
 
-Route::get('/clear-all', function () {
-    Artisan::call('config:clear');
-    Artisan::call('cache:clear');
-   
-    
+// TEMP: visual-verification only, removed immediately after screenshotting.
+if (app()->environment('local')) {
+    Route::get('/__verify_login', function () {
+        \Illuminate\Support\Facades\Auth::loginUsingId(1);
+        return redirect('/admin/universities');
+    });
+}
 
-    return "All cache cleared!";
-});
+Route::get('/clear-all', [StaticPageController::class, 'clearAll']);
 
-    Route::fallback(function () {
-        return view('errors.404');
-    });
-    Route::get('meetoel', function () {
-        return view('frontend.global.meetoel');
-    });
-    Route::get('psychometricstest', function () {
-        return view('frontend.global.psychometricstest');
-    });
-    Route::get('countryprogram', function () {
-        return view('frontend.global.countryprogram');
-    });
-    Route::get('admissionguidance', function () {
-        return view('frontend.global.admissionguidance');
-    });
-    Route::get('testprepration', function () {
-        return view('frontend.global.testprepration');
-    });
-    Route::get('pretestprepration', function () {
-        return view('frontend.global.pretestprepration');
-    });
-    Route::get('resumeevaluation', function () {
-        return view('frontend.global.resumeevaluation');
-    });
-    Route::get('universityapplicationassistance', function () {
-        return view('frontend.global.universityapplicationassistance');
-    });
-    Route::get('financialcounselling', function () {
-        return view('frontend.global.financialcounselling');
-    });
-    Route::get('visainterview', function () {
-        return view('frontend.global.visainterview');
-    });
-    Route::get('foreignexchange', function () {
-        return view('frontend.global.foreignexchange');
-    });
-    Route::get('predeparturebriefing', function () {
-        return view('frontend.global.predeparturebriefing');
-    });
-    Route::get('bonvoyage', function () {
-        $data['bonvoyage'] = "bonvoyage";
-        return view('frontend.global.bonvoyage', $data);
-    });
-    Route::get('travelmedical', function () {
-        return view('frontend.global.travelmedical');
-    });
-    Route::get('accommodation', function () {
-        return view('frontend.global.acommodation');
-    });
+    Route::fallback([StaticPageController::class, 'fallback']);
+    Route::get('meetoel', [StaticPageController::class, 'meetoel']);
+    Route::get('psychometricstest', [StaticPageController::class, 'psychometricstest']);
+    Route::get('countryprogram', [StaticPageController::class, 'countryprogram']);
+    Route::get('admissionguidance', [StaticPageController::class, 'admissionguidance']);
+    Route::get('testprepration', [StaticPageController::class, 'testprepration']);
+    Route::get('pretestprepration', [StaticPageController::class, 'pretestprepration']);
+    Route::get('resumeevaluation', [StaticPageController::class, 'resumeevaluation']);
+    Route::get('universityapplicationassistance', [StaticPageController::class, 'universityapplicationassistance']);
+    Route::get('financialcounselling', [StaticPageController::class, 'financialcounselling']);
+    Route::get('visainterview', [StaticPageController::class, 'visainterview']);
+    Route::get('foreignexchange', [StaticPageController::class, 'foreignexchange']);
+    Route::get('predeparturebriefing', [StaticPageController::class, 'predeparturebriefing']);
+    Route::get('bonvoyage', [StaticPageController::class, 'bonvoyage']);
+    Route::get('travelmedical', [StaticPageController::class, 'travelmedical']);
+    Route::get('accommodation', [StaticPageController::class, 'accommodation']);
     Route::get('/send-daily-report', [ReportController::class, 'sendDailyUserReport']);
 
     // Route::get('/', [FrontendController::class, 'index'])->name('index');
@@ -149,7 +118,7 @@ Route::get('course-details/{slug}', [FrontendController::class, 'course_details'
 
 // Updated: Support both GET and POST for view-program-data
 Route::match(['get', 'post'], 'view-program-data/{id?}', [FrontendController::class, 'view_program_data'])->name('view-program-data');
-Route::match(['get', 'post'], 'selected-program-data', [FrontendController::class, 'view_program_data'])->name('view-program-data');
+Route::match(['get', 'post'], 'selected-program-data', [FrontendController::class, 'view_program_data'])->name('selected-program-data');
 
 Route::get('apply-program-payment/{student_id}/{program_id}', [FrontendController::class, 'apply_program_payment'])->name('apply-program-payment');
 Route::get('pay-later/{student_id}/{program_id}/{amount?}/{intake_month?}/{intake_year?}', [FrontendController::class, 'pay_later'])->name('pay-later');
@@ -157,7 +126,7 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
     Route::get('universities/{page?}', [FrontendController::class, 'universities'])->name('universities');
     Route::get("university-details/{slug}", [UniversityController::class, 'view_university'])->name('view-university');
     Route::get('continue-course/{student_id}/{program_id}/{amount?}/{intake_month?}/{intake_year?}', [FrontendController::class, 'continue_course'])->name('continue-course');
-    Route::get('programs/{page?}', [FrontendController::class, 'programs'])->name('programs');
+    Route::get('programs/{page?}', [FrontendController::class, 'programs'])->name('programs.paged');
     Route::get('about-oel', [FrontendController::class, 'about_oel'])->name('about-oel');
     Route::get('contact-us', [FrontendController::class, 'contact_us'])->name('contact_us');
     Route::post('contact-us', [FrontendController::class, 'storeContactus'])->name('contact_us.store');
@@ -323,9 +292,37 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
             Route::post('check-student-attendend', [StudentController::class, 'check_school_attendend_store'])->name('check-student-attendend');
 
             // university
-            Route::get("manage-university", [UniversityController::class, 'manage_university'])->name('manage-university');
-            Route::get("filter-university", [UniversityController::class, 'manage_university'])->name('filter-university');
+            Route::get("manage-university", [UniversityController::class, 'redirectManageUniversity'])->name('manage-university');
+            Route::get("filter-university", [UniversityController::class, 'redirectManageUniversity'])->name('filter-university');
             Route::post('/university-gallery-delete', [UniversityController::class, 'deleteGalleryImage'])->name('university-gallery-delete');
+
+            // Unified Universities page (tabs: all | approved | unapproved | needs-update | reviews | types)
+            Route::get('universities', [UniversityController::class, 'universitiesHub'])->name('universities.index');
+            Route::get('universities/panel/{tab}', [UniversityController::class, 'universitiesPanel'])->name('universities.panel');
+            Route::get('universities/stats', [UniversityController::class, 'universitiesStatsJson'])->name('universities.stats');
+            Route::post('universities/toggle-approval', [UniversityController::class, 'toggleUniversityApproval'])->name('universities.toggle-approval');
+            Route::post('universities/bulk-approval', [UniversityController::class, 'bulkToggleUniversityApproval'])->name('universities.bulk-approval');
+            Route::post('universities/mark-verified', [UniversityController::class, 'markUniversityVerified'])->name('universities.mark-verified');
+            Route::post('universities/bulk-verify', [UniversityController::class, 'bulkMarkUniversityVerified'])->name('universities.bulk-verify');
+            Route::get('universities/search-students', [UniversityController::class, 'searchStudents'])->name('universities.search-students');
+
+            Route::post('universities/types', [UniversityController::class, 'storeTypeAjax'])->name('universities.types.store');
+            Route::post('universities/types/{id}', [UniversityController::class, 'updateTypeAjax'])->name('universities.types.update');
+            Route::post('universities/types/{id}/delete', [UniversityController::class, 'deleteTypeAjax'])->name('universities.types.delete');
+            Route::post('universities/types/{id}/toggle-active', [UniversityController::class, 'toggleTypeActiveAjax'])->name('universities.types.toggle-active');
+            Route::post('universities/types/reorder', [UniversityController::class, 'reorderTypesAjax'])->name('universities.types.reorder');
+
+            Route::post('universities/reviews', [UniversityController::class, 'storeReviewAjax'])->name('universities.reviews.store');
+            Route::post('universities/reviews/{id}', [UniversityController::class, 'updateReviewAjax'])->name('universities.reviews.update');
+            Route::post('universities/reviews/{id}/approve', [UniversityController::class, 'approveReviewAjax'])->name('universities.reviews.approve');
+
+            // Wizard (Add/Edit University) additions
+            Route::post('universities/submit-wizard', [UniversityController::class, 'submitUniversityWizard'])->name('universities.submit-wizard');
+            Route::get('universities/drafts-list', [UniversityController::class, 'draftsList'])->name('universities.drafts-list');
+            Route::post('universities/ranking/{id}', [UniversityController::class, 'updateRankingAjax'])->name('universities.ranking.update');
+            Route::post('universities/ranking/{id}/delete', [UniversityController::class, 'deleteRankingAjax'])->name('universities.ranking.delete');
+            Route::post('universities/accreditation/{id}', [UniversityController::class, 'updateAccerediationAjax'])->name('universities.accreditation.update');
+            Route::post('universities/accreditation/{id}/delete', [UniversityController::class, 'deleteAccerediationAjax'])->name('universities.accreditation.delete');
 
 
 
@@ -347,17 +344,17 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
             Route::get('delete-university/{id?}', [UniversityController::class, 'delete_university'])->name('delete-university');
             Route::post("approve-university", [UniversityController::class, 'approve_university'])->name('approve-university');
 
-            Route::get("approved-university", [UniversityController::class, 'view_approve_university'])->name('view-approved-university');
+            Route::get("approved-university", [UniversityController::class, 'redirectApprovedUniversity'])->name('view-approved-university');
             // Route::get("filter-approved-university",[UniversityController::class,'view_approve_university'])->name('filter-approved-university');
 
-            Route::get("un-approve-university/{id?}", [UniversityController::class, 'view_unapprove_university'])->name('unapproved-university');
-            Route::get("filter-un-approve-university", [UniversityController::class, 'view_unapprove_university'])->name('filter-unapproved-university');
-            Route::get("updation-manage-university", [UniversityController::class, 'update_university'])->name('update-university');
+            Route::get("un-approve-university/{id?}", [UniversityController::class, 'redirectUnapprovedUniversity'])->name('unapproved-university');
+            Route::get("filter-un-approve-university", [UniversityController::class, 'redirectUnapprovedUniversity'])->name('filter-unapproved-university');
+            Route::get("updation-manage-university", [UniversityController::class, 'redirectNeedsUpdateUniversity'])->name('update-university');
             Route::get("due_student_amount", [AccountingController::class, 'due_amount_student'])->name('due_student_amount');
 
 
             // oel-review
-            Route::get('oel-review', [UniversityController::class, 'oel_review'])->name('oel-review');
+            Route::get('oel-review', [UniversityController::class, 'redirectOelReview'])->name('oel-review');
             Route::get('add-review', [UniversityController::class, 'add_review'])->name('add-review');
             Route::post('store-oel-review', [UniversityController::class, 'store_oel_review'])->name('store-oel-review');
             Route::get('edit-review/{id?}', [UniversityController::class, 'edit_oel_review'])->name('edit-review');
@@ -366,7 +363,7 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
 
 
             // oel type
-            Route::get('university-type', [UniversityController::class, 'oel_type'])->name('oel-type');
+            Route::get('university-type', [UniversityController::class, 'redirectOelType'])->name('oel-type');
             Route::get('add-type', [UniversityController::class, 'add_type'])->name('add-type');
             Route::post('store-oel-type', [UniversityController::class, 'store_oel_type'])->name('store-oel-type');
             Route::get('edit-type/{id?}', [UniversityController::class, 'edit_oel_type'])->name('edit-type');
@@ -378,6 +375,7 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
             Route::get('updation-program', [ProgramController::class, 'update_program_month'])->name('updation-program');
 
             Route::get('add-program', [ProgramController::class, 'add_program'])->name('add-program');
+            Route::get('search-university', [ProgramController::class, 'searchUniversities'])->name('search-university');
             Route::get('get-program-sub-discipline', [ProgramController::class, 'get_program_sub_discipline'])->name('get-program-sub-discipline');
             Route::post('get-education-level', [ProgramController::class, 'get_education_level'])->name('get-education-level');
             Route::post('store-program', [ProgramController::class, 'store_program'])->name('store-program');
@@ -756,11 +754,11 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
             Route::post('show-lead-sms', [MessageController::class, 'show_msg'])->name('show-lead-sms');
             Route::post('show-lead-email', [MessageController::class, 'show_email'])->name('show-lead-email');
 
-            Route::get('learning-franchise', [LearningTrainingController::class, 'learning_franchise'])->name('learning-franchise.index');
-            Route::get('create-learning-franchise', [LearningTrainingController::class, 'create_learning_franchise'])->name('learning-franchise.create');
-            Route::get('edit-learning-franchise/{id?}', [LearningTrainingController::class, 'edit_learning_franchise'])->name('learning-franchise.edit');
-            Route::Post('store-learning-franchise', [LearningTrainingController::class, 'store_learning_franchise'])->name('learning-franchise.store');
-            Route::post('update-learning-franchise/{id?}', [LearningTrainingController::class, 'update_learning_franchise'])->name('learning-franchise.update');
+            Route::get('learning-franchise', [LearningTrainingController::class, 'learning_franchise'])->name('learning-franchise-legacy.index');
+            Route::get('create-learning-franchise', [LearningTrainingController::class, 'create_learning_franchise'])->name('learning-franchise-legacy.create');
+            Route::get('edit-learning-franchise/{id?}', [LearningTrainingController::class, 'edit_learning_franchise'])->name('learning-franchise-legacy.edit');
+            Route::Post('store-learning-franchise', [LearningTrainingController::class, 'store_learning_franchise'])->name('learning-franchise-legacy.store');
+            Route::post('update-learning-franchise/{id?}', [LearningTrainingController::class, 'update_learning_franchise'])->name('learning-franchise-legacy.update');
             Route::get('delete-learning-franchise/{id?}', [LearningTrainingController::class, 'delete_learning_franchise'])->name('learning-franchise.delete');
             Route::get('learning-franchise-request/{id?}', [LearningTrainingController::class, 'request_learning_franchise'])->name('learning-franchise.request');
 
@@ -918,14 +916,9 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
                 [BookingController::class, 'sendReminder'])->name('send.reminder');
     
         });
-    Route::get('/korean-classes', function () {
-        return view('landingpage.korean-classes');
-    })->name('korean.classes');
+    Route::get('/korean-classes', [StaticPageController::class, 'koreanClasses'])->name('korean.classes');
 
-    Route::get('/ielts-courses', function () {
-       
-         return view('landingpage.landing');
-    })->name('ielts-courses');
+    Route::get('/ielts-courses', [StaticPageController::class, 'ieltsCourses'])->name('ielts-courses');
 
     Route::post('/ielts-courses/enquiry', [App\Http\Controllers\IeltsCourseController::class, 'store'])->name('ielts-courses.enquiry.store');
     Route::post('/ielts-courses/payment/retry', [App\Http\Controllers\IeltsCourseController::class, 'retry'])->name('ielts-courses.payment.retry');

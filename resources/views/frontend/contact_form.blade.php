@@ -25,8 +25,11 @@
                             <h3 class="fw-bold">Contact OEL</h3>
                             <p> We offer numerous way for you to connect with us.</p>
                         </div>
+                        @if(request()->routeIs('index'))
+                        <div class="home-trust"><span>97.9% visa success</span><span>750+ universities</span><span>Free end-to-end service</span></div>
+                        @endif
                         <div class="attractive-bar">
-                            <img src="{{asset('frontend/img/contact1.jpg')}}" alt="gif">
+                            <img src="{{asset(request()->routeIs('index') ? 'assets/home-media/contact.webp' : 'frontend/img/contact1.jpg')}}" alt="gif">
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -52,16 +55,19 @@
                                 <div class="row">
                                     <!-- First Name -->
                                     <div class="col-12 mb-3">
-                                        <input type="text" class="form-control delete rounded" name="first_name" placeholder="First name" required>
+                                        @if(request()->routeIs('index'))<label for="home-first_name">First name</label>@endif
+                                        <input id="home-first_name" type="text" class="form-control delete rounded" name="first_name" placeholder="First name" required>
                                     </div>
 
                                     <!-- Last Name -->
                                     <div class="col-12 mb-3">
-                                        <input type="text" class="form-control delete rounded" name="last_name" placeholder="Last name" required>
+                                        @if(request()->routeIs('index'))<label for="home-last_name">Last name</label>@endif
+                                        <input id="home-last_name" type="text" class="form-control delete rounded" name="last_name" placeholder="Last name" required>
                                     </div>
 
                                     <!-- Phone -->
                                     <div class="col-12 mb-3">
+                                        @if(request()->routeIs('index'))<label for="phone">Mobile number</label>@endif
                                         <input type="tel" id="phone" class="form-control delete rounded" name="phone_display" placeholder="Mobile Number" required  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
                                         <input type="hidden" id="phone-number" name="phone">
                                         <div id="phone-error" style="color: red; display: none;">Please enter a valid phone number.</div>
@@ -96,9 +102,10 @@
 
                                     <!-- Study Destination -->
                                     <div class="col-12 mb-3">
-                                        <select class="form-control delete rounded" name="preferred_study_destination" required>
+                                        @if(request()->routeIs('index'))<label for="home-preferred_study_destination">Destination</label>@endif
+                                        <select id="home-preferred_study_destination" class="form-control delete rounded" name="preferred_study_destination" required>
                                             <option value="" disabled selected>Preferred Study Destination</option>
-                                            @foreach(App\Models\Country::select('name', 'id')->where('is_active', 1)->get() as $user)
+                                            @foreach(request()->routeIs('index') ? $country : App\Models\Country::select('name', 'id')->where('is_active', 1)->get() as $user)
                                                 <option value="{{$user->id}}">{{$user->name}}</option>
                                             @endforeach
                                         </select>
@@ -106,7 +113,8 @@
 
                                     <!-- Study Year -->
                                     <div class="col-12 mb-3">
-                                        <select class="form-control delete rounded" name="preferred_study_year" required>
+                                        @if(request()->routeIs('index'))<label for="home-preferred_study_year">Study year</label>@endif
+                                        <select id="home-preferred_study_year" class="form-control delete rounded" name="preferred_study_year" required>
                                             <option value="" disabled selected>Preferred Study Year</option>
                                             @for($year = 2025; $year <= 2035; $year++)
                                                 <option value="{{$year}}">{{$year}}</option>
@@ -116,7 +124,8 @@
 
                                     <!-- Study Intake -->
                                     <div class="col-12 mb-3">
-                                        <select class="form-control delete rounded" name="preferred_study_intake" required>
+                                        @if(request()->routeIs('index'))<label for="home-preferred_study_intake">Intake</label>@endif
+                                        <select id="home-preferred_study_intake" class="form-control delete rounded" name="preferred_study_intake" required>
                                             <option value="" disabled selected>Preferred Study Intake</option>
                                             <option value="Fall">Fall</option>
                                             <option value="Spring">Spring</option>

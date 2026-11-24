@@ -1,5 +1,9 @@
 	@extends('admin.include.app')
+	@section('style')
+	<link rel="stylesheet" href="{{ asset('assets/css/admin-dashboard-redesign.css') }}">
+	@endsection
 	@section('main-content')
+	<div id="oel-admin-dashboard">
 	<div class="main-content">
 	    <div class="row">
 	        <div class="card card-buttons mt-md-4">
@@ -22,7 +26,21 @@
 	    </div>
 	</div>
 	<!-- /Page Header -->
-	<div class="row">
+    <div class="oel-dashboard-heading"><h1>Admin Dashboard</h1><p>Overview of your operations</p></div>
+    <div id="oel-dashboard-kpis" class="oel-dashboard-kpis">
+        @if(auth()->user()->hasRole('Administrator'))
+        @can('total_application.total_application_view')
+        <article class="oel-kpi" data-kpi-order="2"><span class="oel-kpi-icon"><i class="la la-file-text-o" aria-hidden="true"></i></span><div class="oel-kpi-content"><h2>Applied Programs</h2><strong>{{ $data['total_program_applied'] }}</strong>@can('application.view')<a class="oel-action" href="{{ route('total-applied-program') }}">View Applications <span aria-hidden="true">&rarr;</span></a>@endcan</div></article>
+        @endcan
+        @endif
+    </div>
+    <section class="oel-panel oel-attention" id="oel-attention"><div class="oel-panel-heading"><h2>Needs Attention</h2><p>Items that may need your review</p></div><div id="oel-attention-items" class="oel-attention-items"></div></section>
+    <div class="oel-dashboard-groups">
+        <section class="oel-panel"><div class="oel-panel-heading"><h2>Leads &amp; Applications</h2></div><div id="oel-group-leads" class="oel-group-items">@if(auth()->user()->hasRole('Administrator')) @can('total_application.total_application_view') <div class="oel-group-row"><span>Application Records</span><strong>{{ $data['total_application'] }}</strong></div> @endcan @endif</div></section>
+        <section class="oel-panel"><div class="oel-panel-heading"><h2>Members &amp; Partners</h2></div><div id="oel-group-members" class="oel-group-items"></div></section>
+        <section class="oel-panel"><div class="oel-panel-heading"><h2>Universities &amp; Programs</h2></div><div id="oel-group-programs" class="oel-group-items"></div></section>
+    </div>
+    <div class="row" id="oel-legacy-metrics">
 	    @can('total_member.total_member_view')
 	    <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
 	        <div class="card dash-widget">
@@ -41,9 +59,9 @@
 	                </div>
 	                <div clas="col-md-12">
 	                    <div class="submit-section btnpr">
-	                        <a href="{{url('admin-management/users')}}">
+	                        @can('admin_user.view')<a href="{{url('admin-management/users')}}">
 	                            <button type="button" class="btn btn-outline-primary">Read More</button>
-	                        </a>
+	                        </a>@endcan
 
 	                    </div>
 	                </div>
@@ -74,9 +92,9 @@
 	                </div>
 	                <div clas="col-md-12">
 	                    <div class="submit-section btnpr">
-	                        <a href="{{route('applied-program')}}">
+	                        @can('applied_program.view')<a href="{{route('applied-program')}}">
 	                            <button type="button" class="btn btn-outline-primary">Read More</button>
-	                        </a>
+	                        </a>@endcan
 
 
 	                    </div>
@@ -104,9 +122,9 @@
 	                </div>
 	                <div clas="col-md-12">
 	                    <div class="submit-section btnpr">
-	                        <a href="{{route('student-list')}}">
+	                        @can('student.view')<a href="{{route('student-list')}}">
 	                            <button type="button" class="btn btn-outline-primary">Read More</button>
-	                        </a>
+	                        </a>@endcan
 	                    </div>
 	                </div>
 	            </div>
@@ -158,9 +176,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{url('admin-management/users?roles=agent')}}">
+	                    @can('admin_user.view')<a href="{{url('admin-management/users?roles=agent')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 
 	                </div>
 	            </div>
@@ -191,13 +209,13 @@
 	                    $user=Auth::user();
 	                    @endphp
 	                    {{-- @if($user->hasRole('Administrator')) --}}
-	                    <a href="{{url('admin-management/users?roles=sub_agent')}}">
+	                    @can('admin_user.view')<a href="{{url('admin-management/users?roles=sub_agent')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                    {{-- @else
-                                <a href="{{url('admin-management/users?roles=sub_agent')}}">
+                                @can('admin_user.view')<a href="{{url('admin-management/users?roles=sub_agent')}}">
 	                    <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                    @endif --}}
 	                    {{-- <button type="button" class="btn btn-outline-primary">Read More</button> --}}
 	                </div>
@@ -209,7 +227,7 @@
 	@php
 	$user=Auth::user();
 	@endphp
-	@if(!($user->hasRole('Data oprator') || $user->hasRole('Sub Data-Operator') || $user->hasRole('visa') || $user->hasRole('Application Punching') || $user->hasRole('agent') || $user->hasRole('student') ))
+	@if(!($user->hasRole('Data oprator') || $user->hasRole('Sub Data-Operator') || $user->hasRole('visa') || $user->hasRole('Application Punching') || $user->hasRole('agent') || $user->hasRole('student') ) && !($user->hasRole('Administrator') && $user->can('total_application.total_application_view')))
 	<div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
 	    <div class="card dash-widget">
 	        <div class="row">
@@ -227,9 +245,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{route('total-applied-program')}}">
+	                    @can('application.view')<a href="{{route('total-applied-program')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                </div>
 	            </div>
 	        </div>
@@ -255,10 +273,8 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{route('oel_360')}}">
-	                        <button type="button" class="btn btn-outline-primary">Read More</button>
+	                    @can('oel_360.view')<a href="{{route('oel_360')}}">View 360 profiles</a>@endcan
 	                </div>
-	                </a>
 	            </div>
 	        </div>
 	    </div>
@@ -283,9 +299,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{url('franchise/frenchise-filter?status=Active')}}">
+	                    @can('franchise.view')<a href="{{url('franchise/frenchise-filter?status=Active')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                </div>
 	            </div>
 	        </div>
@@ -311,9 +327,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{url('franchise/frenchise-filter?status=InActive')}}">
+	                    @can('franchise.view')<a href="{{url('franchise/frenchise-filter?status=InActive')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                </div>
 	            </div>
 	        </div>
@@ -339,9 +355,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{url('franchise/frenchise-filter?approvestatus=Approve')}}">
+	                    @can('franchise.view')<a href="{{url('franchise/frenchise-filter?approvestatus=Approve')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                    {{-- <button type="button" class="btn btn-outline-primary">Read More</button> --}}
 	                </div>
 	            </div>
@@ -368,9 +384,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{url('franchise/frenchise-filter?approvestatus=UnApprove')}}">
+	                    @can('franchise.view')<a href="{{url('franchise/frenchise-filter?approvestatus=UnApprove')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 
 
 	                </div>
@@ -399,9 +415,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{route('manage-university')}}">
+	                    @can('manage_university.manage_university_view')<a href="{{route('manage-university')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                </div>
 	            </div>
 	        </div>
@@ -426,9 +442,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{route('unapproved-university')}}">
+	                    @can('un_approve_university.un_approve_university_view')<a href="{{route('unapproved-university')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                    {{-- <button type="button" class="btn btn-outline-primary">Read More</button> --}}
 	                </div>
 	            </div>
@@ -454,9 +470,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{route('view-approved-university')}}">
+	                    @can('approve_university.approve_university_view')<a href="{{route('view-approved-university')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                    {{-- <button type="button" class="btn btn-outline-primary">Read More</button> --}}
 	                </div>
 	            </div>
@@ -482,9 +498,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{route('manage-program')}}">
+	                    @can('manage_program.manage_program_view')<a href="{{route('manage-program')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 
 	                </div>
 	            </div>
@@ -510,9 +526,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{url('program-filter?approve_status=unapprove')}}">
+	                    @can('manage_program.manage_program_view')<a href="{{ route('manage-program', array_merge(['approve_status' => 'unapprove_including_null'], auth()->user()->admin_type === 'Administrator' ? [] : ['user_id' => auth()->id()])) }}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                </div>
 	            </div>
 	        </div>
@@ -537,9 +553,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{route('approve-program')}}">
+	                    @can('manage_program.manage_program_view')<a href="{{ route('manage-program', array_merge(['approve_status' => 'approve'], auth()->user()->admin_type === 'Administrator' ? [] : ['user_id' => auth()->id()])) }}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                </div>
 	            </div>
 	        </div>
@@ -616,9 +632,11 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{route('leads-filter')}}">
+	                    @can('leads_lists.view')
+                        <a href="{{route('leads-filter')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
 	                    </a>
+                        @endcan
 
 
 	                </div>
@@ -645,9 +663,11 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{route('assigned-leads')}}">
+	                    @can('assigned_lead.view')
+                        <a href="{{route('assigned-leads')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
 	                    </a>
+                        @endcan
 	                    {{-- <button type="button" class="btn btn-outline-primary">Read More</button> --}}
 	                </div>
 	            </div>
@@ -673,7 +693,7 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <button type="button" class="btn btn-outline-primary">Read More</button>
+	                    @can('leads_lists.view')<a class="btn btn-outline-primary" href="{{ route('leads-filter') }}">View Leads</a>@endcan
 	                </div>
 	            </div>
 	        </div>
@@ -705,9 +725,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{route('oel_360')}}">
+	                    @can('oel_360.view')<a href="{{route('oel_360')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                </div>
 	            </div>
 	        </div>
@@ -738,9 +758,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{route('oel_360')}}">
+	                    @can('oel_360.view')<a href="{{route('oel_360')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                </div>
 	            </div>
 	        </div>
@@ -801,9 +821,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{route('oel_360')}}">
+	                    @can('oel_360.view')<a href="{{route('oel_360')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                </div>
 	            </div>
 	        </div>
@@ -867,9 +887,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{route('student-list')}}">
+	                    @can('student.view')<a href="{{route('student-list')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                </div>
 	            </div>
 	        </div>
@@ -930,9 +950,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{route('oel_360')}}">
+	                    @can('oel_360.view')<a href="{{route('oel_360')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                </div>
 	            </div>
 	        </div>
@@ -995,9 +1015,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{route('student-list')}}">
+	                    @can('student.view')<a href="{{route('student-list')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                </div>
 	            </div>
 	        </div>
@@ -1024,9 +1044,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{route('view-approved-university')}}">
+	                    @can('approve_university.approve_university_view')<a href="{{route('view-approved-university')}}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                </div>
 	            </div>
 	        </div>
@@ -1054,9 +1074,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{ route('update-university') }}">
+	                    @can('updation_manage_university.updation_manage_university_view')<a href="{{ route('update-university') }}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                </div>
 	            </div>
 	        </div>
@@ -1082,9 +1102,9 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    <a href="{{route('approve-program')}}">
+	                    @can('manage_program.manage_program_view')<a href="{{ route('manage-program') }}">
 	                        <button type="button" class="btn btn-outline-primary">Read More</button>
-	                    </a>
+	                    </a>@endcan
 	                </div>
 	            </div>
 	        </div>
@@ -1228,4 +1248,6 @@
 	@endif
 	</div>
 	</div>
+    </div>
+    <script defer src="{{ asset('assets/js/admin-dashboard-redesign.js') }}"></script>
 	@endsection

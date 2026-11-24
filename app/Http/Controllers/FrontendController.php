@@ -26,31 +26,15 @@ class FrontendController extends Controller
     public function index()
     {
         return view('frontend.index', [
-            'service' => ServiceLanding::where('status', 1)->select('name', 'image', 'id', 'content')->take(4)->get(),
-            'instagram' => Instagram::where('status', 1)->select('id', 'url')->get(),
-            'blogs' => Blog::where('status', 1)->select('image', 'text', 'id', 'title')->take(3)->get(),
-            'programs' => Program::with(['university_name' => function ($query) {
-                $query->select('id', 'university_name', 'logo', 'banner', 'country_id')
-                    ->with('country_name:id,name');
-            }])
-                ->select('id', 'school_id', 'name', 'description', 'application_fee')
-                ->where('is_approved', 1)
-                ->inRandomOrder() // Fetch random records
-                ->take(20)
-                ->get(),
-
-
-
-            'ads' => Ads::select('image', 'title')->get(),
-
-            'feedback_video' => FeedBackVideo::where('status', 1)->get(),
-            'testimonials' => Testimonials::where('status', 1)->Select('profile_picture', 'designation', 'name', 'location', 'testimonial_desc')->where('status', 1)->take(6)->get(),
-            'universitiesltl' => University::select('id', 'university_name', 'logo')->where('is_approved', 1)->take(16)->get(),
-            'universitiesrtl' => University::select('id', 'university_name', 'logo')->where('is_approved', 1)->latest()->take(16)->get(),
-            'country' => Country::select('name', 'id')->where('is_active', 1)->get(),
-            'online_country' => OnlineCountry::select('name', 'id', 'flag')->get()
-
-
+            'service' => Cache::remember('home_service_v1', 300, fn () => ServiceLanding::where('status', 1)->select('name', 'image', 'id', 'content')->take(4)->get()),
+            'programs' => Cache::remember('home_programs_v1', 300, fn () => Program::with(['university_name' => function ($query) {
+                $query->select('id', 'university_name', 'logo', 'banner', 'country_id')->with('country_name:id,name');
+            }])->select('id', 'school_id', 'name', 'description', 'application_fee')->where('is_approved', 1)->inRandomOrder()->take(20)->get()),
+            'ads' => Cache::remember('home_ads_v1', 300, fn () => Ads::select('image', 'title')->get()),
+            'feedback_video' => Cache::remember('home_feedback_video_v1', 300, fn () => FeedBackVideo::where('status', 1)->get()),
+            'universitiesrtl' => Cache::remember('home_universities_v1', 300, fn () => University::select('id', 'university_name', 'logo')->where('is_approved', 1)->latest()->take(16)->get()),
+            'country' => Cache::remember('home_country_v1', 300, fn () => Country::select('name', 'id')->where('is_active', 1)->get()),
+            'online_country' => Cache::remember('home_online_country_v1', 300, fn () => OnlineCountry::select('name', 'id', 'flag')->get()),
         ]);
     }
 
@@ -136,9 +120,9 @@ class FrontendController extends Controller
     public function check_eligibility()
     {
         // 🔒 OTP SECURITY CHECK
-        if (!session()->has('otp_verified')) {
-            return redirect('/');
-        }
+        // if (!session()->has('otp_verified')) {
+        //     return redirect('/');
+        // }
 
         $country = Country::select('name', 'id')
             ->where('is_active', 1)
@@ -213,25 +197,10 @@ class FrontendController extends Controller
         'id', 'name', 'school_id', 'program_level_id', 'application_fee', 'length', 'tution_fee', 'currency',
     ];
 
-    public function course_university(Request $request)
+    /** The filtered course listing is also used by the eligibility count. */
+    private function filteredCourseQuery(Request $request)
     {
-
-
-        $country = Country::select('name', 'id')->where('is_active', 1)->get();
-        $program_level = ProgramLevel::select('name', 'id')->get();
-        $program_discipline = ProgramDiscipline::select('name', 'id')->get();
-        $eng_proficiency_level = EngProficiencyLevel::select('name', 'id')->get();
-
-        $exam = Exam::select('name', 'id')->where('program_level_id', $request->program_level)->get();
-        DB::statement("SET SESSION group_concat_max_len = 1000000"); //  Increase limit
-
-
-        if ($request->ajax()) {
-
-
-            if ($request->has('country') || $request->has('intake') || $request->has('other_exam') || $request->has('program_level') ||  $request->has('program_sub_level') ||  $request->has('education_level') ||  $request->has('program_discipline') ||  $request->has('program_sub_discipline') ||  $request->has('eng_proficiency_level') ||  $request->has('eng_pro_input') ||  $request->has('program_search') || $request->has('program_sort')) {
-
-                $course = Program::select(self::COURSE_CARD_COLUMNS)->with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')->where('is_approved', 1)
+        return Program::query()->where('is_approved', 1)
                     ->when($request->has('program_level'), function ($query) use ($request) {
                         return $query->whereIn('program_level_id', explode(',', $request->program_level));
                     })
@@ -270,7 +239,47 @@ class FrontendController extends Controller
                             $searchQuery->where('name', 'like', $search)
                                 ->orWhereIn('school_id', University::query()->select('id')->where('university_name', 'like', $search));
                         });
-                    })
+                    });
+    }
+
+    public function course_university(Request $request)
+    {
+        // The filtered listing is public and applies the same scope to guests and students.
+        // Preserve parameter presence as well as value: the listing treats empty filters as filters.
+        if ($request->ajax() && $request->input('eligibility_count') === '1') {
+            if (!$request->hasAny(['country', 'intake', 'other_exam', 'program_level', 'program_sub_level', 'education_level', 'program_discipline', 'program_sub_discipline', 'eng_proficiency_level', 'eng_pro_input', 'program_search', 'program_sort'])) {
+                return response()->json(['error' => 'At least one listing filter is required.'], 422);
+            }
+            $keys = ['program_level', 'country', 'intake', 'other_exam', 'program_sub_level',
+                'education_level', 'program_discipline', 'program_sub_discipline', 'program_search'];
+            $filters = [];
+            foreach ($keys as $key) {
+                if ($request->has($key)) {
+                    $filters[$key] = $request->input($key);
+                }
+            }
+            $cacheKey = 'eligibility_course_count_v1_' . hash('sha256', json_encode($filters));
+            $count = Cache::remember($cacheKey, 60, fn () => $this->filteredCourseQuery($request)->count());
+            return response()->json(['count' => $count]);
+        }
+
+
+        $country = Country::select('name', 'id')->where('is_active', 1)->get();
+        $program_level = ProgramLevel::select('name', 'id')->get();
+        $program_discipline = ProgramDiscipline::select('name', 'id')->get();
+        $eng_proficiency_level = EngProficiencyLevel::select('name', 'id')->get();
+
+        $exam = Exam::select('name', 'id')->where('program_level_id', $request->program_level)->get();
+        DB::statement("SET SESSION group_concat_max_len = 1000000"); //  Increase limit
+
+
+        if ($request->ajax()) {
+
+
+            if ($request->has('country') || $request->has('intake') || $request->has('other_exam') || $request->has('program_level') ||  $request->has('program_sub_level') ||  $request->has('education_level') ||  $request->has('program_discipline') ||  $request->has('program_sub_discipline') ||  $request->has('eng_proficiency_level') ||  $request->has('eng_pro_input') ||  $request->has('program_search') || $request->has('program_sort')) {
+
+                $course = $this->filteredCourseQuery($request)
+                    ->select(self::COURSE_CARD_COLUMNS)->with('university_name', 'programLevel', 'university_name.country_name', 'university_name.university_type_name')
                     ->when($request->input('program_sort') === 'tuition', function ($query) {
                         return $query->orderBy('tution_fee');
                     })

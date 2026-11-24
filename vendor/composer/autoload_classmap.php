@@ -54,6 +54,7 @@ return array(
     'App\\Http\\Controllers\\ProgramShortlistController' => $baseDir . '/app/Http/Controllers/ProgramShortlistController.php',
     'App\\Http\\Controllers\\ReportController' => $baseDir . '/app/Http/Controllers/ReportController.php',
     'App\\Http\\Controllers\\RolesController' => $baseDir . '/app/Http/Controllers/RolesController.php',
+    'App\\Http\\Controllers\\StaticPageController' => $baseDir . '/app/Http/Controllers/StaticPageController.php',
     'App\\Http\\Controllers\\StudentController' => $baseDir . '/app/Http/Controllers/StudentController.php',
     'App\\Http\\Controllers\\UniversityController' => $baseDir . '/app/Http/Controllers/UniversityController.php',
     'App\\Http\\Controllers\\UserController' => $baseDir . '/app/Http/Controllers/UserController.php',

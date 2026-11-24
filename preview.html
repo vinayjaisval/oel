@@ -1,0 +1,134 @@
+I have attached 4 design images. Redesign my Laravel admin panel pages so they look EXACTLY like these images.
+reference folder design 
+Images:
+1. 1-manage-program-list.png  → Admin > Programs > Manage Program (list page)
+2. 2-add-program-form.png     → Admin > Programs > Add Program (form page)
+3. 3-scholarship-yes.png      → Scholarship section when "Yes" is selected
+4. 4-scholarship-no.png       → Scholarship section when "No" is selected
+
+Project: Laravel admin panel "Overseas Education Lane", running at localhost:8888/overseas.
+
+Before you start:Redesign the HOMEPAGE (http://localhost:8888/overseas/) WITHOUT removing anything.
+Images: design/HomeFull-desk-2col.png (desktop, one long page split into 2 columns) + design/HomeFull-mob-4col.png (mobile, split into 4 columns). Open both before coding. Ignore the older design/Home-desk.png.
+
+KEEP EVERYTHING: header (top phone bar, logo, menu, Quick Search, Check My Eligibility, Book Online Counselling, Login, student-loan icon), the plane image/animation, city skyline strip, offer ticker, the 4 stage cards with their illustrations, About Us with the tree image, Our Values, Education and Migration blocks with their images and links, video testimonials, offer posters, Most Viewed Courses, Google Reviews + testimonial slider, Programs Category/Level with the character image, Partner Universities, Gateway text + "World is your Campus" with the map, Contact OEL form with the illustration, full footer, chatbot/WhatsApp. Same data sources, same links, same form submit route/fields/validation/OTP. Only restyle and make it faster.
+
+STEP 1 – Report (no changes): list each section, its data source, its images/GIFs with file sizes, scripts (Swiper, YouTube, chatbot), forms, and Lighthouse mobile + page weight.
+
+Layout / UI (match the images):
+- Container max-width ~1180px, 20px side padding (16px mobile); alternate section backgrounds white / #F4F6FB; section headings 30–32px bold navy; orange #C2410C for main CTAs.
+- Header: same items; sticky; on mobile ≤1024px collapse menu + buttons into a hamburger drawer (keep Book Online Counselling visible as a small red button).
+- Hero: text left (pill, H1 with orange second line, subtitle, "Enquiry now" + "Find a course", 3 stats), plane right; stacks on mobile (text first). Skyline strip below.
+- Stage cards: 4-column grid → 2 on tablet → 1 on mobile, illustration on top, numbered titles.
+- About: tree left, text right; Our Values: 4 cards with the existing values text (if the section is empty in DB, tell me and leave placeholders hidden).
+- Education/Migration: image + text side by side, alternating; chips as rounded buttons.
+- Video testimonials, offer posters, (on mobile also Most Viewed Courses): horizontal swipe rows with scroll-snap instead of auto sliders.
+- Google Reviews card + testimonial card side by side; testimonial keeps prev/next.
+- Programs category chips | character image | Programs level chips; stacks on mobile.
+- Contact: navy section, trust chips + smaller illustration left, form with visible labels right.
+- Footer: same 4 columns and links; destinations as chips; social icons; stacks on mobile.
+- No horizontal page scroll at 360px; 44px touch targets.
+
+SPEED (keep the visuals, make them light):
+- Plane: keep it, but if it's a GIF convert to MP4/WebM (autoplay muted loop playsinline) or animated WebP/Lottie; preload only the hero poster frame. Same for the skyline and any other GIF (transparent.gif ~21MB, Comp 1.gif ~28MB, airplane.gif) — same look, much smaller files. Keep originals on disk.
+- All images: WebP, sized (width/height), loading="lazy" below the fold, responsive srcset for big ones (tree, map, education/migration images, course photos, posters).
+- YouTube testimonials: facade (thumbnail + play), load the iframe only on click (youtube-nocookie).
+- Replace auto sliders with CSS scroll-snap rows where possible; load Swiper only if still needed, once.
+- Cache homepage data blocks (Cache::remember), drop unused queries.
+- Critical CSS inline, defer the rest; fonts woff2 + swap; defer non-critical JS (chatbot loads after page load).
+- Report page weight, requests, Lighthouse mobile (LCP, CLS, TBT) before vs after.
+
+Test widths 360 / 390 / 768 / 1024 / 1440, desktop + mobile screenshots, and one real form submission.
+Rules: stay on perf-hardening, NO git push, don't commit .env or design/. Commit when done, show git show --stat HEAD, then STOP for my review.
+- Read my existing ProgramController, Program model, routes, the current manage/add program views and
+  the admin layout.
+- Keep my existing field names, route names, database columns, master tables, sidebar and top header.
+- Do not break existing features: Score, Commission, Edit, Approve toggle, filters, Summernote.
+- Show me a short plan first, then make the changes.
+
+━━━━━━━━ DESIGN – follow the images ━━━━━━━━
+Overall look: clean and modern. Light gray page background, white cards with rounded corners, a thin
+light border and a soft shadow. Blue is the main color (#1677ff). Green means Approved/Scholarship,
+amber means Pending, red marks required fields and errors. Use the Inter or system font. Use a lot of
+white space and keep everything well aligned.
+
+Keep the new styles separate in their own CSS file, scoped to these pages only, so they do not affect
+the rest of the admin panel.
+
+Manage Program list (image 1):
+- Top: page title "Programs / Courses" with a breadcrumb below it, and a blue "+ Add Program" button on
+  the right.
+- 4 stat cards in one row: Total Programs, Approved (green number), Pending Approval (amber number),
+  With Scholarship (blue number).
+- Filter card: everything in one row. Program name and University name search boxes have a search icon
+  inside. Then Approval, Added by, From date, To date, with Reset and Apply filters buttons below on the
+  right. Labels go above the inputs.
+- Table card titled "All Programs" with a count badge.
+  The table header is light gray with small uppercase text. Do NOT use the old full blue header.
+  Columns: # | Program (bold name with a small gray line below: duration · intake year) | University |
+  Level (purple badge for Postgraduate, blue badge for Undergraduate) | Scholarship (green badge with
+  amount like "EUR 2,000", or a gray "No" badge) | Status (toggle switch with "Approved"/"Pending" text
+  next to it) | Actions.
+- Actions: replace the big blue "+Score" and "+Commission" buttons with 3 small square outline icon
+  buttons: star = Score, $ = Commission, pencil = Edit. Show a tooltip on hover.
+- Rows highlight lightly on hover. Footer shows "Showing 1–20 of N" on the left and pagination on the
+  right.
+- The table should scroll horizontally on small screens.
+
+Add Program form (image 2):
+- Top: title "Add Program", a breadcrumb, and a "Back to list" button on the right.
+- Split the form into 6 numbered cards (a blue number in a circle, a title and a small gray subtitle):
+  1 Basic Information: University/College, Program/Course Type, Program/Course Name, Program
+    Duration, Course Campus, Campus (Address/Notes), Program Language
+  2 Classification: Program Discipline, Program Sub Discipline, Program Level, Program Sub Level,
+    Course Tags (hint: "Comma se alag karein")
+  3 Admission Requirements: Min. Education Level, Grading Scheme, Other Exam, Work Experience
+  4 Fees, Dates & Intake: Tuition Currency, Tuition Fee, Application Fee (INR) with a ₹ prefix box,
+    Application Open Date, Application Closing Date with Fixed date / ASAP / TBD radio buttons below
+    it, Intake, Year
+  5 Scholarship (new, see below)
+  6 Description & Notes: Description and Extra Notes editors (keep Summernote)
+- Use 3 columns on desktop, 2 on tablet and 1 on mobile. University, Program Name and Course Tags take
+  more width, as shown in the image.
+- Labels go ABOVE the inputs (not inside them as placeholders). Required fields have a red *.
+- All inputs and dropdowns have the same height and rounded corners. A blue outline shows on focus.
+- The bottom bar has Cancel and a blue "✓ Save Program" button. It stays stuck at the bottom while
+  scrolling.
+
+━━━━━━━━ SCHOLARSHIP FIELD (images 3 & 4) ━━━━━━━━
+- Add a new "Scholarship Available?" dropdown with No / Yes. The default is No.
+- When No (image 4): show only the dropdown.
+- When Yes (image 3): smoothly open a light blue box with a dashed border containing:
+  Scholarship Name (optional), Scholarship Amount (required) and Scholarship Currency (required, from
+  my existing currency list).
+- When switched back to No, hide these fields and do not save their values.
+- Validation: if Yes, amount and currency are required, and the amount must be a number of 0 or more.
+- Add the database columns for scholarship available, name, amount and currency through a migration.
+- Show the scholarship in the list page's Scholarship column, as in image 1.
+- Apply the same design and scholarship fields to the Edit Program page with pre-filled values.
+
+━━━━━━━━ BEHAVIOUR ━━━━━━━━
+- When ASAP or TBD is selected, disable the closing date.
+- Sub Discipline loads based on the selected Discipline.
+- After a validation error, keep the filled values and show a red error under each wrong field.
+- On submit, scroll to the first field with an error.
+- The approve toggle works without a page reload and reverts if saving fails.
+
+━━━━━━━━ FAST DATA LOADING ━━━━━━━━
+- First measure the Manage Program page: number of DB queries and load time. Report this.
+- Load related data (university, level, currency) together, not one query per row. Fetch only the
+  columns the page needs.
+- Show 20 programs per page using server-side pagination. Never load all programs at once.
+- Add database indexes on the columns used for filtering, searching and sorting.
+- Cache the stat card numbers for a few minutes and refresh them when a program is added, edited or
+  approved.
+- Cache the dropdown master lists (discipline, level, currency, intake, etc.).
+- University dropdown: make it a type-to-search dropdown that loads results as you type, instead of
+  loading every university at once.
+- Wait for the user to stop typing before searching in the filters.
+- Apply Laravel's production optimizations (config, route and view cache, optimized autoloader).
+
+━━━━━━━━ FINISH ━━━━━━━━
+- Open both pages, compare them with the attached images and fix any visual differences.
+- Tell me which files you changed, which indexes you added, and the load time and query count before
+  and after.

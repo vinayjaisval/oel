@@ -11,4 +11,14 @@ class SchoolReview extends Model
 
     protected $table = 'school_reviews';
     protected $guarded =[];
+
+    public function university()
+    {
+        return $this->belongsTo(University::class, 'school_id');
+    }
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class, 'student_id');
+    }
 }

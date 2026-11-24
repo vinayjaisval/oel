@@ -575,16 +575,8 @@ public function index(Request $request)
     |--------------------------------------------------------------------------
     */
 
-    if (count($total_student_id) > 0) {
-
-        $total_program_applied = PaymentsLink::whereIn('user_id', $total_student_id)
-            ->distinct('program_id')
-            ->count('program_id');
-
-    } else {
-
-        $total_program_applied = 0;
-    }
+    // Count the same student-program rows, scopes and payment types as the destination list.
+    $total_program_applied = \App\Support\AppliedProgramQuery::countForStudents($total_student_id);
 
     /*
     |--------------------------------------------------------------------------

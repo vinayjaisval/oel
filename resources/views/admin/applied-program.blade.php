@@ -1,208 +1,54 @@
 @extends('admin.include.app')
+@section('style')
+<link rel="stylesheet" href="{{ asset('assets/css/applied-program-list.css') }}">
+@endsection
 @section('main-content')
-<div class="main-content">
-   <!--card section check from here-->
-   <section class="college-detail-page loaded">
-      <div class="my-5 ">
-         <div class="row mb-2">
-            <div class="col-12">
-               <div class="c-detail-right">
-                  <div class="row">
-
-                  <div class="card-group">
-                     <div class="card">
-                        <div class="card-body myform">
-                        <form id="program_filter" action="{{route('total-applied-program')}}" method="get">
-                           <div class="row">
-                              <div class="col-md-4">
-                              <input type="text" class="form-control formmrgin" name="first_name" id="first_name" placeholder="Search By  Name">
-                              </div>
-                              <div class="col-md-4">
-                              <input type="text" class="form-control formmrgin" name="email" id="email" placeholder="Search By Email">
-                              </div>
-                        
-                              <div class="col-md-2 col-sm-12 ">
-                              <button type="submit" class="btn mr-3 btn-info d-lg-block float-end  formmrgin px-5 mx-2" id="submit" value="1">Search</button>
-
-                              </div>
-                              <div class="col-md-2 col-sm-12 ">
-                              <a href="{{route('total-applied-program')}}" class="btn mr-3 btn-info d-lg-block float-end  formmrgin px-5 mx-2">
-                                 Reset
-                              </a>
-                              </div>
-                           </div>
-
-                        </form>
-                        </div>
-                     </div>
-                  </div>
-                     <div class="col-md-12 my-4" id="financials">
-                        <div class="r-w-s">
-                           <h3 class="mb-20 c-desc-t-h-r">Applied Program List</h3>
-                           <div class="row">
-                              <div class="col-md-12 table-responsive">
-                                 <table class="table table-hover">
-                                    <thead>
-                                       <tr>
-                                          @php
-                                          $user = Auth::user();
-                                          $users = App\Models\User::where('id', $user->id)->first();
-                                          @endphp
-                                          <th>Application Id</th>
-                                          @if(($users->hasRole('Administrator')) || ($users->hasRole('agent')))
-                                          <th>Applied On</th>
-                                          @endif
-
-                                          @if(($users->hasRole('Administrator')) || ($users->hasRole('agent')))
-                                          <th>Created By</th>
-                                          @endif                
-                                          <th>Student Name</th>
-                                          <th>University Name</th>
-                                          <th>Program Name</th>
-                                          <th>Payment Status</th>
-                                          <th> Status</th>
-                                          <th>Delete</th>
-                                       </tr>
-                                    </thead>
-                                    <tbody>
-                                      @if (!empty($program_applied) && is_iterable($program_applied))
-                                       @foreach ($program_applied as $index => $item)
-                                    
-                                       <tr>
-                                          <td><a href="">{{$item->app_id}}</a></td>
-                                          @if(($users->hasRole('Administrator')) || ($users->hasRole('agent')))
-                                          <td>{{$item->created_at}}</td>
-                                          @endif
-                                          @php
-                                          $users =Auth::User();
-                                          $user = App\Models\User::where('id',$item->assigned_to)->pluck('email')->first();
-                                          $frenchise = App\Models\User::where('id',$item->added_by_agent_id)->pluck('email')->first();
-                                          @endphp
-
-                                          @if (($users->hasRole('agent')) || ($users->hasRole('Administrator')))
-                                          <td>
-                                             @if(!empty($item->assigned_to))
-                                             @if(($users->hasRole('Administrator')) || ($users->hasRole('agent')))
-                                             @if($item->assigned_to == $item->added_by_agent_id)
-                                             {{$frenchise ?? ''}} <br>
-                                             @else
-                                             Frenchise: {{$frenchise ?? ''}} <br>
-                                             Sub Agent : {{$user ?? ''}}
-                                             @endif
-                                             @endif
-                                             @endif
-                                          </td>
-                                          @endif
-                                          <td>{{$item->name}}</td>
-                                          <td class="text-success">{{$item->program->university_name->university_name ?? null}}</td>
-                                          <td><a class="text-info" href="{{ route('course-details', [str_replace(' ', '-', $item->program->name ?? '') . '-' . ($item->program->id ?? '')]) }}">{{$item->program->name ?? null}}</a> </td>
-                                          <td>
-                                             @if((!empty($item->payments->payment_status) == 'success'))
-                                             {{'Success'}}
-                                             @else
-                                             {{'Pending'}}
-                                             @endif
-                                          </td>
-
-                                          @php 
-                                             // Retrieve the course status data
-                                             $table_data = DB::table('tbl_three_sixtee_course_status')
-                                                            ->where('user_id', $item->user_id)
-                                                            ->where('course_id', $item->program_id)
-                                                            ->select('user_id', 'sba_id', 'course_id', 'course_remarks')
-                                                            ->first();
-                                             
-                                             // Retrieve the visa application data
-                                             $table_dataa = DB::table('tbl_three_sixtee')
-                                                               ->where('user_id', $item->user_id)
-                                                               ->where('cource_details', $item->program_id)
-                                                               ->select('application', 'visa_application', 'cource_details',)
-                                                               ->first();
-                                          @endphp
-
-                                          <td>
-                                             @if(!empty($table_data))
-                                                @php
-                                                      $course_remarks = $table_data->course_remarks ?? 'N/A';
-                                                      $course_remarks_color = 'black'; // Default color
-                                                      
-                                                      // For course_remarks
-                                                      if (strtolower($course_remarks) == 'Accepted') {
-                                                         $course_remarks_color = 'green'; // Accepted color
-                                                      } elseif (strtolower($course_remarks) == 'rejected') {
-                                                         $course_remarks_color = 'red'; // Rejected color
-                                                      } elseif (strtolower($course_remarks) == 'case_closed') {
-                                                         $course_remarks_color = 'blue'; // Case closed color
-                                                      }
-                                                      elseif (strtolower($course_remarks) == 'student_rejected') {
-                                                         $course_remarks_color = 'red'; // Case closed color
-                                                      }
-                                                @endphp
-
-                                                <!-- Display course_remarks with color -->
-                                                <span style="color: {{ $course_remarks_color }};">
-                                                      App- {{ $course_remarks }} <br>
-                                                </span>
-                                             @else
-                                                <span style="color: black;">App- N/A <br></span>
-                                             @endif
-
-                                             @if(!empty($table_dataa))
-                                                @php
-                                                      $visa_application = $table_dataa->visa_application ?? 'N/A';
-                                                      $visa_application_color = 'black'; // Default color
-
-                                                      // For visa_application
-                                                      if (strtolower($visa_application) == 'Accepted') {
-                                                         $visa_application_color = 'green'; // Accepted color
-                                                      } elseif (strtolower($visa_application) == 'rejected') {
-                                                         $visa_application_color = 'red'; // Rejected color
-                                                      }
-                                                @endphp
-
-                                                <!-- Display visa_application with color -->
-                                                <span style="color: {{ $visa_application_color }};">
-                                                      Visa- {{ $visa_application }}
-                                                </span>
-                                             @else
-                                                <span style="color: black;">Visa- N/A</span>
-                                             @endif
-                                          </td>
-
-
-
-                                          <td>
-                                             <a class="btn btn-info" href="{{route('delete-program',[$item->id])}}" style="margin-top:5px;"><i class="fa-solid fa-trash"></i></a>
-                                          </td>
-                                       </tr>
-                                       @endforeach
-                                      @else
-    <tr>
-        <td colspan="10" class="text-center text-muted">No applications found.</td>
-    </tr>
-@endif
-                                    </tbody>
-                                 </table>
-                              </div>
-                             @if (!empty($program_applied) && $program_applied instanceof \Illuminate\Pagination\LengthAwarePaginator)
-    <div class="row">
-        <div class="col-sm-12 col-md-12">
-            <div class="dataTables_paginate paging_simple_numbers" id="pagination">
-                {{ $program_applied->withQueryString()->links() }}
-            </div>
+<div class="applied-page">
+    <div class="applied-heading"><h1>Applied Program List</h1></div>
+    <section class="applied-filters" aria-label="Filter applications">
+        <form action="{{ route('total-applied-program') }}" method="get" class="applied-filter-form">
+            <div><label for="applied-name">Student Name</label><input id="applied-name" type="search" name="first_name" value="{{ request('first_name') }}" placeholder="Search by student name"></div>
+            <div><label for="applied-email">Email</label><input id="applied-email" type="search" name="email" value="{{ request('email') }}" placeholder="Search by email"></div>
+            <div class="applied-filter-actions"><button type="submit" class="applied-primary"><i class="fa fa-search" aria-hidden="true"></i> Search</button><a class="applied-reset" href="{{ route('total-applied-program') }}"><i class="fa fa-rotate-right" aria-hidden="true"></i> Reset</a></div>
+        </form>
+    </section>
+    <section class="applied-table-card" aria-label="Applied programs">
+        <div class="applied-scroll" tabindex="0" aria-label="Scroll applied programs table horizontally">
+            <table class="applied-table">
+                <thead><tr><th scope="col">Application ID</th><th scope="col">Applied On</th><th scope="col">Created By</th><th scope="col">Student</th><th scope="col">University &amp; Program</th><th scope="col">Payment</th><th scope="col">Application / Visa</th><th scope="col">Actions</th></tr></thead>
+                <tbody>
+                @forelse($program_applied as $item)
+                    @php
+                        $key = $item->user_id . ':' . $item->program_id;
+                        $courseStatus = optional(optional($courseStatuses->get($key))->first())->course_remarks ?? 'N/A';
+                        $visaStatus = optional(optional($visaStatuses->get($key))->first())->visa_application ?? 'N/A';
+                        $paymentStatus = strtolower(trim((string) ($item->payments->payment_status ?? $item->payment_status ?? '')));
+                        $paymentLabel = $paymentStatus === 'success' ? 'Success' : ($paymentStatus === 'free' ? 'Free' : ($paymentStatus === 'failed' ? 'Failed' : ($item->payment_type_remarks === 'applied_program_pay_later' ? 'Pending' : ($paymentStatus ?: 'N/A'))));
+                        $badgeClass = function ($value) {
+                            $value = strtolower(trim((string) $value));
+                            if (in_array($value, ['success', 'free', 'accepted', 'approved'], true)) return 'is-success';
+                            if (in_array($value, ['pending', 'processing', 'in progress'], true)) return 'is-pending';
+                            if (in_array($value, ['failed', 'rejected', 'student_rejected'], true)) return 'is-failed';
+                            return 'is-neutral';
+                        };
+                    @endphp
+                    <tr>
+                        <td><strong>{{ $item->app_id ?: 'N/A' }}</strong></td>
+                        <td>{{ $item->created_at ?: 'N/A' }}</td>
+                        <td>@if(auth()->user()->hasRole('Administrator') || auth()->user()->hasRole('agent'))<span class="applied-line"><small>Franchise</small> {{ $creatorEmails[$item->added_by_agent_id] ?? 'N/A' }}</span><span class="applied-line"><small>Sub Agent</small> {{ $creatorEmails[$item->assigned_to] ?? 'N/A' }}</span>@else N/A @endif</td>
+                        <td><strong>{{ $item->name ?: 'N/A' }}</strong><span class="applied-muted">{{ $item->user_email }}</span></td>
+                        <td><strong>{{ $item->program->university_name->university_name ?? 'N/A' }}</strong>@if($item->program)<a class="applied-program-link" href="{{ route('course-details', [str_replace(' ', '-', $item->program->name) . '-' . $item->program->id]) }}">{{ $item->program->name }}</a>@else<span class="applied-muted">N/A</span>@endif</td>
+                        <td><span class="applied-badge {{ $badgeClass($paymentLabel) }}">{{ ucfirst($paymentLabel) }}</span></td>
+                        <td><span class="applied-status-line"><small>Application</small> <span class="applied-badge {{ $badgeClass($courseStatus) }}">{{ $courseStatus ?: 'N/A' }}</span></span><span class="applied-status-line"><small>Visa</small> <span class="applied-badge {{ $badgeClass($visaStatus) }}">{{ $visaStatus ?: 'N/A' }}</span></span></td>
+                        <td>@if((int) $item->user_id === (int) auth()->id())<details class="applied-menu"><summary aria-label="Actions for application {{ $item->app_id ?: $item->id }}">&#8943;</summary><div><a href="{{ route('delete-program', [$item->id]) }}" onclick="return confirm('Delete this applied program?')">Delete</a></div></details>@else<span class="applied-muted">—</span>@endif</td>
+                    </tr>
+                @empty
+                    <tr><td colspan="8" class="applied-empty">No applications match your search.</td></tr>
+                @endforelse
+                </tbody>
+            </table>
         </div>
-    </div>
-@endif
-                             
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-        
-         </div>
-      </div>
-   </section>
+        <div class="applied-pagination"><span>@if($program_applied->total()) Showing {{ $program_applied->firstItem() }}–{{ $program_applied->lastItem() }} of {{ $program_applied->total() }} applications @else No applications found @endif</span>{{ $program_applied->links() }}</div>
+    </section>
 </div>
 @endsection

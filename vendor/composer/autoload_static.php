@@ -827,6 +827,7 @@ class ComposerStaticInit363bfcacdaa18c9ce433d72d49dfa03e
         'App\\Http\\Controllers\\ProgramShortlistController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProgramShortlistController.php',
         'App\\Http\\Controllers\\ReportController' => __DIR__ . '/../..' . '/app/Http/Controllers/ReportController.php',
         'App\\Http\\Controllers\\RolesController' => __DIR__ . '/../..' . '/app/Http/Controllers/RolesController.php',
+        'App\\Http\\Controllers\\StaticPageController' => __DIR__ . '/../..' . '/app/Http/Controllers/StaticPageController.php',
         'App\\Http\\Controllers\\StudentController' => __DIR__ . '/../..' . '/app/Http/Controllers/StudentController.php',
         'App\\Http\\Controllers\\UniversityController' => __DIR__ . '/../..' . '/app/Http/Controllers/UniversityController.php',
         'App\\Http\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserController.php',

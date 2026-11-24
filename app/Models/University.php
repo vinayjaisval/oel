@@ -59,4 +59,9 @@ class University extends Model
     public function Program(){
         return $this->hasMany(Program::class,'school_id','id');
     }
+
+    public function lastUpdatedBy()
+    {
+        return $this->belongsTo(User::class, 'last_updated_by');
+    }
 }

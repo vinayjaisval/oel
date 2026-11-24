@@ -34,6 +34,14 @@
                             <a href="{{ isset($menu->url) ? url($menu->url) : 'javascript:void(0);' }}">
                                 <i class="{{ $menu->icon }}"></i>
                                 <span > {{ isset($menu->name) ? __($menu->name) : '' }}</span>
+                                @if(($menu->slug ?? null) === 'universities' && $user->can('updation_manage_university.updation_manage_university_view'))
+                                    @php
+                                        $universitiesNeedsUpdateCount = \App\Http\Controllers\UniversityController::universityStats()['needs_update'] ?? 0;
+                                    @endphp
+                                    @if($universitiesNeedsUpdateCount > 0)
+                                        <span class="badge bg-danger ms-1">{{ $universitiesNeedsUpdateCount }}</span>
+                                    @endif
+                                @endif
                                 @if(!isset($menu->url))
                                     <span class="menu-arrow"></span>
                                 @endif
