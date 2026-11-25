@@ -572,7 +572,7 @@
                                                     </label>
                                                     <input type="date" class="form-control" name="joining_date"
                                                         id="joining_date"
-                                                        value="{{ isset($threesixtee->joining_date) ? $threesixtee->joining_date : date('Y-m-d') }}">
+                                                        value="{{ $threesixtee->joining_date ?? '' }}">
                                                     <input type="hidden" class="form-control" name="tab" id="tab4"
                                                         value="tab4">
                                                 </div>
@@ -881,7 +881,7 @@
                                                     <label class="form-label">Date of Apply</label>
                                                     <input type="date" name="visa_apply_date" required
                                                         class="form-control"
-                                                        value="{{ isset($threesixtee->visa_apply_date) ? $threesixtee->visa_apply_date : date('Y-m-d') }}"
+                                                        value="{{ $threesixtee->visa_apply_date ?? '' }}"
                                                         id="visa_apply_date">
                                                     <input type="hidden" name="sba_id" class="sba_id"
                                                         value="{{$leadDetails->student_user_id ?? null  }}">
