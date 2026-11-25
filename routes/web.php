@@ -228,7 +228,7 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
             Route::get('create_student_profile/{id}', [LeadsManageCotroller::class, 'create_student_profile'])->name('create-student-profile');
             Route::get('oel-360/', [LeadsManageCotroller::class, 'oel_360'])->name('oel_360');
             Route::get('lead-details', [LeadsManageCotroller::class, 'lead_details'])->name('lead-details');
-            Route::get('apply-360/{id?}', [LeadsManageCotroller::class, 'aply_360'])->name('apply-360');
+            Route::get('apply-360/{id?}', [LeadsManageCotroller::class, 'openWorkspaceJourney'])->name('apply-360');
             Route::get('/getCourses', [LeadsManageCotroller::class, 'getCourses'])->name('getCourses');
 
             Route::get('fetch-visa-sub-document/{visa_document_id?}', [LeadsManageCotroller::class, 'fetch_visa_sub_document'])->name('fetch-visa-sub-document');
@@ -248,6 +248,7 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
             Route::get("relocate-frenchise", [LeadsManageCotroller::class, 'relocated_frenchise'])->name('relocated-frenchise');
             Route::post('assign-leads', [LeadsManageCotroller::class, 'allocate_franchise'])->name('assign-leads');
             // Route::post('assign-leads',[LeadsManageCotroller::class,'allocate_franchise']);
+            Route::get('students/{id}/case', [StudentController::class, 'workspaceCaseFragment'])->whereNumber('id')->name('workspace-case-fragment');
             Route::get('students/workspace-list', [StudentController::class, 'workspaceListFragment'])->name('workspace-list-fragment');
             Route::get("student-list", [StudentController::class, 'student_list'])->name('student-list');
             // Route::get('cehckout/{say}',[LeadsManageCotroller::class,'with_parameter'])->name('parameter');

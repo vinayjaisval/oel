@@ -12,12 +12,12 @@
                 filled($item->college) => ['Step 2/11 ? Courses', 'p-ok'],
                 default => ['Ready for OEL 360', 'p-new'],
             };
-            $studentUrl = route('student-list', array_merge(request()->except(['student','tab','step','page']), ['student' => $item->user_id, 'tab' => 'journey']));
+            $studentUrl = route('student-list', array_merge(request()->except(['student','tab','step','page']), ['student' => $item->user_id, 'tab' => $item->profile_complete && $item->status_threesixty && auth()->user()->can('oel_360.view') && auth()->user()->can('oel_apply.view') ? 'journey' : 'overview']));
         @endphp
-        <a class="it {{ $selectedId == $item->user_id ? 'on' : '' }}" href="{{ $studentUrl }}" data-student="{{ $item->user_id }}">
+        <a class="it" aria-current="{{ $selectedId == $item->user_id ? 'true' : 'false' }}" href="{{ $studentUrl }}" data-student="{{ $item->user_id }}">
             <span class="av">{{ mb_strtoupper(mb_substr($item->first_name ?? '?', 0, 1).mb_substr($item->last_name ?? '', 0, 1)) }}</span>
-            <span class="meta"><b>{{ $item->first_name }} {{ $item->last_name }}</b><small>{{ $item->email }}</small></span>
-            <span class="badges"><span class="pill {{ $color }}">{{ $stage }}</span><span class="pill {{ $item->workspace_payment === 'Paid' ? 'p-ok' : 'p-warn' }}">{{ $item->workspace_payment }}</span></span>
+            <span class="meta"><b class="nm">{{ $item->first_name }} {{ $item->last_name }}</b><small class="em">{{ $item->email }}</small></span>
+            <span class="r"><span class="pill {{ $color }}">{{ $stage }}</span><span class="pill {{ $item->workspace_payment === 'Paid' ? 'p-ok' : 'p-warn' }}">{{ $item->workspace_payment }}</span></span>
         </a>
     @empty
         <p class="empty">No students match these filters.</p>

@@ -2042,277 +2042,9 @@ class LeadsManageCotroller extends Controller
 
 
     public function oel_360(Request $request)
-{
-    $studentData = Student::query();
-
-    $user = Auth::user();
-
-    /*
-    |--------------------------------------------------------------------------
-    | SUB AGENTS & AGENTS
-    |--------------------------------------------------------------------------
-    */
-
-    if ($user->hasRole('Administrator')) {
-
-        $sub_agents = User::where('admin_type', 'sub_agent')
-            ->select('id', 'email', 'name')
-            ->get();
-
-        $agents = User::where('admin_type', 'agent')
-            ->select('id', 'email', 'name')
-            ->get();
-
-    } else {
-
-        $sub_agents = User::where('admin_type', 'sub_agent')
-            ->where('added_by', $user->id)
-            ->select('id', 'email', 'name')
-            ->get();
-
-        $agents = User::where('admin_type', 'agent')
-            ->where('added_by', $user->id)
-            ->select('id', 'email', 'name')
-            ->get();
+    {
+        return redirect()->route('student-list', array_merge($request->only(['first_name', 'email', 'agent_id', 'subagent_id', 'page']), ['view' => 'ready']));
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | ROLE FILTER
-    |--------------------------------------------------------------------------
-    */
-
-    if ($user->hasRole('agent')) {
-
-        $studentData->where(function ($query) use ($user) {
-
-            $query->where('student.added_by_agent_id', $user->id)
-                  ->orWhere('student.added_by', $user->id);
-        });
-    }
-
-    if ($user->hasRole('sub_agent')) {
-
-        $studentData->where('student.added_by', $user->id);
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | SEARCH FILTER
-    |--------------------------------------------------------------------------
-    */
-
-    if ($request->first_name) {
-
-        $studentData->where(
-            'student.first_name',
-            'LIKE',
-            '%' . $request->first_name . '%'
-        );
-    }
-
-    if ($request->email) {
-
-        $studentData->where(
-            'student.email',
-            'LIKE',
-            '%' . $request->email . '%'
-        );
-    }
-
-    if ($request->subagent_id) {
-
-        $studentData->where(
-            'student.added_by',
-            $request->subagent_id
-        );
-    }
-
-    if ($request->agent_id) {
-
-        $studentData->where(
-            'student.added_by_agent_id',
-            $request->agent_id
-        );
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | MAIN QUERY
-    |--------------------------------------------------------------------------
-    */
-
-    $studentData = $studentData
-
-        ->join('users', 'users.id', '=', 'student.added_by')
-
-        /*
-        |--------------------------------------------------------------------------
-        | FIX DUPLICATE student_by_agent RECORDS
-        |--------------------------------------------------------------------------
-        */
-
-        ->join(DB::raw('
-            (
-                SELECT MAX(id) as id, student_user_id
-                FROM student_by_agent
-                GROUP BY student_user_id
-            ) as sba_latest
-        '), function ($join) {
-
-            $join->on(
-                'sba_latest.student_user_id',
-                '=',
-                'student.user_id'
-            );
-        })
-
-        ->join(
-            'student_by_agent',
-            'student_by_agent.id',
-            '=',
-            'sba_latest.id'
-        )
-
-        ->leftJoin(
-            'payments',
-            'payments.customer_email',
-            '=',
-            'student.email'
-        )
-
-        ->leftJoin(
-            'payments_link',
-            'payments_link.fallowp_unique_id',
-            '=',
-            'payments.fallowp_unique_id'
-        )
-
-        ->where('student.status_threesixty', 1)
-
-        ->where('student.profile_complete', 1);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | VISA FILTER
-    |--------------------------------------------------------------------------
-    */
-
-    if ($user->hasRole('visa')) {
-
-        $studentData->join(
-            'tbl_three_sixtee',
-            'tbl_three_sixtee.sba_id',
-            '=',
-            'student.id'
-        )
-        ->where(
-            'tbl_three_sixtee.visa_application',
-            'Accepted'
-        );
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | APPLICATION PUNCHING FILTER
-    |--------------------------------------------------------------------------
-    */
-
-    if ($user->hasRole('Application Punching')) {
-
-        $studentData->join(
-            'tbl_three_sixtee',
-            'tbl_three_sixtee.sba_id',
-            '=',
-            'student.id'
-        )
-        ->where(
-            'tbl_three_sixtee.application_punching',
-            1
-        );
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | FINAL SELECT
-    |--------------------------------------------------------------------------
-    */
-
-    $studentData = $studentData
-
-        ->select(
-
-            'student.id',
-
-            DB::raw('MAX(student.email) as email'),
-
-            DB::raw('MAX(student.user_id) as user_id'),
-
-            DB::raw('MAX(student.first_name) as first_name'),
-
-            DB::raw('MAX(student.last_name) as last_name'),
-
-            DB::raw('MAX(student.status_threesixty) as status_threesixty'),
-
-            DB::raw('MAX(student.profile_complete) as profile_complete'),
-
-            DB::raw('MAX(users.name) as added_by_name'),
-
-            DB::raw('MAX(users.email) as added_by_email'),
-
-            DB::raw('MAX(payments.id) as payment_id'),
-
-            DB::raw('MAX(payments.amount) as payment_amount'),
-
-            DB::raw('MAX(payments.payment_status) as payment_status')
-        )
-
-        ->groupBy('student.id')
-
-        ->orderByDesc('student.id')
-
-        ->paginate(15);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | MASTER SERVICE
-    |--------------------------------------------------------------------------
-    */
-
-    $master_service = MasterService::select('name', 'id')->get();
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | RETURN VIEW
-    |--------------------------------------------------------------------------
-    */
-
-    return view(
-        'admin.leads.oel-360',
-        compact(
-            'studentData',
-            'sub_agents',
-            'master_service',
-            'agents'
-        )
-    );
-}
-
-    
-
-
-
-
-
-
 
     public function lead_details(Request $request)
     {
@@ -2323,6 +2055,48 @@ class LeadsManageCotroller extends Controller
 
 
         return response()->json($leadDetails);
+    }
+
+    private function authorizedJourneyStudent($studentUserId)
+    {
+        $user = Auth::user();
+        abort_unless($user && $user->can('oel_apply.view'), 403);
+        $student = Student::where('user_id', $studentUserId)->firstOrFail();
+        if ($user->hasRole('student')) {
+            abort_unless((int) $student->user_id === (int) $user->id, 404);
+            return $student;
+        }
+
+        $all = false;
+        if ($user->can('student.view')) {
+            [$query] = app(StudentController::class)->workspaceAllQuery(new Request());
+            $all = (bool) $query->where('student.user_id', $student->user_id)->first();
+        }
+        $ready = false;
+        if (!$all && $user->can('oel_360.view')) {
+            $ready = (bool) \App\Support\Oel360ReadyQuery::forUser($user)
+                ->where('student.user_id', $student->user_id)->first();
+        }
+        abort_unless($all || $ready, 404);
+        return $student;
+    }
+
+    public function openWorkspaceJourney($id = null)
+    {
+        $user = Auth::user();
+        if ($user->hasRole('student') || $id === null) {
+            return $this->aply_360($id);
+        }
+        $student = $this->authorizedJourneyStudent($id);
+        $view = 'ready';
+        if ($user->can('student.view')) {
+            [$all] = app(StudentController::class)->workspaceAllQuery(new Request());
+            if ($all->where('student.user_id', $student->user_id)->exists()) {
+                $view = 'all';
+            }
+        }
+
+        return redirect()->route('student-list', ['view' => $view, 'student' => $student->user_id, 'tab' => 'journey']);
     }
 
     public function aply_360($id = null)
@@ -2339,6 +2113,7 @@ class LeadsManageCotroller extends Controller
 
             return view('errors.404');
         }
+        $this->authorizedJourneyStudent($studentDetails->user_id);
 
         $leadDetails = StudentByAgent::with('caste_data', 'subject', 'country', 'state')->orwhere('student_user_id', $id)->first();
 
@@ -2444,9 +2219,32 @@ class LeadsManageCotroller extends Controller
     public function store_lead_360(Request $request)
     {
 
-        $id = Student::where('user_id', $request->sba_id)->value('id');
+        $authorizedStudent = $this->authorizedJourneyStudent($request->sba_id);
+        $id = $authorizedStudent->id;
         $user_id = $request->sba_id;
         $response = null;
+        $branch = $request->tab1 ? 'tab1' : ($request->tab2 ? 'tab2' : ($request->tab3 ? 'tab3' : ($request->tab5 ? 'tab5' : $request->tab)));
+        $permissions = [
+            'tab1' => 'universities.create', 'tab2' => 'courses.create',
+            'tab3' => 'application_status.create', 'tab4' => 'offer_details.create',
+            'tab7' => 'fee_details.create', 'tab5' => 'visa_application.create',
+            'tab6' => 'visa_status.create', 'tab8' => 'flight_details.create',
+            'tab9' => 'take_off.create', 'tab10' => 'boarding.create',
+        ];
+        abort_unless(isset($permissions[$branch]) && Auth::user()->can($permissions[$branch]), 403);
+        if ($request->boolean('draft')) {
+            return response()->json(['success' => false, 'message' => 'Draft saves are not available for this journey yet.'], 422);
+        }
+        $student = Student::where('user_id', $user_id)->first();
+        if (!$student || !$student->profile_complete) {
+            return response()->json(['success' => false, 'message' => 'Complete the student profile before saving the OEL 360 journey.'], 422);
+        }
+        if (in_array($request->tab, ['tab8', 'tab9', 'tab10'], true)) {
+            $visaStatus = DB::table('tbl_three_sixtee')->where('sba_id', $id)->value('visa_application');
+            if ($visaStatus !== 'Accepted') {
+                return response()->json(['success' => false, 'message' => 'Travel steps require an accepted visa.'], 422);
+            }
+        }
         if ($request->tab1) {
             $validator = Validator::make($request->all(), [
                 'collegeValues' => 'required',
@@ -2515,7 +2313,8 @@ class LeadsManageCotroller extends Controller
                         'selected_program' => $course
                     ]);
             }
-            $program = Program::whereIn('id', explode(',', $table_three_sixtee->courses))->where('is_approved', 1)->select('id', 'name')->get();
+            $table_three_sixtee = DB::table('tbl_three_sixtee')->where('sba_id', $id)->first();
+            $program = Program::whereIn('id', $request->courseValues)->where('is_approved', 1)->select('id', 'name')->get();
             $response = true;
             $data = [
                 'success' => true,
@@ -2883,23 +2682,42 @@ class LeadsManageCotroller extends Controller
             return response()->json($data);
         } elseif ($request->tab5 == 'tab5') {
             $three_sixtee = DB::table('tbl_three_sixtee')->where('sba_id', $id)->first();
+            $validator = Validator::make($request->all(), [
+                'visa_apply_date' => ['sometimes', 'nullable', 'date'],
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+            }
+            $portalPassword = $three_sixtee->portal_password ?? null;
+            if ($request->filled('portal_password')) {
+                if (!Auth::user()->hasRole('Administrator')) {
+                    return response()->json(['success' => false, 'message' => 'Not authorized to change the portal password.'], 403);
+                }
+                $encryptedPassword = \Illuminate\Support\Facades\Crypt::encryptString($request->input('portal_password'));
+                if (strlen($encryptedPassword) > 255) {
+                    return response()->json(['success' => false, 'message' => 'The password is too long for the existing storage.'], 422);
+                }
+                $portalPassword = $encryptedPassword;
+            }
+            $visaApplyDate = $request->exists('visa_apply_date') ? $request->input('visa_apply_date') : ($three_sixtee->visa_apply_date ?? null);
+            $visaApplication = $request->exists('visa_application') ? $request->input('visa_application') : ($three_sixtee->visa_application ?? null);
             if ($three_sixtee == NULL) {
                 DB::table('tbl_three_sixtee')->insert([
                     'sba_id' => $id,
                     'user_id' => $user_id,
                     'visa_document' => $request->visa_document ?? null,
-                    'visa_apply_date' => $request->visa_apply_date ?? null,
+                    'visa_apply_date' => $visaApplyDate,
                     'visa_agent' => $request->visa_agent ?? null,
                     'visa_manual' => $request->visa_manual ?? null,
                     'portal_url' => $request->portal_url ?? null,
                     'portal_email' => $request->portal_email ?? null,
                     'portal_userid' => $request->portal_userid ?? null,
-                    'portal_password' => $request->portal_password ?? null,
+                    'portal_password' => $portalPassword,
                     'portal_question' => $request->portal_question ?? null,
                     'portal_answer' => $request->portal_answer ?? null,
                     'visa_document_type' => $request->visa_document_type ?? null,
                     'visa_sub_document_type' => $request->visa_sub_document_type ?? null,
-                    'visa_application' => $request->visa_application ?? null
+                    'visa_application' => $visaApplication
                 ]);
             } else {
                 DB::table('tbl_three_sixtee')
@@ -2908,18 +2726,18 @@ class LeadsManageCotroller extends Controller
                         'sba_id' => $id,
                         'user_id' => $user_id,
                         'visa_document' => $request->visa_document ?? null,
-                        'visa_apply_date' => $request->visa_apply_date ?? null,
+                        'visa_apply_date' => $visaApplyDate,
                         'visa_agent' => $request->visa_agent ?? null,
                         'visa_manual' => $request->visa_manual ?? null,
                         'portal_url' => $request->portal_url ?? null,
                         'portal_email' => $request->portal_email ?? null,
                         'portal_userid' => $request->portal_userid ?? null,
-                        'portal_password' => $request->portal_password ?? null,
+                        'portal_password' => $portalPassword,
                         'portal_question' => $request->portal_question ?? null,
                         'portal_answer' => $request->portal_answer ?? null,
                         'visa_document_type' => $request->visa_document_type ?? null,
                         'visa_sub_document_type' => $request->visa_sub_document_type ?? null,
-                        'visa_application' => $request->visa_application ?? null
+                        'visa_application' => $visaApplication
                     ]);
             }
 
@@ -2977,6 +2795,13 @@ class LeadsManageCotroller extends Controller
             ];
             return response()->json($data);
         } elseif ($request->tab == 'tab6') {
+            $validator = Validator::make($request->all(), [
+                'visa_remarks' => ['required_if:visa_application,Rejected', 'nullable', 'string'],
+                'visa_exp_date' => ['nullable', 'date'],
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+            }
             $data = DB::table('tbl_three_sixtee')
                 ->where('sba_id', $id)
                 ->first();
@@ -2995,9 +2820,9 @@ class LeadsManageCotroller extends Controller
                     ->update([
                         'sba_id' => $id,
                         'user_id' => $user_id,
-                        'visa_no' => $request->visa_no ?? null,
-                        'visa_exp_date' => $request->visa_exp_date ?? null,
-                        'visa_remarks' => $request->visa_remarks ?? null,
+                        'visa_no' => $request->exists('visa_no') ? $request->input('visa_no') : $data->visa_no,
+                        'visa_exp_date' => $request->exists('visa_exp_date') ? $request->input('visa_exp_date') : $data->visa_exp_date,
+                        'visa_remarks' => $request->exists('visa_remarks') ? $request->input('visa_remarks') : $data->visa_remarks,
                         'visa_application' => $request->visa_application ?? null
                     ]);
             }
@@ -3020,7 +2845,6 @@ class LeadsManageCotroller extends Controller
                 'portal_url' => $threesixetee->portal_url ?? null,
                 'portal_email' => $threesixetee->portal_email ?? null,
                 'portal_userid' => $threesixetee->portal_userid ?? null,
-                'portal_password' => $threesixetee->portal_password ?? null,
                 'portal_question' => $threesixetee->portal_question ?? null,
                 'portal_answer' => $threesixetee->portal_answer ?? null,
                 'visa_document_type' => $threesixetee->visa_document_type ?? null,
@@ -3185,6 +3009,7 @@ class LeadsManageCotroller extends Controller
 
     public function get_lead_360_images(Request $request)
     {
+        $this->authorizedJourneyStudent($request->sba_id);
         // dd($request->sba_id);
         $table_three_sixtee_image = DB::table('tbl_three_sixtee_image')
             ->join('program', 'tbl_three_sixtee_image.selected_course', '=', 'program.id')
@@ -3201,6 +3026,12 @@ class LeadsManageCotroller extends Controller
     public function delete_lead_360_image(Request $request)
     {
         $id = $request->id;
+        $document = DB::table('tbl_three_sixtee_image')->where('id', $id)->first();
+        abort_unless($document, 404);
+        if ($request->filled('sba_id')) {
+            abort_unless((string) $request->sba_id === (string) $document->user_id, 404);
+        }
+        $this->authorizedJourneyStudent($document->user_id);
         DB::table('tbl_three_sixtee_image')->where('id', $id)->delete();
         $data = [
             'success' => true,
@@ -3679,6 +3510,7 @@ class LeadsManageCotroller extends Controller
     public function get_visa_document(Request $request)
     {
         if ($request->ajax()) {
+            $this->authorizedJourneyStudent($request->sba_id);
             $visa_document = DB::table('tbl_three_sixtee_image')
                 ->select('tbl_three_sixtee_image.id', 'tbl_three_sixtee_image.user_id', 'tbl_three_sixtee_image.image_type', 'tbl_three_sixtee_image.image', 'visa_documents.name AS visa_document_name', 'visa_sub_documents.name AS visa_sub_document_name')
                 ->join('visa_documents', 'tbl_three_sixtee_image.visa_document_type', '=', 'visa_documents.id')
@@ -3699,6 +3531,12 @@ class LeadsManageCotroller extends Controller
     public function delete_visa_document(Request $request)
     {
         if ($request->ajax()) {
+            $document = DB::table('tbl_three_sixtee_image')->where('id', $request->id)->first();
+            abort_unless($document, 404);
+            if ($request->filled('sba_id')) {
+                abort_unless((string) $request->sba_id === (string) $document->user_id, 404);
+            }
+            $this->authorizedJourneyStudent($document->user_id);
             $visa_document = DB::table('tbl_three_sixtee_image')->where('id', $request->id)->delete();
             return response()->json(['success' => true, 'status' => true]);
         }
@@ -3707,6 +3545,7 @@ class LeadsManageCotroller extends Controller
 
     public function getCourses(Request $request)
     {
+        $this->authorizedJourneyStudent($request->sba_id);
 
 
 

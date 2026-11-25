@@ -148,18 +148,27 @@ class StudentController extends Controller
     // }
 
 
-    public function student_list(Request $request)
+    public function workspaceCaseFragment(Request $request, string $id)
+    {
+        return $this->student_list($request, $id);
+    }
+
+    public function student_list(Request $request, ?string $caseId = null)
     {
         $user = Auth::user();
         [$view, $query] = $this->workspaceListQuery($request);
         $selected = null;
-        if ($request->filled('student')) {
-            $allowed = (clone $query)->where('student.user_id', $request->query('student'))->first();
+        $studentId = $caseId ?? $request->query('student');
+        if ($studentId !== null) {
+            $scopeRequest = new Request(['view' => $view === 'ready' ? 'ready' : 'all']);
+            [, $scope] = $this->workspaceListQuery($scopeRequest);
+            $allowed = $scope->where('student.user_id', $studentId)->first();
             abort_unless($allowed, 404);
             $selected = Student::with('country', 'province')->where('user_id', $allowed->user_id)->firstOrFail();
         }
-        $student_profile = $this->workspaceListPage($query, $request);
-        $tab = $request->query('tab', 'overview');
+        $tab = $request->query('tab', $view === 'ready' && $selected ? 'payments' : 'overview');
+        $step = $request->integer('step', 0);
+        abort_unless($step >= 0 && $step <= 11, 404);
         abort_unless(in_array($tab, ['overview', 'documents', 'applications', 'payments', 'journey'], true), 404);
         $details = collect();
         $owner = null;
@@ -168,11 +177,30 @@ class StudentController extends Controller
         $courseStatuses = collect();
         $latestApplication = null;
         $journeyData = null;
+        $summary = null;
+        $totals = null;
+        $universities = collect();
         if ($selected) {
+            $summary = DB::table('tbl_three_sixtee')->where('sba_id', $selected->id)->orderByDesc('id')->first([
+                'college', 'courses', 'application', 'cource_details', 'joining_date', 'fee_amount', 'visa_apply_date',
+                'visa_application', 'flight_name', 'flight_no', 'hand_holding', 'hostel',
+            ]);
+            if ($summary?->college) {
+                $universities = DB::table('universities')->whereIn('id', explode(',', $summary->college))->pluck('university_name');
+            }
+            $mayViewPayments = $user->can('application.view') && (
+                $user->hasRole('Administrator') || $selected->added_by == $user->id ||
+                ($user->hasRole('agent') && User::where('added_by', $user->id)->whereNotIn('admin_type', ['student'])->where('id', $selected->added_by)->exists())
+            );
+            if ($mayViewPayments && $selected->email) {
+                $totals = DB::table('payments')->where('customer_email', $selected->email)
+                    ->selectRaw("COUNT(*) AS entries, SUM(CASE WHEN payment_status = 'success' THEN amount ELSE 0 END) AS paid, SUM(CASE WHEN payment_status = 'success' THEN 0 ELSE amount END) AS due")
+                    ->first();
+            }
             $owner = User::find($selected->added_by);
             $account = User::where('email', $selected->email)->first();
             if ($tab === 'journey') {
-                abort_unless($user->can('oel_apply.view'), 403);
+                abort_unless($user->can('oel_360.view') && $user->can('oel_apply.view'), 403);
                 abort_unless($selected->profile_complete, 403);
                 $journeyView = app(LeadsManageCotroller::class)->aply_360($selected->user_id);
                 abort_unless($journeyView->name() === 'admin.leads.apply_oel_360', 404);
@@ -217,10 +245,16 @@ class StudentController extends Controller
                 }
             }
         }
+        $caseData = compact('view', 'tab', 'step', 'selected', 'details', 'owner', 'account', 'latestApplication', 'visaStatuses', 'courseStatuses', 'journeyData', 'summary', 'totals', 'universities');
+        if ($caseId !== null) {
+            return response()->view('admin.student.workspace-case', $caseData)->header('Cache-Control', 'private, no-store');
+        }
+
+        $student_profile = $this->workspaceListPage($query, $request);
         $agents = User::where('admin_type', 'agent')->when(!$user->hasRole('Administrator'), fn ($q) => $q->where('added_by', $user->id))->get(['id', 'name']);
         $sub_agents = User::where('admin_type', 'sub_agent')->when(!$user->hasRole('Administrator'), fn ($q) => $q->where('added_by', $user->id))->get(['id', 'name']);
         $master_service = MasterService::select('name', 'id')->get();
-        return view('admin.student.workspace', compact('view', 'tab', 'student_profile', 'selected', 'details', 'owner', 'account', 'agents', 'sub_agents', 'master_service', 'latestApplication', 'visaStatuses', 'courseStatuses', 'journeyData'));
+        return view('admin.student.workspace', $caseData + compact('student_profile', 'agents', 'sub_agents', 'master_service'));
     }
 
     public function workspaceListFragment(Request $request)

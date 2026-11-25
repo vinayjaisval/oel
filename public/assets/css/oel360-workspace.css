@@ -1,12 +1,12 @@
 .oel360 :where(button,input,select,textarea,table){margin:0;font:inherit}
 .oel360 :where(h1,h2,h3,h4,p){line-height:inherit}
 
-.oel360 /* VOICE: calm admin tool for counsellors, .oel360 fast to scan
-   IDEA: a student's case file — list on the left, .oel360 one journey on the right
-   PICTURE: the working workspace itself: list, .oel360 journey rail, .oel360 step form, .oel360 payments ledger
-   COLOUR and TYPE: OEL navy, .oel360 orange primary action, .oel360 green/amber/red status; Inter
-   LAYOUT: list | case; on phones list first, .oel360 case opens full screen with back */
-:root{color-scheme:light dark;
+/* VOICE: calm admin tool for counsellors, fast to scan
+   IDEA: a student's case file — list on the left, one journey on the right
+   PICTURE: the working workspace itself: list, journey rail, step form, payments ledger
+   COLOUR and TYPE: OEL navy, orange primary action, green/amber/red status; Inter
+   LAYOUT: list | case; on phones list first, case opens full screen with back */
+.oel360{color-scheme:light dark;
 --bg:light-dark(#F4F6FB,#0E1330);--card:light-dark(#FFF,#171D42);--ink:light-dark(#1A1F36,#E8EAF6);--muted:light-dark(#4A5170,#AEB4D6);
 --line:light-dark(#E3E7F0,#2A3160);--line2:light-dark(#C9CFE0,#3A427A);--navy:light-dark(#111A66,#8E9BFF);--navyBg:light-dark(#EEF0FB,#222A63);--onNavy:light-dark(#FFF,#0E1330);
 --cta:#C2410C;--ok:light-dark(#166534,#6EE7A0);--okBg:light-dark(#ECFDF3,#123526);--warn:light-dark(#92400E,#FCD34D);--warnBg:light-dark(#FFFBEB,#3A2E10);--bad:light-dark(#B91C1C,#FCA5A5);--badBg:light-dark(#FEF2F2,#3B1515)}
@@ -109,3 +109,7 @@
 @media(prefers-reduced-motion:reduce){.oel360 .toast{transition:none}}
 
 .oel360 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.oel360 .case[data-loading]::before{content:"";display:block;height:168px;border-radius:14px;background:var(--navyBg)}
+.oel360 [data-legacy-journey] .apply360-step-menu{display:none}
+.oel360 .it{text-decoration:none;color:inherit}
+.oel360 .ch .acts>a{text-decoration:none}

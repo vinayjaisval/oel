@@ -197,7 +197,7 @@
             });
         });
         
-        $('.payment_model').on('click', function() {
+        $(document).on('click', '.oel360 .payment_model', function() {
             var student_id = $(this).attr('student-id');
             $('#student_second_id').val(student_id);
             $('input[name="student_id"]').val(student_id);
@@ -375,7 +375,5 @@
         });
 
 </script>
-@if($tab === 'journey' && $journeyData)
-    @include('admin.leads.partials.journey-scripts', $journeyData)
-@endif
+<script src="{{ asset('assets/js/apply-360-redesign.js') }}" defer></script>
 @endsection
