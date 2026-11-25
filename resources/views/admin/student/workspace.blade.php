@@ -1,4 +1,4 @@
-﻿@extends('admin.include.app')
+@extends('admin.include.app')
 @section('style')
 <link rel="stylesheet" href="{{ asset('assets/css/oel360-workspace.css') }}">
 <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.2/dist/sweetalert2.min.css" rel="stylesheet">
@@ -11,45 +11,38 @@
     $backUrl = route('student-list', $base);
     $tabUrl = fn ($target) => route('student-list', array_merge($base, ['student' => $selected->user_id, 'tab' => $target]));
 @endphp
-<div class="oel360">
+<div class="oel360" data-list-endpoint="{{ route('workspace-list-fragment') }}">
     <div class="top"><div><span class="logo">OEL</span><span class="crumb">Admin ? Students &amp; OEL 360</span><span class="who">Counsellor view</span></div></div>
     <div class="wrap {{ $selected ? 'open' : '' }}">
         <section class="card list" aria-label="Students">
             <div class="lh">
-            <h1>Students <small>{{ $student_profile->total() }}</small></h1>
+            <h1>Students <small data-student-count>{{ $student_profile->total() }}</small></h1>
     <nav class="tabs" aria-label="Student views">
-        @can('student.view')<a class="{{ $view === 'all' ? 'active' : '' }}" href="{{ route('student-list', ['view' => 'all']) }}" {{ $view === 'all' ? 'aria-current=page' : '' }}>All Students</a>@endcan
-        @can('oel_360.view')<a class="{{ $view === 'ready' ? 'active' : '' }}" href="{{ route('student-list', ['view' => 'ready']) }}" {{ $view === 'ready' ? 'aria-current=page' : '' }}>OEL 360 Ready</a>@endcan
+        @foreach(['all' => 'All', 'ready' => 'Ready for 360', 'progress' => 'In progress', 'visa' => 'Visa issues', 'done' => 'Completed', 'incomplete' => 'Profile incomplete'] as $filter => $label)
+            @can($filter === 'ready' ? 'oel_360.view' : 'student.view')
+                <button type="button" data-view="{{ $filter }}" aria-pressed="{{ $view === $filter ? 'true' : 'false' }}">{{ $label }}</button>
+            @endcan
+        @endforeach
     </nav>
-    <form class="workspace-filters" method="get" action="{{ route('student-list') }}">
+    <form data-list-filters method="get" action="{{ route('student-list') }}">
         <input type="hidden" name="view" value="{{ $view }}">
         <label class="workspace-search"><span class="sr">Search students</span><input class="inp" type="search" name="q" value="{{ request('q') }}" placeholder="Search name, email or phone"></label>
         <details><summary>More filters</summary><div class="workspace-filter-fields">
             <label>Name <input name="{{ $view === 'ready' ? 'first_name' : 'name' }}" value="{{ request($view === 'ready' ? 'first_name' : 'name') }}"></label>
             <label>Email <input name="email" value="{{ request('email') }}"></label>
-            @if($view === 'ready')
             <label>Franchise <select name="agent_id"><option value="">All franchises</option>@foreach($agents as $agent)<option value="{{ $agent->id }}" @selected(request('agent_id') == $agent->id)>{{ $agent->name }}</option>@endforeach</select></label>
             <label>Sub Agent <select name="subagent_id"><option value="">All sub agents</option>@foreach($sub_agents as $agent)<option value="{{ $agent->id }}" @selected(request('subagent_id') == $agent->id)>{{ $agent->name }}</option>@endforeach</select></label>
-            @else
             <label>Phone <input name="phone_number" value="{{ request('phone_number') }}"></label>
             <label>Pincode <input name="zip" value="{{ request('zip') }}"></label>
             <label>Country <select name="country_id"><option value="">All countries</option>@foreach(\App\Models\Country::orderBy('name')->get() as $country)<option value="{{ $country->id }}" @selected(request('country_id') == $country->id)>{{ $country->name }}</option>@endforeach</select></label>
             <label>From date <input type="date" name="from_date" value="{{ request('from_date') }}"></label>
             <label>To date <input type="date" name="to_date" value="{{ request('to_date') }}"></label>
-            @endif
         </div></details>
         <button type="submit">Search</button><a href="{{ route('student-list', ['view' => $view]) }}">Reset</a>
     </form>
             </div>
-            <div class="items">
-            @forelse($student_profile as $item)
-            <a class="it {{ $selected && $selected->user_id == $item->user_id ? 'selected' : '' }}" href="{{ route('student-list', array_merge($base, ['student' => $item->user_id])) }}">
-                <span class="av">{{ mb_strtoupper(mb_substr($item->first_name ?? '?', 0, 1)) }}{{ mb_strtoupper(mb_substr($item->last_name ?? '', 0, 1)) }}</span><span><strong>{{ $item->first_name }} {{ $item->last_name }}</strong><small>{{ $item->email }}</small></span>
-                @if($view === 'ready')<span class="pill p-new">360 Ready</span>@endif
-            </a>
-            @empty<p>No students match these filters.</p>@endforelse
-            {{ $student_profile->links() }}
-            </div>
+            <p class="note n-bad" data-list-error hidden>Unable to load students. Try again.</p>
+            @include('admin.student.workspace-list', ['selectedId' => $selected?->user_id])
         </section>
         <section class="case" aria-label="Student profile" aria-live="polite">
             @if($selected)

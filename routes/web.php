@@ -248,6 +248,7 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
             Route::get("relocate-frenchise", [LeadsManageCotroller::class, 'relocated_frenchise'])->name('relocated-frenchise');
             Route::post('assign-leads', [LeadsManageCotroller::class, 'allocate_franchise'])->name('assign-leads');
             // Route::post('assign-leads',[LeadsManageCotroller::class,'allocate_franchise']);
+            Route::get('students/workspace-list', [StudentController::class, 'workspaceListFragment'])->name('workspace-list-fragment');
             Route::get("student-list", [StudentController::class, 'student_list'])->name('student-list');
             // Route::get('cehckout/{say}',[LeadsManageCotroller::class,'with_parameter'])->name('parameter');
             Route::get('get-visa-document', [LeadsManageCotroller::class, 'get_visa_document'])->name('get-visa-document');

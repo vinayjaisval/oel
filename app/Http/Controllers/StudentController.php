@@ -148,9 +148,167 @@ class StudentController extends Controller
     // }
 
 
-    public function student_list(Request $request){
+    public function student_list(Request $request)
+    {
         $user = Auth::user();
-        $query = Student::where('profile_complete', 1)
+        [$view, $query] = $this->workspaceListQuery($request);
+        $selected = null;
+        if ($request->filled('student')) {
+            $allowed = (clone $query)->where('student.user_id', $request->query('student'))->first();
+            abort_unless($allowed, 404);
+            $selected = Student::with('country', 'province')->where('user_id', $allowed->user_id)->firstOrFail();
+        }
+        $student_profile = $this->workspaceListPage($query, $request);
+        $tab = $request->query('tab', 'overview');
+        abort_unless(in_array($tab, ['overview', 'documents', 'applications', 'payments', 'journey'], true), 404);
+        $details = collect();
+        $owner = null;
+        $account = null;
+        $visaStatuses = collect();
+        $courseStatuses = collect();
+        $latestApplication = null;
+        $journeyData = null;
+        if ($selected) {
+            $owner = User::find($selected->added_by);
+            $account = User::where('email', $selected->email)->first();
+            if ($tab === 'journey') {
+                abort_unless($user->can('oel_apply.view'), 403);
+                abort_unless($selected->profile_complete, 403);
+                $journeyView = app(LeadsManageCotroller::class)->aply_360($selected->user_id);
+                abort_unless($journeyView->name() === 'admin.leads.apply_oel_360', 404);
+                $journeyData = $journeyView->getData();
+            } elseif ($tab === 'documents') {
+                abort_unless($user->can('oel_360.view'), 403);
+                $details = DB::table('student_documents')->leftJoin('documents', 'student_documents.document_type', '=', 'documents.id')->where('student_documents.student_id', $selected->id)->select('documents.name', 'student_documents.image_url')->get();
+            } elseif ($tab === 'applications') {
+                abort_unless($user->can('application.view'), 403);
+                $allowedOwners = $user->hasRole('Administrator') ? null : [$user->id];
+                if ($user->hasRole('agent')) {
+                    $allowedOwners = User::where('added_by', $user->id)->whereNotIn('admin_type', ['student'])->pluck('id')->all();
+                    $allowedOwners[] = $user->id;
+                }
+                abort_if($allowedOwners !== null && !in_array($selected->added_by, $allowedOwners), 403);
+                $details = \App\Support\AppliedProgramQuery::forStudents(collect([$selected->user_id]))->orderByDesc('id')->limit(25)->get();
+                $programIds = $details->pluck('program_id');
+                $visaStatuses = DB::table('tbl_three_sixtee')->where('user_id', $selected->user_id)->whereIn('cource_details', $programIds)->get()->keyBy('cource_details');
+                $courseStatuses = DB::table('tbl_three_sixtee_course_status')->where('user_id', $selected->user_id)->whereIn('course_id', $programIds)->get()->keyBy('course_id');
+            } elseif ($tab === 'payments') {
+                abort_unless($user->can('application.view'), 403);
+                $allowedOwners = $user->hasRole('Administrator') ? null : [$user->id];
+                if ($user->hasRole('agent')) {
+                    $allowedOwners = User::where('added_by', $user->id)->whereNotIn('admin_type', ['student'])->pluck('id')->all();
+                    $allowedOwners[] = $user->id;
+                }
+                abort_if($allowedOwners !== null && !in_array($selected->added_by, $allowedOwners), 403);
+                $details = DB::table('payments')
+                    ->select('payments.*')
+                    ->selectSub(function ($query) {
+                        $query->from('payments_link')
+                            ->leftJoin('master_service', 'master_service.id', '=', 'payments_link.master_service')
+                            ->whereColumn('payments_link.fallowp_unique_id', 'payments.fallowp_unique_id')
+                            ->orderByDesc('payments_link.id')->limit(1)->select('master_service.name');
+                    }, 'service_name')
+                    ->where('payments.customer_email', $selected->email)->orderByDesc('payments.id')->get();
+            } else {
+                $details = EducationHistory::with('educationLevel')->where('student_id', $selected->id)->first();
+                $mayViewApplications = $user->hasRole('Administrator') || $selected->added_by == $user->id || ($user->hasRole('agent') && User::where('added_by', $user->id)->whereNotIn('admin_type', ['student'])->where('id', $selected->added_by)->exists());
+                if ($user->can('application.view') && $mayViewApplications) {
+                    $latestApplication = \App\Support\AppliedProgramQuery::forStudents(collect([$selected->user_id]))->orderByDesc('id')->first();
+                }
+            }
+        }
+        $agents = User::where('admin_type', 'agent')->when(!$user->hasRole('Administrator'), fn ($q) => $q->where('added_by', $user->id))->get(['id', 'name']);
+        $sub_agents = User::where('admin_type', 'sub_agent')->when(!$user->hasRole('Administrator'), fn ($q) => $q->where('added_by', $user->id))->get(['id', 'name']);
+        $master_service = MasterService::select('name', 'id')->get();
+        return view('admin.student.workspace', compact('view', 'tab', 'student_profile', 'selected', 'details', 'owner', 'account', 'agents', 'sub_agents', 'master_service', 'latestApplication', 'visaStatuses', 'courseStatuses', 'journeyData'));
+    }
+
+    public function workspaceListFragment(Request $request)
+    {
+        [$view, $query] = $this->workspaceListQuery($request);
+
+        return response()->view('admin.student.workspace-list', [
+            'student_profile' => $this->workspaceListPage($query, $request),
+            'selectedId' => $request->query('student'),
+        ])->header('Cache-Control', 'private, no-store');
+    }
+
+    private function workspaceListQuery(Request $request): array
+    {
+        $user = Auth::user();
+        $view = $request->query('view', $user->can('student.view') ? 'all' : 'ready');
+        abort_unless(in_array($view, ['all', 'ready', 'progress', 'visa', 'done', 'incomplete'], true), 404);
+        abort_unless($user->can($view === 'ready' ? 'oel_360.view' : 'student.view'), 403);
+
+        if ($view === 'ready') {
+            $scope = \App\Support\Oel360ReadyQuery::forUser($user);
+        } else {
+            [$scope] = $this->workspaceAllQuery(new Request(), true);
+        }
+
+        $query = Student::query()->whereIn('student.user_id', $scope->reorder()->select('student.user_id'));
+        $latest = DB::table('tbl_three_sixtee')->selectRaw('MAX(id)')->whereColumn('sba_id', 'student.id');
+        $query->leftJoin('tbl_three_sixtee as journey', 'journey.id', '=', $latest)
+            ->select('student.id', 'student.user_id', 'student.first_name', 'student.last_name', 'student.email',
+                'student.profile_complete', 'student.status_threesixty', 'journey.college', 'journey.visa_application',
+                'journey.hostel', 'journey.flight_no', 'journey.visa_apply_date', 'journey.fee_amount', 'journey.courses');
+        if ($request->filled('q')) {
+            $term = '%' . $request->input('q') . '%';
+            $query->where(function ($query) use ($term) {
+                $query->whereRaw("CONCAT_WS(' ', student.first_name, student.last_name) LIKE ?", [$term])
+                    ->orWhere('student.email', 'like', $term)
+                    ->orWhere('student.phone_number', 'like', $term);
+            });
+        }
+        foreach (['agent_id' => 'added_by_agent_id', 'subagent_id' => 'added_by', 'country_id' => 'country_id'] as $input => $column) {
+            if ($request->filled($input)) {
+                $query->where('student.' . $column, $request->input($input));
+            }
+        }
+        foreach (['from_date' => '>=', 'to_date' => '<='] as $input => $operator) {
+            if ($request->filled($input)) {
+                $query->whereDate('student.created_at', $operator, $request->input($input));
+            }
+        }
+        foreach (['first_name' => 'first_name', 'name' => 'first_name', 'email' => 'email', 'phone_number' => 'phone_number', 'zip' => 'zip'] as $input => $column) {
+            if ($request->filled($input)) {
+                $query->where('student.' . $column, 'like', '%' . $request->input($input) . '%');
+            }
+        }
+        if ($view === 'incomplete') {
+            $query->where(fn ($query) => $query->where('student.profile_complete', 0)->orWhereNull('student.profile_complete'));
+        } elseif ($view === 'visa') {
+            $query->where('journey.visa_application', 'Rejected');
+        } elseif ($view === 'done') {
+            $query->whereNotNull('journey.hostel')->where('journey.hostel', '!=', '');
+        } elseif ($view === 'progress') {
+            $query->where('student.profile_complete', 1)->whereNotNull('journey.college')->where('journey.college', '!=', '')
+                ->where(fn ($query) => $query->whereNull('journey.hostel')->orWhere('journey.hostel', ''))
+                ->where(fn ($query) => $query->whereNull('journey.visa_application')->orWhere('journey.visa_application', '!=', 'Rejected'));
+        }
+
+        return [$view, $query->orderByDesc('student.id')];
+    }
+
+    private function workspaceListPage($query, Request $request)
+    {
+        $students = $query->paginate(20);
+        $payments = DB::table('payments')->whereIn('customer_email', $students->pluck('email')->filter()->all())
+            ->groupBy('customer_email')
+            ->selectRaw("customer_email, COUNT(*) AS entries, SUM(CASE WHEN payment_status = 'success' THEN 1 ELSE 0 END) AS paid")
+            ->get()->keyBy('customer_email');
+        foreach ($students as $student) {
+            $payment = $payments->get($student->email);
+            $student->workspace_payment = !$payment ? 'No payments' : ($payment->paid == $payment->entries ? 'Paid' : 'Part paid');
+        }
+
+        return $students;
+    }
+
+    public function workspaceAllQuery(Request $request, bool $includeIncomplete = false)
+    {
+        $user = Auth::user();
+        $query = Student::query()->when(!$includeIncomplete, fn ($query) => $query->where('profile_complete', 1))
             ->orderBy('created_at', 'desc');
              
         // Filters (common for all roles)
@@ -176,7 +334,7 @@ class StudentController extends Controller
         // Role-based access control
         if ($user->hasRole('Administrator')) {
             // Admin sees everything
-            $student_profile = $query->paginate(15);
+            $perPage = 15;
         
         } elseif ($user->hasRole('visa')) {
             // Visa officer sees filtered joined data
@@ -215,7 +373,7 @@ class StudentController extends Controller
                     'student.profile_complete'
                 );
         
-            $student_profile = $query->paginate(15);
+            $perPage = 15;
         
         } elseif ($user->hasRole('Application Punching')) {
              
@@ -256,7 +414,7 @@ class StudentController extends Controller
                   'student.profile_complete'
               );
           
-          $student_profile = $query->paginate(12);
+          $perPage = 12;
           
         
         } else {
@@ -274,12 +432,19 @@ class StudentController extends Controller
             }
         
             $query->whereIn('added_by', $usersId);
-            $student_profile = $query->paginate(12);
+            $perPage = 12;
         }
         
-        $master_service = MasterService::select('name', 'id')->get();
-        return view('admin.student.index', compact('student_profile', 'master_service'));
-
+        if ($request->filled('q')) {
+            $term = '%' . $request->input('q') . '%';
+            $query->where(function ($q) use ($term) {
+                $q->where('student.first_name', 'like', $term)
+                    ->orWhere('student.last_name', 'like', $term)
+                    ->orWhere('student.email', 'like', $term)
+                    ->orWhere('student.phone_number', 'like', $term);
+            });
+        }
+        return [$query, $perPage];
     }
 
     /**
@@ -1299,6 +1464,13 @@ class StudentController extends Controller
 
     public function payment_link(Request $request)
     {
+        $validator = \Validator::make($request->all(), [
+            'amount' => ['required', 'numeric', 'gt:0'],
+            'discount' => ['nullable', 'numeric', 'min:0', 'lte:amount'],
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'message' => 'Check the amount and discount.', 'errors' => $validator->errors()], 422);
+        }
 
         if ($request->paymentMode == 'Online') {
             if (empty($request->selected_program)) {
@@ -1331,7 +1503,6 @@ class StudentController extends Controller
             ->where('payments_link.master_service', $request->master_service)
             ->where('payments_link.user_id', $request->student_id)
             ->where('payments.payment_status', 'success')
-            ->where('payments_link.program_id', $request->selected_program)        
             ->exists();
 
             if (!$masterServiceExists) {
@@ -1459,7 +1630,6 @@ class StudentController extends Controller
             ->where('payments_link.master_service', $request->master_service)
             ->where('payments_link.user_id', $request->student_id)
             ->where('payments.payment_status', 'success')
-            ->where('payments_link.program_id', $request->selected_program)        
             ->exists();
 
            if (!$masterServiceExists) {
