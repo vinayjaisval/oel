@@ -74,10 +74,13 @@ $progress = $summary;
                 <div class="kpi"><span>Due</span><b>&#8377;{{ number_format($totals->due ?? 0, 2) }}</b></div>
                 <div><span>Entries</span><strong>{{ $details->count() }}</strong></div>
             </div>
+            @if(count($duplicatePaymentIds))
+            <div class="note n-warn" style="margin-top:12px">Same service is marked paid twice &mdash; check for a duplicate entry.</div>
+            @endif
             <div class="tw"><table class="stack">
                 <thead><tr><th>Service</th><th>Amount</th><th>Mode</th><th>Date</th><th>Status</th></tr></thead>
                 <tbody>@forelse($details as $entry)
-                <tr><td data-l="Service">{{ $entry->service_name ?: '—' }}</td><td data-l="Amount">₹{{ number_format((float) $entry->amount, 2) }}</td><td data-l="Mode">{{ $entry->payment_method ?: '—' }}</td><td data-l="Date">{{ $entry->created_at ?: '—' }}</td><td data-l="Status"><span class="pill p-new">{{ $entry->payment_status ?: 'Unknown' }}</span></td></tr>
+                <tr><td data-l="Service">{{ $entry->service_name ?: '—' }}</td><td data-l="Amount">₹{{ number_format((float) $entry->amount, 2) }}</td><td data-l="Mode">{{ $entry->payment_method ?: '—' }}</td><td data-l="Date">{{ $entry->created_at ?: '—' }}</td><td data-l="Status"><span class="pill p-new">{{ $entry->payment_status ?: 'Unknown' }}</span>@if(in_array($entry->id, $duplicatePaymentIds)) <span class="pill p-warn">Possible duplicate</span>@endif</td></tr>
                 @empty <tr><td colspan="5">No payment records available.</td></tr> @endforelse</tbody>
             </table></div>
             @if($selected->email)<div class="workspace-add-payment"><h3>Add payment</h3><button type="button" class="payment_model" student-id="{{ $selected->user_id }}" data-bs-toggle="offcanvas" data-bs-target="#gmat">Add payment</button></div>@endif

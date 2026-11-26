@@ -180,6 +180,7 @@ class StudentController extends Controller
         $summary = null;
         $totals = null;
         $universities = collect();
+        $duplicatePaymentIds = [];
         if ($selected) {
             $summary = DB::table('tbl_three_sixtee')->where('sba_id', $selected->id)->orderByDesc('id')->first([
                 'college', 'courses', 'application', 'cource_details', 'joining_date', 'fee_amount', 'visa_apply_date',
@@ -231,6 +232,7 @@ class StudentController extends Controller
                 $details = $this->paymentLedgerQuery($selected->email)
                     ->select(
                         'payments_link.id',
+                        'payments_link.master_service as master_service_id',
                         'payments_link.amount',
                         'payments_link.payment_mode as payment_method',
                         'payments_link.created_at',
@@ -238,6 +240,11 @@ class StudentController extends Controller
                         DB::raw("IF(payments_link.payment_type_remarks = 'applied_program_pay_later', 'pending', 'success') as payment_status")
                     )
                     ->orderByDesc('payments_link.id')->get();
+                $duplicatePaymentIds = $details->where('payment_status', 'success')
+                    ->groupBy(fn ($entry) => $entry->master_service_id . '|' . $entry->amount)
+                    ->filter(fn ($group) => $group->count() > 1)
+                    ->flatMap(fn ($group) => $group->pluck('id'))
+                    ->all();
             } else {
                 $details = EducationHistory::with('educationLevel')->where('student_id', $selected->id)->first();
                 $mayViewApplications = $user->hasRole('Administrator') || $selected->added_by == $user->id || ($user->hasRole('agent') && User::where('added_by', $user->id)->whereNotIn('admin_type', ['student'])->where('id', $selected->added_by)->exists());
@@ -246,7 +253,7 @@ class StudentController extends Controller
                 }
             }
         }
-        $caseData = compact('view', 'tab', 'step', 'selected', 'details', 'owner', 'account', 'latestApplication', 'visaStatuses', 'courseStatuses', 'journeyData', 'summary', 'totals', 'universities');
+        $caseData = compact('view', 'tab', 'step', 'selected', 'details', 'owner', 'account', 'latestApplication', 'visaStatuses', 'courseStatuses', 'journeyData', 'summary', 'totals', 'universities', 'duplicatePaymentIds');
         if ($caseId !== null) {
             return response()->view('admin.student.workspace-case', $caseData)->header('Cache-Control', 'private, no-store');
         }
@@ -330,13 +337,15 @@ class StudentController extends Controller
     private function workspaceListPage($query, Request $request)
     {
         $students = $query->paginate(20);
-        $payments = DB::table('payments_link')->whereIn('email', $students->pluck('email')->filter()->all())
+        $normalizedEmails = $students->pluck('email')->filter()->map(fn ($email) => mb_strtolower(trim($email)))->unique()->values()->all();
+        $payments = DB::table('payments_link')
             ->whereNotNull('master_service')
-            ->groupBy('email')
-            ->selectRaw("email, COUNT(*) AS entries, SUM(CASE WHEN payment_type_remarks = 'applied_program_pay_later' THEN 0 ELSE 1 END) AS paid")
-            ->get()->keyBy('email');
+            ->whereIn(DB::raw('LOWER(TRIM(email))'), $normalizedEmails)
+            ->groupBy(DB::raw('LOWER(TRIM(email))'))
+            ->selectRaw("LOWER(TRIM(email)) AS normalized_email, COUNT(*) AS entries, SUM(CASE WHEN payment_type_remarks = 'applied_program_pay_later' THEN 0 ELSE 1 END) AS paid")
+            ->get()->keyBy('normalized_email');
         foreach ($students as $student) {
-            $payment = $payments->get($student->email);
+            $payment = $student->email ? $payments->get(mb_strtolower(trim($student->email))) : null;
             $student->workspace_payment = !$payment ? 'No payments' : ($payment->paid == $payment->entries ? 'Paid' : 'Part paid');
         }
 
@@ -346,16 +355,17 @@ class StudentController extends Controller
     /**
      * The OEL 360 payment ledger. This is the same payments_link rows the old
      * payment drawer read (filtered by student email, not user_id - payments_link.user_id
-     * is not the student's user_id). A row is "due" when it came from the student-facing
-     * "pay later" apply flow (payment_type_remarks = applied_program_pay_later); every other
-     * row was entered by staff after collecting the amount (Cash/Cheque/Bank/Online), so it
-     * counts as received.
+     * is not the student's user_id, it doesn't match any student/user/lead id). The match is
+     * case- and whitespace-insensitive because the drawer's emails aren't normalized on write.
+     * A row is "due" when it came from the student-facing "pay later" apply flow
+     * (payment_type_remarks = applied_program_pay_later); every other row was entered by staff
+     * after collecting the amount (Cash/Cheque/Bank/Online), so it counts as received.
      */
     private function paymentLedgerQuery(string $email)
     {
         return DB::table('payments_link')
             ->leftJoin('master_service', 'master_service.id', '=', 'payments_link.master_service')
-            ->where('payments_link.email', $email)
+            ->whereRaw('LOWER(TRIM(payments_link.email)) = LOWER(TRIM(?))', [$email])
             ->whereNotNull('payments_link.master_service');
     }
 
