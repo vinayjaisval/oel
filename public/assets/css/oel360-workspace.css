@@ -40,7 +40,7 @@
 .oel360 .it .em{font-size:12px;color:var(--muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .oel360 .it .r{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
 .oel360 .pill{font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;white-space:nowrap}
-.oel360 .p-ok{background:var(--okBg);color:var(--ok)}.oel360 .p-warn{background:var(--warnBg);color:var(--warn)}.oel360 .p-bad{background:var(--badBg);color:var(--bad)}.oel360 .p-new{background:var(--navyBg);color:var(--navy)}
+.oel360 .p-ok{background:var(--okBg);color:var(--ok)}.oel360 .p-warn{background:var(--warnBg);color:var(--warn)}.oel360 .p-bad{background:var(--badBg);color:var(--bad)}.oel360 .p-new{background:var(--navyBg);color:var(--navy)}.oel360 .p-grey{background:var(--line);color:var(--muted)}
 .oel360 .mini{font-size:11px;color:var(--muted)}
 .oel360 .empty{padding:24px;text-align:center;color:var(--muted)}
 .oel360 /* case */

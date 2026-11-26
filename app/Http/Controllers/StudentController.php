@@ -181,6 +181,8 @@ class StudentController extends Controller
         $totals = null;
         $universities = collect();
         $duplicatePaymentIds = [];
+        $masterServices = collect();
+        $paymentUniversities = collect();
         if ($selected) {
             $summary = DB::table('tbl_three_sixtee')->where('sba_id', $selected->id)->orderByDesc('id')->first([
                 'college', 'courses', 'application', 'cource_details', 'joining_date', 'fee_amount', 'visa_apply_date',
@@ -234,6 +236,8 @@ class StudentController extends Controller
                         'payments_link.id',
                         'payments_link.master_service as master_service_id',
                         'payments_link.amount',
+                        'payments_link.discount',
+                        'payments_link.remarks',
                         'payments_link.payment_mode as payment_method',
                         'payments_link.created_at',
                         'master_service.name as service_name',
@@ -245,6 +249,22 @@ class StudentController extends Controller
                     ->filter(fn ($group) => $group->count() > 1)
                     ->flatMap(fn ($group) => $group->pluck('id'))
                     ->all();
+                $masterServices = MasterService::select('id', 'name', 'amount')->orderBy('name')->get();
+                $paymentUniversities = collect();
+                if ($summary?->college) {
+                    $universityIds = array_filter(explode(',', $summary->college));
+                    $courseIds = array_filter(explode(',', $summary->courses ?? ''));
+                    $coursesByUniversity = $courseIds
+                        ? DB::table('program')->whereIn('id', $courseIds)->get()->keyBy('school_id')
+                        : collect();
+                    $paymentUniversities = DB::table('universities')->whereIn('id', $universityIds)->get()
+                        ->map(fn ($uni) => (object) [
+                            'id' => $uni->id,
+                            'name' => $uni->university_name,
+                            'program_id' => $coursesByUniversity->get($uni->id)?->id,
+                            'program_name' => $coursesByUniversity->get($uni->id)?->name,
+                        ]);
+                }
             } else {
                 $details = EducationHistory::with('educationLevel')->where('student_id', $selected->id)->first();
                 $mayViewApplications = $user->hasRole('Administrator') || $selected->added_by == $user->id || ($user->hasRole('agent') && User::where('added_by', $user->id)->whereNotIn('admin_type', ['student'])->where('id', $selected->added_by)->exists());
@@ -253,7 +273,7 @@ class StudentController extends Controller
                 }
             }
         }
-        $caseData = compact('view', 'tab', 'step', 'selected', 'details', 'owner', 'account', 'latestApplication', 'visaStatuses', 'courseStatuses', 'journeyData', 'summary', 'totals', 'universities', 'duplicatePaymentIds');
+        $caseData = compact('view', 'tab', 'step', 'selected', 'details', 'owner', 'account', 'latestApplication', 'visaStatuses', 'courseStatuses', 'journeyData', 'summary', 'totals', 'universities', 'duplicatePaymentIds', 'masterServices', 'paymentUniversities');
         if ($caseId !== null) {
             return response()->view('admin.student.workspace-case', $caseData)->header('Cache-Control', 'private, no-store');
         }
@@ -1526,222 +1546,86 @@ class StudentController extends Controller
 
 
 
+    /**
+     * Add an OEL 360 payment ledger entry (the Payments tab's "Add payment" form).
+     * "Pay later" only records the amount owed (payments_link, no payments row); every
+     * other mode records it as collected (payments_link + a matching payments row), mirroring
+     * how Cash/Cheque/Bank entries worked before. University Application Fee is the only
+     * service that needs a university + program, since it's tied to a specific application.
+     */
     public function payment_link(Request $request)
     {
         $validator = \Validator::make($request->all(), [
+            'student_id' => ['required'],
+            'master_service' => ['required'],
             'amount' => ['required', 'numeric', 'gt:0'],
             'discount' => ['nullable', 'numeric', 'min:0', 'lte:amount'],
+            'paymentMode' => ['required', 'in:UPI,Card,Bank transfer,Cash,Pay later'],
         ]);
         if ($validator->fails()) {
-            return response()->json(['status' => false, 'message' => 'Check the amount and discount.', 'errors' => $validator->errors()], 422);
+            return response()->json(['status' => false, 'message' => 'Check the fields and try again.', 'errors' => $validator->errors()], 422);
         }
 
-        if ($request->paymentMode == 'Online') {
-            if (empty($request->selected_program)) {
-                return response()->json(['status' => false, 'message' => 'Program is required'], 422);
-            }
-            if (empty($request->master_service)) {
-                return response()->json(['status' => false, 'message' => 'Master service is required'], 422);
-            }
+        $student = Student::where('user_id', $request->student_id)->first();
+        if (!$student || !$student->email) {
+            return response()->json(['status' => false, 'message' => 'Student not found.'], 404);
+        }
+        $this->authorizePaymentAccess($student);
 
+        $service = MasterService::find($request->master_service);
+        if (!$service) {
+            return response()->json(['status' => false, 'message' => 'Unknown service.', 'errors' => ['master_service' => ['Unknown service.']]], 422);
+        }
+        if ($service->name === 'University Application Fee' && (empty($request->selected_university) || empty($request->selected_program))) {
+            return response()->json(['status' => false, 'message' => 'University and program are required for this service.', 'errors' => ['selected_program' => ['University and program are required for this service.']]], 422);
+        }
 
-            $student_id = $request->student_id;
-            if ($request->discount) {
-                $discount = $request->discount;
-                $amount = $request->amount - $discount;
-            } else {
-                $amount = $request->amount;
-            }
-          
-
-            if (empty($student_id)) {
-                return response()->json(['status' => false, 'message' => 'Student id is required'], 422);
-            }
-               
-            $controller = new LeadsManageCotroller();
-            $uniqueId     = $controller->uniqidgenrate();
-            $token         = $controller->generateToken();
-            $student    = Student::where('user_id', $request->student_id)->first();
-
-            $masterServiceExists = PaymentsLink::join('payments', 'payments.fallowp_unique_id', '=', 'payments_link.fallowp_unique_id')
-            ->where('payments_link.master_service', $request->master_service)
-            ->where('payments_link.user_id', $request->student_id)
-            ->where('payments.payment_status', 'success')
+        $payLater = $request->paymentMode === 'Pay later';
+        $alreadyPaid = $this->paymentLedgerQuery($student->email)
+            ->where('payments_link.master_service', $service->id)
+            ->where(fn ($query) => $query->whereNull('payments_link.payment_type_remarks')->orWhere('payments_link.payment_type_remarks', '!=', 'applied_program_pay_later'))
             ->exists();
-
-            if (!$masterServiceExists) {
-                $paymentLinkData = [
-                    'token' => $token,
-                    'user_id' => $request->student_id,
-                    'program_id' => $request->selected_program,
-                    'selected_university' => $request->selected_university,
-                    'master_service' => $request->master_service,
-                    'sub_service' => implode(',', $request->sub_service ?? []),                        
-                    'discount' => $request->discount ?? 0,
-                    'is_discount' => $request->is_discount,
-                    'email' => $student->email,
-                    'remarks' => $request->remarks,
-                    'payment_mode' => $request->paymentMode ?? null,
-                    'payment_mode_remarks' => $request->paymentModeRemarks ?? null,
-                    'bankName' => $request->bankName ?? null,
-                    'accountNo' => $request->accountNo ?? null,
-                    'ifscCode' => $request->ifscCode ?? null,
-                    'amount' => $amount,
-                    'expired_in' => date('Y-m-d H:i:s', strtotime('+10 days')),
-                    'fallowp_unique_id' => $uniqueId,
-                ];
-                $attributes = [
-                    'program_id' => $request->selected_program,
-                    'user_id' => $request->student_id,
-                    'master_service' => $request->master_service,
-
-                ];
-
-
-                $data = PaymentsLink::updateOrCreate($attributes, $paymentLinkData);
-
-                $paymentData = [
-                    'name' => $student->first_name,
-                    'payment_link' => url('/pay-now/c?token=' . $token),
-                    'amount' => $amount,
-                ];
-
-                $attachmentPath = public_path('frontend/studentPraposel.pdf');
-
-                $attachmentName = 'studentPraposel.pdf';
-                // Mail::to($student->email)->send(new PaymentLinkEmail($paymentData));
-
-                // Mail::to($student->email)->send(new PaymentLinkEmail($paymentData, $attachmentPath, $attachmentName));
-               
-                Mail::mailer('bravo')->to($student->email)->send(new PaymentLinkEmail($paymentData, $attachmentPath, $attachmentName));
-              
-        }
-        else {
-            return response()->json(['status' => false, 'message' => 'Application fee is all Ready exist'], 400);
-            
+        if (!$payLater && $alreadyPaid) {
+            return response()->json(['status' => false, 'message' => $service->name . ' is already paid. Delete the old entry first if this is a correction.'], 422);
         }
 
-    }
+        $discount = (float) ($request->discount ?? 0);
+        $amount = (float) $request->amount - $discount;
 
-       
+        $controller = new LeadsManageCotroller();
+        $data = PaymentsLink::create([
+            'token' => $controller->generateToken(),
+            'user_id' => $request->student_id,
+            'program_id' => $request->selected_program ?: null,
+            'selected_university' => $request->selected_university ?: null,
+            'master_service' => $service->id,
+            'sub_service' => '',
+            'discount' => $discount,
+            'is_discount' => $discount > 0 ? 1 : 0,
+            'email' => $student->email,
+            'remarks' => $request->remarks,
+            'payment_mode' => $payLater ? null : $request->paymentMode,
+            'payment_type_remarks' => $payLater ? 'applied_program_pay_later' : '',
+            'amount' => $amount,
+            'expired_in' => date('Y-m-d H:i:s', strtotime('+10 days')),
+            'fallowp_unique_id' => $controller->uniqidgenrate(),
+        ]);
 
-        if ($request->paymentMode == 'Cash' || $request->paymentMode == 'Cheque' || $request->paymentMode == 'Bank') {
-            if ($request->discount) {
-                $discount = $request->discount;
-                $amount = $request->amount - $discount;
-            } else {
-                $discount = 0;
-                $amount = $request->amount;
-            }
-
-
-            if (empty($request->selected_program)) {
-                return response()->json(['status' => false, 'message' => 'Program is required'], 422);
-            }
-            if (empty($request->master_service)) {
-                return response()->json(['status' => false, 'message' => 'Master service is required'], 422);
-            }
-
-
-            $student_id = $request->student_id;
-            if ($request->discount) {
-                $discount = $request->discount;
-                $amount = $request->amount - $discount;
-            } else {
-                $amount = $request->amount;
-            }
-
-
-            if (empty($student_id)) {
-                return response()->json(['status' => false, 'message' => 'Student id is required'], 422);
-            }
-
-            $controller = new LeadsManageCotroller();
-            $uniqueId     = $controller->uniqidgenrate();
-            $token         = $controller->generateToken();
-            $student    = Student::where('user_id', $request->student_id)->first();
-
-
-            $paymentLinkData = [
-                'token' => $token,
+        if (!$payLater) {
+            Payment::create([
+                'payment_id' => $data->id,
+                'payment_method' => $request->paymentMode,
+                'fallowp_unique_id' => $data->fallowp_unique_id,
+                'customer_name' => trim(($student->first_name ?? '') . ' ' . ($student->last_name ?? '')),
                 'user_id' => $request->student_id,
-                'program_id' => $request->selected_program,
-                'selected_university' => $request->selected_university,
-                'master_service' => $request->master_service,
-                'sub_service' => implode(',', $request->sub_service ?? []),
-                'sub_service' => implode(',', $request->sub_service),
-                'discount' => $request->discount ?? 0,
-                'is_discount' => $request->is_discount,
-                'email' => $student->email,
-                'remarks' => $request->remarks,
-                'payment_mode' => $request->paymentMode ?? null,
-                'payment_mode_remarks' => $request->paymentModeRemarks ?? null,
-                'bankName' => $request->bankName ?? null,
-                'accountNo' => $request->accountNo ?? null,
-                'ifscCode' => $request->ifscCode ?? null,
+                'customer_email' => $student->email,
                 'amount' => $amount,
-                'expired_in' => date('Y-m-d H:i:s', strtotime('+10 days')),
-                'fallowp_unique_id' => $uniqueId,
-            ];
-            $attributes = [
-                'program_id' => $request->selected_program,
-                'user_id' => $request->student_id,
-            ];
+                'payment_status' => 'success',
+                'json_response' => 'null',
+            ]);
+        }
 
-        //    dd($request->all());
-            
-            $masterServiceExists = PaymentsLink::join('payments', 'payments.fallowp_unique_id', '=', 'payments_link.fallowp_unique_id')
-            ->where('payments_link.master_service', $request->master_service)
-            ->where('payments_link.user_id', $request->student_id)
-            ->where('payments.payment_status', 'success')
-            ->exists();
-
-           if (!$masterServiceExists) {
-
-                // $data = PaymentsLink::updateOrCreate($attributes, $paymentLinkData);
-                $data = PaymentsLink::updateOrCreate([
-                    'token' => $token,
-                    'user_id' => $request->student_id,
-                    'program_id' => $request->selected_program,
-                    'selected_university' => $request->selected_university,
-                    'master_service' => $request->master_service,
-                    'sub_service' => implode(',', $request->sub_service ?? []),
-                    'discount' => $request->discount ?? 0,
-                    'is_discount' => $request->is_discount,
-                    'email' => $student->email,
-                    'remarks' => $request->remarks,
-                    'payment_mode' => $request->paymentMode ?? null,
-                    'payment_mode_remarks' => $request->paymentModeRemarks ?? null,
-                    'bankName' => $request->bankName ?? null,
-                    'accountNo' => $request->accountNo ?? null,
-                    'ifscCode' => $request->ifscCode ?? null,
-                    'amount' => $amount,
-                    'expired_in' => date('Y-m-d H:i:s', strtotime('+10 days')),
-                    'fallowp_unique_id' => $uniqueId,
-                ]);
-
-                Payment::updateOrCreate([
-                    'payment_id' => $data->id ?? null,
-                    'payment_method' => $request->payment_mode ?? null,
-                    'currency' => null,
-                    'fallowp_unique_id' => $data->fallowp_unique_id,
-                    'customer_name' => $request->name ?? null,
-                    'user_id' => $request->student_id ?? null,
-                    'customer_email' => $student->email ?? null,
-                    'amount' => $amount ?? null,
-                    'payment_status' => 'success',  // Fixed status to 'success'
-                    'json_response' => 'null',
-                ]);
-          }
-
-            else {
-                return response()->json(['status' => false, 'message' => 'Application fee is all Ready exist'], 400);
-                
-            }
-       }
-
-
-        return response()->json(['status' => true, 'message' => 'Payment link sent successfully', 'student_id' => $request->student_id]);
+        return response()->json(['status' => true, 'success' => true, 'message' => 'Payment added.', 'id' => $data->id]);
     }
 
   
@@ -1785,12 +1669,67 @@ class StudentController extends Controller
     public function delete_payment_link(Request $request)
     {
         $payment = PaymentsLink::find($request->score_id);
-        if ($payment) {
-            $payment->delete();
-            return response()->json(['success' => 'Payment link deleted successfully']);
-        } else {
-            return response()->json(['error' => 'Payment link not found']);
+        if (!$payment) {
+            return response()->json(['success' => false, 'message' => 'Payment entry not found.'], 404);
         }
+        if ($student = Student::where('email', $payment->email)->first()) {
+            $this->authorizePaymentAccess($student);
+        }
+        Payment::where('fallowp_unique_id', $payment->fallowp_unique_id)->delete();
+        $payment->delete();
+
+        return response()->json(['success' => true, 'message' => 'Payment entry deleted.']);
+    }
+
+    public function markPaymentPaid(Request $request)
+    {
+        $request->validate(['id' => ['required']]);
+        $payment = PaymentsLink::find($request->id);
+        if (!$payment) {
+            return response()->json(['success' => false, 'message' => 'Payment entry not found.'], 404);
+        }
+        $student = Student::where('email', $payment->email)->first();
+        if ($student) {
+            $this->authorizePaymentAccess($student);
+        }
+        if ($payment->payment_type_remarks !== 'applied_program_pay_later') {
+            return response()->json(['success' => false, 'message' => 'This entry is already paid.'], 422);
+        }
+        $payment->payment_type_remarks = '';
+        $payment->payment_mode = $payment->payment_mode ?: 'UPI';
+        $payment->save();
+        Payment::create([
+            'payment_id' => $payment->id,
+            'payment_method' => $payment->payment_mode,
+            'fallowp_unique_id' => $payment->fallowp_unique_id,
+            'user_id' => $payment->user_id,
+            'customer_email' => $payment->email,
+            'amount' => $payment->amount,
+            'payment_status' => 'success',
+            'json_response' => 'null',
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Marked as paid.']);
+    }
+
+    /**
+     * Shared ownership gate for the OEL 360 payment ledger (add/mark paid/delete) -
+     * same rule as the Payments tab itself: Administrators see everything, agents see
+     * their own sub-tree, everyone else only their own students.
+     */
+    private function authorizePaymentAccess(Student $student): void
+    {
+        $user = Auth::user();
+        abort_unless($user->can('application.view'), 403);
+        if ($user->hasRole('Administrator')) {
+            return;
+        }
+        $allowedOwners = [$user->id];
+        if ($user->hasRole('agent')) {
+            $allowedOwners = User::where('added_by', $user->id)->whereNotIn('admin_type', ['student'])->pluck('id')->all();
+            $allowedOwners[] = $user->id;
+        }
+        abort_unless(in_array($student->added_by, $allowedOwners), 403);
     }
 
 

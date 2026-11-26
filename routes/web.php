@@ -167,6 +167,7 @@ Route::get('check-eligibility', [FrontendController::class, 'check_eligibility']
     Route::post('send-payment-link', [StudentController::class, 'payment_link'])->name('send-payment-link');
     Route::get('payment_link_details', [StudentController::class, 'payment_link_details'])->name('fetch-student-payment');
     Route::get('delete-payment-link', [StudentController::class, 'delete_payment_link'])->name('delete-payment-link');
+    Route::post('mark-payment-paid', [StudentController::class, 'markPaymentPaid'])->name('mark-payment-paid');
     Route::get('/get-program', [StudentController::class, 'get_program'])->name('get-program');
 
     // student mobile number verfication

@@ -69,20 +69,78 @@ $progress = $summary;
             </div>
             @else
             @if($tab === 'payments')
-            <div class="workspace-payment-summary" aria-label="Payment summary">
-                <div><span>Received</span><strong>&#8377;{{ number_format($totals->paid ?? 0, 2) }}</strong></div>
+            @php
+                $statusLabels = ['success' => ['Paid', 'p-ok'], 'free' => ['Free', 'p-grey'], 'pending' => ['Pay later', 'p-warn'], 'failed' => ['Failed', 'p-bad']];
+                $sbaIdForPay = $selected->user_id;
+            @endphp
+            <div class="g" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+                <div class="kpi"><span>Received</span><b>&#8377;{{ number_format($totals->paid ?? 0, 2) }}</b></div>
                 <div class="kpi"><span>Due</span><b>&#8377;{{ number_format($totals->due ?? 0, 2) }}</b></div>
-                <div><span>Entries</span><strong>{{ $details->count() }}</strong></div>
+                <div class="kpi"><span>Entries</span><b>{{ $details->count() }}</b></div>
             </div>
             @if(count($duplicatePaymentIds))
             <div class="note n-warn" style="margin-top:12px">Same service is marked paid twice &mdash; check for a duplicate entry.</div>
             @endif
-            <div class="tw"><table class="stack">
-                <thead><tr><th>Service</th><th>Amount</th><th>Mode</th><th>Date</th><th>Status</th></tr></thead>
+            <div class="tw" style="margin-top:14px"><table class="stack" data-payment-table>
+                <thead><tr><th>Service</th><th class="n">Amount</th><th>Mode</th><th>Date</th><th>Status</th><th></th></tr></thead>
                 <tbody>@forelse($details as $entry)
-                <tr><td data-l="Service">{{ $entry->service_name ?: '—' }}</td><td data-l="Amount">₹{{ number_format((float) $entry->amount, 2) }}</td><td data-l="Mode">{{ $entry->payment_method ?: '—' }}</td><td data-l="Date">{{ $entry->created_at ?: '—' }}</td><td data-l="Status"><span class="pill p-new">{{ $entry->payment_status ?: 'Unknown' }}</span>@if(in_array($entry->id, $duplicatePaymentIds)) <span class="pill p-warn">Possible duplicate</span>@endif</td></tr>
-                @empty <tr><td colspan="5">No payment records available.</td></tr> @endforelse</tbody>
+                @php [$statusLabel, $statusClass] = $statusLabels[$entry->payment_status] ?? [ucfirst($entry->payment_status ?: 'Unknown'), 'p-new']; @endphp
+                <tr data-payment-row="{{ $entry->id }}">
+                    <td data-l="Service">{{ $entry->service_name ?: 'Unknown service' }}</td>
+                    <td data-l="Amount" class="n">&#8377;{{ number_format((float) $entry->amount, 2) }}</td>
+                    <td data-l="Mode">{{ $entry->payment_method ?: '—' }}</td>
+                    <td data-l="Date">{{ $entry->created_at ?: '—' }}</td>
+                    <td data-l="Status"><span class="pill {{ $statusClass }}">{{ $statusLabel }}</span>@if(in_array($entry->id, $duplicatePaymentIds)) <span class="pill p-warn">Possible duplicate</span>@endif</td>
+                    <td data-l="">
+                        @if($entry->payment_status === 'pending')<button type="button" class="btn" data-mark-paid="{{ $entry->id }}">Mark paid</button>@endif
+                        <button type="button" class="btn" data-view-payment="{{ $entry->id }}">View</button>
+                        <button type="button" class="btn" data-delete-payment="{{ $entry->id }}" aria-label="Delete entry">Delete</button>
+                    </td>
+                </tr>
+                <tr data-payment-detail="{{ $entry->id }}" hidden><td colspan="6"><div class="note n-info">Remark: {{ $entry->remarks ?: '—' }} &middot; Discount: &#8377;{{ number_format((float) ($entry->discount ?? 0), 2) }} &middot; Entry #{{ $entry->id }}</div></td></tr>
+                @empty <tr><td colspan="6" class="empty">No payments yet.</td></tr> @endforelse</tbody>
             </table></div>
+            <form data-add-payment-form class="card" style="margin-top:16px;padding:14px;display:flex;flex-direction:column;gap:12px" data-sba-id="{{ $sbaIdForPay }}" novalidate>
+                <h4 style="margin:0">Add payment</h4>
+                <div class="g">
+                    <div class="fld"><label for="psvc" class="req">Service</label>
+                        <select class="inp" id="psvc" name="master_service" data-pay-service>
+                            <option value="">Select</option>
+                            @foreach($masterServices as $service)
+                                <option value="{{ $service->id }}" data-amount="{{ $service->amount }}" data-name="{{ $service->name }}">{{ $service->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="fld"><label for="pamt" class="req">Amount (&#8377;)</label><input class="inp" id="pamt" name="amount" type="number" min="0" step="0.01"></div>
+                    <div class="fld"><label for="pmode" class="req">Payment mode</label>
+                        <select class="inp" id="pmode" name="paymentMode">
+                            <option value="">Select</option>
+                            <option value="UPI">UPI</option>
+                            <option value="Card">Card</option>
+                            <option value="Bank transfer">Bank transfer</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Pay later">Pay later</option>
+                        </select>
+                    </div>
+                    <div class="fld"><label for="pdisc">Discount (&#8377;)</label><input class="inp" id="pdisc" name="discount" type="number" min="0" step="0.01" placeholder="0"></div>
+                    <div class="fld" data-pay-university-field hidden><label for="psvcuni" class="req">University</label>
+                        <select class="inp" id="psvcuni" name="selected_university" data-pay-university>
+                            <option value="">Select</option>
+                            @foreach($paymentUniversities as $uni)
+                                <option value="{{ $uni->id }}" data-program="{{ $uni->program_id }}" data-program-name="{{ $uni->program_name }}">{{ $uni->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="fld" data-pay-program-field hidden><label for="psvcprog" class="req">Program</label>
+                        <input class="inp" id="psvcprog" type="text" readonly>
+                        <input type="hidden" name="selected_program" data-pay-program>
+                    </div>
+                </div>
+                <div class="fld"><label for="prem">Remark</label><input class="inp" id="prem" name="remarks"></div>
+                <div class="note n-bad" data-pay-error hidden></div>
+                <input type="hidden" name="student_id" value="{{ $sbaIdForPay }}">
+                <div><button class="btn go" type="submit">Add payment</button></div>
+            </form>
             @else
             <article class="workspace-detail"><h3>{{ ['documents'=>'Documents','applications'=>'Applications & Visa'][$tab] }}</h3>
                 @forelse($details as $entry)

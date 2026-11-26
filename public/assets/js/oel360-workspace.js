@@ -250,6 +250,74 @@
         }
     }
 
+    function refreshCase() {
+        document.dispatchEvent(new CustomEvent('apply360:saved'));
+        loadCase(new URL(location.href));
+    }
+
+    async function addPayment(form) {
+        const button = form.querySelector('button[type="submit"]');
+        const errorEl = form.querySelector('[data-pay-error]');
+        button?.setAttribute('disabled', '');
+        if (errorEl) errorEl.hidden = true;
+        try {
+            const response = await fetch(root.dataset.savePaymentEndpoint, {
+                method: 'POST',
+                headers: {'X-CSRF-TOKEN': csrfToken(), 'Accept': 'application/json'},
+                body: new FormData(form),
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || !data.status) {
+                const message = data.message || (data.errors && Object.values(data.errors)[0]?.[0]) || 'Check the fields and try again.';
+                if (errorEl) { errorEl.hidden = false; errorEl.textContent = message; }
+                toast(message);
+                return;
+            }
+            toast('Payment added');
+            refreshCase();
+        } catch (error) {
+            if (errorEl) { errorEl.hidden = false; errorEl.textContent = 'Save failed. Try again.'; }
+            toast('Save failed');
+        } finally {
+            button?.removeAttribute('disabled');
+        }
+    }
+
+    async function markPaymentPaid(button) {
+        button.setAttribute('disabled', '');
+        try {
+            const response = await fetch(root.dataset.markPaidEndpoint, {
+                method: 'POST',
+                headers: {'X-CSRF-TOKEN': csrfToken(), 'Accept': 'application/json'},
+                body: new URLSearchParams({id: button.dataset.markPaid}),
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || !data.success) throw new Error(data.message || 'Failed');
+            toast('Marked as paid');
+            refreshCase();
+        } catch (error) {
+            toast(error.message || 'Could not mark as paid');
+            button.removeAttribute('disabled');
+        }
+    }
+
+    async function deletePayment(button) {
+        if (!confirm('Delete this payment entry? This cannot be undone.')) return;
+        button.setAttribute('disabled', '');
+        try {
+            const url = new URL(root.dataset.deletePaymentEndpoint);
+            url.searchParams.set('score_id', button.dataset.deletePayment);
+            const response = await fetch(url, {headers: {'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest'}});
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || !data.success) throw new Error(data.message || 'Failed');
+            toast('Entry deleted');
+            refreshCase();
+        } catch (error) {
+            toast(error.message || 'Delete failed');
+            button.removeAttribute('disabled');
+        }
+    }
+
     function caseKey(url) {
         return JSON.stringify(['view','student','tab','step'].map(key => url.searchParams.get(key)));
     }
@@ -419,12 +487,34 @@
             if (acceptedNote) acceptedNote.style.display = target.value === 'Accepted' ? '' : 'none';
             return;
         }
+        if (target.matches('[data-pay-service]')) {
+            const option = target.selectedOptions[0];
+            const amountField = casePanel.querySelector('#pamt');
+            if (amountField && !amountField.value && option?.dataset.amount) amountField.value = option.dataset.amount;
+            const needsUniversity = option?.dataset.name === 'University Application Fee';
+            casePanel.querySelector('[data-pay-university-field]')?.toggleAttribute('hidden', !needsUniversity);
+            casePanel.querySelector('[data-pay-program-field]')?.toggleAttribute('hidden', !needsUniversity);
+            return;
+        }
+        if (target.matches('[data-pay-university]')) {
+            const option = target.selectedOptions[0];
+            const programField = casePanel.querySelector('#psvcprog');
+            const programInput = casePanel.querySelector('[data-pay-program]');
+            if (programField) programField.value = option?.dataset.programName || '';
+            if (programInput) programInput.value = option?.dataset.program || '';
+            return;
+        }
         if (target.form === filters && target.name !== 'q') loadList();
     });
     root.addEventListener('submit', event => {
         if (event.target.matches('[data-journey-form]')) {
             event.preventDefault();
             saveJourneyStep(event.target);
+            return;
+        }
+        if (event.target.matches('[data-add-payment-form]')) {
+            event.preventDefault();
+            addPayment(event.target);
             return;
         }
         if (event.target !== filters) return;
@@ -470,6 +560,21 @@
         const delVisaDoc = event.target.closest('[data-del-visa-doc]');
         if (delVisaDoc) {
             deleteVisaDocument(delVisaDoc);
+            return;
+        }
+        const markPaid = event.target.closest('[data-mark-paid]');
+        if (markPaid) {
+            markPaymentPaid(markPaid);
+            return;
+        }
+        const deletePay = event.target.closest('[data-delete-payment]');
+        if (deletePay) {
+            deletePayment(deletePay);
+            return;
+        }
+        const viewPay = event.target.closest('[data-view-payment]');
+        if (viewPay) {
+            casePanel.querySelector(`[data-payment-detail="${viewPay.dataset.viewPayment}"]`)?.toggleAttribute('hidden');
             return;
         }
         const target = event.target.closest('[data-student], [data-case-tab], [data-case-step], [data-case-close]');
