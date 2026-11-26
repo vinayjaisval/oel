@@ -1,5 +1,5 @@
 @php
-    $labels = [1 => 'Universities', 2 => 'Courses', 3 => 'Application status', 4 => 'Offer details', 5 => 'Fees'];
+    $labels = [1 => 'Universities', 2 => 'Courses', 3 => 'Application status', 4 => 'Offer details', 5 => 'Fees', 6 => 'Visa application', 7 => 'Visa status', 8 => 'Flight details', 9 => 'Take off', 10 => 'Boarding', 11 => 'Done'];
     $sbaId = $leadDetails->student_user_id ?? null;
     $applicationMap = $threesixtee && $threesixtee?->application ? (json_decode($threesixtee?->application, true) ?: []) : [];
     $selectedCourseIds = array_filter(explode(',', $threesixtee?->courses ?? ''));
@@ -9,6 +9,14 @@
     $feeKey = $step <= 5 ? 'University Application Fee' : 'Visa Processing Fee';
     $feePaid = ($paymentStatusDone[$feeKey] ?? null) === 'Done';
     $progressPct = min(($current ?? 1) - 1, 10) / 10 * 100;
+    $visaUploadedDocuments = $step === 6 ? \Illuminate\Support\Facades\DB::table('tbl_three_sixtee_image')
+        ->select('tbl_three_sixtee_image.id', 'tbl_three_sixtee_image.image', 'visa_documents.name AS visa_document_name', 'visa_sub_documents.name AS visa_sub_document_name')
+        ->join('visa_documents', 'tbl_three_sixtee_image.visa_document_type', '=', 'visa_documents.id')
+        ->join('visa_sub_documents', 'tbl_three_sixtee_image.visa_sub_document_type', '=', 'visa_sub_documents.id')
+        ->where('tbl_three_sixtee_image.user_id', $sbaId)
+        ->where('tbl_three_sixtee_image.image_type', 'visa_application_document')
+        ->orderByDesc('tbl_three_sixtee_image.id')
+        ->get() : collect();
 @endphp
 <form class="form" data-journey-form data-step="{{ $step }}" data-sba-id="{{ $sbaId }}" id="sf" novalidate>
     <div class="fh"><h3>Step {{ $step }} of 11 &middot; {{ $labels[$step] }}</h3><span class="pill {{ $feePaid ? 'p-ok' : 'p-warn' }}">Payments: {{ $feePaid ? 'Paid' : 'Unpaid' }}</span></div>
@@ -189,8 +197,147 @@
         @if(auth()->user()->hasRole('Application Punching'))
             <input type="hidden" name="application_punching" value="1">
         @endif
+
+    @elseif($step === 6)
+        <div class="g">
+            <div class="fld"><label for="visa_document" class="req">Agent type</label>
+                <select class="inp" id="visa_document" name="visa_document" data-visa-agent-type>
+                    <option value="">Select</option>
+                    <option value="direct" @selected(($threesixtee?->visa_document ?? null) === 'direct')>Direct</option>
+                    <option value="agent" @selected(($threesixtee?->visa_document ?? null) === 'agent')>Agent</option>
+                    <option value="manual" @selected(($threesixtee?->visa_document ?? null) === 'manual')>Manual</option>
+                </select>
+            </div>
+            <div class="fld" data-visa-agent-field style="{{ ($threesixtee?->visa_document ?? null) === 'agent' ? '' : 'display:none' }}"><label for="visa_agent">Agent</label>
+                <select class="inp" id="visa_agent" name="visa_agent">
+                    <option value="">Select</option>
+                    @foreach($agent as $item)
+                        <option value="{{ $item->id }}" @selected(($threesixtee?->visa_agent ?? null) == $item->id)>{{ $item->legal_first_name }} {{ $item->legal_last_name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="fld" data-visa-manual-field style="{{ ($threesixtee?->visa_document ?? null) === 'manual' ? '' : 'display:none' }}"><label for="visa_manual">Agent name</label>
+                <input class="inp" id="visa_manual" name="visa_manual" maxlength="150" value="{{ $threesixtee?->visa_manual ?? '' }}">
+            </div>
+            <div class="fld"><label for="visa_apply_date" class="req">Date of apply</label>
+                <input class="inp" id="visa_apply_date" name="visa_apply_date" type="date" value="{{ $threesixtee?->visa_apply_date ?? '' }}">
+            </div>
+        </div>
+        <h4 style="margin:4px 0 0;font-size:15px">Country portal login</h4>
+        <div class="g">
+            <div class="fld"><label for="portal_url">Portal URL</label>
+                <input class="inp" id="portal_url" name="portal_url" type="url" value="{{ $threesixtee?->portal_url ?? '' }}" placeholder="https://"></div>
+            <div class="fld"><label for="portal_email">Portal email</label>
+                <input class="inp" id="portal_email" name="portal_email" type="email" value="{{ $threesixtee?->portal_email ?? '' }}"></div>
+            <div class="fld"><label for="portal_userid">Portal user ID</label>
+                <input class="inp" id="portal_userid" name="portal_userid" value="{{ $threesixtee?->portal_userid ?? '' }}"></div>
+            @if(auth()->user()->hasRole('Administrator'))
+            <div class="fld"><label for="portal_password">Portal password</label>
+                <div class="pw"><input class="inp" id="portal_password" name="portal_password" type="password" autocomplete="new-password" value=""><button type="button" class="btn" data-pw-toggle="portal_password">Show</button></div>
+                <div class="hint">Leave blank to keep the existing password.</div>
+            </div>
+            @else
+            <div class="fld"><label>Portal password</label><div class="hint">Available to administrators only.</div></div>
+            @endif
+        </div>
+        <h4 style="margin:4px 0 0;font-size:15px">Visa documents</h4>
+        <div class="g">
+            <div class="fld"><label for="visa_document_type">Document type</label>
+                <select class="inp" id="visa_document_type" name="visa_document_type" data-visa-document-type>
+                    <option value="">Select</option>
+                    @foreach($visa_document as $item)
+                        <option value="{{ $item->id }}" @selected(($threesixtee?->visa_document_type ?? null) == $item->id)>{{ $item->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="fld"><label for="visa_sub_document_type">Sub type</label>
+                <select class="inp" id="visa_sub_document_type" name="visa_sub_document_type">
+                    <option value="">Select</option>
+                    @isset($visa_sub_document_three)
+                        <option value="{{ $visa_sub_document_three->id }}" selected>{{ $visa_sub_document_three->name }}</option>
+                    @endisset
+                </select>
+            </div>
+            <div class="fld"><label for="lead_document">Files</label>
+                <input class="inp" id="lead_document" name="lead_document" type="file" style="padding:8px"></div>
+        </div>
+        <div class="tw"><table class="stack">
+            <thead><tr><th>Document type</th><th>Sub type</th><th>File</th><th></th></tr></thead>
+            <tbody data-visa-doc-rows>
+            @forelse($visaUploadedDocuments as $row)
+                <tr data-doc-row="{{ $row->id }}"><td data-l="Document type">{{ $row->visa_document_name }}</td><td data-l="Sub type">{{ $row->visa_sub_document_name }}</td><td data-l="File"><a href="{{ asset($row->image) }}" target="_blank">View</a></td><td data-l=""><button type="button" class="btn" data-del-visa-doc="{{ $row->id }}">Delete</button></td></tr>
+            @empty
+                <tr><td colspan="4" class="empty">No documents uploaded yet.</td></tr>
+            @endforelse
+            </tbody>
+        </table></div>
+        <input type="hidden" name="tab5" value="tab5">
+        <input type="hidden" name="sba_id" value="{{ $sbaId }}">
+
+    @elseif($step === 7)
+        @php $visaStatus = $threesixtee?->visa_application ?? null; @endphp
+        <div class="seg" role="radiogroup">
+            <label><input type="radio" name="visa_application" value="Inprogress" @checked($visaStatus === 'Inprogress')>In progress</label>
+            <label><input type="radio" name="visa_application" value="Accepted" @checked($visaStatus === 'Accepted')>Accepted</label>
+            <label><input type="radio" name="visa_application" value="Rejected" @checked($visaStatus === 'Rejected')>Rejected</label>
+        </div>
+        <div class="note n-bad" data-visa-rejected-note style="{{ $visaStatus === 'Rejected' ? '' : 'display:none' }}"><b>Visa rejected.</b> Travel steps are locked. Record the reason and re-apply from step 6, or close the case.</div>
+        <div class="fld" data-visa-rejected-reason style="{{ $visaStatus === 'Rejected' ? '' : 'display:none' }}"><label for="visa_remarks" class="req">Rejection reason</label>
+            <textarea class="inp" id="visa_remarks" name="visa_remarks">{{ $threesixtee?->visa_remarks ?? '' }}</textarea></div>
+        <div class="note n-ok" data-visa-accepted-note style="{{ $visaStatus === 'Accepted' ? '' : 'display:none' }}">Visa accepted &mdash; travel steps are unlocked.</div>
+        <input type="hidden" name="tab" value="tab6">
+        <input type="hidden" name="sba_id" value="{{ $sbaId }}">
+
+    @elseif($step === 8)
+        <div class="g">
+            <div class="fld"><label for="flight_name" class="req">Airline</label>
+                <input class="inp" id="flight_name" name="flight_name" maxlength="250" value="{{ $threesixtee?->flight_name ?? '' }}"></div>
+            <div class="fld"><label for="flight_no" class="req">Flight number</label>
+                <input class="inp" id="flight_no" name="flight_no" value="{{ $threesixtee?->flight_no ?? '' }}" placeholder="e.g. LH 761"></div>
+            <div class="fld"><label for="flight_dep_date" class="req">Departure date</label>
+                <input class="inp" id="flight_dep_date" name="flight_dep_date" type="date" value="{{ $threesixtee?->flight_dep_date ?? '' }}"></div>
+        </div>
+        <input type="hidden" name="tab" value="tab8">
+        <input type="hidden" name="sba_id" value="{{ $sbaId }}">
+
+    @elseif($step === 9)
+        @php $handHolding = $threesixtee?->hand_holding ?? null; @endphp
+        <div class="fld"><span style="display:block;font-size:13px;font-weight:600;margin-bottom:5px">Airport hand-holding</span>
+            <div class="seg" role="radiogroup">
+                <label><input type="radio" name="hand_holding" value="yes" @checked($handHolding === 'yes')>Yes</label>
+                <label><input type="radio" name="hand_holding" value="no" @checked($handHolding === 'no')>No</label>
+            </div>
+        </div>
+        <div class="g" data-handholding-agent style="{{ $handHolding === 'yes' ? '' : 'display:none' }}">
+            <div class="fld"><label for="agent_name" class="req">Agent name</label>
+                <input class="inp" id="agent_name" name="agent_name" maxlength="150" value="{{ $threesixtee?->agent_name ?? '' }}"></div>
+        </div>
+        <input type="hidden" name="tab" value="tab9">
+        <input type="hidden" name="sba_id" value="{{ $sbaId }}">
+
+    @elseif($step === 10)
+        <div class="g">
+            <div class="fld"><label for="hostel" class="req">Accommodation</label>
+                <select class="inp" id="hostel" name="hostel">
+                    <option value="">Select</option>
+                    @foreach(['OEL partner hostel', 'University halls', 'Private housing', 'Arranged by student'] as $option)
+                        <option value="{{ $option }}" @selected(($threesixtee?->hostel ?? null) === $option)>{{ $option }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="fld"><label for="personal">Address / room details</label>
+                <input class="inp" id="personal" name="personal" maxlength="200" value="{{ $threesixtee?->personal ?? '' }}"></div>
+        </div>
+        <input type="hidden" name="tab" value="tab10">
+        <input type="hidden" name="sba_id" value="{{ $sbaId }}">
+
+    @elseif($step === 11)
+        <div class="note n-ok"><b>{{ $studentDetails->first_name }} {{ $studentDetails->last_name }}</b> has completed the OEL 360 journey.</div>
     @endif
 
     <div class="fnav"><button type="button" class="btn" data-case-step="{{ $step - 1 }}" @disabled($step <= 1)>&larr; Previous</button>
-    <div class="r"><button type="submit" class="btn go">Save &amp; continue &rarr;</button></div></div>
+    @if($step < 11)
+    <div class="r"><button type="submit" class="btn go">{!! $step === 7 && ($threesixtee?->visa_application ?? null) === 'Rejected' ? 'Save' : 'Save &amp; continue &rarr;' !!}</button></div>
+    @endif
+    </div>
 </form>

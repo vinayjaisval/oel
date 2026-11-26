@@ -167,10 +167,16 @@
                 toast(data.message || 'Save failed');
                 return;
             }
-            toast('Saved');
-            document.dispatchEvent(new CustomEvent('apply360:saved'));
             const step = Number(form.dataset.step);
-            const stay = step === 3 && data.status === 'Rejected';
+            let stay = step === 3 && data.status === 'Rejected';
+            let message = 'Saved';
+            if (step === 7) {
+                const visaStatus = new FormData(form).get('visa_application');
+                if (visaStatus === 'Rejected') { stay = true; message = 'Saved — travel steps locked'; }
+                else if (visaStatus === 'Inprogress') { stay = true; message = 'Saved — waiting for visa decision'; }
+            }
+            toast(message);
+            document.dispatchEvent(new CustomEvent('apply360:saved'));
             const url = new URL(location.href);
             url.searchParams.set('step', stay ? step : step + 1);
             loadCase(url);
@@ -210,6 +216,40 @@
         }
     }
 
+    async function loadVisaSubDocuments(select, documentTypeId) {
+        if (!select) return;
+        select.innerHTML = '<option value="">Select</option>';
+        if (!documentTypeId) return;
+        try {
+            const url = new URL(root.dataset.visaSubDocumentEndpoint);
+            url.searchParams.set('visa_document_id', documentTypeId);
+            const response = await fetch(url, {headers: {'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest'}});
+            const data = await response.json().catch(() => ({}));
+            select.innerHTML = '<option value="">Select</option>' + (data.data || []).map(item => `<option value="${item.id}">${escapeHtml(item.name)}</option>`).join('');
+        } catch (error) {
+            select.innerHTML = '<option value="">Select</option>';
+        }
+    }
+
+    async function deleteVisaDocument(button) {
+        if (!confirm('Delete this document? This cannot be undone.')) return;
+        const row = button.closest('[data-doc-row]');
+        try {
+            const url = new URL(root.dataset.deleteVisaDocumentEndpoint);
+            url.searchParams.set('id', button.dataset.delVisaDoc);
+            const sbaId = button.closest('form')?.dataset.sbaId;
+            if (sbaId) url.searchParams.set('sba_id', sbaId);
+            const response = await fetch(url, {headers: {'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest'}});
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || !data.success) throw new Error('delete failed');
+            row?.remove();
+            document.dispatchEvent(new CustomEvent('apply360:saved'));
+            toast('Document deleted');
+        } catch (error) {
+            toast('Delete failed');
+        }
+    }
+
     function caseKey(url) {
         return JSON.stringify(['view','student','tab','step'].map(key => url.searchParams.get(key)));
     }
@@ -217,32 +257,6 @@
     function selectStudent() {
         const student = new URL(location.href).searchParams.get('student');
         root.querySelectorAll('[data-student]').forEach(row => row.setAttribute('aria-current', row.dataset.student === student));
-    }
-
-    function activateJourney() {
-        const template = casePanel.querySelector('[data-journey-scripts]');
-        if (!template) return;
-        const journey = casePanel.querySelector('[data-legacy-journey]');
-        const step = journey.dataset.step;
-        const tab = journey.querySelector('#step' + step + '-tab');
-        if (tab && !tab.hasAttribute('disabled')) {
-            journey.querySelectorAll('.tab-pane.active,.nav-link.active').forEach(element => element.classList.remove('active','show'));
-            tab.classList.add('active');
-            journey.querySelector('#step' + step)?.classList.add('active','show');
-        }
-        template.content.querySelectorAll('script:not([src])').forEach(source => {
-            const script = document.createElement('script');
-            script.textContent = source.textContent;
-            casePanel.append(script);
-            script.remove();
-        });
-    }
-
-    function clearJourney() {
-        if (!window.jQuery) return;
-        const $ = window.jQuery;
-        $(document).off('.workspaceJourney');
-        $(casePanel).find('.select2-hidden-accessible').select2('destroy');
     }
 
     async function loadCase(url, push = true) {
@@ -266,9 +280,7 @@
                 panels.set(key, html);
             }
             if (push) history.pushState(null, '', url);
-            clearJourney();
             casePanel.innerHTML = html;
-            activateJourney();
             initStepForm();
             selectStudent();
         } catch (error) {
@@ -286,7 +298,6 @@
     }
 
     if (listUrl.searchParams.has('student')) panels.set(caseKey(listUrl), casePanel.innerHTML);
-    activateJourney();
     initStepForm();
     const listKeys = url => {
         const params = new URLSearchParams(url.search);
@@ -383,6 +394,31 @@
             if (field) field.style.display = target.value === 'agent' ? '' : 'none';
             return;
         }
+        if (target.matches('[data-visa-agent-type]')) {
+            const agentField = casePanel.querySelector('[data-visa-agent-field]');
+            const manualField = casePanel.querySelector('[data-visa-manual-field]');
+            if (agentField) agentField.style.display = target.value === 'agent' ? '' : 'none';
+            if (manualField) manualField.style.display = target.value === 'manual' ? '' : 'none';
+            return;
+        }
+        if (target.matches('[data-visa-document-type]')) {
+            loadVisaSubDocuments(casePanel.querySelector('#visa_sub_document_type'), target.value);
+            return;
+        }
+        if (target.name === 'hand_holding' && target.closest('[data-journey-form]')) {
+            const field = casePanel.querySelector('[data-handholding-agent]');
+            if (field) field.style.display = target.value === 'yes' ? '' : 'none';
+            return;
+        }
+        if (target.name === 'visa_application' && target.closest('[data-journey-form]')) {
+            const rejectedNote = casePanel.querySelector('[data-visa-rejected-note]');
+            const rejectedReason = casePanel.querySelector('[data-visa-rejected-reason]');
+            const acceptedNote = casePanel.querySelector('[data-visa-accepted-note]');
+            if (rejectedNote) rejectedNote.style.display = target.value === 'Rejected' ? '' : 'none';
+            if (rejectedReason) rejectedReason.style.display = target.value === 'Rejected' ? '' : 'none';
+            if (acceptedNote) acceptedNote.style.display = target.value === 'Accepted' ? '' : 'none';
+            return;
+        }
         if (target.form === filters && target.name !== 'q') loadList();
     });
     root.addEventListener('submit', event => {
@@ -419,6 +455,21 @@
         const uploadOffer = event.target.closest('[data-upload-offer]');
         if (uploadOffer) {
             uploadOfferDocument(uploadOffer.closest('form'));
+            return;
+        }
+        const pwToggle = event.target.closest('[data-pw-toggle]');
+        if (pwToggle) {
+            const input = casePanel.querySelector('#' + pwToggle.dataset.pwToggle);
+            if (input) {
+                const showing = input.type === 'text';
+                input.type = showing ? 'password' : 'text';
+                pwToggle.textContent = showing ? 'Show' : 'Hide';
+            }
+            return;
+        }
+        const delVisaDoc = event.target.closest('[data-del-visa-doc]');
+        if (delVisaDoc) {
+            deleteVisaDocument(delVisaDoc);
             return;
         }
         const target = event.target.closest('[data-student], [data-case-tab], [data-case-step], [data-case-close]');

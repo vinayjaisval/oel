@@ -110,6 +110,5 @@
 
 .oel360 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .oel360 .case[data-loading]::before{content:"";display:block;height:168px;border-radius:14px;background:var(--navyBg)}
-.oel360 [data-legacy-journey] .apply360-step-menu{display:none}
 .oel360 .it{text-decoration:none;color:inherit}
 .oel360 .ch .acts>a{text-decoration:none}

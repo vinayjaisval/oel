@@ -375,5 +375,4 @@
         });
 
 </script>
-<script src="{{ asset('assets/js/apply-360-redesign.js') }}" defer></script>
 @endsection
