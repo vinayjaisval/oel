@@ -45,10 +45,15 @@ $progress = $summary;
             @if($tab === 'journey' && $journeyData)
 
             @include('admin.student.workspace-rail')
+            @if($activeStep <= 5)
+            @include('admin.student.workspace-journey-form', array_merge($journeyData, ['step' => $activeStep, 'current' => $current]))
+            </div>
+            @else
             <div data-legacy-journey data-step="{{ $activeStep }}">
             @include('admin.leads.partials.journey', array_merge($journeyData, ['embeddedJourney' => true]))
                         </div></div>
             <template data-journey-scripts>@include('admin.leads.partials.journey-scripts', $journeyData)</template>
+            @endif
             @elseif($tab === 'overview')
             <div class="acts">@can('oel_360.view')<a class="btn" href="{{ $tabUrl('documents') }}">Documents</a>@endcan @can('application.view')<a class="btn" href="{{ $tabUrl('applications') }}">Applications &amp; Visa</a>@endcan</div>
             <div class="ov">

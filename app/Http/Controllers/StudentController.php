@@ -281,8 +281,10 @@ class StudentController extends Controller
         }
 
         $query = Student::query()->whereIn('student.user_id', $scope->reorder()->select('student.user_id'));
-        $latest = DB::table('tbl_three_sixtee')->selectRaw('MAX(id)')->whereColumn('sba_id', 'student.id');
-        $query->leftJoin('tbl_three_sixtee as journey', 'journey.id', '=', $latest)
+        $query->leftJoin('tbl_three_sixtee as journey', function ($join) {
+                $join->on('journey.sba_id', '=', 'student.id')
+                    ->whereRaw('journey.id = (select max(id) from tbl_three_sixtee where tbl_three_sixtee.sba_id = student.id)');
+            })
             ->select('student.id', 'student.user_id', 'student.first_name', 'student.last_name', 'student.email',
                 'student.profile_complete', 'student.status_threesixty', 'journey.college', 'journey.visa_application',
                 'journey.hostel', 'journey.flight_no', 'journey.visa_apply_date', 'journey.fee_amount', 'journey.courses');

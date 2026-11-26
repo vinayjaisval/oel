@@ -12,6 +12,203 @@
     const emptyCase = '<div class="card empty" style="padding:48px">Select a student to open their OEL 360 case.</div>';
     const listUrl = new URL(location.href);
     let listSearch = '';
+    const toastEl = root.querySelector('[data-toast]');
+    let toastTimer;
+
+    function toast(message) {
+        if (!toastEl) return;
+        toastEl.textContent = message;
+        toastEl.classList.add('on');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toastEl.classList.remove('on'), 1800);
+    }
+
+    function csrfToken() {
+        return document.querySelector('meta[name="csrf-token"]')?.content || '';
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+    }
+
+    async function loadUniversityCourses(select, universityId, selectedId) {
+        if (!universityId) return;
+        try {
+            const response = await fetch(root.dataset.coursesEndpoint, {
+                method: 'POST',
+                headers: {'X-CSRF-TOKEN': csrfToken(), 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded'},
+                body: new URLSearchParams({university_id: universityId}),
+            });
+            const data = await response.json().catch(() => ({}));
+            select.innerHTML = '<option value="">Select course</option>' + (data.program || []).map(item => `<option value="${item.id}"${String(item.id) === String(selectedId) ? ' selected' : ''}>${escapeHtml(item.name)}</option>`).join('');
+        } catch (error) {
+            select.innerHTML = '<option value="">Select course</option>';
+        }
+    }
+
+    async function loadOfferCourses(form, universityId, selectedId) {
+        const select = casePanel.querySelector('[data-offer-course]');
+        if (!select) return;
+        select.innerHTML = '<option value="">Select</option>';
+        if (!universityId) return;
+        try {
+            const url = new URL(root.dataset.offerCoursesEndpoint);
+            url.searchParams.set('university_id', universityId);
+            url.searchParams.set('sba_id', form?.dataset.sbaId || '');
+            const response = await fetch(url, {headers: {'Accept': 'application/json'}});
+            const data = await response.json().catch(() => ({}));
+            select.innerHTML = '<option value="">Select</option>' + (data.courses || []).map(item => `<option value="${item.id}"${String(item.id) === String(selectedId) ? ' selected' : ''}>${escapeHtml(item.name)}</option>`).join('');
+        } catch (error) {
+            select.innerHTML = '<option value="">Select</option>';
+        }
+    }
+
+    function initStepForm() {
+        casePanel.querySelectorAll('[data-course-select]').forEach(select => {
+            loadUniversityCourses(select, select.dataset.university, select.dataset.selected);
+        });
+        const offerUniversity = casePanel.querySelector('[data-offer-university]');
+        const offerCourse = casePanel.querySelector('[data-offer-course]');
+        if (offerUniversity && offerUniversity.value) {
+            loadOfferCourses(offerUniversity.closest('form'), offerUniversity.value, offerCourse?.dataset.selected || '');
+        }
+    }
+
+    function addUniversityChip(id, name) {
+        const chips = casePanel.querySelector('[data-uni-chips]');
+        if (!chips || !id || chips.querySelector(`[data-chip-uni="${id}"]`)) return;
+        chips.querySelector('[data-uni-empty]')?.remove();
+        const chip = document.createElement('span');
+        chip.className = 'chip';
+        chip.dataset.chipUni = id;
+        chip.innerHTML = `${escapeHtml(name)}<button type="button" data-rmuni="${id}" aria-label="Remove ${escapeHtml(name)}">&#10005;</button><input type="hidden" name="collegeValues[]" value="${id}">`;
+        chips.append(chip);
+    }
+
+    let uniTimer;
+    let uniRequest;
+
+    async function searchUniversities(input) {
+        const results = input.closest('.fld')?.querySelector('[data-uni-results]');
+        if (!results) return;
+        uniRequest?.abort();
+        const active = new AbortController();
+        uniRequest = active;
+        try {
+            const url = new URL(root.dataset.universitySearchEndpoint);
+            url.searchParams.set('q', input.value.trim());
+            const response = await fetch(url, {signal: active.signal, headers: {'Accept': 'application/json'}});
+            const data = await response.json().catch(() => ({}));
+            if (active.signal.aborted) return;
+            const chips = casePanel.querySelector('[data-uni-chips]');
+            const added = new Set([...(chips?.querySelectorAll('[data-chip-uni]') || [])].map(el => el.dataset.chipUni));
+            const items = (data.results || []).filter(item => !added.has(String(item.id)));
+            results.innerHTML = items.length
+                ? items.map(item => `<button type="button" class="it" style="width:100%" data-pick-uni="${item.id}" data-name="${escapeHtml(item.text)}">${escapeHtml(item.text)}</button>`).join('')
+                : '<p class="empty">No matches.</p>';
+            results.hidden = false;
+        } catch (error) {
+            if (error.name !== 'AbortError') results.hidden = true;
+        }
+    }
+
+    function removeUniversityChip(button) {
+        const chip = button.closest('[data-chip-uni]');
+        if (!chip) return;
+        chip.remove();
+        const chips = casePanel.querySelector('[data-uni-chips]');
+        if (chips && !chips.querySelector('[data-chip-uni]')) {
+            const empty = document.createElement('div');
+            empty.className = 'note n-info';
+            empty.dataset.uniEmpty = '';
+            empty.textContent = 'No university selected yet.';
+            chips.append(empty);
+        }
+    }
+
+    function showJourneyErrors(form, errors) {
+        form.querySelectorAll('[data-field-error]').forEach(el => el.remove());
+        const ferr = form.querySelector('[data-ferr]');
+        let shown = false;
+        Object.keys(errors || {}).forEach(key => {
+            const field = form.querySelector(`[name="${key}"], [name="${key}[]"]`);
+            const message = Array.isArray(errors[key]) ? errors[key][0] : errors[key];
+            if (field) {
+                const note = document.createElement('div');
+                note.className = 'hint';
+                note.dataset.fieldError = '';
+                note.style.color = 'var(--bad)';
+                note.textContent = message;
+                (field.closest('.fld') || field.parentElement).append(note);
+                shown = true;
+            }
+        });
+        if (ferr) {
+            ferr.hidden = shown;
+            if (!shown) ferr.textContent = 'Check the fields and try again.';
+        }
+    }
+
+    async function saveJourneyStep(form) {
+        const button = form.querySelector('button[type="submit"]');
+        button?.setAttribute('disabled', '');
+        const ferr = form.querySelector('[data-ferr]');
+        if (ferr) ferr.hidden = true;
+        form.querySelectorAll('[data-field-error]').forEach(el => el.remove());
+        try {
+            const response = await fetch(root.dataset.saveEndpoint, {
+                method: 'POST',
+                headers: {'X-CSRF-TOKEN': csrfToken(), 'Accept': 'application/json'},
+                body: new FormData(form),
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                showJourneyErrors(form, data.errors);
+                toast(data.message || 'Save failed');
+                return;
+            }
+            toast('Saved');
+            document.dispatchEvent(new CustomEvent('apply360:saved'));
+            const step = Number(form.dataset.step);
+            const stay = step === 3 && data.status === 'Rejected';
+            const url = new URL(location.href);
+            url.searchParams.set('step', stay ? step : step + 1);
+            loadCase(url);
+        } catch (error) {
+            toast('Save failed');
+        } finally {
+            button?.removeAttribute('disabled');
+        }
+    }
+
+    async function uploadOfferDocument(form) {
+        if (!form) return;
+        const files = form.querySelector('#document')?.files || [];
+        const formData = new FormData(form);
+        for (const file of files) formData.append('images[]', file);
+        const errorEl = casePanel.querySelector('[data-offer-upload-error]');
+        if (errorEl) errorEl.hidden = true;
+        try {
+            const response = await fetch(root.dataset.saveEndpoint, {
+                method: 'POST',
+                headers: {'X-CSRF-TOKEN': csrfToken(), 'Accept': 'application/json'},
+                body: formData,
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error('upload failed');
+            document.dispatchEvent(new CustomEvent('apply360:saved'));
+            toast('Document uploaded');
+            const rows = casePanel.querySelector('[data-offer-doc-rows]');
+            if (rows && Array.isArray(data.table_three_sixtee_image)) {
+                rows.innerHTML = data.table_three_sixtee_image.length
+                    ? data.table_three_sixtee_image.map(row => `<tr><td data-l="#">${row.id}</td><td data-l="Document">${escapeHtml(row.program_name || '')}</td><td data-l="File"><a href="${root.dataset.assetBase}${row.image || ''}" target="_blank">View</a></td></tr>`).join('')
+                    : '<tr><td colspan="3" class="empty">No documents uploaded yet.</td></tr>';
+            }
+        } catch (error) {
+            if (errorEl) { errorEl.hidden = false; errorEl.textContent = 'Upload failed. Check the file and try again.'; }
+            toast('Upload failed');
+        }
+    }
 
     function caseKey(url) {
         return JSON.stringify(['view','student','tab','step'].map(key => url.searchParams.get(key)));
@@ -72,6 +269,7 @@
             clearJourney();
             casePanel.innerHTML = html;
             activateJourney();
+            initStepForm();
             selectStudent();
         } catch (error) {
             if (error.name === 'AbortError') return;
@@ -89,6 +287,7 @@
 
     if (listUrl.searchParams.has('student')) panels.set(caseKey(listUrl), casePanel.innerHTML);
     activateJourney();
+    initStepForm();
     const listKeys = url => {
         const params = new URLSearchParams(url.search);
         ['student','tab','step','page'].forEach(key => params.delete(key));
@@ -152,21 +351,76 @@
 
     document.addEventListener('apply360:saved', () => panels.clear());
     root.addEventListener('input', event => {
+        if (event.target.matches('[data-uni-search]')) {
+            clearTimeout(uniTimer);
+            uniRequest?.abort();
+            const input = event.target;
+            uniTimer = setTimeout(() => searchUniversities(input), 300);
+            return;
+        }
         if (event.target.name !== 'q' || event.target.form !== filters) return;
         clearTimeout(timer);
         request?.abort();
         timer = setTimeout(loadList, 300);
     });
     root.addEventListener('change', event => {
-        if (event.target.form === filters && event.target.name !== 'q') loadList();
+        const target = event.target;
+        if (target.matches('[data-status-select]')) {
+            const wrap = casePanel.querySelector(`[data-remarks-wrap="${target.dataset.course}"]`);
+            if (wrap) wrap.style.display = ['rejected', 'in_progress'].includes(target.value) ? '' : 'none';
+            return;
+        }
+        if (target.matches('[data-offer-university]')) {
+            loadOfferCourses(target.closest('form'), target.value, '');
+            return;
+        }
+        if (target.name === 'fees_details' && target.closest('[data-journey-form]')) {
+            casePanel.querySelectorAll('[data-fee-prepaid-fields]').forEach(el => el.style.display = target.value === 'Prepaid' ? '' : 'none');
+            return;
+        }
+        if (target.id === 'fee_payment_by') {
+            const field = casePanel.querySelector('[data-fee-agent-field]');
+            if (field) field.style.display = target.value === 'agent' ? '' : 'none';
+            return;
+        }
+        if (target.form === filters && target.name !== 'q') loadList();
     });
     root.addEventListener('submit', event => {
+        if (event.target.matches('[data-journey-form]')) {
+            event.preventDefault();
+            saveJourneyStep(event.target);
+            return;
+        }
         if (event.target !== filters) return;
         event.preventDefault();
         clearTimeout(timer);
         loadList();
     });
     root.addEventListener('click', event => {
+        const pickUni = event.target.closest('[data-pick-uni]');
+        if (pickUni) {
+            addUniversityChip(pickUni.dataset.pickUni, pickUni.dataset.name);
+            const field = pickUni.closest('.fld');
+            if (field) {
+                field.querySelector('[data-uni-search]').value = '';
+                const results = field.querySelector('[data-uni-results]');
+                if (results) { results.hidden = true; results.innerHTML = ''; }
+            }
+            return;
+        }
+        if (!event.target.closest('[data-uni-search], [data-uni-results]')) {
+            casePanel.querySelectorAll('[data-uni-results]').forEach(el => { el.hidden = true; });
+        }
+        const rmuni = event.target.closest('[data-rmuni]');
+        if (rmuni) {
+            removeUniversityChip(rmuni);
+            return;
+        }
+        const uploadOffer = event.target.closest('[data-upload-offer]');
+        if (uploadOffer) {
+            uploadOfferDocument(uploadOffer.closest('form'));
+            return;
+        }
         const target = event.target.closest('[data-student], [data-case-tab], [data-case-step], [data-case-close]');
         if (target && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) {
             event.preventDefault();

@@ -6,7 +6,8 @@
 @endsection
 @section('main-content')
 
-<div class="oel360" data-case-endpoint="{{ route('workspace-case-fragment', ['id' => 'STUDENT']) }}" data-list-endpoint="{{ route('workspace-list-fragment') }}">
+<div class="oel360" data-case-endpoint="{{ route('workspace-case-fragment', ['id' => 'STUDENT']) }}" data-list-endpoint="{{ route('workspace-list-fragment') }}" data-save-endpoint="{{ route('store-lead-360') }}" data-courses-endpoint="{{ route('university.courses') }}" data-offer-courses-endpoint="{{ route('getCourses') }}" data-university-search-endpoint="{{ route('search-university') }}" data-asset-base="{{ asset('') }}">
+    <div class="toast" data-toast role="status"></div>
     <div class="top"><div><span class="logo">OEL</span><span class="crumb">Admin ? Students &amp; OEL 360</span><span class="who">Counsellor view</span></div></div>
     <div class="wrap {{ $selected ? 'open' : '' }}">
         <section class="card list" aria-label="Students">
