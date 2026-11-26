@@ -596,6 +596,15 @@
             loadCase(url);
             return;
         }
+        const clearFilters = event.target.closest('[data-clear-filters]');
+        if (clearFilters) {
+            for (const field of filters.elements) {
+                if (field.name && field.name !== 'view') field.value = '';
+            }
+            clearTimeout(timer);
+            loadList();
+            return;
+        }
         const chip = event.target.closest('[data-view]');
         const more = event.target.closest('[data-load-more]');
         if (chip) {

@@ -21,19 +21,26 @@
     </nav>
     <form data-list-filters method="get" action="{{ route('student-list') }}">
         <input type="hidden" name="view" value="{{ $view }}">
-        <label class="workspace-search"><span class="sr">Search students</span><input class="inp" type="search" name="q" value="{{ request('q') }}" placeholder="Search name, email or phone"></label>
-        <details><summary>More filters</summary><div class="workspace-filter-fields">
-            <label>Name <input name="{{ $view === 'ready' ? 'first_name' : 'name' }}" value="{{ request($view === 'ready' ? 'first_name' : 'name') }}"></label>
-            <label>Email <input name="email" value="{{ request('email') }}"></label>
-            <label>Franchise <select name="agent_id"><option value="">All franchises</option>@foreach($agents as $agent)<option value="{{ $agent->id }}" @selected(request('agent_id') == $agent->id)>{{ $agent->name }}</option>@endforeach</select></label>
-            <label>Sub Agent <select name="subagent_id"><option value="">All sub agents</option>@foreach($sub_agents as $agent)<option value="{{ $agent->id }}" @selected(request('subagent_id') == $agent->id)>{{ $agent->name }}</option>@endforeach</select></label>
-            <label>Phone <input name="phone_number" value="{{ request('phone_number') }}"></label>
-            <label>Pincode <input name="zip" value="{{ request('zip') }}"></label>
-            <label>Country <select name="country_id"><option value="">All countries</option>@foreach(\App\Models\Country::orderBy('name')->get() as $country)<option value="{{ $country->id }}" @selected(request('country_id') == $country->id)>{{ $country->name }}</option>@endforeach</select></label>
-            <label>From date <input type="date" name="from_date" value="{{ request('from_date') }}"></label>
-            <label>To date <input type="date" name="to_date" value="{{ request('to_date') }}"></label>
-        </div></details>
-        <button type="submit">Search</button><a href="{{ route('student-list', ['view' => $view]) }}">Reset</a>
+        <label class="sr" for="q">Search students</label>
+        <input class="inp" id="q" type="search" name="q" value="{{ request('q') }}" placeholder="Search name, email or phone">
+        <details data-more-filters>
+            <summary class="btn">More filters</summary>
+            <div class="g" style="margin-top:10px">
+                <div class="fld"><label for="f_name">Name</label><input class="inp" id="f_name" name="{{ $view === 'ready' ? 'first_name' : 'name' }}" value="{{ request($view === 'ready' ? 'first_name' : 'name') }}"></div>
+                <div class="fld"><label for="f_email">Email</label><input class="inp" id="f_email" name="email" value="{{ request('email') }}"></div>
+                <div class="fld"><label for="f_agent">Franchise</label><select class="inp" id="f_agent" name="agent_id"><option value="">All franchises</option>@foreach($agents as $agent)<option value="{{ $agent->id }}" @selected(request('agent_id') == $agent->id)>{{ $agent->name }}</option>@endforeach</select></div>
+                <div class="fld"><label for="f_subagent">Sub agent</label><select class="inp" id="f_subagent" name="subagent_id"><option value="">All sub agents</option>@foreach($sub_agents as $agent)<option value="{{ $agent->id }}" @selected(request('subagent_id') == $agent->id)>{{ $agent->name }}</option>@endforeach</select></div>
+                <div class="fld"><label for="f_phone">Phone</label><input class="inp" id="f_phone" name="phone_number" value="{{ request('phone_number') }}"></div>
+                <div class="fld"><label for="f_zip">Pincode</label><input class="inp" id="f_zip" name="zip" value="{{ request('zip') }}"></div>
+                <div class="fld"><label for="f_country">Country</label><select class="inp" id="f_country" name="country_id"><option value="">All countries</option>@foreach(\App\Models\Country::orderBy('name')->get() as $country)<option value="{{ $country->id }}" @selected(request('country_id') == $country->id)>{{ $country->name }}</option>@endforeach</select></div>
+                <div class="fld"><label for="f_from">From date</label><input class="inp" id="f_from" type="date" name="from_date" value="{{ request('from_date') }}"></div>
+                <div class="fld"><label for="f_to">To date</label><input class="inp" id="f_to" type="date" name="to_date" value="{{ request('to_date') }}"></div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center;margin-top:10px">
+                <button type="submit" class="btn go">Apply</button>
+                <button type="button" class="btn-text" data-clear-filters>Clear</button>
+            </div>
+        </details>
     </form>
             </div>
             <p class="note n-bad" data-list-error hidden>Unable to load students. Try again.</p>
