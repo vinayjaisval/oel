@@ -2,7 +2,6 @@
     $base = request()->except(['student', 'tab', 'step']);
     $base['view'] = $view;
     $backUrl = route('student-list', $base);
-    $tabUrl = fn ($target) => route('student-list', array_merge($base, ['student' => $selected->user_id, 'tab' => $target]));
 $progress = $summary;
     $saved = [
         filled($progress->college ?? null), filled($progress->courses ?? null),
@@ -38,6 +37,8 @@ $progress = $summary;
                     @if($selected->profile_complete && $selected->status_threesixty && auth()->user()->can('oel_apply.view'))<button type="button" role="tab" aria-selected="{{ $tab === 'journey' ? 'true' : 'false' }}" data-case-tab="journey">OEL 360 journey</button>@else<span class="workspace-tab-disabled" aria-disabled="true">OEL 360 journey</span>@endif
                 @endcan
                 @can('application.view')<button type="button" role="tab" aria-selected="{{ $tab === 'payments' ? 'true' : 'false' }}" data-case-tab="payments">Payments</button>@endcan
+                @can('oel_360.view')<button type="button" role="tab" aria-selected="{{ $tab === 'documents' ? 'true' : 'false' }}" data-case-tab="documents">Documents</button>@endcan
+                @can('application.view')<button type="button" role="tab" aria-selected="{{ $tab === 'applications' ? 'true' : 'false' }}" data-case-tab="applications">Applications &amp; Visa</button>@endcan
                 <button type="button" role="tab" aria-selected="{{ $tab === 'overview' ? 'true' : 'false' }}" data-case-tab="overview">Overview</button>
             </nav>
             <div class="body">
@@ -48,7 +49,6 @@ $progress = $summary;
             @include('admin.student.workspace-journey-form', array_merge($journeyData, ['step' => $activeStep, 'current' => $current]))
             </div>
             @elseif($tab === 'overview')
-            <div class="acts">@can('oel_360.view')<a class="btn" href="{{ $tabUrl('documents') }}">Documents</a>@endcan @can('application.view')<a class="btn" href="{{ $tabUrl('applications') }}">Applications &amp; Visa</a>@endcan</div>
             <div class="ov">
                 <div class="card"><h4>Contact</h4>
                     <div class="kv"><span>Email</span><span>{{ $selected->email ?: '?' }}</span></div>
@@ -67,8 +67,26 @@ $progress = $summary;
                     <div class="kv"><span>Stay</span><span>{{ $summary?->hostel ?: '?' }}</span></div>
                 </div>
             </div>
-            @else
-            @if($tab === 'payments')
+            @elseif($tab === 'documents')
+            <div class="tw"><table class="stack">
+                <thead><tr><th>Document</th><th>File</th></tr></thead>
+                <tbody>@forelse($details as $entry)
+                <tr><td data-l="Document">{{ $entry->name ?: 'Student document' }}</td><td data-l="File">{!! $entry->image_url ? '<a href="' . asset($entry->image_url) . '" target="_blank">View</a>' : '—' !!}</td></tr>
+                @empty <tr><td colspan="2" class="empty">No documents available.</td></tr> @endforelse</tbody>
+            </table></div>
+            @elseif($tab === 'applications')
+            <div class="tw"><table class="stack">
+                <thead><tr><th>Program</th><th>University</th><th>Application</th><th>Visa</th></tr></thead>
+                <tbody>@forelse($details as $entry)
+                <tr>
+                    <td data-l="Program">{{ optional($entry->program)->name ?: 'Program unavailable' }}</td>
+                    <td data-l="University">{{ optional(optional($entry->program)->university_name)->university_name ?: 'University unavailable' }}</td>
+                    <td data-l="Application">{{ optional($courseStatuses->get($entry->program_id))->course_remarks ?: 'N/A' }}</td>
+                    <td data-l="Visa">{{ optional($visaStatuses->get($entry->program_id))->visa_application ?: 'N/A' }}</td>
+                </tr>
+                @empty <tr><td colspan="4" class="empty">No applications available.</td></tr> @endforelse</tbody>
+            </table></div>
+            @elseif($tab === 'payments')
             @php
                 $statusLabels = ['success' => ['Paid', 'p-ok'], 'free' => ['Free', 'p-grey'], 'pending' => ['Pay later', 'p-warn'], 'failed' => ['Failed', 'p-bad']];
                 $sbaIdForPay = $selected->user_id;
@@ -141,15 +159,6 @@ $progress = $summary;
                 <input type="hidden" name="student_id" value="{{ $sbaIdForPay }}">
                 <div><button class="btn go" type="submit">Add payment</button></div>
             </form>
-            @else
-            <article class="workspace-detail"><h3>{{ ['documents'=>'Documents','applications'=>'Applications & Visa'][$tab] }}</h3>
-                @forelse($details as $entry)
-                @if($tab === 'documents')<p>{{ $entry->name ?: 'Student document' }}</p>
-                @elseif($tab === 'applications')<p><strong>{{ optional($entry->program)->name ?: 'Program unavailable' }}</strong> · {{ optional(optional($entry->program)->university_name)->university_name ?: 'University unavailable' }}<br>Application: {{ optional($courseStatuses->get($entry->program_id))->course_remarks ?: 'N/A' }} · Visa: {{ optional($visaStatuses->get($entry->program_id))->visa_application ?: 'N/A' }}</p>
-                @else<p>{{ $entry->created_at ?? '' }} · {{ $entry->amount ?? '' }} · {{ $entry->payment_status ?? 'Status unavailable' }}</p>@endif
-                @empty<p>No records available.</p>@endforelse
-            </article>
-            @endif
             @endif
             </div></div>
             @else <div class="card empty" style="padding:48px">Select a student to open their OEL 360 case.</div> @endif

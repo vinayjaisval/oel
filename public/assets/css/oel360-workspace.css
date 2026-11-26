@@ -97,7 +97,7 @@
 .oel360 .pw{display:flex;gap:6px}.oel360 .pw .inp{flex:1}
 .oel360 .ov{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px}
 .oel360 .ov .card{padding:14px}.oel360 .ov h4{margin:0 0 8px;font-size:14px}
-.oel360 .kv{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}.oel360 .kv:last-child{border:0}.oel360 .kv span:first-child{color:var(--muted)}
+.oel360 .kv{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}.oel360 .kv:last-child{border:0}.oel360 .kv span:first-child{color:var(--muted);flex:0 0 110px;white-space:nowrap}.oel360 .kv span:last-child{text-align:right;overflow-wrap:anywhere}
 .oel360 .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--navy);color:var(--onNavy);padding:10px 16px;border-radius:10px;font-weight:600;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
 .oel360 .toast.on{opacity:1}
 .oel360 .foot{max-width:1400px;margin:0 auto;padding:0 16px 24px;font-size:12px;color:var(--muted)}
