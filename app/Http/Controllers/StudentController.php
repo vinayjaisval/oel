@@ -193,8 +193,8 @@ class StudentController extends Controller
                 ($user->hasRole('agent') && User::where('added_by', $user->id)->whereNotIn('admin_type', ['student'])->where('id', $selected->added_by)->exists())
             );
             if ($mayViewPayments && $selected->email) {
-                $totals = DB::table('payments')->where('customer_email', $selected->email)
-                    ->selectRaw("COUNT(*) AS entries, SUM(CASE WHEN payment_status = 'success' THEN amount ELSE 0 END) AS paid, SUM(CASE WHEN payment_status = 'success' THEN 0 ELSE amount END) AS due")
+                $totals = $this->paymentLedgerQuery($selected->email)
+                    ->selectRaw("COUNT(*) AS entries, SUM(CASE WHEN payments_link.payment_type_remarks = 'applied_program_pay_later' THEN 0 ELSE payments_link.amount END) AS paid, SUM(CASE WHEN payments_link.payment_type_remarks = 'applied_program_pay_later' THEN payments_link.amount ELSE 0 END) AS due")
                     ->first();
             }
             $owner = User::find($selected->added_by);
@@ -228,15 +228,16 @@ class StudentController extends Controller
                     $allowedOwners[] = $user->id;
                 }
                 abort_if($allowedOwners !== null && !in_array($selected->added_by, $allowedOwners), 403);
-                $details = DB::table('payments')
-                    ->select('payments.*')
-                    ->selectSub(function ($query) {
-                        $query->from('payments_link')
-                            ->leftJoin('master_service', 'master_service.id', '=', 'payments_link.master_service')
-                            ->whereColumn('payments_link.fallowp_unique_id', 'payments.fallowp_unique_id')
-                            ->orderByDesc('payments_link.id')->limit(1)->select('master_service.name');
-                    }, 'service_name')
-                    ->where('payments.customer_email', $selected->email)->orderByDesc('payments.id')->get();
+                $details = $this->paymentLedgerQuery($selected->email)
+                    ->select(
+                        'payments_link.id',
+                        'payments_link.amount',
+                        'payments_link.payment_mode as payment_method',
+                        'payments_link.created_at',
+                        'master_service.name as service_name',
+                        DB::raw("IF(payments_link.payment_type_remarks = 'applied_program_pay_later', 'pending', 'success') as payment_status")
+                    )
+                    ->orderByDesc('payments_link.id')->get();
             } else {
                 $details = EducationHistory::with('educationLevel')->where('student_id', $selected->id)->first();
                 $mayViewApplications = $user->hasRole('Administrator') || $selected->added_by == $user->id || ($user->hasRole('agent') && User::where('added_by', $user->id)->whereNotIn('admin_type', ['student'])->where('id', $selected->added_by)->exists());
@@ -329,16 +330,33 @@ class StudentController extends Controller
     private function workspaceListPage($query, Request $request)
     {
         $students = $query->paginate(20);
-        $payments = DB::table('payments')->whereIn('customer_email', $students->pluck('email')->filter()->all())
-            ->groupBy('customer_email')
-            ->selectRaw("customer_email, COUNT(*) AS entries, SUM(CASE WHEN payment_status = 'success' THEN 1 ELSE 0 END) AS paid")
-            ->get()->keyBy('customer_email');
+        $payments = DB::table('payments_link')->whereIn('email', $students->pluck('email')->filter()->all())
+            ->whereNotNull('master_service')
+            ->groupBy('email')
+            ->selectRaw("email, COUNT(*) AS entries, SUM(CASE WHEN payment_type_remarks = 'applied_program_pay_later' THEN 0 ELSE 1 END) AS paid")
+            ->get()->keyBy('email');
         foreach ($students as $student) {
             $payment = $payments->get($student->email);
             $student->workspace_payment = !$payment ? 'No payments' : ($payment->paid == $payment->entries ? 'Paid' : 'Part paid');
         }
 
         return $students;
+    }
+
+    /**
+     * The OEL 360 payment ledger. This is the same payments_link rows the old
+     * payment drawer read (filtered by student email, not user_id - payments_link.user_id
+     * is not the student's user_id). A row is "due" when it came from the student-facing
+     * "pay later" apply flow (payment_type_remarks = applied_program_pay_later); every other
+     * row was entered by staff after collecting the amount (Cash/Cheque/Bank/Online), so it
+     * counts as received.
+     */
+    private function paymentLedgerQuery(string $email)
+    {
+        return DB::table('payments_link')
+            ->leftJoin('master_service', 'master_service.id', '=', 'payments_link.master_service')
+            ->where('payments_link.email', $email)
+            ->whereNotNull('payments_link.master_service');
     }
 
     public function workspaceAllQuery(Request $request, bool $includeIncomplete = false)

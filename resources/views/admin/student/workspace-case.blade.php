@@ -29,9 +29,9 @@ $progress = $summary;
             </div></div>
             <div class="kpis" aria-label="Case summary">
                 <div class="kpi"><span>Progress</span><b>{{ $current - 1 }} / 10 steps</b></div>
-                <div class="kpi"><span>Universities</span><b>—</b></div>
-                <div class="kpi"><span>Paid to OEL</span><b>—</b></div>
-                <div class="kpi"><span>Due</span><b>—</b></div>
+                <div class="kpi"><span>Universities</span><b>{{ $universities->count() }}</b></div>
+                <div class="kpi"><span>Paid to OEL</span><b>&#8377;{{ number_format($totals->paid ?? 0, 2) }}</b></div>
+                <div class="kpi"><span>Due</span><b>&#8377;{{ number_format($totals->due ?? 0, 2) }}</b></div>
             </div>
             <nav class="ctabs" role="tablist" aria-label="Profile sections">
                 @can('oel_360.view')
@@ -70,8 +70,8 @@ $progress = $summary;
             @else
             @if($tab === 'payments')
             <div class="workspace-payment-summary" aria-label="Payment summary">
-                <div><span>Received</span><strong>₹{{ number_format($details->where('payment_status', 'success')->sum('amount'), 2) }}</strong></div>
-                <div class="kpi"><span>Due</span><b>—</b></div>
+                <div><span>Received</span><strong>&#8377;{{ number_format($totals->paid ?? 0, 2) }}</strong></div>
+                <div class="kpi"><span>Due</span><b>&#8377;{{ number_format($totals->due ?? 0, 2) }}</b></div>
                 <div><span>Entries</span><strong>{{ $details->count() }}</strong></div>
             </div>
             <div class="tw"><table class="stack">
