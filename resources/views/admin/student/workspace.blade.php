@@ -1,7 +1,6 @@
 @extends('admin.include.app')
 @section('style')
 <link rel="stylesheet" href="{{ asset('assets/css/oel360-workspace.css') }}">
-<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.2/dist/sweetalert2.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 @endsection
 @section('main-content')
@@ -45,6 +44,7 @@
         </section>
     </div>
 </div>
-@include('admin.student.workspace-payment')
 @endsection
-@include('admin.student.workspace-scripts')
+@section('scripts')
+<script defer src="{{ asset('assets/js/oel360-workspace.js') }}"></script>
+@endsection

@@ -25,7 +25,7 @@ $progress = $summary;
             <div class="ch"><a class="btn back" data-case-close href="{{ $backUrl }}">&larr; Students</a><span class="av large">{{ mb_strtoupper(mb_substr($selected->first_name ?? '?', 0, 1)) }}{{ mb_strtoupper(mb_substr($selected->last_name ?? '', 0, 1)) }}</span><div><h2>{{ $selected->first_name }} {{ $selected->last_name }}</h2><p class="sub">{{ $selected->email }} @if($selected->phone_number) · {{ $selected->phone_number }} @endif</p><span class="pill p-new">{{ $selected->profile_complete ? 'Profile Completed' : 'Profile incomplete' }}</span></div><div class="acts">
                 @if($selected->phone_number)<a class="btn" href="tel:{{ $selected->phone_number }}">Call</a>@endif
                 @if($account && $account->email && $account->password && !session()->has('admin_user') && auth()->user()->hasAnyRole(['Administrator','visa','agent','sub_agent','Application Punching']))<a class="btn" href="{{ route('impersonate', $account) }}">Login as student</a>@endif
-                @if($selected->email)<button type="button" class="btn payment_model" student-id="{{ $selected->user_id }}" data-bs-toggle="offcanvas" data-bs-target="#gmat">Payment Link</button>@endif
+                @can('application.view')<button type="button" class="btn" data-case-tab="payments">Payment Link</button>@endcan
             </div></div>
             <div class="kpis" aria-label="Case summary">
                 <div class="kpi"><span>Progress</span><b>{{ $current - 1 }} / 10 steps</b></div>
@@ -83,7 +83,6 @@ $progress = $summary;
                 <tr><td data-l="Service">{{ $entry->service_name ?: '—' }}</td><td data-l="Amount">₹{{ number_format((float) $entry->amount, 2) }}</td><td data-l="Mode">{{ $entry->payment_method ?: '—' }}</td><td data-l="Date">{{ $entry->created_at ?: '—' }}</td><td data-l="Status"><span class="pill p-new">{{ $entry->payment_status ?: 'Unknown' }}</span>@if(in_array($entry->id, $duplicatePaymentIds)) <span class="pill p-warn">Possible duplicate</span>@endif</td></tr>
                 @empty <tr><td colspan="5">No payment records available.</td></tr> @endforelse</tbody>
             </table></div>
-            @if($selected->email)<div class="workspace-add-payment"><h3>Add payment</h3><button type="button" class="payment_model" student-id="{{ $selected->user_id }}" data-bs-toggle="offcanvas" data-bs-target="#gmat">Add payment</button></div>@endif
             @else
             <article class="workspace-detail"><h3>{{ ['documents'=>'Documents','applications'=>'Applications & Visa'][$tab] }}</h3>
                 @forelse($details as $entry)
