@@ -51,20 +51,20 @@ $progress = $summary;
             @elseif($tab === 'overview')
             <div class="ov">
                 <div class="card"><h4>Contact</h4>
-                    <div class="kv"><span>Email</span><span>{{ $selected->email ?: '?' }}</span></div>
-                    <div class="kv"><span>Phone</span><span>{{ $selected->phone_number ?: '?' }}</span></div>
-                    <div class="kv"><span>Pincode</span><span>{{ $selected->zip ?: '?' }}</span></div>
-                    <div class="kv"><span>Counsellor</span><span>{{ $owner?->name ?? '?' }}</span></div>
+                    <div class="kv"><span>Email</span><span>{{ $selected->email ?: '—' }}</span></div>
+                    <div class="kv"><span>Phone</span><span>{{ $selected->phone_number ?: '—' }}</span></div>
+                    <div class="kv"><span>Pincode</span><span>{{ $selected->zip ?: '—' }}</span></div>
+                    <div class="kv"><span>Counsellor</span><span>{{ $owner?->name ?? '—' }}</span></div>
                 </div>
                 <div class="card"><h4>Admission</h4>
-                    <div class="kv"><span>Universities</span><span>{{ $universities->join(', ') ?: '?' }}</span></div>
-                    <div class="kv"><span>Offer</span><span>{{ $latestApplication?->status ?? '?' }}</span></div>
-                    <div class="kv"><span>Joining</span><span>{{ $summary?->joining_date ?: '?' }}</span></div>
+                    <div class="kv"><span>Universities</span><span>{{ $universities->join(', ') ?: '—' }}</span></div>
+                    <div class="kv"><span>Offer</span><span>{{ $latestApplication?->status ?? '—' }}</span></div>
+                    <div class="kv"><span>Joining</span><span>{{ $summary?->joining_date ?: '—' }}</span></div>
                 </div>
                 <div class="card"><h4>Visa &amp; travel</h4>
-                    <div class="kv"><span>Visa</span><span>{{ $summary?->visa_application ?: '?' }}</span></div>
-                    <div class="kv"><span>Flight</span><span>{{ trim(($summary?->flight_name ?? '').' '.($summary?->flight_no ?? '')) ?: '?' }}</span></div>
-                    <div class="kv"><span>Stay</span><span>{{ $summary?->hostel ?: '?' }}</span></div>
+                    <div class="kv"><span>Visa</span><span>{{ $summary?->visa_application ?: '—' }}</span></div>
+                    <div class="kv"><span>Flight</span><span>{{ trim(($summary?->flight_name ?? '').' '.($summary?->flight_no ?? '')) ?: '—' }}</span></div>
+                    <div class="kv"><span>Stay</span><span>{{ $summary?->hostel ?: '—' }}</span></div>
                 </div>
             </div>
             @elseif($tab === 'documents')

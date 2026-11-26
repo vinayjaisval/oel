@@ -15,15 +15,10 @@
 .oel360{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif;overflow-x:clip}
 .oel360 button,.oel360 input,.oel360 select,.oel360 textarea{font:inherit;color:inherit}
 .oel360 :focus-visible{outline:3px solid #F59E0B;outline-offset:2px}
-.oel360 .top{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-.oel360 .top>div{max-width:1400px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.oel360 .logo{font-weight:800;font-size:20px;color:var(--navy)}
-.oel360 .crumb{color:var(--muted);font-size:14px;flex:1}
-.oel360 .who{font-size:13px;color:var(--muted)}
 .oel360 .wrap{max-width:1400px;margin:0 auto;padding:16px;display:grid;grid-template-columns:340px minmax(0,1fr);gap:16px;align-items:start}
 .oel360 .card{background:var(--card);border:1px solid var(--line);border-radius:14px}
-.oel360 /* list */
-.list{position:sticky;top:64px;display:flex;flex-direction:column;max-height:calc(100vh - 80px)}
+/* list */
+.oel360 .list{position:sticky;top:16px;display:flex;flex-direction:column;max-height:calc(100vh - 32px)}
 .oel360 .lh{padding:14px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
 .oel360 .lh h1{margin:0;font-size:18px;font-weight:800;color:var(--navy);display:flex;justify-content:space-between;align-items:baseline}
 .oel360 .lh h1 small{font-size:13px;color:var(--muted);font-weight:500}
@@ -43,8 +38,8 @@
 .oel360 .p-ok{background:var(--okBg);color:var(--ok)}.oel360 .p-warn{background:var(--warnBg);color:var(--warn)}.oel360 .p-bad{background:var(--badBg);color:var(--bad)}.oel360 .p-new{background:var(--navyBg);color:var(--navy)}.oel360 .p-grey{background:var(--line);color:var(--muted)}
 .oel360 .mini{font-size:11px;color:var(--muted)}
 .oel360 .empty{padding:24px;text-align:center;color:var(--muted)}
-.oel360 /* case */
-.case{display:flex;flex-direction:column;gap:14px}
+/* case */
+.oel360 .case{display:flex;flex-direction:column;gap:14px}
 .oel360 .ch{padding:18px;display:flex;flex-wrap:wrap;gap:14px;align-items:center}
 .oel360 .ch .av{width:56px;height:56px;font-size:18px}
 .oel360 .ch h2{margin:0;font-size:22px;font-weight:800;color:var(--navy)}

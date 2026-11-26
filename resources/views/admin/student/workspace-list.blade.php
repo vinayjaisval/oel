@@ -5,11 +5,11 @@
                 !$item->profile_complete => ['Profile incomplete', 'p-warn'],
                 $item->visa_application === 'Rejected' => ['Visa rejected', 'p-bad'],
                 filled($item->hostel) => ['Completed', 'p-ok'],
-                filled($item->flight_no) => ['Step 9/11 ? Take off', 'p-ok'],
-                filled($item->visa_apply_date) => ['Step 7/11 ? Visa status', 'p-ok'],
-                filled($item->fee_amount) => ['Step 6/11 ? Visa application', 'p-ok'],
-                filled($item->courses) => ['Step 3/11 ? Application status', 'p-ok'],
-                filled($item->college) => ['Step 2/11 ? Courses', 'p-ok'],
+                filled($item->flight_no) => ['Step 9/11 · Take off', 'p-ok'],
+                filled($item->visa_apply_date) => ['Step 7/11 · Visa status', 'p-ok'],
+                filled($item->fee_amount) => ['Step 6/11 · Visa application', 'p-ok'],
+                filled($item->courses) => ['Step 3/11 · Application status', 'p-ok'],
+                filled($item->college) => ['Step 2/11 · Courses', 'p-ok'],
                 default => ['Ready for OEL 360', 'p-new'],
             };
             $studentUrl = route('student-list', array_merge(request()->except(['student','tab','step','page']), ['student' => $item->user_id, 'tab' => $item->profile_complete && $item->status_threesixty && auth()->user()->can('oel_360.view') && auth()->user()->can('oel_apply.view') ? 'journey' : 'overview']));
