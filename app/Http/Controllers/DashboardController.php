@@ -616,67 +616,8 @@ public function index(Request $request)
     |--------------------------------------------------------------------------
     */
 
-    $complete360Query = Student::query()
-
-        ->join('users', 'users.id', '=', 'student.added_by')
-
-        ->join(DB::raw('
-        (
-            SELECT MAX(id) as id, student_user_id
-            FROM student_by_agent
-            GROUP BY student_user_id
-        ) as sba_latest
-        '), function ($join) {
-
-            $join->on(
-                'sba_latest.student_user_id',
-                '=',
-                'student.user_id'
-            );
-        })
-
-        ->join(
-            'student_by_agent',
-            'student_by_agent.id',
-            '=',
-            'sba_latest.id'
-        )
-
-        ->leftJoin(
-            'payments',
-            'payments.customer_email',
-            '=',
-            'student.email'
-        )
-
-        ->leftJoin(
-            'payments_link',
-            'payments_link.fallowp_unique_id',
-            '=',
-            'payments.fallowp_unique_id'
-        )
-
-        ->where('student.status_threesixty', 1)
-
-        ->where('student.profile_complete', 1);
-
-    if (auth()->user()->hasRole('agent')) {
-
-        $complete360Query->where(function ($q) {
-
-            $q->where('student.added_by_agent_id', auth()->id())
-                ->orWhere('student.added_by', auth()->id());
-
-        });
-
-    } elseif (auth()->user()->hasRole('sub_agent')) {
-
-        $complete360Query->where('student.added_by', auth()->id());
-    }
-
-    $complete360 = $complete360Query
-        ->distinct('student.id')
-        ->count('student.id');
+    $complete360 = \App\Support\Oel360ReadyQuery::forUser(auth()->user())
+        ->distinct('student.id')->count('student.id');
 
     /*
     |--------------------------------------------------------------------------

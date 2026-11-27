@@ -273,7 +273,7 @@
 	            </div>
 	            <div clas="col-md-12">
 	                <div class="submit-section btnpr">
-	                    @can('oel_360.view')<a href="{{route('oel_360')}}">View 360 profiles</a>@endcan
+	                    @can('oel_360.view')<a href="{{ route('student-list', ['view' => 'ready']) }}">View 360 profiles</a>@endcan
 	                </div>
 	            </div>
 	        </div>

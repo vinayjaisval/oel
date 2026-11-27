@@ -8,32 +8,6 @@
             "permission": "dashboard.view"
         },
         {
-            "name": "Application",
-            "icon": "menu-icon tf-icons fas fa-graduation-cap",
-            "slug": "application",
-            "permission": [
-                "application.view",
-                "learning_franchise.view",
-                "learning_agents.view",
-                "learning_student.view",
-                "oel_360.view"
-            ],
-            "submenu": [
-                {
-                    "url": "admin/total-applied-program",
-                    "name": "All Applications",
-                    "slug": "all-application",
-                    "permission": "application.view"
-                },
-                {
-                    "url": "/admin/oel-360",
-                    "name": "oel 360",
-                    "slug": "admin-oel-360",
-                    "permission": "oel_360.view"
-                }
-            ]
-        },
-        {
             "name": "Landing Page",
             "icon": "menu-icon tf-icons fas fa-home fs-5",
             "slug": "landing-page",
@@ -257,6 +231,8 @@
             "slug": "student",
             "permission": [
                 "student.view",
+                "application.view",
+                "oel_360.view",
                 "student_apply_question.view",
                 "student_assistance.view",
                 "student_enquiry_log.view",
@@ -266,9 +242,15 @@
             "submenu": [
                 {
                     "url": "/admin/student-list",
-                    "name": "Student List",
+                    "name": "Students Workspace",
                     "slug": "admin-student-list",
-                    "permission": "student.view"
+                    "permission": ["student.view", "oel_360.view"]
+                },
+                {
+                    "url": "admin/total-applied-program",
+                    "name": "All Applications",
+                    "slug": "all-application",
+                    "permission": "application.view"
                 },
                 {
                     "url": "/admin/student-apply-question",

@@ -19,7 +19,7 @@ $frenchise = DB::table('agents')->where('email',$user->email)->first();
     @if (isset($menu))
         @foreach ($menu as $submenu)
             @if (isset($submenu->name))
-                @if (auth()->user()->can($submenu->permission))
+                @if (is_array($submenu->permission) ? auth()->user()->hasAnyPermission($submenu->permission) : auth()->user()->can($submenu->permission))
                     <li class="menu-item ">
                         @php
                             $currentUrl = app()->environment() === 'local' ? request()->url() : str_replace('http://', 'https://', request()->url());
